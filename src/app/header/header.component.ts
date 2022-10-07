@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -8,7 +9,6 @@ import {Component, OnInit} from '@angular/core';
 export class HeaderComponent implements OnInit {
   pages: Array<{ title: string, link: string }> = [
     {title: 'Racecard', link: '/'},
-    {title: 'Tips', link: '/tips'},
     {title: 'Performance', link: '/performance'},
     {title: 'Pools', link: '/pools'},
   ]
@@ -16,7 +16,7 @@ export class HeaderComponent implements OnInit {
   hour = 'HH';
   minute = 'MM';
 
-  constructor() {
+  constructor(private router: Router) {
   }
 
   ngOnInit(): void {
@@ -31,6 +31,10 @@ export class HeaderComponent implements OnInit {
 
     this.hour = hours ? `${hours}` : `12`;
     this.minute = minutes >= 10 ? `${minutes}` : `0${minutes}`;
+  }
+
+  get currentUrl(): string {
+    return this.router.url
   }
 
 }

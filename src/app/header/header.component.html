@@ -8,7 +8,9 @@
            class="pt-0.5 pr-10 text-2xl font-bold"
       >
         <a [routerLink]="page.link"
-           class="hvr-underline-from-center hover:text-sky-400 focus:outline-0"
+           [class.hvr-push]="currentUrl !== page.link"
+           [class.text-sky-400]="currentUrl === page.link"
+           class="hover:text-sky-400 focus:text-sky-400 focus:outline-0"
         >
           {{page.title}}
         </a>
