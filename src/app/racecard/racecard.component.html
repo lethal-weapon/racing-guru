@@ -39,22 +39,28 @@
   </div>
 </div>
 
-<div class="m-3 table-fixed">
-  <table class="border-collapse border border-gray-500 noselect">
+<div class="m-3">
+  <table class="table-fixed border-collapse border border-gray-500 text-center noselect">
     <thead>
     <th class="w-20 border border-gray-600">
       <i class="fa fa-dollar fa-lg"></i>
     </th>
     <th *ngFor="let jockey of jockeys"
-        class="w-20 py-3 border border-gray-600 text-lg"
+        class="w-20 border border-gray-600"
+        [class.border-r-red-900]="isBoundaryJockey(jockey)"
     >
-      {{jockey}}
+      <div class="">
+        {{jockeys.indexOf(jockey) > 6 ? '-' : (jockeys.indexOf(jockey) + 1) * 16 - 10 + 0.12}}
+      </div>
+      <div class="">
+        {{jockey}}
+      </div>
     </th>
     </thead>
     <tbody>
     <tr *ngFor="let race of races">
-      <td class="py-2 border border-gray-700 text-center "
-          [class.border-b-red-600]="race.raceNum == 5"
+      <td class="border border-gray-700"
+          [class.border-b-red-900]="race.raceNum == 5"
       >
         <div class="">
           {{race.raceNum}}
@@ -65,38 +71,50 @@
         </div>
       </td>
       <td *ngFor="let jockey of jockeys"
-          class="border border-gray-700 text-center text-sm"
-          [class.border-b-red-600]="race.raceNum == 5"
+          class="border border-gray-700 text-sm"
+          [class.border-b-red-900]="race.raceNum == 5"
+          [class.border-b-gray-900]="hideBottomBorder(jockey, race.raceNum)"
+          [class.border-r-red-900]="isBoundaryJockey(jockey)"
+          [class.border-r-gray-900]="hideRightBorder(jockey, race.raceNum)"
           [class.text-red-600]="(jockey == 'PZ' || jockey == 'FEL') && race.raceNum < 6"
           [class.text-green-600]="(jockey == 'DSS' || jockey == 'PMF') && race.raceNum < 6"
           [class.text-blue-600]="(jockey == 'LDE' || jockey == 'BV') && race.raceNum < 6"
           [class.text-purple-600]="(jockey == 'BHW' || jockey == 'MMR') && race.raceNum < 6"
       >
-        <div *ngIf="(jockey[0] < 'G' && race.raceNum % 2 == 0) || (jockey[0] > 'J' && race.raceNum % 2 == 1)"
+        <div *ngIf="rideThisRace(jockey, race.raceNum)"
              class="flex flex-col"
         >
           <div class="flex flex-row justify-between">
             <div class="w-5 h-5 rounded-full border border-gray-700">
-              {{(jockeys.indexOf(jockey) + race.raceNum) % 12}}
+              {{(jockeys.indexOf(jockey) + race.raceNum) % 12 + 1}}
             </div>
             <div>
               <a href="http://localhost:8080" target="_blank">B</a>
             </div>
             <div class="w-5 h-5 border border-gray-700">
-              {{(jockeys.indexOf(jockey) + 2 * race.raceNum) % 12}}
+              {{(jockeys.indexOf(jockey) + 2 * race.raceNum) % 12 + 1}}
             </div>
           </div>
-          <div class="">
-             HDA
+          <div class="flex flex-row justify-evenly">
+            <div class="">
+              {{getTrainer(jockey, race.raceNum)}}
+            </div>
+            <div *ngIf="(jockey === 'PZ' || jockey === 'DSS')"
+                 class="text-yellow-400">
+              &#937;
+            </div>
           </div>
-          <div class="flex flex-row justify-around">
+          <div class="flex flex-row justify-around"
+               [class.font-bold]="race.raceNum == 6"
+          >
             <div class=""
-                 [class.font-bold]="race.raceNum == 6"
-                 [class.text-green-600]="race.raceNum == 6"
+                 [class.text-red-600]="race.raceNum == 6"
             >
               {{(jockeys.indexOf(jockey) + 7 * race.raceNum) % 30 + 3}}
             </div>
-            <div class="">
+            <div class=""
+                 [class.text-blue-600]="race.raceNum == 6"
+            >
               {{(jockeys.indexOf(jockey) + 5 * race.raceNum) % 7 + 1 + jockeys.indexOf(jockey) / 10}}
             </div>
           </div>
