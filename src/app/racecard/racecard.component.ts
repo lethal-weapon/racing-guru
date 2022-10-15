@@ -10,6 +10,8 @@ export class RacecardComponent implements OnInit {
   currentMeeting: string = this.meetings[0]
   isDropdownHover: boolean = false
 
+  activeTrainer: string = ''
+
   constructor(private repo: RacecardRepository) {
   }
 
@@ -23,41 +25,59 @@ export class RacecardComponent implements OnInit {
     }
   }
 
-  hideBottomBorder(jockey: string, raceNum: number): boolean {
+  setActiveTrainer(clickedTrainer: string) {
+    this.activeTrainer = this.activeTrainer === clickedTrainer
+      ? ''
+      : clickedTrainer
+  }
+
+  hideBottomBorder(jockey: string, race: number): boolean {
     return !(
-      raceNum === 5
-      || raceNum === 10
-      || this.rideThisRace(jockey, raceNum)
-      || this.rideNextRace(jockey, raceNum)
+      race === 5
+      || race === 10
+      || this.rideThisRace(jockey, race)
+      || this.rideNextRace(jockey, race)
     )
   }
 
-  hideRightBorder(jockey: string, raceNum: number): boolean {
+  hideRightBorder(jockey: string, race: number): boolean {
     return !(
       jockey === this.jockeys.pop()
       || this.isBoundaryJockey(jockey)
-      || this.rideThisRace(jockey, raceNum)
-      || this.rideThisRace(this.jockeys[this.jockeys.indexOf(jockey) + 1], raceNum)
+      || this.rideThisRace(jockey, race)
+      || this.rideThisRace(this.jockeys[this.jockeys.indexOf(jockey) + 1], race)
     )
   }
 
-  rideThisRace(jockey: string, raceNum: number): boolean {
-    return (jockey[0] < 'G' && raceNum % 2 == 0) || (jockey[0] > 'J' && raceNum % 2 == 1)
+  rideThisRace(jockey: string, race: number): boolean {
+    return (jockey[0] < 'G' && race % 2 == 0) || (jockey[0] > 'J' && race % 2 == 1)
   }
 
-  rideNextRace(jockey: string, raceNum: number): boolean {
-    return raceNum < 10 && this.rideThisRace(jockey, raceNum + 1)
+  rideNextRace(jockey: string, race: number): boolean {
+    return race < 10 && this.rideThisRace(jockey, race + 1)
   }
 
   isBoundaryJockey(jockey: string): boolean {
     return this.meetingBoundaryJockeys.includes(jockey)
   }
 
-  getTrainer(jockey: string, raceNum: number): string {
+  isSpecialRace(race: { race: number, grade: string, distance: number, track: string }): boolean {
+    return !(
+      race.track === 'Turf'
+      && race.grade.startsWith('C')
+      && (
+        race.grade.endsWith('3')
+        || race.grade.endsWith('4')
+        || race.grade.endsWith('5')
+      )
+    )
+  }
+
+  getTrainer(jockey: string, race: number): string {
     return [
       'SJJ', 'LFC', 'CAS', 'WDJ', 'YPF', 'LKW', 'FC', 'SCS', 'YTP', 'HDA', 'HAD',
       'SWY', 'TKH', 'MKL', 'YCH', 'NPC', 'RW', 'MA', 'GR', 'CCW', 'TYS', 'HL'
-    ][(this.jockeys.indexOf(jockey) * raceNum) % 20 + 1]
+    ][(this.jockeys.indexOf(jockey) * race) % 20 + 1]
   }
 
   get meetings(): string[] {
@@ -80,65 +100,73 @@ export class RacecardComponent implements OnInit {
     ]
   }
 
-  get races(): { raceNum: number, raceClass: string, distance: number, track: string }[] {
+  get lastRace(): number {
+    return 5
+  }
+
+  get currentRace(): number {
+    return this.lastRace + 1;
+  }
+
+  get races(): { race: number, grade: string, distance: number, track: string }[] {
     return [
       {
-        raceNum: 1,
-        raceClass: 'Class 5',
+        race: 1,
+        grade: 'Class 5',
         distance: 1200,
         track: 'Turf',
       },
       {
-        raceNum: 2,
-        raceClass: 'Class 4',
+        race: 2,
+        grade: 'Class 4',
         distance: 1400,
         track: 'AWT',
       },
       {
-        raceNum: 3,
-        raceClass: 'Group 3',
+        race: 3,
+        grade: 'Group 3',
         distance: 1200,
         track: 'Turf',
       },
       {
-        raceNum: 4,
-        raceClass: 'Class 3',
+        race: 4,
+        grade: 'Class 3',
         distance: 1600,
         track: 'AWT',
       },
       {
-        raceNum: 5,
-        raceClass: 'Class 5',
+        race: 5,
+        grade: 'Class 5',
         distance: 1800,
         track: 'Turf',
       },
       {
-        raceNum: 6,
-        raceClass: 'Class 4',
+        race: 6,
+        grade: 'Class 4',
         distance: 1200,
         track: 'Turf',
       },
       {
-        raceNum: 7,
-        raceClass: 'Class 4',
+        race: 7,
+        grade: 'Class 4',
         distance: 2400,
         track: 'Turf',
       },
       {
-        raceNum: 8,
-        raceClass: 'Class 3',
+        race: 8,
+        grade: 'Class 3',
         distance: 1400,
         track: 'Turf',
       },
       {
-        raceNum: 9,
-        raceClass: 'Class 4',
+        race: 9,
+        grade: 'Class 4',
         distance: 1000,
         track: 'Turf',
       },
       {
-        raceNum: 10,
-        raceClass: 'Class 2',
+        race: 10,
+        grade: 'Class 2',
         distance: 1650,
         track: 'Turf',
       },

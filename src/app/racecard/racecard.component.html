@@ -60,11 +60,12 @@
     <tbody>
     <tr *ngFor="let race of races">
       <td class="border border-gray-700"
-          [class.border-b-red-900]="race.raceNum == 5"
+          [class.border-b-red-900]="race.race === lastRace"
+          [class.text-yellow-400]="isSpecialRace(race)"
       >
         <div class="">
-          {{race.raceNum}}
-          {{race.raceClass[0]}}{{race.raceClass[race.raceClass.length - 1]}}
+          {{race.race}}
+          {{race.grade[0]}}{{race.grade[race.grade.length - 1]}}
         </div>
         <div class="">
           {{race.distance}}
@@ -72,50 +73,55 @@
       </td>
       <td *ngFor="let jockey of jockeys"
           class="border border-gray-700 text-sm"
-          [class.border-b-red-900]="race.raceNum == 5"
-          [class.border-b-gray-900]="hideBottomBorder(jockey, race.raceNum)"
+          [class.border-b-red-900]="race.race === lastRace"
+          [class.border-b-gray-900]="hideBottomBorder(jockey, race.race)"
           [class.border-r-red-900]="isBoundaryJockey(jockey)"
-          [class.border-r-gray-900]="hideRightBorder(jockey, race.raceNum)"
-          [class.text-red-600]="(jockey == 'PZ' || jockey == 'FEL') && race.raceNum < 6"
-          [class.text-green-600]="(jockey == 'DSS' || jockey == 'PMF') && race.raceNum < 6"
-          [class.text-blue-600]="(jockey == 'LDE' || jockey == 'BV') && race.raceNum < 6"
-          [class.text-purple-600]="(jockey == 'BHW' || jockey == 'MMR') && race.raceNum < 6"
+          [class.border-r-gray-900]="hideRightBorder(jockey, race.race)"
+          [class.text-red-600]="(jockey == 'PZ' || jockey == 'FEL') && race.race < 6"
+          [class.text-green-600]="(jockey == 'DSS' || jockey == 'PMF') && race.race < 6"
+          [class.text-blue-600]="(jockey == 'LDE' || jockey == 'BV') && race.race < 6"
+          [class.text-purple-600]="(jockey == 'BHW' || jockey == 'MMR') && race.race < 6"
       >
-        <div *ngIf="rideThisRace(jockey, race.raceNum)"
+        <div *ngIf="rideThisRace(jockey, race.race)"
              class="flex flex-col"
         >
           <div class="flex flex-row justify-between">
             <div class="w-5 h-5 rounded-full border border-gray-700">
-              {{(jockeys.indexOf(jockey) + race.raceNum) % 12 + 1}}
+              {{(jockeys.indexOf(jockey) + race.race) % 12 + 1}}
             </div>
             <div>
               <a href="http://localhost:8080" target="_blank">B</a>
             </div>
             <div class="w-5 h-5 border border-gray-700">
-              {{(jockeys.indexOf(jockey) + 2 * race.raceNum) % 12 + 1}}
+              {{(jockeys.indexOf(jockey) + 2 * race.race) % 12 + 1}}
             </div>
           </div>
           <div class="flex flex-row justify-evenly">
-            <div class="">
-              {{getTrainer(jockey, race.raceNum)}}
+            <div class="cursor-pointer"
+                 [class.font-bold]="activeTrainer === getTrainer(jockey, race.race)"
+                 [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race.race)"
+                 (click)="setActiveTrainer(getTrainer(jockey, race.race))"
+            >
+              {{getTrainer(jockey, race.race)}}
             </div>
             <div *ngIf="(jockey === 'PZ' || jockey === 'DSS')"
-                 class="text-yellow-400">
+                 class="text-yellow-400"
+            >
               &#937;
             </div>
           </div>
           <div class="flex flex-row justify-around"
-               [class.font-bold]="race.raceNum == 6"
+               [class.font-bold]="race.race == currentRace"
           >
             <div class=""
-                 [class.text-red-600]="race.raceNum == 6"
+                 [class.text-red-600]="race.race == currentRace"
             >
-              {{(jockeys.indexOf(jockey) + 7 * race.raceNum) % 30 + 3}}
+              {{(jockeys.indexOf(jockey) + 7 * race.race) % 30 + 3}}
             </div>
             <div class=""
-                 [class.text-blue-600]="race.raceNum == 6"
+                 [class.text-blue-600]="race.race == currentRace"
             >
-              {{(jockeys.indexOf(jockey) + 5 * race.raceNum) % 7 + 1 + jockeys.indexOf(jockey) / 10}}
+              {{(jockeys.indexOf(jockey) + 5 * race.race) % 7 + 1 + jockeys.indexOf(jockey) / 10}}
             </div>
           </div>
         </div>

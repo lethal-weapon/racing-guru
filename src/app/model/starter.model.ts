@@ -1,11 +1,11 @@
 export class Starter {
   constructor(
-    public horseNum    : number,
-    public horseCode   : string,
-    public jockeyCode  : string,
-    public trainerCode : string,
-    public draw        : number,
-    public scratched   : boolean
+    public order     : number,
+    public draw      : number,
+    public horse     : string,
+    public jockey    : string,
+    public trainer   : string,
+    public scratched : boolean
   ) {
   }
 }
