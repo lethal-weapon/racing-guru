@@ -130,3 +130,53 @@
     </tbody>
   </table>
 </div>
+
+<div class="m-3 mt-10">
+  <table class="table-fixed border-collapse border border-gray-500 text-center text-xl noselect">
+    <thead>
+    <th class="w-20 border border-gray-600 p-3">
+      <i class="fa fa-magic fa-lg"></i>
+    </th>
+    <th *ngFor="let tipster of tipsters"
+        class="w-60 border border-gray-600 p-3"
+    >
+      <div class="">
+        {{tipster}}
+      </div>
+    </th>
+    </thead>
+    <tbody>
+    <tr *ngFor="let race of races">
+      <td class="border border-gray-700 p-3"
+          [class.border-b-red-900]="race.race === lastRace"
+      >
+        <div class="">
+          {{race.race}}
+        </div>
+      </td>
+      <td *ngFor="let tipster of tipsters"
+          class="border border-gray-700 p-3"
+          [class.border-b-red-900]="race.race === lastRace"
+      >
+        <div class="flex flex-row justify-evenly">
+          <div *ngIf="getConfident(tipster, race.race)"
+               class="text-yellow-400"
+          >
+            <i class="fa fa-cube"></i>
+          </div>
+          <div *ngFor="let order of getOrders(tipster, race.race)"
+               class=""
+               [class.text-red-600]="race.race < currentRace && order === 3"
+               [class.text-green-600]="race.race < currentRace && order === 4"
+               [class.text-blue-600]="race.race < currentRace && order === 7"
+               [class.text-purple-600]="race.race < currentRace && order === 8"
+               [class.text-yellow-400]="race.race === currentRace && order === 11"
+          >
+            {{order}}
+          </div>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

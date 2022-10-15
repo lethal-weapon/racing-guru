@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RacecardRepository} from '../model/racecard.repository';
+import {Tip} from '../model/tip.model';
 
 @Component({
   selector: 'app-racecard',
@@ -80,6 +81,18 @@ export class RacecardComponent implements OnInit {
     ][(this.jockeys.indexOf(jockey) * race) % 20 + 1]
   }
 
+  getOrders(tipster: string, race: number): number[] {
+    return [2, 3, 4, 5].map(e =>
+      Math.floor(((1 + this.tipsters.indexOf(tipster)) * race * 17 * e) % 14) + 1)
+  }
+
+  getConfident(tipster: string, race: number): boolean {
+    return (tipster.includes('a') && [3, 8].includes(race))
+      || (tipster.includes('o') && [1, 5].includes(race))
+      || (tipster.includes('t') && [2, 6].includes(race))
+      || (tipster.includes('h') && [7, 9].includes(race))
+  }
+
   get meetings(): string[] {
     return [
       'SUN, 2022-10-09, ST, 10 Races, 19 Jockeys, 22 Trainers, 123 Horses',
@@ -98,6 +111,10 @@ export class RacecardComponent implements OnInit {
       'MMR', 'FEL', 'CLR', 'BHW', 'BV',
       'CJE', 'CCY', 'YML', 'MHT', 'LHW', 'CHA', 'WJH', 'WCV'
     ]
+  }
+
+  get tipsters(): string[] {
+    return ['Sam', 'Mark', 'Philip', 'Vincent', 'Post', 'Trackwork', 'BigFont']
   }
 
   get lastRace(): number {
