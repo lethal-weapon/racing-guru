@@ -1,9 +1,8 @@
-import {Singular, Combination} from './order.model';
+import {WinPlaceOdds, Combination} from './order.model';
 
 export class Odds {
   constructor(
-    public win            : Singular[],
-    public place          : Singular[],
+    public winPlace       : WinPlaceOdds[],
     public quinella       : Combination[],
     public quinellaPlace  : Combination[],
     public forecast       : Combination[],

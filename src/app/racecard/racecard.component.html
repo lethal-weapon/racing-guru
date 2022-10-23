@@ -39,144 +39,144 @@
   </div>
 </div>
 
-<div class="m-3">
-  <table class="table-fixed border-collapse border border-gray-500 text-center noselect">
-    <thead>
-    <th class="w-20 border border-gray-600">
-      <i class="fa fa-dollar fa-lg"></i>
-    </th>
-    <th *ngFor="let jockey of jockeys"
-        class="w-20 border border-gray-600"
-        [class.border-r-red-900]="isBoundaryJockey(jockey)"
-    >
-      <div class="">
-        {{jockeys.indexOf(jockey) > 6 ? '-' : (jockeys.indexOf(jockey) + 1) * 16 - 10 + 0.12}}
-      </div>
-      <div class="">
-        {{jockey}}
-      </div>
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let race of races">
-      <td class="border border-gray-700"
-          [class.border-b-red-900]="race.race === lastRace"
-          [class.text-yellow-400]="isSpecialRace(race)"
-      >
-        <div class="">
-          {{race.race}}
-          {{race.grade[0]}}{{race.grade[race.grade.length - 1]}}
-        </div>
-        <div class="">
-          {{race.distance}}
-        </div>
-      </td>
-      <td *ngFor="let jockey of jockeys"
-          class="border border-gray-700 text-sm"
-          [class.border-b-red-900]="race.race === lastRace"
-          [class.border-b-gray-900]="hideBottomBorder(jockey, race.race)"
-          [class.border-r-red-900]="isBoundaryJockey(jockey)"
-          [class.border-r-gray-900]="hideRightBorder(jockey, race.race)"
-          [class.text-red-600]="(jockey == 'PZ' || jockey == 'FEL') && race.race < 6"
-          [class.text-green-600]="(jockey == 'DSS' || jockey == 'PMF') && race.race < 6"
-          [class.text-blue-600]="(jockey == 'LDE' || jockey == 'BV') && race.race < 6"
-          [class.text-purple-600]="(jockey == 'BHW' || jockey == 'MMR') && race.race < 6"
-      >
-        <div *ngIf="rideThisRace(jockey, race.race)"
-             class="flex flex-col"
-        >
-          <div class="flex flex-row justify-between">
-            <div class="w-5 h-5 rounded-full border border-gray-700">
-              {{(jockeys.indexOf(jockey) + race.race) % 12 + 1}}
-            </div>
-            <div>
-              <a href="http://localhost:8080" target="_blank">B</a>
-            </div>
-            <div class="w-5 h-5 border border-gray-700">
-              {{(jockeys.indexOf(jockey) + 2 * race.race) % 12 + 1}}
-            </div>
-          </div>
-          <div class="flex flex-row justify-evenly">
-            <div class="cursor-pointer"
-                 [class.font-bold]="activeTrainer === getTrainer(jockey, race.race)"
-                 [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race.race)"
-                 (click)="setActiveTrainer(getTrainer(jockey, race.race))"
-            >
-              {{getTrainer(jockey, race.race)}}
-            </div>
-            <div *ngIf="(jockey === 'PZ' || jockey === 'DSS')"
-                 class="text-yellow-400"
-            >
-              &#937;
-            </div>
-          </div>
-          <div class="flex flex-row justify-around"
-               [class.font-bold]="race.race == currentRace"
-          >
-            <div class=""
-                 [class.text-red-600]="race.race == currentRace"
-            >
-              {{(jockeys.indexOf(jockey) + 7 * race.race) % 30 + 3}}
-            </div>
-            <div class=""
-                 [class.text-blue-600]="race.race == currentRace"
-            >
-              {{(jockeys.indexOf(jockey) + 5 * race.race) % 7 + 1 + jockeys.indexOf(jockey) / 10}}
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+<!--<div class="m-3">-->
+<!--  <table class="table-fixed border-collapse border border-gray-500 text-center noselect">-->
+<!--    <thead>-->
+<!--    <th class="w-20 border border-gray-600">-->
+<!--      <i class="fa fa-dollar fa-lg"></i>-->
+<!--    </th>-->
+<!--    <th *ngFor="let jockey of jockeys"-->
+<!--        class="w-20 border border-gray-600"-->
+<!--        [class.border-r-red-900]="isBoundaryJockey(jockey)"-->
+<!--    >-->
+<!--      <div class="">-->
+<!--        {{jockeys.indexOf(jockey) > 6 ? '-' : (jockeys.indexOf(jockey) + 1) * 16 - 10 + 0.12}}-->
+<!--      </div>-->
+<!--      <div class="">-->
+<!--        {{jockey}}-->
+<!--      </div>-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let race of races">-->
+<!--      <td class="border border-gray-700"-->
+<!--          [class.border-b-red-900]="race.race === lastRace"-->
+<!--          [class.text-yellow-400]="isSpecialRace(race)"-->
+<!--      >-->
+<!--        <div class="">-->
+<!--          {{race.race}}-->
+<!--          {{race.grade[0]}}{{race.grade[race.grade.length - 1]}}-->
+<!--        </div>-->
+<!--        <div class="">-->
+<!--          {{race.distance}}-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td *ngFor="let jockey of jockeys"-->
+<!--          class="border border-gray-700 text-sm"-->
+<!--          [class.border-b-red-900]="race.race === lastRace"-->
+<!--          [class.border-b-gray-900]="hideBottomBorder(jockey, race.race)"-->
+<!--          [class.border-r-red-900]="isBoundaryJockey(jockey)"-->
+<!--          [class.border-r-gray-900]="hideRightBorder(jockey, race.race)"-->
+<!--          [class.text-red-600]="(jockey == 'PZ' || jockey == 'FEL') && race.race < 6"-->
+<!--          [class.text-green-600]="(jockey == 'DSS' || jockey == 'PMF') && race.race < 6"-->
+<!--          [class.text-blue-600]="(jockey == 'LDE' || jockey == 'BV') && race.race < 6"-->
+<!--          [class.text-purple-600]="(jockey == 'BHW' || jockey == 'MMR') && race.race < 6"-->
+<!--      >-->
+<!--        <div *ngIf="rideThisRace(jockey, race.race)"-->
+<!--             class="flex flex-col"-->
+<!--        >-->
+<!--          <div class="flex flex-row justify-between">-->
+<!--            <div class="w-5 h-5 rounded-full border border-gray-700">-->
+<!--              {{(jockeys.indexOf(jockey) + race.race) % 12 + 1}}-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              <a href="http://localhost:8080" target="_blank">B</a>-->
+<!--            </div>-->
+<!--            <div class="w-5 h-5 border border-gray-700">-->
+<!--              {{(jockeys.indexOf(jockey) + 2 * race.race) % 12 + 1}}-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="flex flex-row justify-evenly">-->
+<!--            <div class="cursor-pointer"-->
+<!--                 [class.font-bold]="activeTrainer === getTrainer(jockey, race.race)"-->
+<!--                 [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race.race)"-->
+<!--                 (click)="setActiveTrainer(getTrainer(jockey, race.race))"-->
+<!--            >-->
+<!--              {{getTrainer(jockey, race.race)}}-->
+<!--            </div>-->
+<!--            <div *ngIf="(jockey === 'PZ' || jockey === 'DSS')"-->
+<!--                 class="text-yellow-400"-->
+<!--            >-->
+<!--              &#937;-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="flex flex-row justify-around"-->
+<!--               [class.font-bold]="race.race == currentRace"-->
+<!--          >-->
+<!--            <div class=""-->
+<!--                 [class.text-red-600]="race.race == currentRace"-->
+<!--            >-->
+<!--              {{(jockeys.indexOf(jockey) + 7 * race.race) % 30 + 3}}-->
+<!--            </div>-->
+<!--            <div class=""-->
+<!--                 [class.text-blue-600]="race.race == currentRace"-->
+<!--            >-->
+<!--              {{(jockeys.indexOf(jockey) + 5 * race.race) % 7 + 1 + jockeys.indexOf(jockey) / 10}}-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+<!--</div>-->
 
-<div class="m-3 mt-10">
-  <table class="table-fixed border-collapse border border-gray-500 text-center text-xl noselect">
-    <thead>
-    <th class="w-20 border border-gray-600 p-3">
-      <i class="fa fa-magic fa-lg"></i>
-    </th>
-    <th *ngFor="let tipster of tipsters"
-        class="w-60 border border-gray-600 p-3"
-    >
-      <div class="">
-        {{tipster}}
-      </div>
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let race of races">
-      <td class="border border-gray-700 p-3"
-          [class.border-b-red-900]="race.race === lastRace"
-      >
-        <div class="">
-          {{race.race}}
-        </div>
-      </td>
-      <td *ngFor="let tipster of tipsters"
-          class="border border-gray-700 p-3"
-          [class.border-b-red-900]="race.race === lastRace"
-      >
-        <div class="flex flex-row justify-evenly">
-          <div *ngIf="getConfident(tipster, race.race)"
-               class="text-yellow-400"
-          >
-            <i class="fa fa-cube"></i>
-          </div>
-          <div *ngFor="let order of getOrders(tipster, race.race)"
-               class=""
-               [class.text-red-600]="race.race < currentRace && order === 3"
-               [class.text-green-600]="race.race < currentRace && order === 4"
-               [class.text-blue-600]="race.race < currentRace && order === 7"
-               [class.text-purple-600]="race.race < currentRace && order === 8"
-               [class.text-yellow-400]="race.race === currentRace && order === 11"
-          >
-            {{order}}
-          </div>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+<!--<div class="m-3 mt-10">-->
+<!--  <table class="table-fixed border-collapse border border-gray-500 text-center text-xl noselect">-->
+<!--    <thead>-->
+<!--    <th class="w-20 border border-gray-600 p-3">-->
+<!--      <i class="fa fa-magic fa-lg"></i>-->
+<!--    </th>-->
+<!--    <th *ngFor="let tipster of tipsters"-->
+<!--        class="w-60 border border-gray-600 p-3"-->
+<!--    >-->
+<!--      <div class="">-->
+<!--        {{tipster}}-->
+<!--      </div>-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let race of races">-->
+<!--      <td class="border border-gray-700 p-3"-->
+<!--          [class.border-b-red-900]="race.race === lastRace"-->
+<!--      >-->
+<!--        <div class="">-->
+<!--          {{race.race}}-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td *ngFor="let tipster of tipsters"-->
+<!--          class="border border-gray-700 p-3"-->
+<!--          [class.border-b-red-900]="race.race === lastRace"-->
+<!--      >-->
+<!--        <div class="flex flex-row justify-evenly">-->
+<!--          <div *ngIf="getConfident(tipster, race.race)"-->
+<!--               class="text-yellow-400"-->
+<!--          >-->
+<!--            <i class="fa fa-cube"></i>-->
+<!--          </div>-->
+<!--          <div *ngFor="let order of getOrders(tipster, race.race)"-->
+<!--               class=""-->
+<!--               [class.text-red-600]="race.race < currentRace && order === 3"-->
+<!--               [class.text-green-600]="race.race < currentRace && order === 4"-->
+<!--               [class.text-blue-600]="race.race < currentRace && order === 7"-->
+<!--               [class.text-purple-600]="race.race < currentRace && order === 8"-->
+<!--               [class.text-yellow-400]="race.race === currentRace && order === 11"-->
+<!--          >-->
+<!--            {{order}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+<!--</div>-->
