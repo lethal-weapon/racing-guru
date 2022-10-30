@@ -1,4 +1,3 @@
-import {Tip} from './tip.model';
 import {Pool} from './pool.model';
 import {Odds} from './odds.model';
 import {Starter} from './starter.model';
@@ -19,7 +18,6 @@ export class Racecard {
     public resultUrl  : string,
     public course    ?: string,
     public starters  ?: Starter[],
-    public tips      ?: Tip[],
     public pool      ?: Pool,
     public odds      ?: Odds,
     public dividend  ?: Dividend
