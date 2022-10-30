@@ -8,8 +8,9 @@ import {Router} from '@angular/router';
 export class HeaderComponent implements OnInit {
   pages: Array<{ title: string, link: string }> = [
     {title: 'Racecard', link: '/'},
-    {title: 'Performance', link: '/performance'},
-    {title: 'Pools', link: '/pools'},
+    {title: 'Earning', link: '/earning'},
+    {title: 'Pool', link: '/pool'},
+    {title: 'People', link: '/people'},
   ]
 
   hour = 'HH';

@@ -79,18 +79,6 @@ export class RacecardComponent implements OnInit {
   //     'SWY', 'TKH', 'MKL', 'YCH', 'NPC', 'RW', 'MA', 'GR', 'CCW', 'TYS', 'HL'
   //   ][(this.jockeys.indexOf(jockey) * race) % 20 + 1]
   // }
-  //
-  // getOrders(tipster: string, race: number): number[] {
-  //   return [2, 3, 4, 5].map(e =>
-  //     Math.floor(((1 + this.tipsters.indexOf(tipster)) * race * 17 * e) % 14) + 1)
-  // }
-  //
-  // getConfident(tipster: string, race: number): boolean {
-  //   return (tipster.includes('a') && [3, 8].includes(race))
-  //     || (tipster.includes('o') && [1, 5].includes(race))
-  //     || (tipster.includes('t') && [2, 6].includes(race))
-  //     || (tipster.includes('h') && [7, 9].includes(race))
-  // }
 
   get meetings(): string[] {
     return [
@@ -110,10 +98,6 @@ export class RacecardComponent implements OnInit {
   //     'MMR', 'FEL', 'CLR', 'BHW', 'BV',
   //     'CJE', 'CCY', 'YML', 'MHT', 'LHW', 'CHA', 'WJH', 'WCV'
   //   ]
-  // }
-  //
-  // get tipsters(): string[] {
-  //   return ['Sam', 'Mark', 'Philip', 'Vincent', 'Post', 'Trackwork', 'BigFont']
   // }
   //
   // get lastRace(): number {

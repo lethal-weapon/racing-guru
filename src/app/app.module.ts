@@ -7,9 +7,10 @@ import {AppComponent} from './app.component';
 import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
-import {PerformanceComponent} from './performance/performance.component';
-import {PoolComponent} from './pool/pool.component';
 import {MeetingComponent} from './meeting/meeting.component';
+import {EarningComponent} from './earning/earning.component';
+import {PoolComponent} from './pool/pool.component';
+import {PeopleComponent} from './people/people.component';
 
 @NgModule({
   declarations: [
@@ -17,9 +18,10 @@ import {MeetingComponent} from './meeting/meeting.component';
     HeaderComponent,
     FooterComponent,
     RacecardComponent,
-    PerformanceComponent,
+    MeetingComponent,
+    EarningComponent,
     PoolComponent,
-    MeetingComponent
+    PeopleComponent
   ],
   imports: [
     BrowserModule,
