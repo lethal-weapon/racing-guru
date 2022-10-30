@@ -9,6 +9,7 @@ import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {PerformanceComponent} from './performance/performance.component';
 import {PoolComponent} from './pool/pool.component';
+import {MeetingComponent} from './meeting/meeting.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {PoolComponent} from './pool/pool.component';
     FooterComponent,
     RacecardComponent,
     PerformanceComponent,
-    PoolComponent
+    PoolComponent,
+    MeetingComponent
   ],
   imports: [
     BrowserModule,
