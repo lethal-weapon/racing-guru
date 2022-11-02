@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
+import {TooltipModule} from 'ng2-tooltip-directive';
 
 import {AppRoutingModule} from './app-routing.module';
 import {ModelModule} from './model/model.module';
@@ -26,7 +27,8 @@ import {PeopleComponent} from './people/people.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ModelModule
+    ModelModule,
+    TooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]
