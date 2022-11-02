@@ -4,6 +4,7 @@ import {HttpClientModule} from '@angular/common/http';
 
 import {RestDataSource} from './rest.datasource';
 import {RacecardRepository} from './racecard.repository';
+import {MeetingRepository} from './meeting.repository';
 
 @NgModule({
   declarations: [],
@@ -13,7 +14,8 @@ import {RacecardRepository} from './racecard.repository';
   ],
   providers: [
     RestDataSource,
-    RacecardRepository
+    RacecardRepository,
+    MeetingRepository
   ]
 })
 export class ModelModule {

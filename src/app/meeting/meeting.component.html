@@ -1,10 +1,41 @@
-<p>meeting works!</p>
-
-<div class="m-3">
-  <table class="table-fixed border-collapse border border-gray-500 noselect">
-    <thead>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
-</div>
+<table class="mx-auto table-auto border-collapse text-center noselect">
+  <tr class="text-lg">
+    <td class="border border-gray-700 px-5 py-2"></td>
+    <td *ngFor="let overview of overviews"
+        class="border border-gray-700 px-5 py-2"
+        colspan="6"
+    >
+      {{overview}}
+    </td>
+  </tr>
+  <tr>
+    <td class="border border-gray-700"></td>
+    <ng-container *ngFor="let meeting of meetings">
+      <td *ngFor="let placing of placings; let last = last"
+          colspan="1"
+          class="border border-b-gray-700 border-gray-900 {{placing.color}}"
+          [class.border-r-gray-700]="last"
+      >
+        {{placing.placing}}
+      </td>
+    </ng-container>
+  </tr>
+  <tr *ngFor="let person of persons">
+    <td class="border border-gray-700 px-2"
+        [class.border-b-gray-400]="isBoundaryPerson(person)"
+    >
+      {{person}}
+    </td>
+    <ng-container *ngFor="let meeting of meetings">
+      <td *ngFor="let placing of placings; let last = last"
+          colspan="1"
+          class="border border-gray-900 border-b-gray-700 {{placing.color}}"
+          [class.border-r-gray-700]="last"
+          [class.border-b-gray-400]="isBoundaryPerson(person)"
+          [class.text-yellow-400]="'X' == getValue(person, meeting.meeting, placing.key)"
+      >
+        {{getValue(person, meeting.meeting, placing.key)}}
+      </td>
+    </ng-container>
+  </tr>
+</table>
