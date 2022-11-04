@@ -16,8 +16,8 @@ export class Racecard {
     public track      : string,
     public videoUrl   : string,
     public resultUrl  : string,
+    public starters   : Starter[],
     public course    ?: string,
-    public starters  ?: Starter[],
     public pool      ?: Pool,
     public odds      ?: Odds,
     public dividend  ?: Dividend

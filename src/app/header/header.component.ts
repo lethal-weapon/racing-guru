@@ -34,7 +34,7 @@ export class HeaderComponent implements OnInit {
   }
 
   get currentUrl(): string {
-    return this.router.url
+    return this.router.url;
   }
 
 }

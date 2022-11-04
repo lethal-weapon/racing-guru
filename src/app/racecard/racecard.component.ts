@@ -1,15 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 
+import {Starter} from '../model/starter.model';
+import {Racecard} from '../model/racecard.model';
 import {RacecardRepository} from '../model/racecard.repository';
+import {JOCKEYS, TRAINERS} from '../model/person.model';
 
 @Component({
   selector: 'app-racecard',
   templateUrl: './racecard.component.html'
 })
 export class RacecardComponent implements OnInit {
-  currentMeeting: string = this.meetings[0]
-  isDropdownHover: boolean = false
-
   activeTrainer: string = ''
 
   constructor(private repo: RacecardRepository) {
@@ -18,159 +18,175 @@ export class RacecardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  select(clickedMeeting: string) {
-    if (this.currentMeeting !== clickedMeeting) {
-      this.currentMeeting = clickedMeeting;
-      this.isDropdownHover = false;
+  setActiveTrainer = (clicked: string) =>
+    this.activeTrainer = this.activeTrainer === clicked ? '' : clicked
+
+  getMeetingEarning(jockey: string): number {
+    return 0
+  }
+
+  getWinOdds(jockey: string, race: number): number {
+    return 0;
+  }
+
+  getPlaceOdds(jockey: string, race: number): number {
+    return 0;
+  }
+
+  getTrainer(jockey: string, race: number): string {
+    return this.getStarter(jockey, race).trainer;
+  }
+
+  getStarter(jockey: string, race: number): Starter {
+    // @ts-ignore
+    return this.racecards
+      .filter(r => r.race == race)
+      .pop()
+      .starters
+      .filter(s => s.jockey === jockey)
+      .pop();
+  }
+
+  getHorseProfileUrl(horse: string): string {
+    return `
+        https://racing.hkjc.com/racing/information/
+        English/Horse/Horse.aspx?HorseNo=${horse}
+    `.replace(/\s/g, '');
+  }
+
+  hideBottomBorder(jockey: string, race: number): boolean {
+    return !(
+      race === this.lastRace
+      || race === this.maxRace
+      || this.rideThisRace(jockey, race)
+      || this.rideNextRace(jockey, race)
+    )
+  }
+
+  hideRightBorder(jockey: string, race: number): boolean {
+    return !(
+      jockey === this.jockeys.pop()
+      || this.isBoundaryJockey(jockey)
+      || this.rideThisRace(jockey, race)
+      || this.rideThisRace(this.jockeys[this.jockeys.indexOf(jockey) + 1], race)
+    )
+  }
+
+  rideThisRace(jockey: string, race: number): boolean {
+    // @ts-ignore
+    return this.racecards
+      .filter(r => r.race == race)
+      .pop()
+      .starters
+      .map(s => s.jockey)
+      .includes(jockey);
+  }
+
+  rideNextRace(jockey: string, race: number): boolean {
+    return race < this.maxRace && this.rideThisRace(jockey, race + 1)
+  }
+
+  isFavoured(jockey: string, race: number): boolean {
+    return false;
+  }
+
+  isSpecialRace(race: Racecard): boolean {
+    return !(
+      race.track === 'Turf'
+      && race.grade.startsWith('C')
+      && (!race.name.includes('CUP'))
+      && (
+        race.grade.endsWith('3')
+        || race.grade.endsWith('4')
+        || race.grade.endsWith('5')
+      )
+    )
+  }
+
+  isBoundaryJockey(jockey: string): boolean {
+    let specials = []
+    for (const j of ['BA', 'LDE', 'BV']) {
+      if (this.jockeys.includes(j)) {
+        specials.push(j);
+      } else {
+        let priorIndex = JOCKEYS.map(j => j.code).indexOf(j);
+        let priorJockey = j;
+        while (!this.jockeys.includes(priorJockey) && priorIndex > 0) {
+          priorIndex -= 1;
+          priorJockey = JOCKEYS[priorIndex].code;
+        }
+        specials.push(priorJockey);
+      }
     }
+    return specials.includes(jockey);
   }
 
-  // setActiveTrainer(clickedTrainer: string) {
-  //   this.activeTrainer = this.activeTrainer === clickedTrainer
-  //     ? ''
-  //     : clickedTrainer
-  // }
-  //
-  // hideBottomBorder(jockey: string, race: number): boolean {
-  //   return !(
-  //     race === 5
-  //     || race === 10
-  //     || this.rideThisRace(jockey, race)
-  //     || this.rideNextRace(jockey, race)
-  //   )
-  // }
-  //
-  // hideRightBorder(jockey: string, race: number): boolean {
-  //   return !(
-  //     jockey === this.jockeys.pop()
-  //     || this.isBoundaryJockey(jockey)
-  //     || this.rideThisRace(jockey, race)
-  //     || this.rideThisRace(this.jockeys[this.jockeys.indexOf(jockey) + 1], race)
-  //   )
-  // }
-  //
-  // rideThisRace(jockey: string, race: number): boolean {
-  //   return (jockey[0] < 'G' && race % 2 == 0) || (jockey[0] > 'J' && race % 2 == 1)
-  // }
-  //
-  // rideNextRace(jockey: string, race: number): boolean {
-  //   return race < 10 && this.rideThisRace(jockey, race + 1)
-  // }
-  //
-  // isBoundaryJockey(jockey: string): boolean {
-  //   return this.meetingBoundaryJockeys.includes(jockey)
-  // }
-  //
-  // isSpecialRace(race: { race: number, grade: string, distance: number, track: string }): boolean {
-  //   return !(
-  //     race.track === 'Turf'
-  //     && race.grade.startsWith('C')
-  //     && (
-  //       race.grade.endsWith('3')
-  //       || race.grade.endsWith('4')
-  //       || race.grade.endsWith('5')
-  //     )
-  //   )
-  // }
-  //
-  // getTrainer(jockey: string, race: number): string {
-  //   return [
-  //     'SJJ', 'LFC', 'CAS', 'WDJ', 'YPF', 'LKW', 'FC', 'SCS', 'YTP', 'HDA', 'HAD',
-  //     'SWY', 'TKH', 'MKL', 'YCH', 'NPC', 'RW', 'MA', 'GR', 'CCW', 'TYS', 'HL'
-  //   ][(this.jockeys.indexOf(jockey) * race) % 20 + 1]
-  // }
+  get remainingSeconds(): string {
+    if (!this.next) return `0`;
 
-  get meetings(): string[] {
-    return [
-      'SUN, 2022-10-09, ST, 10 Races, 19 Jockeys, 22 Trainers, 123 Horses',
-      'WED, 2022-10-05, HV, 9 Races, 16 Jockeys, 22 Trainers, 93 Horses',
-      'SAT, 2022-10-01, ST, 10 Races, 20 Jockeys, 21 Trainers, 115 Horses',
-    ]
+    const raceTime = new Date(this.next.time).getTime();
+    const currTime = new Date().getTime();
+    const diff = Math.floor((raceTime - currTime) / 1000);
+
+    if (diff > 999) return `999+`
+    return `${diff}`
   }
 
-  // get meetingBoundaryJockeys(): string[] {
-  //   return ['BA', 'LDE', 'BV']
-  // }
-  //
-  // get jockeys(): string[] {
-  //   return [
-  //     'PZ', 'TEK', 'DSS', 'BA', 'CML', 'PMF', 'LDE',
-  //     'MMR', 'FEL', 'CLR', 'BHW', 'BV',
-  //     'CJE', 'CCY', 'YML', 'MHT', 'LHW', 'CHA', 'WJH', 'WCV'
-  //   ]
-  // }
-  //
-  // get lastRace(): number {
-  //   return 5
-  // }
-  //
-  // get currentRace(): number {
-  //   return this.lastRace + 1;
-  // }
-  //
-  // get races(): { race: number, grade: string, distance: number, track: string }[] {
-  //   return [
-  //     {
-  //       race: 1,
-  //       grade: 'Class 5',
-  //       distance: 1200,
-  //       track: 'Turf',
-  //     },
-  //     {
-  //       race: 2,
-  //       grade: 'Class 4',
-  //       distance: 1400,
-  //       track: 'AWT',
-  //     },
-  //     {
-  //       race: 3,
-  //       grade: 'Group 3',
-  //       distance: 1200,
-  //       track: 'Turf',
-  //     },
-  //     {
-  //       race: 4,
-  //       grade: 'Class 3',
-  //       distance: 1600,
-  //       track: 'AWT',
-  //     },
-  //     {
-  //       race: 5,
-  //       grade: 'Class 5',
-  //       distance: 1800,
-  //       track: 'Turf',
-  //     },
-  //     {
-  //       race: 6,
-  //       grade: 'Class 4',
-  //       distance: 1200,
-  //       track: 'Turf',
-  //     },
-  //     {
-  //       race: 7,
-  //       grade: 'Class 4',
-  //       distance: 2400,
-  //       track: 'Turf',
-  //     },
-  //     {
-  //       race: 8,
-  //       grade: 'Class 3',
-  //       distance: 1400,
-  //       track: 'Turf',
-  //     },
-  //     {
-  //       race: 9,
-  //       grade: 'Class 4',
-  //       distance: 1000,
-  //       track: 'Turf',
-  //     },
-  //     {
-  //       race: 10,
-  //       grade: 'Class 2',
-  //       distance: 1650,
-  //       track: 'Turf',
-  //     },
-  //   ]
-  // }
+  get maxRace(): number {
+    return this.racecards.map(r => r.race).pop() || 0;
+  }
+
+  get lastRace(): number {
+    return this.nextRace - 1;
+  }
+
+  get nextRace(): number {
+    return this.next.race || 0;
+  }
+
+  get next(): Racecard {
+    return this.racecards.filter(r => !r.dividend)[0];
+  }
+
+  get racecards(): Racecard[] {
+    return this.repo.findAll();
+  }
+
+  get starters(): Starter[] {
+    return this.racecards
+      .map(r => r.starters)
+      .reduce((prev, curr) => prev.concat(curr), []);
+  }
+
+  get trainers(): string[] {
+    const meetingTrainers = new Set(this.starters.map(s => s.trainer));
+    return TRAINERS.map(t => t.code).filter(t => meetingTrainers.has(t));
+  }
+
+  get jockeys(): string[] {
+    const meetingJockeys = new Set(this.starters.map(s => s.jockey));
+    return JOCKEYS.map(j => j.code).filter(j => meetingJockeys.has(j));
+  }
+
+  get meetingSummary(): string {
+    const racecard = this.racecards.find(r => r.race === 1);
+    if (!racecard) return 'Unknown';
+
+    const date = racecard.meeting;
+    const venue = racecard.venue;
+    const total = this.racecards.length;
+    const dayOfWeek = new Date(date)
+      .toLocaleDateString('en-US', {weekday: 'short'})
+      .toUpperCase();
+
+    const horses = this.starters.length;
+    const jockeys = this.jockeys.length;
+    const trainers = this.trainers.length;
+
+    return `
+        ${dayOfWeek}, ${date}, ${venue}, ${total} Races, 
+        ${jockeys} Jockeys, ${trainers} Trainers, ${horses} Horses
+    `;
+  }
 
 }

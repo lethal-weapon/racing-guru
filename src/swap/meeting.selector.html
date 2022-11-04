@@ -1,0 +1,41 @@
+<!--<div class="m-10 px-10 flex justify-between">-->
+<!--  <div class="relative inline-block"-->
+<!--       (mouseover)="isDropdownHover=true"-->
+<!--       (mouseleave)="isDropdownHover=false"-->
+<!--  >-->
+<!--    <div class="px-10 py-3 bg-gray-700 text-xl rounded-full noselect">-->
+<!--      <span class="pr-3">-->
+<!--        <i class="fa fa-chevron-{{isDropdownHover ? 'up' : 'down'}}"></i>-->
+<!--      </span>-->
+<!--      {{currentMeeting}}-->
+<!--    </div>-->
+<!--    <div class="absolute w-full bg-gray-800 shadow-xl rounded-xl text-lg"-->
+<!--         [class.hidden]="!isDropdownHover"-->
+<!--         [class.block]="isDropdownHover"-->
+<!--    >-->
+<!--      <div *ngFor="let meeting of meetings"-->
+<!--           class="px-10 py-3"-->
+<!--           (click)="select(meeting)"-->
+<!--           [class.cursor-default]="meeting === currentMeeting"-->
+<!--           [class.cursor-pointer]="meeting !== currentMeeting"-->
+<!--           [class.hover:bg-gray-700]="meeting !== currentMeeting"-->
+<!--      >-->
+<!--        <span class="pr-3"-->
+<!--              [class.opacity-0]="meeting !== currentMeeting"-->
+<!--        >-->
+<!--          <i class="fa fa-check"></i>-->
+<!--        </span>-->
+<!--        {{meeting}}-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <div class="pt-3 noselect">-->
+<!--    <span class="pr-5 text-2xl">-->
+<!--      NEXT RACE&#58;-->
+<!--    </span>-->
+<!--    <span class="text-3xl text-red-600">-->
+<!--      300 sec-->
+<!--    </span>-->
+<!--  </div>-->
+<!--</div>-->
+

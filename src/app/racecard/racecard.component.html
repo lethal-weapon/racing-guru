@@ -1,134 +1,112 @@
-<div class="m-10 px-10 flex justify-between">
-  <div class="relative inline-block"
-       (mouseover)="isDropdownHover=true"
-       (mouseleave)="isDropdownHover=false"
-  >
-    <div class="px-10 py-3 bg-gray-700 text-xl rounded-full noselect">
-      <span class="pr-3">
-        <i class="fa fa-chevron-{{isDropdownHover ? 'up' : 'down'}}"></i>
-      </span>
-      {{currentMeeting}}
-    </div>
-    <div class="absolute w-full bg-gray-800 shadow-xl rounded-xl text-lg"
-         [class.hidden]="!isDropdownHover"
-         [class.block]="isDropdownHover"
-    >
-      <div *ngFor="let meeting of meetings"
-           class="px-10 py-3"
-           (click)="select(meeting)"
-           [class.cursor-default]="meeting === currentMeeting"
-           [class.cursor-pointer]="meeting !== currentMeeting"
-           [class.hover:bg-gray-700]="meeting !== currentMeeting"
-      >
-        <span class="pr-3"
-              [class.opacity-0]="meeting !== currentMeeting"
-        >
-          <i class="fa fa-check"></i>
-        </span>
-        {{meeting}}
-      </div>
-    </div>
+<div class="m-10 px-10 flex justify-between noselect">
+  <div class="px-8 py-4 text-xl bg-gray-800 shadow-xl rounded-full border border-gray-900 hover:border-gray-600">
+    {{meetingSummary}}
   </div>
-  <div class="pt-3 noselect">
+  <div class="pt-3">
     <span class="pr-5 text-2xl">
       NEXT RACE&#58;
     </span>
     <span class="text-3xl text-red-600">
-      300 sec
+        {{remainingSeconds}} sec
     </span>
   </div>
 </div>
 
-<app-meeting></app-meeting>
+<table class="mx-auto table-fixed border-collapse border border-gray-500 text-center noselect">
+  <thead>
+  <th class="w-20 border border-gray-600"
+      [class.border-b-red-900]="nextRace === 1"
+  >
+    <i class="fa fa-dollar fa-lg"></i>
+  </th>
+  <th *ngFor="let jockey of jockeys"
+      class="w-20 border border-gray-600"
+      [class.border-r-red-900]="isBoundaryJockey(jockey)"
+      [class.border-b-red-900]="nextRace === 1"
+  >
+    <div class="">
+      {{getMeetingEarning(jockey)}}
+    </div>
+    <div class="">
+      {{jockey}}
+    </div>
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let race of racecards">
+    <td class="border border-gray-700"
+        [class.text-yellow-400]="isSpecialRace(race)"
+        [class.border-b-red-900]="race.race === lastRace"
+    >
+      <div class="">
+        {{race.race}}
+        {{race.grade[0]}}{{race.grade.slice(-1)}}
+      </div>
+      <div class="">
+        {{race.distance}}
+      </div>
+    </td>
+    <td *ngFor="let jockey of jockeys"
+        class="border border-gray-700 text-sm"
+        [class.border-r-red-900]="isBoundaryJockey(jockey)"
+        [class.border-b-red-900]="race.race === lastRace"
+        [class.border-b-gray-900]="hideBottomBorder(jockey, race.race)"
+        [class.border-r-gray-900]="hideRightBorder(jockey, race.race)"
+        [class.text-red-600]=""
+        [class.text-green-600]=""
+        [class.text-blue-600]=""
+        [class.text-purple-600]=""
+    >
+      <div *ngIf="rideThisRace(jockey, race.race)"
+           class="flex flex-col"
+      >
+        <div class="flex flex-row justify-between">
+          <div class="w-5 h-5 rounded-full border border-gray-700">
+            {{getStarter(jockey, race.race).order}}
+          </div>
+          <div>
+            <a [href]="getHorseProfileUrl(getStarter(jockey, race.race).horse)"
+               target="_blank"
+            >
+              {{getStarter(jockey, race.race).horse[0]}}
+            </a>
+          </div>
+          <div class="w-5 h-5 border border-gray-700">
+            {{getStarter(jockey, race.race).draw}}
+          </div>
+        </div>
+        <div class="flex flex-row justify-evenly">
+          <div class="cursor-pointer"
+               [class.font-bold]="activeTrainer === getTrainer(jockey, race.race)"
+               [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race.race)"
+               (click)="setActiveTrainer(getTrainer(jockey, race.race))"
+          >
+            {{getTrainer(jockey, race.race)}}
+          </div>
+          <div *ngIf="isFavoured(jockey, race.race)"
+               class="text-yellow-400"
+          >
+            &#937;
+          </div>
+        </div>
+        <div class="flex flex-row justify-around"
+             [class.font-bold]="race.race == nextRace"
+        >
+          <div class=""
+               [class.text-red-600]="race.race == nextRace"
+          >
+            {{getWinOdds(jockey, race.race)}}
+          </div>
+          <div class=""
+               [class.text-blue-600]="race.race == nextRace"
+          >
+            {{getPlaceOdds(jockey, race.race)}}
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
 
-<!--<div class="m-3">-->
-<!--  <table class="table-fixed border-collapse border border-gray-500 text-center noselect">-->
-<!--    <thead>-->
-<!--    <th class="w-20 border border-gray-600">-->
-<!--      <i class="fa fa-dollar fa-lg"></i>-->
-<!--    </th>-->
-<!--    <th *ngFor="let jockey of jockeys"-->
-<!--        class="w-20 border border-gray-600"-->
-<!--        [class.border-r-red-900]="isBoundaryJockey(jockey)"-->
-<!--    >-->
-<!--      <div class="">-->
-<!--        {{jockeys.indexOf(jockey) > 6 ? '-' : (jockeys.indexOf(jockey) + 1) * 16 - 10 + 0.12}}-->
-<!--      </div>-->
-<!--      <div class="">-->
-<!--        {{jockey}}-->
-<!--      </div>-->
-<!--    </th>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--    <tr *ngFor="let race of races">-->
-<!--      <td class="border border-gray-700"-->
-<!--          [class.border-b-red-900]="race.race === lastRace"-->
-<!--          [class.text-yellow-400]="isSpecialRace(race)"-->
-<!--      >-->
-<!--        <div class="">-->
-<!--          {{race.race}}-->
-<!--          {{race.grade[0]}}{{race.grade[race.grade.length - 1]}}-->
-<!--        </div>-->
-<!--        <div class="">-->
-<!--          {{race.distance}}-->
-<!--        </div>-->
-<!--      </td>-->
-<!--      <td *ngFor="let jockey of jockeys"-->
-<!--          class="border border-gray-700 text-sm"-->
-<!--          [class.border-b-red-900]="race.race === lastRace"-->
-<!--          [class.border-b-gray-900]="hideBottomBorder(jockey, race.race)"-->
-<!--          [class.border-r-red-900]="isBoundaryJockey(jockey)"-->
-<!--          [class.border-r-gray-900]="hideRightBorder(jockey, race.race)"-->
-<!--          [class.text-red-600]="(jockey == 'PZ' || jockey == 'FEL') && race.race < 6"-->
-<!--          [class.text-green-600]="(jockey == 'DSS' || jockey == 'PMF') && race.race < 6"-->
-<!--          [class.text-blue-600]="(jockey == 'LDE' || jockey == 'BV') && race.race < 6"-->
-<!--          [class.text-purple-600]="(jockey == 'BHW' || jockey == 'MMR') && race.race < 6"-->
-<!--      >-->
-<!--        <div *ngIf="rideThisRace(jockey, race.race)"-->
-<!--             class="flex flex-col"-->
-<!--        >-->
-<!--          <div class="flex flex-row justify-between">-->
-<!--            <div class="w-5 h-5 rounded-full border border-gray-700">-->
-<!--              {{(jockeys.indexOf(jockey) + race.race) % 12 + 1}}-->
-<!--            </div>-->
-<!--            <div>-->
-<!--              <a href="http://localhost:8080" target="_blank">B</a>-->
-<!--            </div>-->
-<!--            <div class="w-5 h-5 border border-gray-700">-->
-<!--              {{(jockeys.indexOf(jockey) + 2 * race.race) % 12 + 1}}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="flex flex-row justify-evenly">-->
-<!--            <div class="cursor-pointer"-->
-<!--                 [class.font-bold]="activeTrainer === getTrainer(jockey, race.race)"-->
-<!--                 [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race.race)"-->
-<!--                 (click)="setActiveTrainer(getTrainer(jockey, race.race))"-->
-<!--            >-->
-<!--              {{getTrainer(jockey, race.race)}}-->
-<!--            </div>-->
-<!--            <div *ngIf="(jockey === 'PZ' || jockey === 'DSS')"-->
-<!--                 class="text-yellow-400"-->
-<!--            >-->
-<!--              &#937;-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="flex flex-row justify-around"-->
-<!--               [class.font-bold]="race.race == currentRace"-->
-<!--          >-->
-<!--            <div class=""-->
-<!--                 [class.text-red-600]="race.race == currentRace"-->
-<!--            >-->
-<!--              {{(jockeys.indexOf(jockey) + 7 * race.race) % 30 + 3}}-->
-<!--            </div>-->
-<!--            <div class=""-->
-<!--                 [class.text-blue-600]="race.race == currentRace"-->
-<!--            >-->
-<!--              {{(jockeys.indexOf(jockey) + 5 * race.race) % 7 + 1 + jockeys.indexOf(jockey) / 10}}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--    </tbody>-->
-<!--  </table>-->
-<!--</div>-->
+<!--<app-meeting></app-meeting>-->
