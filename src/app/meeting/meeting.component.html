@@ -1,9 +1,9 @@
-<table class="mx-auto table-auto border-collapse text-center noselect">
+<table class="mx-auto table-fixed border-collapse text-center noselect">
   <tr class="text-lg">
-    <td class="border border-gray-700 px-5 py-2"></td>
+    <td class="w-14 border border-gray-700"></td>
     <td *ngFor="let overview of overviews"
         colspan="6"
-        class="border border-gray-700 px-5 py-2"
+        class="w-52 border border-gray-700"
     >
       {{overview}}
     </td>
@@ -21,7 +21,7 @@
     </ng-container>
   </tr>
   <tr *ngFor="let person of persons">
-    <td class="border border-gray-700 px-2"
+    <td class="border border-gray-700"
         [class.border-b-gray-400]="isBoundaryPerson(person)"
     >
       {{person}}
