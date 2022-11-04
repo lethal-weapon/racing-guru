@@ -155,7 +155,8 @@ export class RacecardComponent implements OnInit {
   get starters(): Starter[] {
     return this.racecards
       .map(r => r.starters)
-      .reduce((prev, curr) => prev.concat(curr), []);
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(s => !s.scratched);
   }
 
   get trainers(): string[] {
