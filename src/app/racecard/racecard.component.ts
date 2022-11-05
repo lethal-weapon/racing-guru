@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {RacecardRepository} from '../model/racecard.repository';
+import {WinPlaceOdds} from '../model/order.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 
 @Component({
@@ -10,6 +11,7 @@ import {JOCKEYS, TRAINERS} from '../model/person.model';
   templateUrl: './racecard.component.html'
 })
 export class RacecardComponent implements OnInit {
+  activeDraw: number = 0
   activeTrainer: string = ''
 
   constructor(private repo: RacecardRepository) {
@@ -18,6 +20,9 @@ export class RacecardComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  setActiveDraw = (clicked: number) =>
+    this.activeDraw = this.activeDraw === clicked ? 0 : clicked
+
   setActiveTrainer = (clicked: string) =>
     this.activeTrainer = this.activeTrainer === clicked ? '' : clicked
 
@@ -25,26 +30,37 @@ export class RacecardComponent implements OnInit {
     return 0
   }
 
-  getWinOdds(jockey: string, race: number): number {
-    return 0;
-  }
+  isFavoured(jockey: string, racecard: Racecard): boolean {
+    if (!racecard.odds) return false;
+    const order = this.getStarter(jockey, racecard).order;
 
-  getPlaceOdds(jockey: string, race: number): number {
-    return 0;
-  }
-
-  getTrainer(jockey: string, race: number): string {
-    return this.getStarter(jockey, race).trainer;
-  }
-
-  getStarter(jockey: string, race: number): Starter {
     // @ts-ignore
-    return this.racecards
-      .filter(r => r.race == race)
-      .pop()
-      .starters
-      .filter(s => s.jockey === jockey)
-      .pop();
+    const favouredOrder = racecard.odds.winPlace
+      .map(o => o)
+      .sort((o1, o2) => o1.win - o2.win)
+      .shift()
+      .order;
+
+    return order === favouredOrder;
+  }
+
+  getWinPlaceOdds(jockey: string, racecard: Racecard): WinPlaceOdds {
+    const order = this.getStarter(jockey, racecard).order;
+
+    // @ts-ignore
+    if (!racecard.odds) return {order: order, win: 0, place: 0}
+
+    // @ts-ignore
+    return racecard.odds.winPlace.filter(o => o.order === order).pop();
+  }
+
+  getTrainer(jockey: string, racecard: Racecard): string {
+    return this.getStarter(jockey, racecard).trainer;
+  }
+
+  getStarter(jockey: string, racecard: Racecard): Starter {
+    // @ts-ignore
+    return racecard.starters.filter(s => s.jockey === jockey).pop();
   }
 
   getHorseProfileUrl(horse: string): string {
@@ -54,40 +70,36 @@ export class RacecardComponent implements OnInit {
     `.replace(/\s/g, '');
   }
 
-  hideBottomBorder(jockey: string, race: number): boolean {
+  hideBottomBorder(jockey: string, racecard: Racecard): boolean {
     return !(
-      race === this.lastRace
-      || race === this.maxRace
-      || this.rideThisRace(jockey, race)
-      || this.rideNextRace(jockey, race)
+      racecard.race === this.lastRace
+      || racecard.race === this.maxRace
+      || this.rideThisRace(jockey, racecard)
+      || this.rideNextRace(jockey, racecard)
     )
   }
 
-  hideRightBorder(jockey: string, race: number): boolean {
+  hideRightBorder(jockey: string, racecard: Racecard): boolean {
     return !(
       jockey === this.jockeys.pop()
       || this.isBoundaryJockey(jockey)
-      || this.rideThisRace(jockey, race)
-      || this.rideThisRace(this.jockeys[this.jockeys.indexOf(jockey) + 1], race)
+      || this.rideThisRace(jockey, racecard)
+      || this.rideThisRace(this.jockeys[this.jockeys.indexOf(jockey) + 1], racecard)
     )
   }
 
-  rideThisRace(jockey: string, race: number): boolean {
+  rideThisRace(jockey: string, racecard: Racecard): boolean {
+    return racecard.starters.map(s => s.jockey).includes(jockey);
+  }
+
+  rideNextRace(jockey: string, racecard: Racecard): boolean {
+    if (racecard.race >= this.maxRace) return false;
+
+    const nextRacecard =
+      this.racecards.filter(r => r.race === racecard.race + 1).pop();
+
     // @ts-ignore
-    return this.racecards
-      .filter(r => r.race == race)
-      .pop()
-      .starters
-      .map(s => s.jockey)
-      .includes(jockey);
-  }
-
-  rideNextRace(jockey: string, race: number): boolean {
-    return race < this.maxRace && this.rideThisRace(jockey, race + 1)
-  }
-
-  isFavoured(jockey: string, race: number): boolean {
-    return false;
+    return this.rideThisRace(jockey, nextRacecard);
   }
 
   isSpecialRace(race: Racecard): boolean {
@@ -145,7 +157,8 @@ export class RacecardComponent implements OnInit {
   }
 
   get next(): Racecard {
-    return this.racecards.filter(r => !r.dividend)[0];
+    // @ts-ignore
+    return this.racecards.filter(r => !r.dividend).shift();
   }
 
   get racecards(): Racecard[] {
@@ -155,8 +168,7 @@ export class RacecardComponent implements OnInit {
   get starters(): Starter[] {
     return this.racecards
       .map(r => r.starters)
-      .reduce((prev, curr) => prev.concat(curr), [])
-      .filter(s => !s.scratched);
+      .reduce((prev, curr) => prev.concat(curr), []);
   }
 
   get trainers(): string[] {

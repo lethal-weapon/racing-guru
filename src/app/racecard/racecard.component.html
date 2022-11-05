@@ -47,43 +47,46 @@
       </div>
     </td>
     <td *ngFor="let jockey of jockeys"
-        class="border border-gray-700 text-sm"
+        class="border border-gray-700 text-sm hover:bg-gray-800"
         [class.border-r-red-900]="isBoundaryJockey(jockey)"
         [class.border-b-red-900]="race.race === lastRace"
-        [class.border-b-gray-900]="hideBottomBorder(jockey, race.race)"
-        [class.border-r-gray-900]="hideRightBorder(jockey, race.race)"
+        [class.border-b-gray-900]="hideBottomBorder(jockey, race)"
+        [class.border-r-gray-900]="hideRightBorder(jockey, race)"
         [class.text-red-600]=""
         [class.text-green-600]=""
         [class.text-blue-600]=""
         [class.text-purple-600]=""
     >
-      <div *ngIf="rideThisRace(jockey, race.race)"
+      <div *ngIf="rideThisRace(jockey, race)"
            class="flex flex-col"
       >
         <div class="flex flex-row justify-between">
           <div class="w-5 h-5 rounded-full border border-gray-700">
-            {{getStarter(jockey, race.race).order}}
+            {{getStarter(jockey, race).order}}
           </div>
           <div>
-            <a [href]="getHorseProfileUrl(getStarter(jockey, race.race).horse)"
+            <a [href]="getHorseProfileUrl(getStarter(jockey, race).horse)"
                target="_blank"
             >
-              {{getStarter(jockey, race.race).horse[0]}}
+              {{getStarter(jockey, race).horse[0]}}
             </a>
           </div>
-          <div class="w-5 h-5 border border-gray-700">
-            {{getStarter(jockey, race.race).draw}}
+          <div class="w-5 h-5 border border-gray-700 cursor-pointer"
+               [class.border-yellow-400]="activeDraw === getStarter(jockey, race).draw"
+               (click)="setActiveDraw(getStarter(jockey, race).draw)"
+          >
+            {{getStarter(jockey, race).draw}}
           </div>
         </div>
         <div class="flex flex-row justify-evenly">
           <div class="cursor-pointer"
-               [class.font-bold]="activeTrainer === getTrainer(jockey, race.race)"
-               [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race.race)"
-               (click)="setActiveTrainer(getTrainer(jockey, race.race))"
+               [class.font-bold]="activeTrainer === getTrainer(jockey, race)"
+               [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race)"
+               (click)="setActiveTrainer(getTrainer(jockey, race))"
           >
-            {{getTrainer(jockey, race.race)}}
+            {{getTrainer(jockey, race)}}
           </div>
-          <div *ngIf="isFavoured(jockey, race.race)"
+          <div *ngIf="isFavoured(jockey, race)"
                class="text-yellow-400"
           >
             &#937;
@@ -95,12 +98,12 @@
           <div class=""
                [class.text-red-600]="race.race == nextRace"
           >
-            {{getWinOdds(jockey, race.race)}}
+            {{getWinPlaceOdds(jockey, race).win}}
           </div>
           <div class=""
                [class.text-blue-600]="race.race == nextRace"
           >
-            {{getPlaceOdds(jockey, race.race)}}
+            {{getWinPlaceOdds(jockey, race).place}}
           </div>
         </div>
       </div>

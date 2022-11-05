@@ -16,8 +16,12 @@ export class MeetingComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  isJTBoundaryPerson(person: string): boolean {
+    return person === 'HL';
+  }
+
   isBoundaryPerson(person: string): boolean {
-    return ['YPF', 'HDA', 'YCH', 'HL', 'BA', 'LDE', 'BV'].includes(person)
+    return ['YPF', 'HDA', 'YCH', 'BA', 'LDE', 'BV'].includes(person)
   }
 
   getValue(person: string, meeting: string, placing: string): string {
@@ -45,7 +49,7 @@ export class MeetingComponent implements OnInit {
   }
 
   get meetings(): Meeting[] {
-    return this.repo.findAll().slice(0, 7)
+    return this.repo.findAll().slice(0, 7);
   }
 
   get overviews(): string[] {

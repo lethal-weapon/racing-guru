@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
 import {Racecard} from './racecard.model';
+import {Meeting} from './meeting.model';
 
 @Injectable()
 export class RestDataSource {
@@ -14,8 +15,12 @@ export class RestDataSource {
       `${env.API_PROTOCOL}://${env.API_HOSTNAME}:${env.API_PORT}/${env.API_PREFIX}`;
   }
 
-  getRecentRacecards(): Observable<Racecard[]> {
+  getRacecards(): Observable<Racecard[]> {
     return this.http.get<Racecard[]>(`${this.baseUrl}/racecards`);
+  }
+
+  getMeetings(): Observable<Meeting[]> {
+    return this.http.get<Meeting[]>(`${this.baseUrl}/performance/meetings`);
   }
 
 }

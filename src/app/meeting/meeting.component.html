@@ -23,6 +23,8 @@
   <tr *ngFor="let person of persons">
     <td class="border border-gray-700"
         [class.border-b-gray-400]="isBoundaryPerson(person)"
+        [class.border-b-yellow-400]="isJTBoundaryPerson(person)"
+        [class.border-b-2]="isJTBoundaryPerson(person)"
     >
       {{person}}
     </td>
@@ -32,6 +34,8 @@
           class="border border-gray-900 border-b-gray-700 {{placing.color}}"
           [class.border-r-gray-700]="last"
           [class.border-b-gray-400]="isBoundaryPerson(person)"
+          [class.border-b-yellow-400]="isJTBoundaryPerson(person)"
+          [class.border-b-2]="isJTBoundaryPerson(person)"
           [class.text-yellow-400]="'X' == getValue(person, meeting.meeting, placing.key)"
       >
         {{getValue(person, meeting.meeting, placing.key)}}
