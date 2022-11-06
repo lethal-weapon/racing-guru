@@ -2,7 +2,11 @@ export const environment = {
   PRODUCTION: false,
 
   API_PROTOCOL: 'http',
-  API_HOSTNAME: '192.168.0.5',
-  API_PORT: 8000,
-  API_PREFIX: 'api'
+  API_PREFIX: 'api',
+
+  WS_PROTOCOL: 'ws',
+  WS_PREFIX: 'ws',
+
+  SERVER_HOSTNAME: '192.168.0.5',
+  SERVER_PORT: 8000,
 };

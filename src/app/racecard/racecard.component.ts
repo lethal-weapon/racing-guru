@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 
+import {WebsocketService} from '../model/websocket.service';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
-import {RacecardRepository} from '../model/racecard.repository';
 import {WinPlaceOdds} from '../model/order.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 
@@ -11,10 +11,16 @@ import {JOCKEYS, TRAINERS} from '../model/person.model';
   templateUrl: './racecard.component.html'
 })
 export class RacecardComponent implements OnInit {
+  racecards: Racecard[] = [];
+
   activeDraw: number = 0
   activeTrainer: string = ''
 
-  constructor(private repo: RacecardRepository) {
+  constructor(private socket: WebsocketService) {
+    socket.racecards.subscribe(data => {
+      this.racecards = data;
+      this.racecards.sort((r1, r2) => r1.race - r2.race);
+    });
   }
 
   ngOnInit(): void {
@@ -212,10 +218,6 @@ export class RacecardComponent implements OnInit {
   get next(): Racecard {
     // @ts-ignore
     return this.racecards.filter(r => !r.dividend).shift();
-  }
-
-  get racecards(): Racecard[] {
-    return this.repo.findAll();
   }
 
   get starters(): Starter[] {

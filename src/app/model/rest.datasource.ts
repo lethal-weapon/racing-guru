@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
-import {Racecard} from './racecard.model';
 import {Meeting} from './meeting.model';
 
 @Injectable()
@@ -12,11 +11,7 @@ export class RestDataSource {
 
   constructor(private http: HttpClient) {
     this.baseUrl =
-      `${env.API_PROTOCOL}://${env.API_HOSTNAME}:${env.API_PORT}/${env.API_PREFIX}`;
-  }
-
-  getRacecards(): Observable<Racecard[]> {
-    return this.http.get<Racecard[]>(`${this.baseUrl}/racecards`);
+      `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}/${env.API_PREFIX}`;
   }
 
   getMeetings(): Observable<Meeting[]> {
