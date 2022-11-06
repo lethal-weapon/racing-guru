@@ -26,14 +26,67 @@ export class RacecardComponent implements OnInit {
   setActiveTrainer = (clicked: string) =>
     this.activeTrainer = this.activeTrainer === clicked ? '' : clicked
 
+  isHighlightEarning(jockey: string): boolean {
+    return this.getMeetingEarning(jockey) >= 12;
+  }
+
   getMeetingEarning(jockey: string): number {
-    return 0
+    const earning = this.racecards
+      .filter(r => this.getPlacing(jockey, r) > 0)
+      .map(r => this.getRaceEarning(jockey, r))
+      .reduce((prev, curr) => prev + curr, 0)
+      .toFixed(1);
+    return parseFloat(earning);
+  }
+
+  getRaceEarning(jockey: string, racecard: Racecard): number {
+    const placing = this.getPlacing(jockey, racecard);
+    const odds = this.getWinPlaceOdds(jockey, racecard);
+    const order = odds.order;
+
+    if ([1, 2, 3].includes(placing)) {
+      const win = racecard.dividend?.win?.filter(w => w.order === order).pop();
+      const pla = racecard.dividend?.place?.filter(p => p.order === order).pop();
+      if (placing === 1) return win?.odds || 0;
+      if (placing === 2) return (pla?.odds || 0) + (odds.win / 10);
+      return pla?.odds || 0;
+
+    } else if (placing === 4) {
+      return odds.win / 10;
+    }
+
+    return 0;
+  }
+
+  getPlacing(jockey: string, racecard: Racecard): number {
+    if (!racecard.dividend) return 0;
+    if (!racecard.dividend.quartet) return 0;
+
+    const orders = racecard.dividend.quartet[0].orders;
+    const order = this.getStarter(jockey, racecard)?.order;
+
+    if (!orders.includes(order)) return 0;
+    return orders.indexOf(order) + 1;
+  }
+
+  getPlacingColor(jockey: string, racecard: Racecard): string {
+    const placing = this.getPlacing(jockey, racecard);
+    const colors = [
+      'text-red-600', 'text-green-600',
+      'text-blue-600', 'text-purple-600',
+    ];
+    return placing > 0 ? colors[placing - 1] : '';
+  }
+
+  isComingFavoured(jockey: string, racecard: Racecard): boolean {
+    if (racecard.race < this.nextRace) return false;
+    return this.isFavoured(jockey, racecard);
   }
 
   isFavoured(jockey: string, racecard: Racecard): boolean {
     if (!racecard.odds) return false;
-    const order = this.getStarter(jockey, racecard).order;
 
+    const order = this.getStarter(jockey, racecard).order;
     // @ts-ignore
     const favouredOrder = racecard.odds.winPlace
       .map(o => o)
@@ -153,7 +206,7 @@ export class RacecardComponent implements OnInit {
   }
 
   get nextRace(): number {
-    return this.next.race || 0;
+    return this.next?.race || 13;
   }
 
   get next(): Racecard {

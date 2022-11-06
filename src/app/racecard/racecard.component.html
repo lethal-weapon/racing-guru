@@ -24,7 +24,9 @@
       [class.border-r-red-900]="isBoundaryJockey(jockey)"
       [class.border-b-red-900]="nextRace === 1"
   >
-    <div class="">
+    <div class=""
+         [class.text-yellow-400]="isHighlightEarning(jockey)"
+    >
       {{getMeetingEarning(jockey)}}
     </div>
     <div class="">
@@ -47,15 +49,11 @@
       </div>
     </td>
     <td *ngFor="let jockey of jockeys"
-        class="border border-gray-700 text-sm hover:bg-gray-800"
+        class="border border-gray-700 hover:bg-gray-800 text-sm {{getPlacingColor(jockey, race)}}"
         [class.border-r-red-900]="isBoundaryJockey(jockey)"
         [class.border-b-red-900]="race.race === lastRace"
         [class.border-b-gray-900]="hideBottomBorder(jockey, race)"
         [class.border-r-gray-900]="hideRightBorder(jockey, race)"
-        [class.text-red-600]=""
-        [class.text-green-600]=""
-        [class.text-blue-600]=""
-        [class.text-purple-600]=""
     >
       <div *ngIf="rideThisRace(jockey, race)"
            class="flex flex-col"
@@ -96,7 +94,7 @@
              [class.font-bold]="race.race == nextRace"
         >
           <div class=""
-               [class.text-red-600]="race.race == nextRace"
+               [class.text-red-600]="(race.race == nextRace) || (isComingFavoured(jockey, race))"
           >
             {{getWinPlaceOdds(jockey, race).win}}
           </div>

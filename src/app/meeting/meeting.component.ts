@@ -54,7 +54,10 @@ export class MeetingComponent implements OnInit {
 
   get overviews(): string[] {
     return this.meetings
-      .map(m => `${m.meeting.replace('2022-', '')} ${m.venue} ${m.races}R $${m.turnover}`)
+      .map(m => `
+          ${m.meeting.replace('2022-', '').replace('2023-', '')} 
+          ${m.venue} ${m.races}R $${m.turnover}
+      `.trim())
   }
 
   get persons(): string[] {
