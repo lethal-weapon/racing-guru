@@ -27,7 +27,7 @@
     <div class=""
          [class.text-yellow-400]="isHighlightEarning(jockey)"
     >
-      {{getMeetingEarning(jockey)}}
+      {{getMeetingEarning(jockey) === 0 ? '-' : getMeetingEarning(jockey)}}
     </div>
     <div class="">
       {{jockey}}
@@ -39,6 +39,8 @@
     <td class="border border-gray-700"
         [class.text-yellow-400]="isSpecialRace(race)"
         [class.border-b-red-900]="race.race === lastRace"
+        tooltip="{{getTooltip(race)}}"
+        [hideDelay]="0"
     >
       <div class="">
         {{race.race}}
@@ -110,6 +112,6 @@
   </tbody>
 </table>
 
-<div class="my-10">
-  <app-meeting></app-meeting>
-</div>
+<!--<div class="my-10">-->
+<!--  <app-meeting></app-meeting>-->
+<!--</div>-->

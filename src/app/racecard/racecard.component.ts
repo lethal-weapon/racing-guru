@@ -37,7 +37,7 @@ export class RacecardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    setInterval(() => this.socket.racecards.next([]), 5_000);
+    setInterval(() => this.socket.racecards.next([]), 3_000);
   }
 
   setActiveDraw = (clicked: number) =>
@@ -206,6 +206,31 @@ export class RacecardComponent implements OnInit {
     return specials.includes(jockey);
   }
 
+  getTooltip(racecard: Racecard): string {
+    const name = racecard.name
+      .replace('(', '')
+      .replace(')', '')
+      .replace('HANDICAP', '')
+      .trim();
+
+    const dt = new Date(racecard.time);
+    const time = `${dt.getHours()} : ${dt.getMinutes()}`;
+    const track = racecard.track.toUpperCase();
+    const prize = `$${(racecard.prize / 1_000_000).toFixed(2)}M`
+    const trackColor = track === 'TURF' ? 'text-green-600' : 'text-orange-900';
+
+    return `
+      <div class="w-44">
+        <div class="text-center">${name}</div>
+        <div class="flex flex-row justify-evenly">
+          <div class="text-red-600">${time}</div>
+          <div class="${trackColor}">${track}</div>
+          <div class="text-yellow-400">${prize}</div>
+        </div>
+      </div>
+    `;
+  }
+
   get remainingSeconds(): string {
     if (!this.next) return `0`;
 
@@ -256,6 +281,7 @@ export class RacecardComponent implements OnInit {
 
     const date = racecard.meeting;
     const venue = racecard.venue;
+    const course = racecard?.course;
     const total = this.racecards.length;
     const dayOfWeek = new Date(date)
       .toLocaleDateString('en-US', {weekday: 'short'})
@@ -266,7 +292,7 @@ export class RacecardComponent implements OnInit {
     const trainers = this.trainers.length;
 
     return `
-        ${dayOfWeek}, ${date}, ${venue}, ${total} Races, 
+        ${dayOfWeek}, ${date}, ${venue}, ${course} Course, ${total} Races, 
         ${jockeys} Jockeys, ${trainers} Trainers, ${horses} Horses
     `;
   }
