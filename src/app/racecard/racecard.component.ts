@@ -18,12 +18,26 @@ export class RacecardComponent implements OnInit {
 
   constructor(private socket: WebsocketService) {
     socket.racecards.subscribe(data => {
-      this.racecards = data;
+      if (this.racecards.length !== data.length) this.racecards = data;
+      else {
+        this.racecards.forEach(r => {
+          const new_card = data.filter(d => d.race === r.race).pop();
+          if (new_card && new_card !== r) {
+            if (new_card.time !== r.time) r.time = new_card.time;
+            if (new_card.starters !== r.starters) r.starters = new_card.starters;
+            if (new_card.pool !== r.pool) r.pool = new_card.pool;
+            if (new_card.odds !== r.odds) r.odds = new_card.odds;
+            if (new_card.dividend !== r.dividend) r.dividend = new_card.dividend;
+          }
+        })
+      }
+
       this.racecards.sort((r1, r2) => r1.race - r2.race);
     });
   }
 
   ngOnInit(): void {
+    setInterval(() => this.socket.racecards.next([]), 5_000);
   }
 
   setActiveDraw = (clicked: number) =>

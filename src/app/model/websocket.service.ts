@@ -5,7 +5,6 @@ import {map} from 'rxjs/operators';
 
 import {environment as env} from '../../environments/environment';
 import {Racecard} from './racecard.model';
-import {Meeting} from './meeting.model';
 
 @Injectable()
 export class WebsocketService {
@@ -21,9 +20,7 @@ export class WebsocketService {
 
     this.racecards = <Subject<Racecard[]>>this.connect(racecardUrl).pipe(
       map(
-        (response: MessageEvent): Racecard[] => {
-          return JSON.parse(response.data)
-        }
+        (response: MessageEvent): Racecard[] => JSON.parse(response.data)
       )
     );
   }
@@ -31,7 +28,7 @@ export class WebsocketService {
   connect(url: string): AnonymousSubject<MessageEvent> {
     if (!this.subject) {
       this.subject = this.create(url);
-      console.log('Successfully connected: ' + url);
+      console.log(`Successfully connected: ${url}`);
     }
     return this.subject;
   }
@@ -48,7 +45,6 @@ export class WebsocketService {
       error: null,
       complete: null,
       next: (data: Object) => {
-        console.log('Message sent to websocket: ', data);
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify(data));
         }
