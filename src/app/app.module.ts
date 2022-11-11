@@ -5,6 +5,7 @@ import {TooltipModule} from 'ng2-tooltip-directive';
 import {AppRoutingModule} from './app-routing.module';
 import {ModelModule} from './model/model.module';
 import {AppComponent} from './app.component';
+import {CounterDirective} from './directives/counter.directive';
 import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
@@ -16,6 +17,7 @@ import {PeopleComponent} from './people/people.component';
 @NgModule({
   declarations: [
     AppComponent,
+    CounterDirective,
     HeaderComponent,
     FooterComponent,
     RacecardComponent,

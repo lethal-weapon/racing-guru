@@ -6,6 +6,8 @@ import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/order.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 
+const ONE_MILLION = 1_000_000
+
 @Component({
   selector: 'app-racecard',
   templateUrl: './racecard.component.html'
@@ -250,7 +252,7 @@ export class RacecardComponent implements OnInit {
     if (track !== 'TURF') track = 'AWT';
     const trackColor = track === 'TURF' ? 'text-green-600' : 'text-orange-400';
 
-    const prize = `$${(racecard.prize / 1_000_000).toFixed(2)}M`;
+    const prize = `$${(racecard.prize / ONE_MILLION).toFixed(2)}M`;
 
     return `
       <div class="w-44">
@@ -262,6 +264,23 @@ export class RacecardComponent implements OnInit {
         </div>
       </div>
     `;
+  }
+
+  get pools(): Array<{ pool: string, amount: string }> {
+    // @ts-ignore
+    const pool = (this.next || this.racecards.slice(-1))?.pool;
+    if (!pool) return [];
+
+    return [
+      {pool: 'W', amount: (pool.win / ONE_MILLION).toFixed(2)},
+      {pool: 'Q', amount: (pool.quinella / ONE_MILLION).toFixed(2)},
+      {pool: 'FT', amount: (pool.forecast / ONE_MILLION).toFixed(2)},
+      {pool: 'TCE', amount: (pool.tierce / ONE_MILLION).toFixed(2)},
+      {pool: 'P', amount: (pool.place / ONE_MILLION).toFixed(2)},
+      {pool: 'QP', amount: (pool.quinellaPlace / ONE_MILLION).toFixed(2)},
+      {pool: 'FQ', amount: (pool.quartet / ONE_MILLION).toFixed(2)},
+      {pool: 'DBL', amount: ((pool?.double || 0) / ONE_MILLION).toFixed(2)},
+    ]
   }
 
   get maxRace(): number {

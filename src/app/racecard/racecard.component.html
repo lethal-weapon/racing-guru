@@ -4,7 +4,23 @@
     <br>
     {{(meetingSummary.split('x').pop() || '').trim()}}
   </div>
-  <div class="pt-1 text-center">
+  <div *ngIf="pools.length > 0"
+       class="p-2 text-xl rounded-3xl border border-gray-500 hover:border-yellow-400"
+  >
+    <table>
+      <tr *counter="let row of (pools.length / 4)">
+        <td *ngFor="let obj of pools.slice((row-1) * 4, (row-1) * 4 + 4)"
+            class="p-1"
+        >
+          <div class="flex flex-row justify-between hover:text-yellow-400">
+            <div class="px-2 font-bold">{{obj.pool}}&#58;</div>
+            <div class="px-2">${{obj.amount}}M</div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="pt-2 text-center">
     <div class="text-2xl">
       NEXT RACE
     </div>
@@ -114,6 +130,6 @@
   </tbody>
 </table>
 
-<!--<div class="my-10">-->
-<!--  <app-meeting></app-meeting>-->
-<!--</div>-->
+<div class="my-10">
+  <app-meeting></app-meeting>
+</div>
