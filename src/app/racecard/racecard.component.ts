@@ -13,8 +13,10 @@ import {JOCKEYS, TRAINERS} from '../model/person.model';
 export class RacecardComponent implements OnInit {
   racecards: Racecard[] = [];
 
-  activeDraw: number = 0
-  activeTrainer: string = ''
+  activeDraw: number = 0;
+  activeTrainer: string = '';
+
+  remainingTime: string = '---';
 
   constructor(private socket: WebsocketService) {
     socket.racecards.subscribe(data => {
@@ -38,6 +40,21 @@ export class RacecardComponent implements OnInit {
 
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), 3_000);
+    setInterval(() => this.updateRemainingTime(), 5_000);
+  }
+
+  updateRemainingTime = () => {
+    if (!this.next) {
+      this.remainingTime = `---`;
+      return
+    }
+
+    const raceTime = new Date(this.next.time).getTime();
+    const currTime = new Date().getTime();
+    const diff = Math.floor((raceTime - currTime) / 1000);
+    if (diff <= 999) this.remainingTime = `${diff} sec`
+    else if (diff <= 3600) this.remainingTime = `${Math.floor(diff / 60)} min`
+    else this.remainingTime = `${Math.floor(diff / 3600)} hrs`
   }
 
   setActiveDraw = (clicked: number) =>
@@ -206,6 +223,15 @@ export class RacecardComponent implements OnInit {
     return specials.includes(jockey);
   }
 
+  formatRaceGrade(grade: string): string {
+    const clean = grade
+      .replace('(', '')
+      .replace(')', '')
+      .replace('RESTRICTED', '')
+      .trim();
+    return `${clean[0]}${clean.slice(-1)}`
+  }
+
   getTooltip(racecard: Racecard): string {
     const name = racecard.name
       .replace('(', '')
@@ -214,10 +240,17 @@ export class RacecardComponent implements OnInit {
       .trim();
 
     const dt = new Date(racecard.time);
-    const time = `${dt.getHours()} : ${dt.getMinutes()}`;
-    const track = racecard.track.toUpperCase();
-    const prize = `$${(racecard.prize / 1_000_000).toFixed(2)}M`
-    const trackColor = track === 'TURF' ? 'text-green-600' : 'text-orange-900';
+    let time = `${dt.getHours()} : ${dt.getMinutes()}`;
+    if (dt.getMinutes() === 0) time += '0';
+    else if (dt.getMinutes() < 10) {
+      time = `${dt.getHours()} : 0${dt.getMinutes()}`;
+    }
+
+    let track = racecard.track.toUpperCase();
+    if (track !== 'TURF') track = 'AWT';
+    const trackColor = track === 'TURF' ? 'text-green-600' : 'text-orange-400';
+
+    const prize = `$${(racecard.prize / 1_000_000).toFixed(2)}M`;
 
     return `
       <div class="w-44">
@@ -229,17 +262,6 @@ export class RacecardComponent implements OnInit {
         </div>
       </div>
     `;
-  }
-
-  get remainingSeconds(): string {
-    if (!this.next) return `0`;
-
-    const raceTime = new Date(this.next.time).getTime();
-    const currTime = new Date().getTime();
-    const diff = Math.floor((raceTime - currTime) / 1000);
-
-    if (diff > 999) return `999+`
-    return `${diff}`
   }
 
   get maxRace(): number {
@@ -277,7 +299,7 @@ export class RacecardComponent implements OnInit {
 
   get meetingSummary(): string {
     const racecard = this.racecards.find(r => r.race === 1);
-    if (!racecard) return 'Unknown';
+    if (!racecard) return '---';
 
     const date = racecard.meeting;
     const venue = racecard.venue;
@@ -292,8 +314,8 @@ export class RacecardComponent implements OnInit {
     const trainers = this.trainers.length;
 
     return `
-        ${dayOfWeek}, ${date}, ${venue}, ${course} Course, ${total} Races, 
-        ${jockeys} Jockeys, ${trainers} Trainers, ${horses} Horses
+        ${dayOfWeek}, ${date}, ${venue}, ${course} Course x
+        ${total} Races, ${jockeys} Jockeys, ${trainers} Trainers, ${horses} Horses
     `;
   }
 

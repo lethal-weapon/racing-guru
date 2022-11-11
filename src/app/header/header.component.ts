@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
     setInterval(() => this.tick(), 10_000);
   }
 
-  tick() {
+  tick = () => {
     const d = new Date();
     const hours = d.getHours() % 12;
     const minutes = d.getMinutes();

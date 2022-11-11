@@ -1,14 +1,16 @@
-<div class="m-10 px-10 flex justify-between noselect">
-  <div class="px-8 py-4 text-xl bg-gray-800 shadow-xl rounded-full border border-gray-900 hover:border-gray-600">
-    {{meetingSummary}}
+<div class="m-5 px-10 flex flex-row justify-between noselect">
+  <div class="px-6 py-4 text-xl bg-gray-800 shadow-xl rounded-3xl border border-gray-900 hover:border-gray-600">
+    {{(meetingSummary.split('x').shift() || '').trim()}}
+    <br>
+    {{(meetingSummary.split('x').pop() || '').trim()}}
   </div>
-  <div class="pt-3">
-    <span class="pr-5 text-2xl">
-      NEXT RACE&#58;
-    </span>
-    <span class="text-3xl text-red-600">
-        {{remainingSeconds}} sec
-    </span>
+  <div class="pt-1 text-center">
+    <div class="text-2xl">
+      NEXT RACE
+    </div>
+    <div class="pt-2 text-4xl text-red-600">
+      {{remainingTime}}
+    </div>
   </div>
 </div>
 
@@ -44,7 +46,7 @@
     >
       <div class="">
         {{race.race}}
-        {{race.grade[0]}}{{race.grade.slice(-1)}}
+        {{formatRaceGrade(race.grade)}}
       </div>
       <div class="">
         {{race.distance}}
