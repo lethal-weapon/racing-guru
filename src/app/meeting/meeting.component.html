@@ -1,6 +1,13 @@
 <table class="mx-auto table-fixed border-collapse text-center noselect">
   <tr class="text-lg">
-    <td class="w-14 border border-gray-700"></td>
+    <td class="w-14 border border-gray-700">
+      <span class="hover:text-yellow-400"
+            [class.invisible]="!isRefreshButtonEnable"
+            (click)="refresh()"
+      >
+        <i class="fa fa-refresh"></i>
+      </span>
+    </td>
     <td *ngFor="let overview of overviews"
         colspan="6"
         class="w-52 border border-gray-700"
@@ -9,7 +16,13 @@
     </td>
   </tr>
   <tr>
-    <td class="border border-gray-700"></td>
+    <td class="border border-gray-700">
+      <span [class.visible]="!isRefreshButtonEnable"
+            [class.invisible]="isRefreshButtonEnable"
+      >
+        <i class="fa fa-clock-o"></i>
+      </span>
+    </td>
     <ng-container *ngFor="let meeting of meetings">
       <td *ngFor="let placing of placings; let last = last"
           colspan="1"

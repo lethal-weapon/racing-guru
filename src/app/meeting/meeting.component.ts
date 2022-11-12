@@ -2,18 +2,27 @@ import {Component, OnInit} from '@angular/core';
 
 import {Meeting} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {MeetingRepository} from '../model/meeting.repository';
+import {RestRepository} from '../model/rest.repository';
 
 @Component({
   selector: 'app-meeting',
   templateUrl: './meeting.component.html'
 })
 export class MeetingComponent implements OnInit {
+  isRefreshButtonEnable: boolean = true;
 
-  constructor(private repo: MeetingRepository) {
+  constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
+  }
+
+  refresh = () => {
+    if (this.isRefreshButtonEnable) {
+      this.isRefreshButtonEnable = false;
+      this.repo.updateMeetings();
+      setTimeout(() => this.isRefreshButtonEnable = true, 10_000);
+    }
   }
 
   isJTBoundaryPerson(person: string): boolean {
@@ -49,7 +58,7 @@ export class MeetingComponent implements OnInit {
   }
 
   get meetings(): Meeting[] {
-    return this.repo.findAll().slice(0, 7);
+    return this.repo.findAllMeetings().slice(0, 7);
   }
 
   get overviews(): string[] {

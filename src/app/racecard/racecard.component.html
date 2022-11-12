@@ -60,12 +60,16 @@
         tooltip="{{getTooltip(race)}}"
         [hideDelay]="0"
     >
-      <div class="">
-        {{race.race}}
-        {{formatRaceGrade(race.grade)}}
+      <div class="hover:underline">
+        <a [href]="race.resultUrl" target="_blank">
+          {{race.race}}
+          {{formatRaceGrade(race.grade)}}
+        </a>
       </div>
-      <div class="">
-        {{race.distance}}
+      <div class="hover:underline">
+        <a [href]="race.videoUrl" target="_blank">
+          {{race.distance}}
+        </a>
       </div>
     </td>
     <td *ngFor="let jockey of jockeys"

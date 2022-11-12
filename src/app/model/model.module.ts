@@ -4,7 +4,7 @@ import {HttpClientModule} from '@angular/common/http';
 
 import {WebsocketService} from './websocket.service';
 import {RestDataSource} from './rest.datasource';
-import {MeetingRepository} from './meeting.repository';
+import {RestRepository} from './rest.repository';
 
 @NgModule({
   declarations: [],
@@ -15,7 +15,7 @@ import {MeetingRepository} from './meeting.repository';
   providers: [
     WebsocketService,
     RestDataSource,
-    MeetingRepository
+    RestRepository
   ]
 })
 export class ModelModule {
