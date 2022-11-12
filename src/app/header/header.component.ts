@@ -8,8 +8,9 @@ import {Router} from '@angular/router';
 export class HeaderComponent implements OnInit {
   pages: Array<{ title: string, link: string }> = [
     {title: 'Racecard', link: '/'},
-    {title: 'Performance', link: '/performance'},
-    {title: 'Pools', link: '/pools'},
+    {title: 'Earning', link: '/earning'},
+    {title: 'Pool', link: '/pool'},
+    {title: 'People', link: '/people'},
   ]
 
   hour = 'HH';
@@ -23,7 +24,7 @@ export class HeaderComponent implements OnInit {
     setInterval(() => this.tick(), 10_000);
   }
 
-  tick() {
+  tick = () => {
     const d = new Date();
     const hours = d.getHours() % 12;
     const minutes = d.getMinutes();
@@ -33,7 +34,7 @@ export class HeaderComponent implements OnInit {
   }
 
   get currentUrl(): string {
-    return this.router.url
+    return this.router.url;
   }
 
 }

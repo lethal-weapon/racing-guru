@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-performance',
-  templateUrl: './performance.component.html'
+  templateUrl: './earning.component.html'
 })
-export class PerformanceComponent implements OnInit {
+export class EarningComponent implements OnInit {
 
   constructor() {
   }
