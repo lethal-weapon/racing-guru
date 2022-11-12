@@ -268,7 +268,7 @@ export class RacecardComponent implements OnInit {
 
   get pools(): Array<{ pool: string, amount: string }> {
     // @ts-ignore
-    const pool = (this.next || this.racecards.slice(-1))?.pool;
+    const pool = (this.next || this.racecards[this.racecards.length - 1])?.pool;
     if (!pool) return [];
 
     return [
