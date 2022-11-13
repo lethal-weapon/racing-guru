@@ -1,12 +1,12 @@
 export class Person {
   constructor(
-    public code        : string,
-    public lastName    : string,
-    public firstName   : string,
-    public shortName   : string,
-    public nationality : string,
-    public licence     : string,
-    public nickname    : string
+    public code: string,
+    public lastName: string,
+    public firstName: string,
+    public shortName: string,
+    public nationality: string,
+    public licence: string,
+    public nickname: string
   ) {
   }
 }
@@ -33,8 +33,8 @@ export const JOCKEYS = [
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
   new Person('BV', 'Borges', 'Vagner', 'V. Borges', 'BRZ', 'Club', ''),
 
-  new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry'),
   new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus'),
+  new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry'),
   new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith'),
   new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred'),
   new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack'),
@@ -70,3 +70,7 @@ export const TRAINERS = [
   new Person('TYS', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me'),
   new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter'),
 ]
+
+export const NEW_PEOPLE =
+  JOCKEYS.filter(j => ['DSS', 'CCY', 'BH', 'MNJ'].includes(j.code))
+    .concat(TRAINERS.filter(t => ['NPC', 'RW'].includes(t.code)))

@@ -1,1 +1,59 @@
-<p>earning works!</p>
+<table *ngFor="let et of earnings"
+       class="mx-auto my-6 table-fixed text-center noselect"
+>
+  <thead>
+  <th class="w-32 py-3 text-xl capitalize">
+    21&#47;22
+  </th>
+  <th *ngFor="let ok of keys"
+      class="w-32 py-3 text-xl capitalize"
+  >
+    {{ok === 'person' ? '22/23' : ok}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let ep of et.personEarnings; let index = index"
+      [class.bg-gray-800]="activePerson === ep.person"
+      (mouseover)="setActivePerson(ep.person)"
+  >
+    <td class="pt-1 text-lg bg-gray-900 border border-gray-900 border-r-gray-700"
+        [class.text-green-600]="activePerson === getLastSeasonRanking(et.personEarnings, index)"
+        (mouseover)="setActivePerson(getLastSeasonRanking(et.personEarnings, index))"
+    >
+      {{getLastSeasonRanking(et.personEarnings, index)}}
+    </td>
+    <td class="text-lg"
+        [class.text-green-600]="activePerson === ep.person"
+    >
+      {{ep.person}}
+    </td>
+    <td class="text-lg">{{ep.currSeason.engageDays}} &#47; {{ep.lastSeason.engageDays}}</td>
+    <td class="text-lg">{{ep.currSeason.earnDays}} &#47; {{ep.lastSeason.earnDays}}</td>
+    <td>{{ep.currSeason.totalEarn}} &#47; {{ep.lastSeason.totalEarn}}</td>
+    <td class="text-lg">
+      <span [class.text-yellow-400]="highlightEarnDayAvg(et.personType, ep.currSeason.earnDayAvg)"
+            [class.text-red-600]="redEarnDayAvg(ep.lastSeason.earnDayAvg, ep.currSeason.earnDayAvg)"
+      >
+        {{ep.currSeason.earnDayAvg}}
+      </span>
+      &#47;
+      <span [class.text-yellow-400]="highlightEarnDayAvg(et.personType, ep.lastSeason.earnDayAvg)">
+        {{ep.lastSeason.earnDayAvg}}
+      </span>
+    </td>
+    <td>{{ep.currSeason.engageDayAvg}} &#47; {{ep.lastSeason.engageDayAvg}}</td>
+    <td>{{ep.currSeason.avgAvg}} &#47; {{ep.lastSeason.avgAvg}}</td>
+    <td>{{ep.currSeason.poor}} &#47; {{ep.lastSeason.poor}}</td>
+    <td>{{ep.currSeason.medium}} &#47; {{ep.lastSeason.medium}}</td>
+    <td class="text-lg">
+      <span [class.text-yellow-400]="highlightRichDayPercent(et.personType, ep.currSeason.rich)">
+        {{ep.currSeason.rich}}
+      </span>
+      &#47;
+      <span [class.text-yellow-400]="highlightRichDayPercent(et.personType, ep.lastSeason.rich)">
+        {{ep.lastSeason.rich}}
+      </span>
+    </td>
+  </tr>
+  </tbody>
+</table>

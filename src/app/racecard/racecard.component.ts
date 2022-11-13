@@ -337,5 +337,4 @@ export class RacecardComponent implements OnInit {
         ${total} Races, ${jockeys} Jockeys, ${trainers} Trainers, ${horses} Horses
     `;
   }
-
 }
