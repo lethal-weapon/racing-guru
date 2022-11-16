@@ -199,6 +199,7 @@ export class RacecardComponent implements OnInit {
       race.track === 'Turf'
       && race.grade.startsWith('C')
       && (!race.name.includes('CUP'))
+      && (!race.name.includes('TROPHY'))
       && (
         race.grade.endsWith('3')
         || race.grade.endsWith('4')
