@@ -4,7 +4,8 @@ import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
 import {Meeting} from './meeting.model';
-import {SeasonEarning} from "./earning.model";
+import {SeasonEarning} from './earning.model';
+import {Statistics} from './statistics.model';
 
 @Injectable()
 export class RestDataSource {
@@ -23,4 +24,7 @@ export class RestDataSource {
     return this.http.get<SeasonEarning[]>(`${this.baseUrl}/performance/earnings`);
   }
 
+  getStatistics(): Observable<Statistics[]> {
+    return this.http.get<Statistics[]>(`${this.baseUrl}/performance/statistics`);
+  }
 }

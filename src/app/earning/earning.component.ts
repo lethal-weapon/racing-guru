@@ -61,7 +61,7 @@ export class EarningComponent implements OnInit {
   }
 
   get earnings(): EarningTable[] {
-    const seasons = this.repo.findAllEarnings();
+    const seasons = this.repo.findEarnings();
     if (seasons.length !== 2) return [];
 
     const last = seasons[0].earnings;

@@ -2,25 +2,35 @@ import {Injectable} from '@angular/core';
 
 import {RestDataSource} from './rest.datasource';
 import {Meeting} from './meeting.model';
-import {SeasonEarning} from "./earning.model";
+import {SeasonEarning} from './earning.model';
+import {Statistics} from './statistics.model';
 
 @Injectable()
 export class RestRepository {
   private meetings: Meeting[] = [];
   private earnings: SeasonEarning[] = [];
+  private statistics: Statistics[] = [];
 
   constructor(private source: RestDataSource) {
     this.updateMeetings();
     this.updateEarnings();
+    this.updateStatistics();
   }
 
-  findAllMeetings(): Meeting[] {
+  findStatistics(): Statistics[] {
+    return this.statistics;
+  }
+
+  findMeetings(): Meeting[] {
     return this.meetings;
   }
 
-  findAllEarnings(): SeasonEarning[] {
+  findEarnings(): SeasonEarning[] {
     return this.earnings;
   }
+
+  updateStatistics = () =>
+    this.source.getStatistics().subscribe(data => this.statistics = data)
 
   updateEarnings = () =>
     this.source.getEarnings().subscribe(data => this.earnings = data)

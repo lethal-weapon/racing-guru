@@ -58,7 +58,7 @@ export class MeetingComponent implements OnInit {
   }
 
   get meetings(): Meeting[] {
-    return this.repo.findAllMeetings().slice(0, 7);
+    return this.repo.findMeetings().slice(0, 7);
   }
 
   get overviews(): string[] {

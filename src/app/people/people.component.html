@@ -1,1 +1,46 @@
-<p>people works!</p>
+<div class="my-6 flex flex-row justify-between">
+  <div *ngFor="let persons of personsList">
+    <table class="mx-auto table-fixed text-center noselect">
+      <thead>
+      <th *ngFor="let attr of attributes"
+          class="w-32 py-3 text-2xl capitalize"
+      >
+        {{attr}}
+      </th>
+      </thead>
+      <tbody>
+      <tr *ngFor="let person of persons"
+          class="text-xl border border-gray-900 hover:bg-gray-800"
+          [class.border-b-red-900]="isBoundaryPerson(person)"
+      >
+        <td class="italic">
+          {{person.code}}
+          <sup *ngIf="isNewPlayer(person)">
+            &#43;
+          </sup>
+          <sup *ngIf="isLeavingPlayer(person)">
+            &#45;
+          </sup>
+        </td>
+        <td class="">
+          {{person.lastName}}
+        </td>
+        <td class="">
+          {{person.firstName}}
+        </td>
+        <td class="">
+          {{person.nickname}}
+        </td>
+        <td class="">
+          {{person.nationality}}
+        </td>
+        <td class=""
+            [class.text-red-600]="isHighlightWinners(getWinners(person))"
+        >
+          {{getWinners(person)}}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

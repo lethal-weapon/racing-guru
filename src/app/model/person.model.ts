@@ -1,12 +1,12 @@
 export class Person {
   constructor(
-    public code: string,
-    public lastName: string,
-    public firstName: string,
-    public shortName: string,
-    public nationality: string,
-    public licence: string,
-    public nickname: string
+    public code        : string,
+    public lastName    : string,
+    public firstName   : string,
+    public shortName   : string,
+    public nationality : string,
+    public licence     : string,
+    public nickname    : string
   ) {
   }
 }
@@ -80,3 +80,8 @@ export const NEW_PEOPLE =
   JOCKEYS
     .filter(j => ['DSS', 'CCY', 'BH', 'MNJ'].includes(j.code))
     .concat(TRAINERS.filter(t => ['NPC', 'RW'].includes(t.code)))
+
+export const GONE_PEOPLE =
+  JOCKEYS
+    .filter(j => ['SHB', 'MOJ', 'TEK'].includes(j.code))
+    .concat(TRAINERS.filter(t => ['OSP'].includes(t.code)))
