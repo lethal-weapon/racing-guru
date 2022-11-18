@@ -18,6 +18,12 @@ export const JOCKEYS = [
   new Person('DSS', 'DeSousa', 'Silvestre', 'S. DeSousa', 'BRZ', 'Club', ''),
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', ''),
 
+  new Person('SHB', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', ''),
+  new Person('BH', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', ''),
+  new Person('MNJ', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', ''),
+  new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
+  new Person('BAM', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', ''),
+
   new Person('HCY', 'Ho', 'Chak-yiu', 'V. Ho', 'HK', 'Freelance', 'Vincent'),
   new Person('CML', 'Chadwick', 'Matthew L.', 'M. Chadwick', 'HK', 'Freelance', 'Lee'),
   new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew'),
@@ -28,8 +34,6 @@ export const JOCKEYS = [
   new Person('HEL', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', ''),
   new Person('BHW', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William'),
   new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', ''),
-  new Person('BH', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', ''),
-  new Person('MNJ', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', ''),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
   new Person('BV', 'Borges', 'Vagner', 'V. Borges', 'BRZ', 'Club', ''),
 
@@ -62,6 +66,7 @@ export const TRAINERS = [
   new Person('TKH', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy'),
   new Person('YCH', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis'),
 
+  new Person('OSP', 'OSullivan', 'Paul', 'P. OSullivan', 'NZ', '', ''),
   new Person('NPC', 'Ng', 'Pang-chi', 'P. Ng', 'HK', '', 'Pierre'),
   new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', ''),
   new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', ''),
@@ -72,5 +77,6 @@ export const TRAINERS = [
 ]
 
 export const NEW_PEOPLE =
-  JOCKEYS.filter(j => ['DSS', 'CCY', 'BH', 'MNJ'].includes(j.code))
+  JOCKEYS
+    .filter(j => ['DSS', 'CCY', 'BH', 'MNJ'].includes(j.code))
     .concat(TRAINERS.filter(t => ['NPC', 'RW'].includes(t.code)))

@@ -32,8 +32,8 @@ export class EarningComponent implements OnInit {
     this.activePerson = selected
 
   highlightRichDayPercent(personType: string, value: number): boolean {
-    return (personType === 'jockey' && value >= 0.4)
-      || (personType === 'trainer' && value >= 0.35)
+    return (personType === 'jockey' && value >= 0.4 && value < 1)
+      || (personType === 'trainer' && value >= 0.35 && value < 1)
   }
 
   highlightEarnDayAvg(personType: string, value: number): boolean {
@@ -42,7 +42,9 @@ export class EarningComponent implements OnInit {
   }
 
   redEarnDayAvg(lastValue: number, currValue: number): boolean {
-    return lastValue > 0 && Math.abs(lastValue - currValue) >= 3;
+    return lastValue > 0
+      && currValue > 0
+      && Math.abs(lastValue - currValue) >= 3;
   }
 
   getLastSeasonRanking(persons: EarningPerson[], index: number): string {
@@ -62,9 +64,8 @@ export class EarningComponent implements OnInit {
     const seasons = this.repo.findAllEarnings();
     if (seasons.length !== 2) return [];
 
+    const last = seasons[0].earnings;
     const curr = seasons[1].earnings;
-    let last = seasons[0].earnings;
-    last = last.filter(l => curr.map(c => c.person).includes(l.person));
 
     return [TRAINERS, JOCKEYS].map(pt => {
       const pes = pt.map(e => {
