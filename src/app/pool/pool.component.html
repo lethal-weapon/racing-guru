@@ -1,1 +1,81 @@
-<p>pool works!</p>
+<div *ngFor="let sg of sectionGroups"
+     class="mx-10 my-6 flex bg-gray-800 rounded-full noselect"
+>
+  <div *ngFor="let s of sg"
+       class="w-full py-4 text-2xl text-center rounded-full {{getToggleStyle(s)}}"
+       (click)="setActiveSectionGroup(s)"
+  >
+    {{s}}
+  </div>
+</div>
+
+<div *ngIf="activeSection === sections[0]"
+     class="my-6 noselect"
+>
+  <table class="mx-auto my-6 table-fixed border-collapse">
+    <thead>
+    <th class="w-24 border border-gray-600">
+      <i class="fa fa-dollar fa-lg"></i>
+    </th>
+    <th *counter="let race of maxRace"
+        class="w-32 border border-gray-600 text-xl"
+    >
+      {{race}}
+    </th>
+    </thead>
+    <tbody>
+    <ng-container *ngFor="let poolGroup of finalPoolGroups; let first = first">
+      <tr *ngFor="let meeting of getUniqueMeetings(poolGroup); let last = last">
+        <td class="py-2 text-xl text-center border border-gray-700"
+            [class.border-b-2]="first && last"
+            [class.border-b-yellow-400]="first && last"
+        >
+          {{meeting.replace('2022-', '')}}
+        </td>
+        <td *counter="let race of maxRace"
+            class="p-2 border border-gray-700"
+            [class.border-b-2]="first && last"
+            [class.border-b-yellow-400]="first && last"
+        >
+          <div class="flex flex-col">
+            <div class="flex flex-row justify-between">
+              <div class="text-red-600">
+                {{ activeGroup === poolGroups[0]
+                ? formatAmount(getFinalPool(poolGroup, meeting, race).WIN)
+                : formatAmount(getFinalPool(poolGroup, meeting, race).FT)
+                }}
+              </div>
+              <div>
+
+              </div>
+              <div class="text-green-600">
+                {{ activeGroup === poolGroups[0]
+                ? formatAmount(getFinalPool(poolGroup, meeting, race).QIN)
+                : formatAmount(getFinalPool(poolGroup, meeting, race).TCE)
+                }}
+              </div>
+            </div>
+            <div class="flex flex-row justify-between">
+              <div class="text-blue-600">
+                {{ activeGroup === poolGroups[0]
+                ? formatAmount(getFinalPool(poolGroup, meeting, race).PLA)
+                : formatAmount(getFinalPool(poolGroup, meeting, race).FQ)
+                }}
+              </div>
+              <div>
+
+              </div>
+              <div class="text-purple-600">
+                {{ activeGroup === poolGroups[0]
+                ? formatAmount(getFinalPool(poolGroup, meeting, race).QPL)
+                : formatAmount(getFinalPool(poolGroup, meeting, race).DBL)
+                }}
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+    </tbody>
+  </table>
+</div>

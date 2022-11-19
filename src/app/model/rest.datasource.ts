@@ -6,6 +6,7 @@ import {environment as env} from '../../environments/environment';
 import {Meeting} from './meeting.model';
 import {SeasonEarning} from './earning.model';
 import {Statistics} from './statistics.model';
+import {FinalPool} from './pool.model';
 
 @Injectable()
 export class RestDataSource {
@@ -27,4 +28,9 @@ export class RestDataSource {
   getStatistics(): Observable<Statistics[]> {
     return this.http.get<Statistics[]>(`${this.baseUrl}/performance/statistics`);
   }
+
+  getFinalPools(): Observable<FinalPool[]> {
+    return this.http.get<FinalPool[]>(`${this.baseUrl}/pool/finals`);
+  }
+
 }

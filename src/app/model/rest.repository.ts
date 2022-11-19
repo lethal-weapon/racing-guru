@@ -4,17 +4,24 @@ import {RestDataSource} from './rest.datasource';
 import {Meeting} from './meeting.model';
 import {SeasonEarning} from './earning.model';
 import {Statistics} from './statistics.model';
+import {FinalPool} from './pool.model';
 
 @Injectable()
 export class RestRepository {
   private meetings: Meeting[] = [];
   private earnings: SeasonEarning[] = [];
   private statistics: Statistics[] = [];
+  private finalPools: FinalPool[] = [];
 
   constructor(private source: RestDataSource) {
-    this.updateMeetings();
-    this.updateEarnings();
-    this.updateStatistics();
+    this.fetchMeetings();
+    this.fetchEarnings();
+    this.fetchStatistics();
+    this.fetchFinalPools();
+  }
+
+  findFinalPools(): FinalPool[] {
+    return this.finalPools;
   }
 
   findStatistics(): Statistics[] {
@@ -29,13 +36,16 @@ export class RestRepository {
     return this.earnings;
   }
 
-  updateStatistics = () =>
+  fetchFinalPools = () =>
+    this.source.getFinalPools().subscribe(data => this.finalPools = data)
+
+  fetchStatistics = () =>
     this.source.getStatistics().subscribe(data => this.statistics = data)
 
-  updateEarnings = () =>
+  fetchEarnings = () =>
     this.source.getEarnings().subscribe(data => this.earnings = data)
 
-  updateMeetings = () => {
+  fetchMeetings = () => {
     this.source.getMeetings().subscribe(data => {
       if (this.meetings.length !== data.length) this.meetings = data;
       else {

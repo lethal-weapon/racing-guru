@@ -20,7 +20,7 @@ export class MeetingComponent implements OnInit {
   refresh = () => {
     if (this.isRefreshButtonEnable) {
       this.isRefreshButtonEnable = false;
-      this.repo.updateMeetings();
+      this.repo.fetchMeetings();
       setTimeout(() => this.isRefreshButtonEnable = true, 10_000);
     }
   }

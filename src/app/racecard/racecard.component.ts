@@ -5,8 +5,7 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/order.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-
-const ONE_MILLION = 1_000_000
+import {ONE_MILLION} from '../constants/numbers';
 
 @Component({
   selector: 'app-racecard',
