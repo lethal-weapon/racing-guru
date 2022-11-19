@@ -10,6 +10,7 @@ export class HeaderComponent implements OnInit {
     {title: 'Racecard', link: '/'},
     {title: 'Earning', link: '/earning'},
     {title: 'Pool', link: '/pool'},
+    {title: 'Dividend', link: '/dividend'},
     {title: 'People', link: '/people'},
   ]
 

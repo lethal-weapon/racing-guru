@@ -1,6 +1,19 @@
-<div class="my-6 flex flex-row justify-between">
-  <div *ngFor="let persons of personsList">
-    <table class="mx-auto table-fixed text-center noselect">
+<div class="my-6 text-4xl text-green-600 text-center noselect">
+  Racing Fixture 22/23
+  <img src="assets/fixture-22-23.png"
+       alt="Racing Fixture 22/23"
+       class="block mx-auto pt-6 w-2/3"
+  />
+</div>
+
+<div class="flex flex-row justify-between noselect">
+  <div *ngFor="let persons of personsList; let index = index"
+       class="text-center"
+  >
+    <div class="my-3 text-4xl text-green-600">
+      {{index === 0 ? 'Trainers' : 'Jockeys'}}
+    </div>
+    <table class="mx-auto table-fixed">
       <thead>
       <th *ngFor="let attr of attributes"
           class="w-32 py-3 text-2xl capitalize"

@@ -13,6 +13,7 @@ import {MeetingComponent} from './meeting/meeting.component';
 import {EarningComponent} from './earning/earning.component';
 import {PoolComponent} from './pool/pool.component';
 import {PeopleComponent} from './people/people.component';
+import {DividendComponent} from './dividend/dividend.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import {PeopleComponent} from './people/people.component';
     MeetingComponent,
     EarningComponent,
     PoolComponent,
-    PeopleComponent
+    PeopleComponent,
+    DividendComponent
   ],
   imports: [
     BrowserModule,
