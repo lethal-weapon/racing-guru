@@ -1,11 +1,13 @@
-<div *ngFor="let sg of sectionGroups"
-     class="mx-10 my-6 flex bg-gray-800 rounded-full noselect"
->
-  <div *ngFor="let s of sg"
-       class="w-full py-4 text-2xl text-center rounded-full {{getToggleStyle(s)}}"
-       (click)="setActiveSectionGroup(s)"
+<div class="mx-10 my-6 flex flex-row justify-between noselect">
+  <div *ngFor="let sg of sectionGroups"
+       class="w-full mx-6 flex bg-gray-800 rounded-full"
   >
-    {{s}}
+    <div *ngFor="let s of sg"
+         class="w-full py-4 text-2xl text-center rounded-full {{getToggleStyle(s)}}"
+         (click)="setActiveSectionGroup(s)"
+    >
+      {{s}}
+    </div>
   </div>
 </div>
 
@@ -33,46 +35,46 @@
           {{meeting.replace('2022-', '')}}
         </td>
         <td *counter="let race of maxRace"
-            class="p-2 border border-gray-700"
+            class="p-2 border border-gray-700 hover:bg-gray-800"
             [class.border-b-2]="first && last"
             [class.border-b-yellow-400]="first && last"
         >
-          <div class="flex flex-col">
-            <div class="flex flex-row justify-between">
-              <div class="text-red-600">
+          <table class="mx-auto">
+            <tr>
+              <td class="text-red-600">
                 {{ activeGroup === poolGroups[0]
                 ? formatAmount(getFinalPool(poolGroup, meeting, race).WIN)
                 : formatAmount(getFinalPool(poolGroup, meeting, race).FT)
                 }}
-              </div>
-              <div>
-
-              </div>
-              <div class="text-green-600">
+              </td>
+              <td class="{{activeGroup === poolGroups[0] ? 'px-1.5' : 'px-2.5'}}">
+                {{formatGrade(getFinalPool(poolGroup, meeting, race).grade)}}
+              </td>
+              <td class="text-green-600">
                 {{ activeGroup === poolGroups[0]
                 ? formatAmount(getFinalPool(poolGroup, meeting, race).QIN)
                 : formatAmount(getFinalPool(poolGroup, meeting, race).TCE)
                 }}
-              </div>
-            </div>
-            <div class="flex flex-row justify-between">
-              <div class="text-blue-600">
+              </td>
+            </tr>
+            <tr>
+              <td class="text-blue-600">
                 {{ activeGroup === poolGroups[0]
                 ? formatAmount(getFinalPool(poolGroup, meeting, race).PLA)
                 : formatAmount(getFinalPool(poolGroup, meeting, race).FQ)
                 }}
-              </div>
-              <div>
-
-              </div>
-              <div class="text-purple-600">
+              </td>
+              <td class="text-center {{activeGroup === poolGroups[0] ? 'px-1.5' : 'px-2.5'}}">
+                {{formatStarters(getFinalPool(poolGroup, meeting, race).starters)}}
+              </td>
+              <td class="text-purple-600">
                 {{ activeGroup === poolGroups[0]
                 ? formatAmount(getFinalPool(poolGroup, meeting, race).QPL)
                 : formatAmount(getFinalPool(poolGroup, meeting, race).DBL)
                 }}
-              </div>
-            </div>
-          </div>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </ng-container>

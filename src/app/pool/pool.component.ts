@@ -29,10 +29,24 @@ export class PoolComponent implements OnInit {
       : 'font-bold bg-gradient-to-r from-sky-800 to-indigo-800'
   }
 
+  formatGrade(grade: string): string {
+    return grade === DEFAULT_FINAL_POOL.grade ? '' : grade;
+  }
+
+  formatStarters(starters: number): string {
+    return starters === DEFAULT_FINAL_POOL.starters ? '' : `${starters}`;
+  }
+
   formatAmount(amount: number): string {
-    return amount === 0
-      ? ''
-      : (amount / ONE_MILLION).toFixed(2)
+    if (amount === 0) return '';
+    let rounded = (amount / ONE_MILLION).toFixed(2);
+    while (rounded.length > 0 && rounded.endsWith('0')) {
+      rounded = rounded.slice(0, rounded.length - 1)
+    }
+    if (rounded.length > 0 && rounded.endsWith('.')) {
+      rounded = rounded.slice(0, rounded.length - 1)
+    }
+    return rounded
   }
 
   getFinalPool(pools: FinalPool[], meeting: string, race: number): FinalPool {
