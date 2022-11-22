@@ -30,7 +30,7 @@ export class MeetingComponent implements OnInit {
   }
 
   isBoundaryPerson(person: string): boolean {
-    return ['YPF', 'HDA', 'YCH', 'BA', 'BAM', 'LDE', 'BV'].includes(person)
+    return ['YPF', 'HDA', 'YCH', 'MNJ', 'LDE', 'BV'].includes(person)
   }
 
   getValue(person: string, meeting: string, placing: string): string {

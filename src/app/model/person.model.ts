@@ -17,12 +17,12 @@ export const JOCKEYS = [
   new Person('TEK', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', ''),
   new Person('DSS', 'DeSousa', 'Silvestre', 'S. DeSousa', 'BRZ', 'Club', ''),
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', ''),
-
-  new Person('SHB', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', ''),
   new Person('BH', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', ''),
   new Person('MNJ', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', ''),
-  new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
-  new Person('BAM', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', ''),
+
+  // new Person('SHB', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', ''),
+  // new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
+  // new Person('BAM', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', ''),
 
   new Person('HCY', 'Ho', 'Chak-yiu', 'V. Ho', 'HK', 'Freelance', 'Vincent'),
   new Person('CML', 'Chadwick', 'Matthew L.', 'M. Chadwick', 'HK', 'Freelance', 'Lee'),

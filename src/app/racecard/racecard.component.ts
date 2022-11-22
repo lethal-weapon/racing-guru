@@ -197,6 +197,7 @@ export class RacecardComponent implements OnInit {
     return !(
       race.track === 'Turf'
       && race.grade.startsWith('C')
+      && race.distance > 1000
       && (!race.name.includes('CUP'))
       && (!race.name.includes('TROPHY'))
       && (
@@ -209,7 +210,7 @@ export class RacecardComponent implements OnInit {
 
   isBoundaryJockey(jockey: string): boolean {
     let specials = []
-    for (const j of ['BA', 'BAM', 'LDE', 'BV']) {
+    for (const j of ['MNJ', 'LDE', 'BV']) {
       if (this.jockeys.includes(j)) {
         specials.push(j);
       } else {
