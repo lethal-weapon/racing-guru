@@ -7,6 +7,7 @@ import {Meeting} from './meeting.model';
 import {SeasonEarning} from './earning.model';
 import {Statistics} from './statistics.model';
 import {FinalPool} from './pool.model';
+import {FinalDividend} from './dividend.model';
 
 @Injectable()
 export class RestDataSource {
@@ -31,6 +32,10 @@ export class RestDataSource {
 
   getFinalPools(): Observable<FinalPool[]> {
     return this.http.get<FinalPool[]>(`${this.baseUrl}/pool/finals`);
+  }
+
+  getFinalDividends(): Observable<FinalDividend[]> {
+    return this.http.get<FinalDividend[]>(`${this.baseUrl}/pool/dividends`);
   }
 
 }

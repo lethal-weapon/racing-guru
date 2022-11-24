@@ -15,3 +15,19 @@ export class Dividend {
   ) {
   }
 }
+
+export interface FinalDividend {
+  meeting : string,
+  race    : number,
+  venue   : string,
+  WIN     : number,
+  QIN     : number,
+  TCE     : number,
+  QTT     : number,
+  persons : PersonPlacing[]
+}
+
+interface PersonPlacing {
+  person  : string,
+  placing : number
+}

@@ -5,6 +5,7 @@ import {Meeting} from './meeting.model';
 import {SeasonEarning} from './earning.model';
 import {Statistics} from './statistics.model';
 import {FinalPool} from './pool.model';
+import {FinalDividend} from './dividend.model';
 
 @Injectable()
 export class RestRepository {
@@ -12,12 +13,18 @@ export class RestRepository {
   private earnings: SeasonEarning[] = [];
   private statistics: Statistics[] = [];
   private finalPools: FinalPool[] = [];
+  private finalDividends: FinalDividend[] = [];
 
   constructor(private source: RestDataSource) {
-    this.fetchMeetings();
-    this.fetchEarnings();
-    this.fetchStatistics();
-    this.fetchFinalPools();
+    // this.fetchMeetings();
+    // this.fetchEarnings();
+    // this.fetchStatistics();
+    // this.fetchFinalPools();
+    this.fetchFinalDividends();
+  }
+
+  findFinalDividends(): FinalDividend[] {
+    return this.finalDividends;
   }
 
   findFinalPools(): FinalPool[] {
@@ -35,6 +42,9 @@ export class RestRepository {
   findEarnings(): SeasonEarning[] {
     return this.earnings;
   }
+
+  fetchFinalDividends = () =>
+    this.source.getFinalDividends().subscribe(data => this.finalDividends = data)
 
   fetchFinalPools = () =>
     this.source.getFinalPools().subscribe(data => this.finalPools = data)

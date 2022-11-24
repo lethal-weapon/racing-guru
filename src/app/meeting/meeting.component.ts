@@ -26,11 +26,11 @@ export class MeetingComponent implements OnInit {
   }
 
   isJTBoundaryPerson(person: string): boolean {
-    return person === 'HL';
+    return person === 'RW';
   }
 
   isBoundaryPerson(person: string): boolean {
-    return ['YPF', 'HDA', 'YCH', 'MNJ', 'LDE', 'BV'].includes(person)
+    return ['WDJ', 'HDA', 'YCH', 'MNJ', 'LDE', 'CLR'].includes(person)
   }
 
   getValue(person: string, meeting: string, placing: string): string {

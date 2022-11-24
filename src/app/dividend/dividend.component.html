@@ -1,1 +1,67 @@
-<p>dividend works!</p>
+<div class="m-10 flex flex-row justify-around items-start noselect">
+  <div class="flex flex-col-reverse text-center">
+    <div *ngFor="let persons of personLists; let index = index"
+         class="my-5"
+    >
+      <div class="text-3xl font-bold mb-8">
+        <span *ngIf="index === 0">Jockeys</span>
+        <span *ngIf="index === 1">Trainers</span>
+      </div>
+      <div class="grid grid-cols-5 gap-4 text-xl">
+        <div *ngFor="let person of persons"
+             class="px-4 py-1 rounded-xl border cursor-pointer {{getPersonStyle(person)}}"
+             (click)="setActivePerson(person)"
+        >
+          {{person}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="">
+    <div class="text-3xl text-center mb-8">
+      Found:
+      {{dividends.length}}
+      /
+      {{totalEngagements}}
+      =
+      <span class="text-yellow-400">
+        {{formatPercentage(dividends.length, totalEngagements)}}
+      </span>
+    </div>
+    <div class="flex flex-col text-xl gap-4">
+      <div *ngFor="let dividend of dividends"
+           class="px-8 py-3 rounded-xl border border-gray-600 hover:border-yellow-400"
+      >
+        <div class="">
+          {{getDividendHeader(dividend)}}
+        </div>
+        <div class="flex flex-row gap-4">
+          <div>
+            <span class="text-red-600">
+              1<sup>st</sup>
+            </span>
+            {{getPlacingPair(dividend, 1)}}
+          </div>
+          <div>
+            <span class="text-green-600">
+              2<sup>nd</sup>
+            </span>
+            {{getPlacingPair(dividend, 2)}}
+          </div>
+          <div>
+            <span class="text-blue-600">
+              3<sup>rd</sup>
+            </span>
+            {{getPlacingPair(dividend, 3)}}
+          </div>
+          <div>
+            <span class="text-purple-600">
+              4<sup>th</sup>
+            </span>
+            {{getPlacingPair(dividend, 4)}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
