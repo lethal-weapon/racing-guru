@@ -10,6 +10,12 @@ import {FinalDividend} from '../model/dividend.model';
 })
 export class DividendComponent implements OnInit {
   activePersons: string[] = [];
+  ordinals: Array<{ ordinal: number, superScript: string, color: string }> = [
+    {ordinal: 1, superScript: 'st', color: 'text-red-600'},
+    {ordinal: 2, superScript: 'nd', color: 'text-green-600'},
+    {ordinal: 3, superScript: 'rd', color: 'text-blue-600'},
+    {ordinal: 4, superScript: 'th', color: 'text-purple-600'},
+  ]
 
   constructor(private repo: RestRepository) {
   }
@@ -42,10 +48,15 @@ export class DividendComponent implements OnInit {
     `
   }
 
-  getPlacingPair(d: FinalDividend, placing: number): string {
-    return d.persons
+  getPlacingPair(d: FinalDividend, placing: number): string[] {
+    const pair = d.persons
       .filter(p => p.placing === placing)
-      .map(p => p.person).join(', ');
+      .map(p => p.person);
+
+    if (JOCKEYS.map(j => j.code).includes(pair[0])) {
+      return pair;
+    }
+    return [pair[1], pair[0]]
   }
 
   formatPercentage(dividend: number, divisor: number): string {

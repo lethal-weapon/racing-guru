@@ -28,38 +28,35 @@
         {{formatPercentage(dividends.length, totalEngagements)}}
       </span>
     </div>
-    <div class="flex flex-col text-xl gap-4">
+    <div class="flex flex-col gap-4">
+      <div *ngIf="dividends.length === 0"
+           class="my-10 text-center text-4xl text-red-600"
+      >
+        <i class="fa fa-thermometer-empty"></i>
+        <span class="mx-5">NO MATCHES</span>
+      </div>
       <div *ngFor="let dividend of dividends"
-           class="px-8 py-3 rounded-xl border border-gray-600 hover:border-yellow-400"
+           class="px-8 py-3 text-xl rounded-xl border border-gray-600 hover:border-yellow-400"
       >
         <div class="">
           {{getDividendHeader(dividend)}}
         </div>
-        <div class="flex flex-row gap-4">
-          <div>
-            <span class="text-red-600">
-              1<sup>st</sup>
+        <div class="">
+          <span *ngFor="let o of ordinals"
+                class="mx-2"
+          >
+            <span class="{{o.color}}">
+              {{o.ordinal}}<sup>{{o.superScript}}</sup>
             </span>
-            {{getPlacingPair(dividend, 1)}}
-          </div>
-          <div>
-            <span class="text-green-600">
-              2<sup>nd</sup>
+            <span *ngFor="let person of getPlacingPair(dividend, o.ordinal); let index = index">
+              <span [class.text-yellow-400]="activePersons.includes(person)">
+                {{person}}
+              </span>
+              <span *ngIf="index === 0">
+                &#44;
+              </span>
             </span>
-            {{getPlacingPair(dividend, 2)}}
-          </div>
-          <div>
-            <span class="text-blue-600">
-              3<sup>rd</sup>
-            </span>
-            {{getPlacingPair(dividend, 3)}}
-          </div>
-          <div>
-            <span class="text-purple-600">
-              4<sup>th</sup>
-            </span>
-            {{getPlacingPair(dividend, 4)}}
-          </div>
+          </span>
         </div>
       </div>
     </div>
