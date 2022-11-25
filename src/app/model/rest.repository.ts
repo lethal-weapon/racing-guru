@@ -16,10 +16,10 @@ export class RestRepository {
   private finalDividends: FinalDividend[] = [];
 
   constructor(private source: RestDataSource) {
-    // this.fetchMeetings();
-    // this.fetchEarnings();
-    // this.fetchStatistics();
-    // this.fetchFinalPools();
+    this.fetchMeetings();
+    this.fetchEarnings();
+    this.fetchStatistics();
+    this.fetchFinalPools();
     this.fetchFinalDividends();
   }
 
