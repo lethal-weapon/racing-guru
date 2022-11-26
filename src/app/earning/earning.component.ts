@@ -26,6 +26,7 @@ export class EarningComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchEarnings();
   }
 
   setActivePerson = (selected: string) =>

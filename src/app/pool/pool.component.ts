@@ -16,6 +16,7 @@ export class PoolComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchFinalPools();
   }
 
   setActiveSectionGroup(clicked: string) {

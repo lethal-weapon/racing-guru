@@ -3,6 +3,10 @@ import {Component, OnInit} from '@angular/core';
 import {JOCKEYS, TRAINERS, GONE_PEOPLE} from '../model/person.model';
 import {RestRepository} from '../model/rest.repository';
 import {FinalDividend} from '../model/dividend.model';
+import {
+  FIVE_HUNDRED, FIVE_THOUSAND, ONE_THOUSAND,
+  TEN_THOUSAND, TWENTY_THOUSAND
+} from '../constants/numbers';
 
 @Component({
   selector: 'app-dividend',
@@ -10,7 +14,8 @@ import {FinalDividend} from '../model/dividend.model';
 })
 export class DividendComponent implements OnInit {
   activePersons: string[] = [];
-  activeMode: string = this.viewModes[2];
+  activeMode: string = this.viewModes[0];
+  activeQTT: number = 0;
 
   ordinals: Array<{ ordinal: number, superScript: string, color: string }> = [
     {ordinal: 1, superScript: 'st', color: 'text-red-600'},
@@ -23,6 +28,26 @@ export class DividendComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchFinalDividends();
+  }
+
+  increaseMinQTT = () =>
+    this.activeQTT += this.activeQTT < TEN_THOUSAND
+      ? FIVE_HUNDRED
+      : this.activeQTT < TWENTY_THOUSAND
+        ? ONE_THOUSAND
+        : FIVE_THOUSAND
+
+  decreaseMinQTT = () => {
+    if (this.activeQTT <= FIVE_HUNDRED) {
+      this.activeQTT = 0
+    } else {
+      this.activeQTT -= this.activeQTT <= TEN_THOUSAND
+        ? FIVE_HUNDRED
+        : this.activeQTT <= TWENTY_THOUSAND
+          ? ONE_THOUSAND
+          : FIVE_THOUSAND
+    }
   }
 
   setActiveMode = (clicked: string) =>
@@ -42,14 +67,11 @@ export class DividendComponent implements OnInit {
       : this.inactiveStyle
   }
 
-  getPersonStyle(person: string): string {
-    return this.activePersons.includes(person)
-      ? this.activeStyle
-      : this.inactiveStyle
-  }
+  getBadgeStyle(persons: string | string[]): string {
+    const involved = (typeof persons) === 'string' ? [persons] : persons
 
-  getPairStyle(pair: string[]): string {
-    return pair.some(p => this.activePersons.includes(p))
+    // @ts-ignore
+    return involved?.some(p => this.activePersons.includes(p))
       ? this.activeStyle
       : this.inactiveStyle
   }
@@ -81,11 +103,19 @@ export class DividendComponent implements OnInit {
     return `${(dividend / divisor * 100).toFixed(1)}%`
   }
 
-  get dividends(): FinalDividend[] {
-    const allDividends = this.repo.findFinalDividends();
-    if (this.activePersons.length === 0) return allDividends.slice(0, 8);
+  get freeModeEngagements(): number {
+    return this.dividends
+      .filter(d => this.activePersons
+        .every(ap => d.persons.map(p => p.person).includes(ap)))
+      .length;
+  }
 
-    return allDividends
+  get freeModeDividends(): FinalDividend[] {
+    if (this.activePersons.length === 0) {
+      return this.dividends.slice(0, 8);
+    }
+
+    return this.dividends
       .filter(d => this.activePersons
         .every(ap => d.persons
           .filter(p => p.placing <= 4)
@@ -95,13 +125,11 @@ export class DividendComponent implements OnInit {
   get singleModeDividends():
     Array<Array<{ person: string, top4s: number, engagements: number, percent: string }>> {
 
-    const allDividends = this.repo.findFinalDividends();
-    return this.personLists.map(pl => {
-      return pl.map(p => {
-        const engaged = allDividends
+    return this.personLists.map(pl => pl.map(p => {
+        const engaged = this.dividends
           .filter(d => d.persons.map(p => p.person).includes(p));
 
-        const top4s = allDividends
+        const top4s = this.dividends
           .filter(d => d.persons
             .filter(dp => dp.placing <= 4)
             .map(p => p.person)
@@ -114,25 +142,25 @@ export class DividendComponent implements OnInit {
           percent: this.formatPercentage(top4s.length, engaged.length)
         }
       }).sort((e1, e2) => (e2.top4s / e2.engagements) - (e1.top4s / e1.engagements))
-    })
+    )
   }
 
   get doubleModeDividends():
     Array<{ pair: string[], top4s: number, engagements: number, percent: string }> {
 
     let pairs: { pair: string[]; top4s: number; engagements: number; percent: string; }[] = []
+    const MIN_TOP4 = 8
     const MIN_RATIO = 0.1
-    const allDividends = this.repo.findFinalDividends();
     const people = this.personLists
       .reduce((prev, curr) => prev.concat(curr), [])
 
     for (let i = 0; i < people.length; i++) {
       for (let j = i + 1; j < people.length; j++) {
         const pair = [people[i], people[j]]
-        const engaged = allDividends
+        const engaged = this.dividends
           .filter(d => pair.every(sp => d.persons.map(p => p.person).includes(sp)));
 
-        const top4s = allDividends
+        const top4s = this.dividends
           .filter(d => pair
             .every(sp => d.persons
               .filter(p => p.placing <= 4).map(t4 => t4.person).includes(sp)));
@@ -140,7 +168,7 @@ export class DividendComponent implements OnInit {
         const engagedCount = engaged.length
         const top4Count = top4s.length
 
-        if (top4Count >= 8 && (top4Count / engagedCount >= MIN_RATIO)) {
+        if (top4Count >= MIN_TOP4 && (top4Count / engagedCount >= MIN_RATIO)) {
           pairs.push({
             pair: pair,
             top4s: top4Count,
@@ -154,11 +182,8 @@ export class DividendComponent implements OnInit {
     return pairs.sort((e1, e2) => (e2.top4s / e2.engagements) - (e1.top4s / e1.engagements));
   }
 
-  get totalEngagements(): number {
-    return this.repo.findFinalDividends()
-      .filter(d => this.activePersons
-        .every(ap => d.persons.map(p => p.person).includes(ap)))
-      .length;
+  get dividends(): FinalDividend[] {
+    return this.repo.findFinalDividends().filter(d => d.QTT >= this.activeQTT);
   }
 
   get personLists(): string[][] {
@@ -169,7 +194,7 @@ export class DividendComponent implements OnInit {
   }
 
   get viewModes(): string[] {
-    return ['Plain', 'Single', 'Double', 'Triple']
+    return ['Free', 'Single', 'Double', 'Triple']
   }
 
   get activeStyle(): string {

@@ -1,24 +1,55 @@
-<div class="m-10 flex flex-row justify-around items-start noselect">
+<div class="mx-10 my-6 flex flex-row justify-around items-start noselect">
   <div class="text-center">
-    <div class="m-4 flex flex-row justify-center">
-      <div *ngFor="let mode of viewModes"
-           class="mx-3 px-5 py-2 text-2xl font-bold rounded-full border cursor-pointer {{getModeStyle(mode)}}"
-           (click)="setActiveMode(mode)"
-      >
-        {{mode}}
-      </div>
-    </div>
+    <table class="mx-auto my-2">
+      <tr>
+        <td class="text-2xl font-bold py-4 pr-6">
+          View Modes
+        </td>
+        <td>
+          <div class="flex flex-row justify-start gap-4">
+            <div *ngFor="let mode of viewModes"
+                 class="px-4 py-2 text-xl rounded-full border cursor-pointer {{getModeStyle(mode)}}"
+                 (click)="setActiveMode(mode)"
+            >
+              {{mode}}
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-2xl font-bold py-3 pr-6">
+          MIN. QTT.
+        </td>
+        <td>
+          <div class="flex flex-row justify-start gap-5">
+            <div class="px-3 py-1 rounded-xl border cursor-pointer border-gray-600 hover:border-yellow-400"
+                 (click)="decreaseMinQTT()"
+            >
+              <i class="fa fa-minus"></i>
+            </div>
+            <div class="px-3 py-1 rounded-xl border cursor-pointer border-gray-600 hover:border-yellow-400"
+                 (click)="increaseMinQTT()"
+            >
+              <i class="fa fa-plus"></i>
+            </div>
+            <div class="text-2xl">
+              X {{activeQTT.toLocaleString()}}
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
     <div class="flex flex-col-reverse">
       <div *ngFor="let persons of personLists; let index = index"
-           class="mt-5"
+           class="mt-3"
       >
-        <div class="text-2xl font-bold mb-8">
+        <div class="text-2xl font-bold mb-6">
           <span *ngIf="index === 0">Jockeys</span>
           <span *ngIf="index === 1">Trainers</span>
         </div>
-        <div class="grid grid-cols-5 gap-4 text-xl">
+        <div class="grid grid-cols-5 gap-4">
           <div *ngFor="let person of persons"
-               class="px-3 py-1 rounded-xl border cursor-pointer {{getPersonStyle(person)}}"
+               class="px-3 py-1 text-xl rounded-xl border cursor-pointer {{getBadgeStyle(person)}}"
                (click)="setActivePerson(person)"
           >
             {{person}}
@@ -30,22 +61,22 @@
   <div *ngIf="activeMode === viewModes[0]">
     <div class="text-3xl text-center mb-8">
       Found:
-      {{dividends.length}}
+      {{freeModeDividends.length}}
       /
-      {{totalEngagements}}
+      {{freeModeEngagements}}
       =
       <span class="text-yellow-400">
-        {{formatPercentage(dividends.length, totalEngagements)}}
+        {{formatPercentage(freeModeDividends.length, freeModeEngagements)}}
       </span>
     </div>
     <div class="flex flex-col gap-4">
-      <div *ngIf="dividends.length === 0"
+      <div *ngIf="freeModeDividends.length === 0"
            class="my-10 text-center text-4xl text-red-600"
       >
         <i class="fa fa-thermometer-empty"></i>
         <span class="mx-5">NO MATCHES</span>
       </div>
-      <div *ngFor="let dividend of dividends"
+      <div *ngFor="let dividend of freeModeDividends"
            class="px-8 py-3 text-xl rounded-xl border border-gray-600 hover:border-yellow-400"
       >
         <div class="">
@@ -77,7 +108,7 @@
            class="mx-5"
       >
         <div *ngFor="let p of group"
-             class="m-2 flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border {{getPersonStyle(p.person)}}"
+             class="m-2 flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border {{getBadgeStyle(p.person)}}"
         >
           <div>
             {{p.person}}
@@ -93,7 +124,7 @@
        class="grid grid-cols-2 gap-2"
   >
     <div *ngFor="let pair of doubleModeDividends"
-         class="flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border {{getPairStyle(pair.pair)}}"
+         class="flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border {{getBadgeStyle(pair.pair)}}"
     >
       <div>
         {{pair.pair[0]}} & {{pair.pair[1]}}

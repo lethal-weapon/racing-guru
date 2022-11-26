@@ -15,6 +15,7 @@ export class MeetingComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchMeetings();
   }
 
   refresh = () => {

@@ -13,6 +13,7 @@ export class PeopleComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchStatistics();
   }
 
   getWinners(person: Person): number {

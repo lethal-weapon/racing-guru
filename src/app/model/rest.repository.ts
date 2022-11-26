@@ -16,32 +16,13 @@ export class RestRepository {
   private finalDividends: FinalDividend[] = [];
 
   constructor(private source: RestDataSource) {
-    this.fetchMeetings();
-    this.fetchEarnings();
-    this.fetchStatistics();
-    this.fetchFinalPools();
-    this.fetchFinalDividends();
   }
 
-  findFinalDividends(): FinalDividend[] {
-    return this.finalDividends;
-  }
-
-  findFinalPools(): FinalPool[] {
-    return this.finalPools;
-  }
-
-  findStatistics(): Statistics[] {
-    return this.statistics;
-  }
-
-  findMeetings(): Meeting[] {
-    return this.meetings;
-  }
-
-  findEarnings(): SeasonEarning[] {
-    return this.earnings;
-  }
+  findMeetings = () => this.meetings
+  findEarnings = () => this.earnings
+  findStatistics = () => this.statistics
+  findFinalPools = () => this.finalPools
+  findFinalDividends = () => this.finalDividends
 
   fetchFinalDividends = () =>
     this.source.getFinalDividends().subscribe(data => this.finalDividends = data)
