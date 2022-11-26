@@ -1,4 +1,4 @@
-<div class="mx-10 my-6 flex flex-row justify-around items-start noselect">
+<div class="mx-10 my-6 flex flex-row justify-between items-start noselect">
   <div class="text-center">
     <table class="mx-auto my-2">
       <tr>
@@ -21,7 +21,13 @@
           MIN. QTT.
         </td>
         <td>
-          <div class="flex flex-row justify-start gap-5">
+          <div class="flex flex-row justify-start text-xl gap-3">
+            <div *ngFor="let opt of quartetOptions"
+                 class="px-3 py-1 rounded-xl border cursor-pointer border-gray-600 hover:border-yellow-400"
+                 (click)="setActiveQuartet(opt.multiplier)"
+            >
+              {{opt.text}}
+            </div>
             <div class="px-3 py-1 rounded-xl border cursor-pointer border-gray-600 hover:border-yellow-400"
                  (click)="decreaseMinQTT()"
             >

@@ -50,6 +50,9 @@ export class DividendComponent implements OnInit {
     }
   }
 
+  setActiveQuartet = (multiplier: number) =>
+    this.activeQTT = multiplier
+
   setActiveMode = (clicked: string) =>
     this.activeMode = clicked
 
@@ -141,7 +144,9 @@ export class DividendComponent implements OnInit {
           engagements: engaged.length,
           percent: this.formatPercentage(top4s.length, engaged.length)
         }
-      }).sort((e1, e2) => (e2.top4s / e2.engagements) - (e1.top4s / e1.engagements))
+      }).sort((e1, e2) =>
+        (e2.top4s / (e2.engagements == 0 ? -1 : e2.engagements)) -
+        (e1.top4s / (e1.engagements == 0 ? -1 : e1.engagements)))
     )
   }
 
@@ -179,11 +184,21 @@ export class DividendComponent implements OnInit {
       }
     }
 
-    return pairs.sort((e1, e2) => (e2.top4s / e2.engagements) - (e1.top4s / e1.engagements));
+    return pairs.sort((e1, e2) =>
+      (e2.top4s / (e2.engagements == 0 ? -1 : e2.engagements)) -
+      (e1.top4s / (e1.engagements == 0 ? -1 : e1.engagements)));
   }
 
   get dividends(): FinalDividend[] {
     return this.repo.findFinalDividends().filter(d => d.QTT >= this.activeQTT);
+  }
+
+  get quartetOptions(): Array<{ text: string, multiplier: number }> {
+    return [
+      {text: '0', multiplier: 0},
+      {text: '5K', multiplier: FIVE_THOUSAND},
+      {text: '10K', multiplier: TEN_THOUSAND},
+    ];
   }
 
   get personLists(): string[][] {
