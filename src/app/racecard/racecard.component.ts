@@ -298,7 +298,7 @@ export class RacecardComponent implements OnInit {
 
   get next(): Racecard {
     // @ts-ignore
-    return this.racecards.filter(r => !r.dividend).shift();
+    return this.racecards.filter(r => !r.dividend?.win).shift();
   }
 
   get starters(): Starter[] {

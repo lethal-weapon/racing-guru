@@ -130,13 +130,27 @@
        class="grid grid-cols-2 gap-2"
   >
     <div *ngFor="let pair of doubleModeDividends"
-         class="flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border {{getBadgeStyle(pair.pair)}}"
+         class="flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border border-gray-600 hover:border-yellow-400"
     >
       <div>
-        {{pair.pair[0]}} & {{pair.pair[1]}}
+        {{pair.persons[0]}} & {{pair.persons[1]}}
       </div>
       <div>
         {{pair.top4s}} / {{pair.engagements}} = {{pair.percent}}
+      </div>
+    </div>
+  </div>
+  <div *ngIf="activeMode === viewModes[3]"
+       class="grid grid-cols-2 gap-2"
+  >
+    <div *ngFor="let trio of tripleModeDividends"
+         class="flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border border-gray-600 hover:border-yellow-400"
+    >
+      <div>
+        {{trio.persons[0]}}, {{trio.persons[1]}} & {{trio.persons[2]}}
+      </div>
+      <div>
+        {{trio.top4s}} / {{trio.engagements}} = {{trio.percent}}
       </div>
     </div>
   </div>

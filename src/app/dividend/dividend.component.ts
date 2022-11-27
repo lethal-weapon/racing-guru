@@ -13,9 +13,9 @@ import {
   templateUrl: './dividend.component.html'
 })
 export class DividendComponent implements OnInit {
-  activePersons: string[] = [];
-  activeMode: string = this.viewModes[0];
+  activeMode: string = this.viewModes[2];
   activeQTT: number = 0;
+  activePersons: string[] = [];
 
   ordinals: Array<{ ordinal: number, superScript: string, color: string }> = [
     {ordinal: 1, superScript: 'st', color: 'text-red-600'},
@@ -53,14 +53,32 @@ export class DividendComponent implements OnInit {
   setActiveQuartet = (multiplier: number) =>
     this.activeQTT = multiplier
 
-  setActiveMode = (clicked: string) =>
-    this.activeMode = clicked
+  setActiveMode = (clicked: string) => {
+    if (this.activeMode !== clicked) {
+      const modeIndex = this.viewModes.indexOf(clicked)
+      const persons = this.activePersons.length
+      if (modeIndex >= 2 && persons >= 2) {
+        this.activePersons = this.activePersons
+          .filter((p, i) => i < modeIndex - 1)
+      }
+
+      this.activeMode = clicked
+    }
+  }
 
   setActivePerson = (clicked: string) => {
     if (this.activePersons.includes(clicked)) {
       this.activePersons = this.activePersons.filter(p => p !== clicked)
     } else {
-      this.activePersons.push(clicked)
+      const modeIndex = this.viewModes.indexOf(this.activeMode)
+      if (modeIndex < 2) {
+        this.activePersons.push(clicked)
+      } else if (modeIndex === 2) {
+        this.activePersons = [clicked]
+      } else if (modeIndex === 3) {
+        if (this.activePersons.length < 2) this.activePersons.push(clicked)
+        else this.activePersons.splice(1, 1, clicked)
+      }
     }
   }
 
@@ -115,14 +133,15 @@ export class DividendComponent implements OnInit {
 
   get freeModeDividends(): FinalDividend[] {
     if (this.activePersons.length === 0) {
-      return this.dividends.slice(0, 8);
+      return this.dividends.slice(0, 10);
     }
 
     return this.dividends
       .filter(d => this.activePersons
         .every(ap => d.persons
           .filter(p => p.placing <= 4)
-          .map(t4 => t4.person).includes(ap)))
+          .map(t4 => t4.person)
+          .includes(ap)))
   }
 
   get singleModeDividends():
@@ -151,40 +170,82 @@ export class DividendComponent implements OnInit {
   }
 
   get doubleModeDividends():
-    Array<{ pair: string[], top4s: number, engagements: number, percent: string }> {
+    Array<{ persons: string[], top4s: number, engagements: number, percent: string }> {
 
-    let pairs: { pair: string[]; top4s: number; engagements: number; percent: string; }[] = []
-    const MIN_TOP4 = 8
-    const MIN_RATIO = 0.1
+    let pairs: { persons: string[]; top4s: number; engagements: number; percent: string; }[] = []
+    const target = this.activePersons[0] || undefined
     const people = this.personLists
       .reduce((prev, curr) => prev.concat(curr), [])
+
+    const limit = target ? 20 : 40
+    const minTop4 = target ? 4 : 8
 
     for (let i = 0; i < people.length; i++) {
       for (let j = i + 1; j < people.length; j++) {
         const pair = [people[i], people[j]]
-        const engaged = this.dividends
-          .filter(d => pair.every(sp => d.persons.map(p => p.person).includes(sp)));
+        if (target && !pair.includes(target)) continue
 
         const top4s = this.dividends
           .filter(d => pair
             .every(sp => d.persons
-              .filter(p => p.placing <= 4).map(t4 => t4.person).includes(sp)));
+              .filter(p => p.placing <= 4).map(t4 => t4.person).includes(sp))).length;
+        if (top4s < minTop4) continue
 
-        const engagedCount = engaged.length
-        const top4Count = top4s.length
+        const engaged = this.dividends
+          .filter(d => pair.every(sp => d.persons.map(p => p.person).includes(sp))).length;
 
-        if (top4Count >= MIN_TOP4 && (top4Count / engagedCount >= MIN_RATIO)) {
-          pairs.push({
-            pair: pair,
-            top4s: top4Count,
-            engagements: engagedCount,
-            percent: this.formatPercentage(top4Count, engagedCount)
-          })
-        }
+        pairs.push({
+          persons: pair,
+          top4s: top4s,
+          engagements: engaged,
+          percent: this.formatPercentage(top4s, engaged)
+        })
       }
     }
 
     return pairs.sort((e1, e2) =>
+      (e2.top4s / (e2.engagements == 0 ? -1 : e2.engagements)) -
+      (e1.top4s / (e1.engagements == 0 ? -1 : e1.engagements))).slice(0, limit);
+  }
+
+  get tripleModeDividends():
+    Array<{ persons: string[], top4s: number, engagements: number, percent: string }> {
+
+    let trios: { persons: string[]; top4s: number; engagements: number; percent: string; }[] = []
+    // const MIN_TOP4 = 8
+    // const MIN_RATIO = 0.15
+    // const people = this.personLists
+    //   .reduce((prev, curr) => prev.concat(curr), [])
+    //
+    // for (let i = 0; i < people.length; i++) {
+    //   for (let j = i + 1; j < people.length; j++) {
+    //     for (let k = j + 1; k < people.length; k++) {
+    //       const trio = [people[i], people[j], people[k]]
+    //       const top4s = this.dividends
+    //         .filter(d => trio
+    //           .every(sp => d.persons
+    //             .filter(p => p.placing <= 4).map(t4 => t4.person).includes(sp)));
+    //
+    //       const top4Count = top4s.length
+    //       if (top4Count < MIN_TOP4) continue
+    //
+    //       const engaged = this.dividends
+    //         .filter(d => trio.every(sp => d.persons.map(p => p.person).includes(sp)));
+    //
+    //       const engagedCount = engaged.length
+    //       if (top4Count / engagedCount < MIN_RATIO) continue
+    //
+    //       trios.push({
+    //         persons: trio,
+    //         top4s: top4Count,
+    //         engagements: engagedCount,
+    //         percent: this.formatPercentage(top4Count, engagedCount)
+    //       })
+    //     }
+    //   }
+    // }
+
+    return trios.sort((e1, e2) =>
       (e2.top4s / (e2.engagements == 0 ? -1 : e2.engagements)) -
       (e1.top4s / (e1.engagements == 0 ? -1 : e1.engagements)));
   }
