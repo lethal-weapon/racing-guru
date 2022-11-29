@@ -132,7 +132,10 @@
     <div *ngFor="let pair of doubleModeDividends"
          class="flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border border-gray-600 hover:border-yellow-400"
     >
-      <div>
+      <div *ngIf="pair.persons.length === 1">
+        {{pair.persons[0]}}
+      </div>
+      <div *ngIf="pair.persons.length === 2">
         {{pair.persons[0]}} & {{pair.persons[1]}}
       </div>
       <div>
@@ -146,8 +149,11 @@
     <div *ngFor="let trio of tripleModeDividends"
          class="flex flex-row justify-between gap-3 text-xl px-4 py-1 rounded-xl border border-gray-600 hover:border-yellow-400"
     >
-      <div>
-        {{trio.persons[0]}}, {{trio.persons[1]}} & {{trio.persons[2]}}
+      <div *ngIf="trio.persons.length === 1">
+        {{trio.persons[0]}}
+      </div>
+      <div *ngIf="trio.persons.length === 2">
+        {{trio.persons[0]}} & {{trio.persons[1]}}
       </div>
       <div>
         {{trio.top4s}} / {{trio.engagements}} = {{trio.percent}}

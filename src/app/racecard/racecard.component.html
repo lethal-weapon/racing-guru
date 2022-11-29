@@ -93,7 +93,8 @@
               {{getStarter(jockey, race).horse[0]}}
             </a>
           </div>
-          <div class="w-5 h-5 border border-gray-700 cursor-pointer"
+          <div class="w-5 h-5 border cursor-pointer"
+               [class.border-gray-700]="activeDraw !== getStarter(jockey, race).draw"
                [class.border-yellow-400]="activeDraw === getStarter(jockey, race).draw"
                (click)="setActiveDraw(getStarter(jockey, race).draw)"
           >

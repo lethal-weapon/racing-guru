@@ -13,7 +13,7 @@ import {
   templateUrl: './dividend.component.html'
 })
 export class DividendComponent implements OnInit {
-  activeMode: string = this.viewModes[2];
+  activeMode: string = this.viewModes[3];
   activeQTT: number = 0;
   activePersons: string[] = [];
 
@@ -173,17 +173,17 @@ export class DividendComponent implements OnInit {
     Array<{ persons: string[], top4s: number, engagements: number, percent: string }> {
 
     let pairs: { persons: string[]; top4s: number; engagements: number; percent: string; }[] = []
-    const target = this.activePersons[0] || undefined
+    const banker = this.activePersons[0] || undefined
     const people = this.personLists
       .reduce((prev, curr) => prev.concat(curr), [])
 
-    const limit = target ? 20 : 40
-    const minTop4 = target ? 4 : 8
+    const limit = banker ? 30 : 50
+    const minTop4 = banker ? 4 : 8
 
     for (let i = 0; i < people.length; i++) {
       for (let j = i + 1; j < people.length; j++) {
         const pair = [people[i], people[j]]
-        if (target && !pair.includes(target)) continue
+        if (banker && !pair.includes(banker)) continue
 
         const top4s = this.dividends
           .filter(d => pair
@@ -195,7 +195,7 @@ export class DividendComponent implements OnInit {
           .filter(d => pair.every(sp => d.persons.map(p => p.person).includes(sp))).length;
 
         pairs.push({
-          persons: pair,
+          persons: !banker ? pair : pair.filter(p => p !== banker),
           top4s: top4s,
           engagements: engaged,
           percent: this.formatPercentage(top4s, engaged)
@@ -212,42 +212,42 @@ export class DividendComponent implements OnInit {
     Array<{ persons: string[], top4s: number, engagements: number, percent: string }> {
 
     let trios: { persons: string[]; top4s: number; engagements: number; percent: string; }[] = []
-    // const MIN_TOP4 = 8
-    // const MIN_RATIO = 0.15
-    // const people = this.personLists
-    //   .reduce((prev, curr) => prev.concat(curr), [])
-    //
-    // for (let i = 0; i < people.length; i++) {
-    //   for (let j = i + 1; j < people.length; j++) {
-    //     for (let k = j + 1; k < people.length; k++) {
-    //       const trio = [people[i], people[j], people[k]]
-    //       const top4s = this.dividends
-    //         .filter(d => trio
-    //           .every(sp => d.persons
-    //             .filter(p => p.placing <= 4).map(t4 => t4.person).includes(sp)));
-    //
-    //       const top4Count = top4s.length
-    //       if (top4Count < MIN_TOP4) continue
-    //
-    //       const engaged = this.dividends
-    //         .filter(d => trio.every(sp => d.persons.map(p => p.person).includes(sp)));
-    //
-    //       const engagedCount = engaged.length
-    //       if (top4Count / engagedCount < MIN_RATIO) continue
-    //
-    //       trios.push({
-    //         persons: trio,
-    //         top4s: top4Count,
-    //         engagements: engagedCount,
-    //         percent: this.formatPercentage(top4Count, engagedCount)
-    //       })
-    //     }
-    //   }
-    // }
+    const bankers = this.activePersons;
+    if (bankers.length === 0) return trios;
+
+    const limit = bankers.length === 2 ? 20 : 40
+    const minTop4 = bankers.length === 2 ? 2 : 4
+    const people = this.personLists
+      .reduce((prev, curr) => prev.concat(curr), [])
+
+    for (let i = 0; i < people.length; i++) {
+      for (let j = i + 1; j < people.length; j++) {
+        for (let k = j + 1; k < people.length; k++) {
+          const trio = [people[i], people[j], people[k]]
+          if (!bankers.every(b => trio.includes(b))) continue
+
+          const top4s = this.dividends
+            .filter(d => trio
+              .every(sp => d.persons
+                .filter(p => p.placing <= 4).map(t4 => t4.person).includes(sp))).length;
+          if (top4s < minTop4) continue
+
+          const engaged = this.dividends
+            .filter(d => trio.every(sp => d.persons.map(p => p.person).includes(sp))).length;
+
+          trios.push({
+            persons: trio.filter(p => !bankers.includes(p)),
+            top4s: top4s,
+            engagements: engaged,
+            percent: this.formatPercentage(top4s, engaged)
+          })
+        }
+      }
+    }
 
     return trios.sort((e1, e2) =>
       (e2.top4s / (e2.engagements == 0 ? -1 : e2.engagements)) -
-      (e1.top4s / (e1.engagements == 0 ? -1 : e1.engagements)));
+      (e1.top4s / (e1.engagements == 0 ? -1 : e1.engagements))).slice(0, limit);
   }
 
   get dividends(): FinalDividend[] {
