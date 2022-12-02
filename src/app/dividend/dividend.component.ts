@@ -13,7 +13,7 @@ import {
   templateUrl: './dividend.component.html'
 })
 export class DividendComponent implements OnInit {
-  activeMode: string = this.viewModes[3];
+  activeMode: string = this.viewModes[0];
   activeQTT: number = 0;
   activePersons: string[] = [];
 

@@ -161,6 +161,31 @@ export class RacecardComponent implements OnInit {
     `.replace(/\s/g, '');
   }
 
+  isTrainerLastRace(jockey: string, racecard: Racecard): boolean {
+    if (racecard.race === this.maxRace) return false;
+
+    const trainer = this.getTrainer(jockey, racecard);
+    return racecard === this.racecards
+      .filter(r => r.starters.map(s => s.trainer).includes(trainer))
+      .pop();
+  }
+
+  emphasiseTrainer(jockey: string, racecard: Racecard): boolean {
+    if (racecard.race >= this.maxRace - 1) return false;
+    if (this.isTrainerLastRace(jockey, racecard)) return false;
+
+    const next = racecard.race + 1;
+    const trainer = this.getTrainer(jockey, racecard);
+
+    // @ts-ignore
+    return !this.racecards
+      .filter(r => r.race === next)
+      .pop()
+      .starters
+      .map(s => s.trainer)
+      .includes(trainer);
+  }
+
   hideBottomBorder(jockey: string, racecard: Racecard): boolean {
     return !(
       racecard.race === this.lastRace
@@ -323,7 +348,7 @@ export class RacecardComponent implements OnInit {
 
     const date = racecard.meeting;
     const venue = racecard.venue;
-    const course = racecard?.course;
+    const course = this.racecards.find(r => r.course)?.course;
     const total = this.racecards.length;
     const dayOfWeek = new Date(date)
       .toLocaleDateString('en-US', {weekday: 'short'})

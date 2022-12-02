@@ -102,7 +102,14 @@
           </div>
         </div>
         <div class="flex flex-row justify-evenly">
+          <div *ngIf="isTrainerLastRace(jockey, race)"
+               class="text-yellow-400"
+          >
+            &#952;
+          </div>
           <div class="cursor-pointer"
+               [class.italic]="emphasiseTrainer(jockey, race)"
+               [class.underline]="emphasiseTrainer(jockey, race)"
                [class.font-bold]="activeTrainer === getTrainer(jockey, race)"
                [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race)"
                (click)="setActiveTrainer(getTrainer(jockey, race))"
@@ -135,6 +142,6 @@
   </tbody>
 </table>
 
-<div class="my-10">
-  <app-meeting></app-meeting>
-</div>
+<!--<div class="my-10">-->
+<!--  <app-meeting></app-meeting>-->
+<!--</div>-->
