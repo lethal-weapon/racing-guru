@@ -12,7 +12,12 @@
         colspan="6"
         class="w-52 border border-gray-700"
     >
-      {{overview}}
+      <a class="hover:underline"
+         target="_blank"
+         href="{{overview.link}}"
+      >
+        {{overview.title}}
+      </a>
     </td>
   </tr>
   <tr>
@@ -39,7 +44,12 @@
         [class.border-b-yellow-400]="isJTBoundaryPerson(person)"
         [class.border-b-2]="isJTBoundaryPerson(person)"
     >
-      {{person}}
+      <a class="hover:underline"
+         target="_blank"
+         [href]="getPastRecordUrl(person)"
+      >
+        {{person}}
+      </a>
     </td>
     <ng-container *ngFor="let meeting of meetings">
       <td *ngFor="let placing of placings; let last = last"

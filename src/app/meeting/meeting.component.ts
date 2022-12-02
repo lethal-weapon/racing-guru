@@ -34,6 +34,21 @@ export class MeetingComponent implements OnInit {
     return ['WDJ', 'HDA', 'YCH', 'MNJ', 'LDE', 'CLR'].includes(person)
   }
 
+  getPastRecordUrl(person: string): string {
+    let url = `
+      https://racing.hkjc.com/racing/information/
+      English/Trainers/TrainerPastRec.aspx?TrainerId=${person}
+    `.replace(/\s/g, '');
+
+    if (JOCKEYS.map(j => j.code).includes(person)) {
+      url = url
+        .replace(/Trainer/g, 'Jockey')
+        .replace('Jockeys', 'Jockey');
+    }
+
+    return url;
+  }
+
   getValue(person: string, meeting: string, placing: string): string {
     const meetings = this.meetings.filter(m => m.meeting == meeting)
     if (meetings.length === 1) {
@@ -62,12 +77,26 @@ export class MeetingComponent implements OnInit {
     return this.repo.findMeetings().slice(0, 7);
   }
 
-  get overviews(): string[] {
-    return this.meetings
-      .map(m => `
-          ${m.meeting.replace('2022-', '').replace('2023-', '')} 
+  get overviews(): Array<{ title: string, link: string }> {
+    return this.meetings.map(m => {
+        const title = `
+          ${m.meeting.replace(/^\d{4}-/g, '')}
           ${m.venue} ${m.races}R $${m.turnover}
-      `.trim())
+        `.trim();
+
+        const date = m.meeting.replace(/-/g, '/');
+
+        const link = `
+          https://racing.hkjc.com/racing/information/
+          English/Racing/ResultsAll.aspx?RaceDate=${date}
+        `.replace(/\s/g, '');
+
+        return {
+          title: title,
+          link: link
+        }
+      }
+    )
   }
 
   get persons(): string[] {
