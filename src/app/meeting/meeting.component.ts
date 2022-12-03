@@ -34,6 +34,28 @@ export class MeetingComponent implements OnInit {
     return ['WDJ', 'HDA', 'YCH', 'MNJ', 'LDE', 'CLR'].includes(person)
   }
 
+  getNoWinnerDays(person: string): number {
+    const winningMeetings = this.repo.findMeetings().filter(m => {
+      const engaged = m.persons.map(p => p.person).includes(person);
+      if (!engaged) return false;
+
+      // @ts-ignore
+      const wins = m.persons.filter(p => p.person === person).pop().wins;
+      return wins > 0;
+    })
+
+    if (winningMeetings.length > 0) {
+      const mostRecentOne = winningMeetings.shift();
+      // @ts-ignore
+      const index = this.repo.findMeetings().indexOf(mostRecentOne);
+      if (!index) return 0;
+
+      return index === 0 ? index : index - 1;
+    }
+
+    return 99;
+  }
+
   getPastRecordUrl(person: string): string {
     let url = `
       https://racing.hkjc.com/racing/information/
@@ -74,7 +96,7 @@ export class MeetingComponent implements OnInit {
   }
 
   get meetings(): Meeting[] {
-    return this.repo.findMeetings().slice(0, 7);
+    return this.repo.findMeetings().slice(0, 8);
   }
 
   get overviews(): Array<{ title: string, link: string }> {
@@ -114,14 +136,14 @@ export class MeetingComponent implements OnInit {
     return people
   }
 
-  get placings(): Array<{ placing: string, key: string, color: string }> {
+  get placings(): Array<{ placing: string, key: string, color: string, width: string }> {
     return [
-      {placing: 'W', key: 'wins', color: 'text-red-600'},
-      {placing: 'Q', key: 'seconds', color: 'text-green-600'},
-      {placing: 'P', key: 'thirds', color: 'text-blue-600'},
-      {placing: 'F', key: 'fourths', color: 'text-purple-600'},
-      {placing: 'E', key: 'engagements', color: ''},
-      {placing: '$', key: 'earnings', color: ''},
+      {placing: 'W', key: 'wins', color: 'text-red-600', width: 'w-8'},
+      {placing: 'Q', key: 'seconds', color: 'text-green-600', width: 'w-6'},
+      {placing: 'P', key: 'thirds', color: 'text-blue-600', width: 'w-6'},
+      {placing: 'F', key: 'fourths', color: 'text-purple-600', width: 'w-6'},
+      {placing: 'E', key: 'engagements', color: '', width: 'w-8'},
+      {placing: '$', key: 'earnings', color: '', width: 'w-12'},
     ]
   }
 
