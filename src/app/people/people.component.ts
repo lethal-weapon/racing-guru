@@ -38,7 +38,7 @@ export class PeopleComponent implements OnInit {
   }
 
   isBoundaryPerson(person: Person): boolean {
-    return ['MA', 'HEL'].includes(person.code);
+    return ['MA', 'FEL'].includes(person.code);
   }
 
   get attributes(): string[] {

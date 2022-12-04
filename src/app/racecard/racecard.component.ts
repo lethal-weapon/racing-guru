@@ -235,7 +235,7 @@ export class RacecardComponent implements OnInit {
 
   isBoundaryJockey(jockey: string): boolean {
     let specials = []
-    for (const j of ['MNJ', 'LDE', 'CLR']) {
+    for (const j of ['MNJ', 'PMF', 'CLR']) {
       if (this.jockeys.includes(j)) {
         specials.push(j);
       } else {

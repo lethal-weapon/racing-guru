@@ -31,7 +31,7 @@ export class MeetingComponent implements OnInit {
   }
 
   isBoundaryPerson(person: string): boolean {
-    return ['WDJ', 'HDA', 'YCH', 'MNJ', 'LDE', 'CLR'].includes(person)
+    return ['WDJ', 'FC', 'YCH', 'MNJ', 'PMF', 'CLR'].includes(person)
   }
 
   getNoWinnerDays(person: string): number {
