@@ -225,6 +225,7 @@ export class RacecardComponent implements OnInit {
       && race.distance > 1000
       && (!race.name.includes('CUP'))
       && (!race.name.includes('TROPHY'))
+      && (!race.name.includes('CHAMPIONSHIP'))
       && (
         race.grade.endsWith('3')
         || race.grade.endsWith('4')
@@ -235,7 +236,7 @@ export class RacecardComponent implements OnInit {
 
   isBoundaryJockey(jockey: string): boolean {
     let specials = []
-    for (const j of ['MNJ', 'PMF', 'CLR']) {
+    for (const j of ['MNJ', 'BAM', 'PMF', 'CLR']) {
       if (this.jockeys.includes(j)) {
         specials.push(j);
       } else {
@@ -265,6 +266,7 @@ export class RacecardComponent implements OnInit {
       .replace('(', '')
       .replace(')', '')
       .replace('HANDICAP', '')
+      .replace('INTERNATIONAL JOCKEYS\' CHAMPIONSHIP', 'IJC')
       .trim();
 
     const dt = new Date(racecard.time);

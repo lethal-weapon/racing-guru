@@ -26,7 +26,10 @@ export class PeopleComponent implements OnInit {
   }
 
   isHighlightWinners(wins: number): boolean {
-    return Math.abs(50 - wins % 50) <= 5;
+    const closeToFifty = Math.abs(50 - wins % 50) <= 5;
+    const endWith4Or9 = [4, 9].includes(wins % 10);
+
+    return closeToFifty || endWith4Or9;
   }
 
   isLeavingPlayer(person: Person): boolean {

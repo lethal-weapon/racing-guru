@@ -13,16 +13,20 @@ export class Person {
 
 export const JOCKEYS = [
   new Person('PZ', 'Purton', 'Zac', 'Z. Purton', 'AUS', 'Club', ''),
-  new Person('DSS', 'DeSousa', 'Silvestre', 'S. DeSousa', 'BRZ', 'Club', ''),
   new Person('BH', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', ''),
-  new Person('MOJ', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', ''),
+  new Person('DSS', 'DeSousa', 'Silvestre', 'S. DeSousa', 'BRZ', 'Club', ''),
   new Person('TEK', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', ''),
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', ''),
   new Person('MNJ', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', ''),
 
+  // new Person('MOJ', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', ''),
   // new Person('SHB', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', ''),
-  // new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
-  // new Person('BAM', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', ''),
+  new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
+  new Person('KJL', 'Kah', 'Jamie', 'J. Kah', 'AUS', 'Club', ''),
+  new Person('DHA', 'Doyle', 'Hollie', 'H. Doyle', 'GB', 'Club', ''),
+  new Person('MTA', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', ''),
+  new Person('MR', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', ''),
+  new Person('BAM', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', ''),
 
   new Person('HCY', 'Ho', 'Chak-yiu', 'V. Ho', 'HK', 'Freelance', 'Vincent'),
   new Person('CML', 'Chadwick', 'Matthew L.', 'M. Chadwick', 'HK', 'Freelance', 'Lee'),
@@ -48,8 +52,8 @@ export const JOCKEYS = [
 ]
 
 export const TRAINERS = [
-  new Person('LFC', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie'),
   new Person('CAS', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony'),
+  new Person('LFC', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie'),
   new Person('SJJ', 'Size', 'John', 'J. Size', 'AUS', '', ''),
   new Person('YPF', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky'),
   new Person('WDJ', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', ''),
@@ -66,8 +70,8 @@ export const TRAINERS = [
   new Person('TKH', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy'),
   new Person('YCH', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis'),
 
-  new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter'),
   new Person('MKL', 'Man', 'Ka-leung', 'M. Man', 'HK', '', 'Manfred'),
+  new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter'),
   new Person('CCW', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael'),
   new Person('TYS', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me'),
   new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', ''),
@@ -83,5 +87,5 @@ export const NEW_PEOPLE =
 
 export const GONE_PEOPLE =
   JOCKEYS
-    .filter(j => ['SHB', 'MOJ'].includes(j.code))
+    .filter(j => ['MOJ', 'SHB'].includes(j.code))
     .concat(TRAINERS.filter(t => ['OSP'].includes(t.code)))
