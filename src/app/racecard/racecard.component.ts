@@ -261,7 +261,22 @@ export class RacecardComponent implements OnInit {
     return `${clean[0]}${clean.slice(-1)}`
   }
 
-  getTooltip(racecard: Racecard): string {
+  getStarterTooltip(jockey: string, racecard: Racecard): string {
+    const starter = racecard.starters.filter(s => s.jockey === jockey).pop()
+    // @ts-ignore
+    const horseNameEN = starter.horseNameEN
+    // @ts-ignore
+    const horseNameCH = starter.horseNameCH
+
+    return `
+      <div class="w-44 text-center">
+        <div>${horseNameCH}</div>
+        <div>${horseNameEN}</div>
+      </div>
+    `;
+  }
+
+  getRaceTooltip(racecard: Racecard): string {
     const name = racecard.name
       .replace('(', '')
       .replace(')', '')

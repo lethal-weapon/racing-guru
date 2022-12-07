@@ -57,7 +57,7 @@
     <td class="border border-gray-700"
         [class.text-yellow-400]="isSpecialRace(race)"
         [class.border-b-red-900]="race.race === lastRace"
-        tooltip="{{getTooltip(race)}}"
+        tooltip="{{getRaceTooltip(race)}}"
         [hideDelay]="0"
     >
       <div class="hover:underline">
@@ -81,6 +81,8 @@
     >
       <div *ngIf="rideThisRace(jockey, race)"
            class="flex flex-col"
+           tooltip="{{getStarterTooltip(jockey, race)}}"
+           [hideDelay]="0"
       >
         <div class="flex flex-row justify-between">
           <div class="w-5 h-5 rounded-full border border-gray-700">
