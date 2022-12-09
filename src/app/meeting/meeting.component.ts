@@ -96,7 +96,7 @@ export class MeetingComponent implements OnInit {
   }
 
   get meetings(): Meeting[] {
-    return this.repo.findMeetings().slice(0, 10);
+    return this.repo.findMeetings().slice(0, 8);
   }
 
   get overviews(): Array<{ title: string, link: string }> {

@@ -1,0 +1,42 @@
+<div *ngFor="let meeting of meetings"
+     class="mx-6 my-4 flex flex-row justify-around items-center noselect"
+>
+  <div class="px-5 py-3 text-2xl rounded-2xl border"
+       [class.border-gray-800]="activeVenue !== meeting.venue"
+       [class.border-yellow-400]="activeVenue == meeting.venue"
+       (click)="setActiveVenue(meeting.venue)"
+  >
+    <div class="mb-2 text-center">
+      {{meeting.meeting}}
+      {{meeting.venue}}
+      {{meeting.races}}R
+      ${{meeting.turnover}}
+    </div>
+    <div class="flex flex-row justify-evenly items-center">
+      <div class="">
+        ${{getAverageTurnoverPerRace(meeting)}}/R
+      </div>
+      <div class="w-5 h-5 rounded-full {{getTurnoverIntensityColor(meeting)}}">
+      </div>
+    </div>
+  </div>
+  <div class="text-lg text-center flex flex-row justify-evenly items-center">
+    <div *ngFor="let ps of getOnBoardPersons(meeting); let index = index"
+         class="p-1 border border-2 rounded-xl"
+         [class.ml-10]="index === 7"
+         [class.border-gray-900]="activePerson !== ps.person"
+         [class.border-yellow-400]="activePerson == ps.person"
+         (click)="setActivePerson(ps.person)"
+    >
+      <div class="">
+        <img src="assets/people/{{ps.person}}.jpg"
+             alt="{{ps.person}}"
+             class="h-16 rounded-xl"
+        />
+      </div>
+      <div class="">
+        {{ps.earnings}}
+      </div>
+    </div>
+  </div>
+</div>

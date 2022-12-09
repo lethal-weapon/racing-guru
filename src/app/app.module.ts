@@ -14,6 +14,7 @@ import {EarningComponent} from './earning/earning.component';
 import {PoolComponent} from './pool/pool.component';
 import {PeopleComponent} from './people/people.component';
 import {DividendComponent} from './dividend/dividend.component';
+import {TrendComponent} from './trend/trend.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import {DividendComponent} from './dividend/dividend.component';
     EarningComponent,
     PoolComponent,
     PeopleComponent,
-    DividendComponent
+    DividendComponent,
+    TrendComponent
   ],
   imports: [
     BrowserModule,
