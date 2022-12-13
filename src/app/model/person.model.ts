@@ -19,16 +19,16 @@ export const JOCKEYS = [
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', ''),
   new Person('MNJ', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', ''),
 
-  new Person('MOJ', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', ''),
-  new Person('SHB', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', ''),
-  new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
+  // new Person('MOJ', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', ''),
+  // new Person('SHB', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', ''),
+  // new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
   // new Person('KJL', 'Kah', 'Jamie', 'J. Kah', 'AUS', 'Club', ''),
   // new Person('DHA', 'Doyle', 'Hollie', 'H. Doyle', 'GB', 'Club', ''),
   // new Person('MTA', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', ''),
-  new Person('MR', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', ''),
-  new Person('BUW', 'Buick', 'William', 'W. Buick', 'DEN', 'Club', ''),
-  new Person('LC', 'Lemaire', 'Christophe', 'C. Lemaire', 'FR', 'Club', ''),
-  new Person('BAM', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', ''),
+  // new Person('MR', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', ''),
+  // new Person('BUW', 'Buick', 'William', 'W. Buick', 'DEN', 'Club', ''),
+  // new Person('LC', 'Lemaire', 'Christophe', 'C. Lemaire', 'FR', 'Club', ''),
+  // new Person('BAM', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', ''),
 
   new Person('HCY', 'Ho', 'Chak-yiu', 'V. Ho', 'HK', 'Freelance', 'Vincent'),
   new Person('CML', 'Chadwick', 'Matthew L.', 'M. Chadwick', 'HK', 'Freelance', 'Lee'),
@@ -46,9 +46,9 @@ export const JOCKEYS = [
   new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus'),
   new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry'),
   new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith'),
-  // new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred'),
-  // new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack'),
-  // new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor'),
+  new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred'),
+  new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack'),
+  new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor'),
   new Person('MHT', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan'),
   new Person('LHW', 'Lai', 'Hoi-wing', 'A. Lai', 'HK', 'Freelance', 'Alex'),
 ]
@@ -66,11 +66,11 @@ export const TRAINERS = [
   new Person('NPC', 'Ng', 'Pang-chi', 'P. Ng', 'HK', '', 'Pierre'),
   new Person('FC', 'Fownes', 'Caspar', 'C. Fownes', 'GB', '', ''),
 
+  new Person('SWY', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris'),
   new Person('HAD', 'Hall', 'David', 'D. Hall', 'AUS', '', ''),
   new Person('HDA', 'Hayes', 'David', 'D. Hayes', 'AUS', '', ''),
-  new Person('SWY', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris'),
-  new Person('TKH', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy'),
   new Person('YCH', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis'),
+  new Person('TKH', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy'),
 
   new Person('MKL', 'Man', 'Ka-leung', 'M. Man', 'HK', '', 'Manfred'),
   new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter'),
@@ -79,7 +79,7 @@ export const TRAINERS = [
   new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', ''),
   new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony'),
   new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', ''),
-  new Person('OSP', 'OSullivan', 'Paul', 'P. OSullivan', 'NZ', '', ''),
+  // new Person('OSP', 'OSullivan', 'Paul', 'P. OSullivan', 'NZ', '', ''),
 ]
 
 export const NEW_PEOPLE =
