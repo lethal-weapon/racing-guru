@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {FinalPool, DEFAULT_FINAL_POOL} from '../model/pool.model';
+import {FinalPool, DEFAULT_FINAL_POOL, TimePool} from '../model/pool.model';
 import {ONE_MILLION} from '../constants/numbers';
 
 @Component({
@@ -13,16 +13,33 @@ export class PoolComponent implements OnInit {
   activeGroup: string = this.poolGroups[0];
 
   activeMeeting: string = '2022-12-14';
+  timeSeriesViewModeInAmount: boolean = false;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
     this.repo.fetchFinalPools();
+    this.fetchTimeSeries();
   }
 
-  setActiveMeeting = (clicked: string) =>
-    this.activeMeeting = clicked
+  fetchTimeSeries = () => {
+    this.repo.fetchTimeSeriesPools(
+      this.activeMeeting,
+      this.activeMeetingFinalRace,
+      this.timePointsInMinute.filter(p => p < 9)
+    )
+  }
+
+  toggleTimeSeriesViewMode = () =>
+    this.timeSeriesViewModeInAmount = !this.timeSeriesViewModeInAmount
+
+  setActiveMeeting(clicked: string) {
+    if (this.activeMeeting != clicked) {
+      this.activeMeeting = clicked;
+      this.fetchTimeSeries();
+    }
+  }
 
   setActiveSectionGroup(clicked: string) {
     if (this.sections.includes(clicked)) this.activeSection = clicked;
@@ -39,6 +56,14 @@ export class PoolComponent implements OnInit {
     return ![this.activeSection, this.activeGroup].includes(sectionGroup)
       ? 'border border-gray-800 hover:border-gray-600 cursor-pointer'
       : 'font-bold bg-gradient-to-r from-sky-800 to-indigo-800'
+  }
+
+  highlightTimeSeriesCell(race: number, point: number): boolean {
+    if (point == -30) return true;
+    const secondToTheLastRace = this.activeMeetingFinalRace - 2;
+
+    if (point == 0 && race <= secondToTheLastRace) return true;
+    return point == 2 && race > secondToTheLastRace;
   }
 
   formatTimePoint(point: number): string {
@@ -64,24 +89,41 @@ export class PoolComponent implements OnInit {
 
   formatAmount(amount: number): string {
     if (amount === 0) return '';
-    let rounded = (amount / ONE_MILLION).toFixed(2);
+    const precision = this.activeSection === this.sections[1] ? 1 : 2;
+    let rounded = (amount / ONE_MILLION).toFixed(precision);
+
     while (rounded.length > 0 && rounded.endsWith('0')) {
       rounded = rounded.slice(0, rounded.length - 1)
     }
     if (rounded.length > 0 && rounded.endsWith('.')) {
       rounded = rounded.slice(0, rounded.length - 1)
     }
-    return rounded
+
+    return rounded === '0' ? '' : rounded;
   }
 
-  getTimePool(meeting: string, race: number, point: number): FinalPool {
+  formatTSAmount(final: number, amount: number, point: number): string {
+    if (point === 9) return this.formatAmount(final);
+    if (amount === final) return '';
+    if (this.timeSeriesViewModeInAmount) return this.formatAmount(amount);
+    const percent = Math.floor((amount / final) * 100).toString();
+    return percent === '0' ? '' : percent;
+  }
+
+  getTimePool(meeting: string, race: number, point: number): FinalPool | TimePool {
     if (point === 9) {
       return this.repo.findFinalPools()
         .filter(p => p.meeting === meeting && p.race === race)
         .pop() || DEFAULT_FINAL_POOL;
     }
 
-    return DEFAULT_FINAL_POOL;
+    const match = this.repo.findTimeSeriesPools()
+      .filter(p => p.meeting === meeting && p.race === race)
+      .pop();
+
+    return match
+      ? match.pools.filter(p => p.point === point).pop() || DEFAULT_FINAL_POOL
+      : DEFAULT_FINAL_POOL;
   }
 
   getFinalPool(pools: FinalPool[], meeting: string, race: number): FinalPool {
@@ -109,7 +151,7 @@ export class PoolComponent implements OnInit {
 
   get timePointsInMinute(): number[] {
     return [
-      9, 3, 2, 1, 0, -1, -2, -3, -5,
+      9, 2, 1, 0, -1, -2, -3, -5,
       -10, -15, -20, -30, -60, -120,
       -240, -480, -960, -1440
     ]
@@ -124,6 +166,10 @@ export class PoolComponent implements OnInit {
       sorted.filter(p => p.venue === 'HV'),
       sorted.filter(p => p.venue !== 'HV'),
     ]
+  }
+
+  get activeMeetingFinalRace(): number {
+    return this.activeMeetingFinalPools.pop()?.race || 9;
   }
 
   get activeMeetingFinalPools(): FinalPool[] {

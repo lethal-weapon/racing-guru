@@ -98,11 +98,19 @@
   </div>
   <table class="mx-auto my-5 text-center table-fixed border-collapse">
     <thead>
-    <th class="w-24 py-2 border border-gray-600">
-      <i class="fa fa-dollar fa-lg"></i>
+    <th class="w-16 py-2 border border-gray-600 cursor-pointer hover:text-yellow-400"
+        (click)="toggleTimeSeriesViewMode()"
+    >
+      <span *ngIf="timeSeriesViewModeInAmount">
+        <i class="fa fa-dollar fa-lg"></i>
+      </span>
+      <span *ngIf="!timeSeriesViewModeInAmount">
+        <i class="fa fa-percent fa-lg"></i>
+      </span>
     </th>
     <th *ngFor="let point of timePointsInMinute"
         class="w-24 py-2 border border-gray-600 text-xl"
+        [class.text-yellow-400]="point == 0 || point == -30"
     >
       {{formatTimePoint(point)}}
     </th>
@@ -110,41 +118,35 @@
     <tbody>
     <tr *ngFor="let pool of activeMeetingFinalPools">
       <td class="p-2 text-xl border border-gray-700">
-        <div class="">
-          {{pool.race}}
-          {{formatGrade(pool.grade)}}
-          {{formatStarters(pool.starters)}}
-        </div>
-        <div class="">
-          {{pool.time}}
-        </div>
+        {{pool.race}}
       </td>
       <td *ngFor="let point of timePointsInMinute"
           class="p-1 border border-gray-700 hover:bg-gray-800"
+          [class.bg-gray-800]="highlightTimeSeriesCell(pool.race, point)"
       >
         <div class="grid grid-cols-2 gap-1">
           <div class="text-red-600">
             {{ activeGroup === poolGroups[0]
-            ? formatAmount(getTimePool(pool.meeting, pool.race, point).WIN)
-            : formatAmount(getTimePool(pool.meeting, pool.race, point).FT)
+            ? formatTSAmount(pool.WIN, getTimePool(pool.meeting, pool.race, point).WIN, point)
+            : formatTSAmount(pool.FT, getTimePool(pool.meeting, pool.race, point).FT, point)
             }}
           </div>
           <div class="text-green-600">
             {{ activeGroup === poolGroups[0]
-            ? formatAmount(getTimePool(pool.meeting, pool.race, point).QIN)
-            : formatAmount(getTimePool(pool.meeting, pool.race, point).TCE)
+            ? formatTSAmount(pool.QIN, getTimePool(pool.meeting, pool.race, point).QIN, point)
+            : formatTSAmount(pool.TCE, getTimePool(pool.meeting, pool.race, point).TCE, point)
             }}
           </div>
           <div class="text-blue-600">
             {{ activeGroup === poolGroups[0]
-            ? formatAmount(getTimePool(pool.meeting, pool.race, point).PLA)
-            : formatAmount(getTimePool(pool.meeting, pool.race, point).FQ)
+            ? formatTSAmount(pool.PLA, getTimePool(pool.meeting, pool.race, point).PLA, point)
+            : formatTSAmount(pool.FQ, getTimePool(pool.meeting, pool.race, point).FQ, point)
             }}
           </div>
           <div class="text-purple-600">
             {{ activeGroup === poolGroups[0]
-            ? formatAmount(getTimePool(pool.meeting, pool.race, point).QPL)
-            : formatAmount(getTimePool(pool.meeting, pool.race, point).DBL)
+            ? formatTSAmount(pool.QPL, getTimePool(pool.meeting, pool.race, point).QPL, point)
+            : formatTSAmount(pool.DBL, getTimePool(pool.meeting, pool.race, point).DBL, point)
             }}
           </div>
         </div>

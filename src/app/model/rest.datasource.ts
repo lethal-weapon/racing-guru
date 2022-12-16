@@ -6,7 +6,7 @@ import {environment as env} from '../../environments/environment';
 import {Meeting} from './meeting.model';
 import {SeasonEarning} from './earning.model';
 import {Statistics} from './statistics.model';
-import {FinalPool} from './pool.model';
+import {FinalPool, TimeSeriesPool} from './pool.model';
 import {FinalDividend} from './dividend.model';
 
 @Injectable()
@@ -32,6 +32,19 @@ export class RestDataSource {
 
   getFinalPools(): Observable<FinalPool[]> {
     return this.http.get<FinalPool[]>(`${this.baseUrl}/pool/finals`);
+  }
+
+  getTimeSeriesPools(
+    meeting: string,
+    races: number,
+    points: number[]
+  ): Observable<TimeSeriesPool[]> {
+    const params =
+      `meeting=${meeting}&races=${races}&points=${points.join(',')}`;
+
+    return this.http.get<TimeSeriesPool[]>(
+      `${this.baseUrl}/pool/time-series?${params}`
+    );
   }
 
   getFinalDividends(): Observable<FinalDividend[]> {

@@ -47,3 +47,21 @@ export const DEFAULT_FINAL_POOL: FinalPool = {
   TCE      : 0,
   DBL      : 0
 }
+
+export interface TimeSeriesPool {
+  meeting  : string,
+  race     : number,
+  pools    : TimePool[]
+}
+
+export interface TimePool {
+  point : number,
+  WIN   : number,
+  PLA   : number,
+  QIN   : number,
+  QPL   : number,
+  FT    : number,
+  FQ    : number,
+  TCE   : number,
+  DBL   : number
+}

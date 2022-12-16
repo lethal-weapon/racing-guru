@@ -4,7 +4,7 @@ import {RestDataSource} from './rest.datasource';
 import {Meeting} from './meeting.model';
 import {SeasonEarning} from './earning.model';
 import {Statistics} from './statistics.model';
-import {FinalPool} from './pool.model';
+import {FinalPool, TimeSeriesPool} from './pool.model';
 import {FinalDividend} from './dividend.model';
 
 @Injectable()
@@ -13,6 +13,7 @@ export class RestRepository {
   private earnings: SeasonEarning[] = [];
   private statistics: Statistics[] = [];
   private finalPools: FinalPool[] = [];
+  private timeSeriesPools: TimeSeriesPool[] = [];
   private finalDividends: FinalDividend[] = [];
 
   constructor(private source: RestDataSource) {
@@ -22,6 +23,7 @@ export class RestRepository {
   findEarnings = () => this.earnings
   findStatistics = () => this.statistics
   findFinalPools = () => this.finalPools
+  findTimeSeriesPools = () => this.timeSeriesPools
   findFinalDividends = () => this.finalDividends
 
   fetchFinalDividends = () =>
@@ -29,6 +31,19 @@ export class RestRepository {
 
   fetchFinalPools = () =>
     this.source.getFinalPools().subscribe(data => this.finalPools = data)
+
+  fetchTimeSeriesPools = (meeting: string, races: number, points: number[]) => {
+    this.source.getTimeSeriesPools(meeting, races, points).subscribe(data => {
+      data.forEach(d => {
+        const old = this.timeSeriesPools
+          .filter(p => p.meeting === d.meeting && p.race === d.race)
+          .pop();
+
+        this.timeSeriesPools = this.timeSeriesPools.filter(p => p !== old);
+        this.timeSeriesPools.push(d);
+      })
+    })
+  }
 
   fetchStatistics = () =>
     this.source.getStatistics().subscribe(data => this.statistics = data)
