@@ -17,6 +17,7 @@ export class Pool {
 export interface FinalPool {
   meeting  : string,
   race     : number,
+  time     : string,
   venue    : string,
   grade    : string,
   starters : number,
@@ -33,6 +34,7 @@ export interface FinalPool {
 export const DEFAULT_FINAL_POOL: FinalPool = {
   meeting  : '1999-09-09',
   race     : 9,
+  time     : '18:45',
   venue    : 'HV',
   grade    : '-',
   starters : 0,
