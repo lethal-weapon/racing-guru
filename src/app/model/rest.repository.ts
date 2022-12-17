@@ -33,6 +33,14 @@ export class RestRepository {
     this.source.getFinalPools().subscribe(data => this.finalPools = data)
 
   fetchTimeSeriesPools = (meeting: string, races: number, points: number[]) => {
+    const currTime = new Date().getTime();
+    const raceTime = new Date(meeting).getTime();
+    const diff = Math.floor((currTime - raceTime) / 1000);
+    const fetched = this.timeSeriesPools
+      .filter(p => p.meeting === meeting && p.race === races)
+      .length > 0;
+    if (fetched && diff > 86400) return
+
     this.source.getTimeSeriesPools(meeting, races, points).subscribe(data => {
       data.forEach(d => {
         const old = this.timeSeriesPools

@@ -9,7 +9,7 @@ import {ONE_MILLION} from '../constants/numbers';
   templateUrl: './pool.component.html'
 })
 export class PoolComponent implements OnInit {
-  activeSection: string = this.sections[1];
+  activeSection: string = this.sections[0];
   activeGroup: string = this.poolGroups[0];
 
   activeMeeting: string = '2022-12-14';
