@@ -44,8 +44,8 @@ export class TrendComponent implements OnInit {
 
   getTurnoverIntensityColor(meeting: Meeting): string {
     const avg = this.getAverageTurnoverPerRace(meeting);
-    if (avg >= 19.5) return 'bg-blue-600';
-    if (avg >= 17.5) return 'bg-green-600';
+    if (avg >= 19) return 'bg-blue-600';
+    if (avg >= 17) return 'bg-green-600';
     return 'bg-red-600';
   }
 

@@ -75,10 +75,10 @@ export const TRAINERS = [
   new Person('MKL', 'Man', 'Ka-leung', 'M. Man', 'HK', '', 'Manfred'),
   new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter'),
   new Person('CCW', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael'),
-  new Person('TYS', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me'),
   new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', ''),
-  new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony'),
   new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', ''),
+  new Person('TYS', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me'),
+  new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony'),
   // new Person('OSP', 'OSullivan', 'Paul', 'P. OSullivan', 'NZ', '', ''),
 ]
 

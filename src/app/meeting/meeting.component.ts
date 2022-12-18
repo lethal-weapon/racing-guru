@@ -27,7 +27,7 @@ export class MeetingComponent implements OnInit {
   }
 
   isJTBoundaryPerson(person: string): boolean {
-    return person === 'RW';
+    return person === 'MA';
   }
 
   isBoundaryPerson(person: string): boolean {
