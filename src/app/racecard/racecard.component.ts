@@ -145,6 +145,23 @@ export class RacecardComponent implements OnInit {
     return racecard.odds.winPlace.filter(o => o.order === order).pop();
   }
 
+  getQQPWinPlaceOdds(order: number, racecard: Racecard): number[] {
+    const PAYOUT_RATE = 0.825;
+    const qin = racecard.odds?.quinella;
+    const qpl = racecard.odds?.quinellaPlace;
+
+    return [qin, qpl].map(pairs => {
+      if (!pairs) return 1;
+      const weightOdds = PAYOUT_RATE / pairs
+        .filter(p => p.orders.includes(order))
+        .map(p => p.odds)
+        .map(o => PAYOUT_RATE / o)
+        .reduce((prev, curr) => prev + curr, 0);
+
+      return pairs === qin ? 2 * weightOdds : weightOdds;
+    });
+  }
+
   getTrainer(jockey: string, racecard: Racecard): string {
     return this.getStarter(jockey, racecard).trainer;
   }
@@ -252,6 +269,25 @@ export class RacecardComponent implements OnInit {
     return specials.includes(jockey);
   }
 
+  isInGoodConditionNextRace(condition: string, jockey: string): boolean {
+    if (!this.next) return false;
+    if (!this.next.odds) return false;
+    if (!this.rideThisRace(jockey, this.next)) return false;
+
+    const wp = this.getWinPlaceOdds(jockey, this.next);
+    if (wp.win == 0 || wp.place == 0) return false;
+
+    let ratio = 0;
+    if (condition == 'WPCI') ratio = 3 * wp.place / wp.win;
+    else {
+      const qqpWP = this.getQQPWinPlaceOdds(wp.order, this.next);
+      if (condition == 'W/QW') ratio = wp.win / qqpWP[0];
+      else if (condition == 'P/QP') ratio = wp.place / qqpWP[1];
+    }
+
+    return ratio >= 0.75 && ratio <= 1.25;
+  }
+
   formatRaceGrade(grade: string): string {
     const clean = grade
       .replace('(', '')
@@ -324,6 +360,10 @@ export class RacecardComponent implements OnInit {
       {pool: 'FQ', amount: (pool.quartet / ONE_MILLION).toFixed(2)},
       {pool: 'DBL', amount: ((pool?.double || 0) / ONE_MILLION).toFixed(2)},
     ]
+  }
+
+  get conditions(): string[] {
+    return ['WPCI', 'W/QW', 'P/QP'];
   }
 
   get maxRace(): number {

@@ -97,6 +97,7 @@
           </div>
           <div class="w-5 h-5 border cursor-pointer"
                [class.border-gray-700]="activeDraw !== getStarter(jockey, race).draw"
+               [class.text-yellow-400]="activeDraw === getStarter(jockey, race).draw"
                [class.border-yellow-400]="activeDraw === getStarter(jockey, race).draw"
                (click)="setActiveDraw(getStarter(jockey, race).draw)"
           >
@@ -142,6 +143,22 @@
     </td>
   </tr>
   </tbody>
+  <tfoot>
+  <tr *ngFor="let condition of conditions">
+    <td class="border border-gray-700">
+      {{condition}}
+    </td>
+    <td *ngFor="let jockey of jockeys"
+        class="border border-gray-700"
+    >
+      <span *ngIf="isInGoodConditionNextRace(condition, jockey)"
+            class="animate__animated animate__bounceIn animate__slow"
+      >
+        <i class="fa fa-check"></i>
+      </span>
+    </td>
+  </tr>
+  </tfoot>
 </table>
 
 <div class="my-10">
