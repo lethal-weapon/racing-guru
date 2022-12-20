@@ -152,13 +152,11 @@ export class RacecardComponent implements OnInit {
 
     return [qin, qpl].map(pairs => {
       if (!pairs) return 1;
-      const weightOdds = PAYOUT_RATE / pairs
+      return 2 * PAYOUT_RATE / pairs
         .filter(p => p.orders.includes(order))
         .map(p => p.odds)
         .map(o => PAYOUT_RATE / o)
         .reduce((prev, curr) => prev + curr, 0);
-
-      return pairs === qin ? 2 * weightOdds : weightOdds;
     });
   }
 
@@ -269,13 +267,14 @@ export class RacecardComponent implements OnInit {
     return specials.includes(jockey);
   }
 
-  isInGoodConditionNextRace(condition: string, jockey: string): boolean {
-    if (!this.next) return false;
-    if (!this.next.odds) return false;
-    if (!this.rideThisRace(jockey, this.next)) return false;
+  getNextRaceConditionGrade(condition: string, jockey: string): string {
+    const grade = this.grades[this.grades.length - 1].grade;
+    if (!this.next) return grade;
+    if (!this.next.odds) return grade;
+    if (!this.rideThisRace(jockey, this.next)) return grade;
 
     const wp = this.getWinPlaceOdds(jockey, this.next);
-    if (wp.win == 0 || wp.place == 0) return false;
+    if (wp.win == 0 || wp.place == 0) return grade;
 
     let ratio = 0;
     if (condition == 'WPCI') ratio = 3 * wp.place / wp.win;
@@ -285,7 +284,10 @@ export class RacecardComponent implements OnInit {
       else if (condition == 'P/QP') ratio = wp.place / qqpWP[1];
     }
 
-    return ratio >= 0.75 && ratio <= 1.25;
+    for (const g of this.grades.filter(g => g.range > 0)) {
+      if (Math.abs(1 - ratio) <= g.range) return g.grade;
+    }
+    return grade;
   }
 
   formatRaceGrade(grade: string): string {
@@ -359,6 +361,14 @@ export class RacecardComponent implements OnInit {
       {pool: 'QP', amount: (pool.quinellaPlace / ONE_MILLION).toFixed(2)},
       {pool: 'FQ', amount: (pool.quartet / ONE_MILLION).toFixed(2)},
       {pool: 'DBL', amount: ((pool?.double || 0) / ONE_MILLION).toFixed(2)},
+    ]
+  }
+
+  get grades(): Array<{ grade: string, range: number }> {
+    return [
+      {grade: 'A', range: 0.15},
+      {grade: 'B', range: 0.25},
+      {grade: 'C', range: 0},
     ]
   }
 

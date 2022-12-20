@@ -56,7 +56,7 @@
   <tr *ngFor="let race of racecards">
     <td class="border border-gray-700"
         [class.text-yellow-400]="isSpecialRace(race)"
-        [class.border-b-red-900]="race.race === lastRace"
+        [class.border-b-red-900]="race.race === lastRace || race.race === maxRace"
         tooltip="{{getRaceTooltip(race)}}"
         [hideDelay]="0"
     >
@@ -75,7 +75,7 @@
     <td *ngFor="let jockey of jockeys"
         class="border border-gray-700 hover:bg-gray-800 text-sm {{getPlacingColor(jockey, race)}}"
         [class.border-r-red-900]="isBoundaryJockey(jockey)"
-        [class.border-b-red-900]="race.race === lastRace"
+        [class.border-b-red-900]="race.race === lastRace || race.race === maxRace"
         [class.border-b-gray-900]="hideBottomBorder(jockey, race)"
         [class.border-r-gray-900]="hideRightBorder(jockey, race)"
     >
@@ -151,8 +151,9 @@
     <td *ngFor="let jockey of jockeys"
         class="border border-gray-700"
     >
-      <span *ngIf="isInGoodConditionNextRace(condition, jockey)"
-            class="animate__animated animate__bounceIn animate__slow"
+      <span class="animate__animated animate__bounceIn animate__slow"
+            [class.invisible]="getNextRaceConditionGrade(condition, jockey) == 'C'"
+            [class.text-green-600]="getNextRaceConditionGrade(condition, jockey) == 'A'"
       >
         <i class="fa fa-check"></i>
       </span>
