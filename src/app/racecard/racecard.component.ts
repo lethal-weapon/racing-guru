@@ -267,27 +267,26 @@ export class RacecardComponent implements OnInit {
     return specials.includes(jockey);
   }
 
-  getNextRaceConditionGrade(condition: string, jockey: string): string {
-    const grade = this.grades[this.grades.length - 1].grade;
-    if (!this.next) return grade;
-    if (!this.next.odds) return grade;
-    if (!this.rideThisRace(jockey, this.next)) return grade;
+  getNextRaceRecommendation(jockey: string): number {
+    if (!this.next) return 0;
+    if (!this.next.odds) return 0;
+    if (!this.rideThisRace(jockey, this.next)) return 0;
 
     const wp = this.getWinPlaceOdds(jockey, this.next);
-    if (wp.win == 0 || wp.place == 0) return grade;
+    if (wp.win == 0 || wp.place == 0) return 0;
 
-    let ratio = 0;
-    if (condition == 'WPCI') ratio = 3 * wp.place / wp.win;
-    else {
-      const qqpWP = this.getQQPWinPlaceOdds(wp.order, this.next);
-      if (condition == 'W/QW') ratio = wp.win / qqpWP[0];
-      else if (condition == 'P/QP') ratio = wp.place / qqpWP[1];
-    }
+    const qqpWP = this.getQQPWinPlaceOdds(wp.order, this.next);
+    const wpci = 3 * wp.place / wp.win;
+    const wqwr = wp.win / qqpWP[0];
+    const qpqr = wp.place / qqpWP[1];
+    let score: number = 0;
 
-    for (const g of this.grades.filter(g => g.range > 0)) {
-      if (Math.abs(1 - ratio) <= g.range) return g.grade;
-    }
-    return grade;
+    if (wpci >= 0.6 && wpci <= 1.2) score += 1;
+    if (Math.abs(1 - wqwr) <= 0.25) score += 1;
+    if (Math.abs(1 - wqwr) <= 0.1) score += 1;
+    if (Math.abs(1 - qpqr) <= 0.25) score += 1;
+
+    return score >= 3 ? wp.order : 0;
   }
 
   formatRaceGrade(grade: string): string {
@@ -362,18 +361,6 @@ export class RacecardComponent implements OnInit {
       {pool: 'FQ', amount: (pool.quartet / ONE_MILLION).toFixed(2)},
       {pool: 'DBL', amount: ((pool?.double || 0) / ONE_MILLION).toFixed(2)},
     ]
-  }
-
-  get grades(): Array<{ grade: string, range: number }> {
-    return [
-      {grade: 'A', range: 0.15},
-      {grade: 'B', range: 0.25},
-      {grade: 'C', range: 0},
-    ]
-  }
-
-  get conditions(): string[] {
-    return ['WPCI', 'W/QW', 'P/QP'];
   }
 
   get maxRace(): number {

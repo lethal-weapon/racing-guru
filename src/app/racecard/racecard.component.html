@@ -144,18 +144,18 @@
   </tr>
   </tbody>
   <tfoot>
-  <tr *ngFor="let condition of conditions">
+  <tr>
     <td class="border border-gray-700">
-      {{condition}}
+      <i class="fa fa-heart"></i>
     </td>
     <td *ngFor="let jockey of jockeys"
-        class="border border-gray-700"
+        class="border border-gray-700 text-yellow-400"
+        [class.border-r-red-900]="isBoundaryJockey(jockey)"
     >
-      <span class="animate__animated animate__bounceIn animate__slow"
-            [class.invisible]="getNextRaceConditionGrade(condition, jockey) == 'C'"
-            [class.text-green-600]="getNextRaceConditionGrade(condition, jockey) == 'A'"
+      <span *ngIf="getNextRaceRecommendation(jockey) > 0"
+            class="animate__animated animate__bounceIn animate__slow"
       >
-        <i class="fa fa-check"></i>
+        {{getNextRaceRecommendation(jockey)}}
       </span>
     </td>
   </tr>
