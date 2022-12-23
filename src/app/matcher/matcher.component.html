@@ -1,3 +1,46 @@
-<div class="m-10 text-2xl text-center noselect">
-  Race Horse Matcher
+<div class="m-10 text-center noselect">
+  <table class="mx-auto table-fixed border-collapse">
+    <thead class="text-2xl">
+    <td class="w-24 pb-3 border border-gray-900 border-b-gray-700 border-r-gray-700">
+      No.
+    </td>
+    <td class="w-32 pb-3 border border-gray-900 border-b-gray-700 border-x-gray-700">
+      Kind
+    </td>
+    <td *ngFor="let meeting of meetings; let index = index; let last = last"
+        class="w-64 pb-3 border border-gray-900 border-b-gray-700"
+        [class.text-yellow-400]="index === 1"
+        [class.border-x-gray-700]="!last"
+    >
+      {{meeting}}
+    </td>
+    </thead>
+    <tbody class="text-xl">
+    <tr *ngFor="let match of matches; let index = index"
+        class="hover:bg-gray-800"
+    >
+      <td class="">
+        {{index + 1}}
+      </td>
+      <td class="italic border border-gray-900 border-x-gray-700">
+        {{match.kind}}
+      </td>
+      <td *ngFor="let meeting of meetings; let last = last"
+          class="border border-gray-900"
+          [class.border-x-gray-700]="!last"
+      >
+        <div *ngFor="let m of getMatchesByMeeting(meeting, match.horses)"
+             class="flex flex-row text-center"
+        >
+          <div class="basis-5/12">
+            {{m.trainer}}
+          </div>
+          <div class="basis-7/12">
+            {{m.horseNameCH}}
+          </div>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>
