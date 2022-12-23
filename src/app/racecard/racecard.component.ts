@@ -278,13 +278,13 @@ export class RacecardComponent implements OnInit {
     const qqpWP = this.getQQPWinPlaceOdds(wp.order, this.next);
     const wpci = 3 * wp.place / wp.win;
     const wqwr = wp.win / qqpWP[0];
-    const qpqr = wp.place / qqpWP[1];
+    const pqpr = wp.place / qqpWP[1];
     let score: number = 0;
 
     if (wpci >= 0.6 && wpci <= 1.2) score += 1;
-    if (Math.abs(1 - wqwr) <= 0.25) score += 1;
+    if (Math.abs(1 - wqwr) <= 0.2) score += 1;
     if (Math.abs(1 - wqwr) <= 0.1) score += 1;
-    if (Math.abs(1 - qpqr) <= 0.25) score += 1;
+    if (Math.abs(1 - pqpr) <= 0.2) score += 1;
 
     return score >= 3 ? wp.order : 0;
   }
