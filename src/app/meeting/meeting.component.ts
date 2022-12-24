@@ -48,10 +48,7 @@ export class MeetingComponent implements OnInit {
       const mostRecentOne = winningMeetings.shift();
       // @ts-ignore
       const index = this.repo.findMeetings().indexOf(mostRecentOne);
-      if (!index) return 99;
-
-      const lastMeeting = this.repo.findMeetings()[0].meeting;
-      if (new Date() > new Date(lastMeeting)) return index;
+      if (!index) return 0;
 
       return index === 0 ? index : index - 1;
     }

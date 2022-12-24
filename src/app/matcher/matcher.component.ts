@@ -23,6 +23,7 @@ export class MatcherComponent implements OnInit {
 
   matchNameEN(horse1: string, horse2: string): boolean {
     const pieces = [horse1, horse2].map(h => h
+      .toUpperCase()
       .replace('\'', '')
       .split(' ')
       .filter(s => s.length > 0)
@@ -34,6 +35,9 @@ export class MatcherComponent implements OnInit {
     for (let i = 0; i < horse1.length - 1; i++) {
       const dual = `${horse1[i]}${horse1[i + 1]}`
       if (horse2.includes(dual)) return true;
+    }
+    if (horse1.length === 3 && horse2.length === 3) {
+      if (horse1[0] === horse2[0] && horse1[2] === horse2[2]) return true;
     }
     return false;
   }
