@@ -21,6 +21,30 @@ export class MatcherComponent implements OnInit {
     this.repo.fetchRacehorses();
   }
 
+  getWinOddsString(horse: RaceHorse): string {
+    if (horse.winOdds) return `${horse.winOdds}`;
+    return '';
+  }
+
+  getPlacingColor(horse: RaceHorse): string {
+    switch (horse.placing) {
+      case 1:
+        return 'text-red-600'
+      case 2:
+        return 'text-green-600'
+      case 3:
+        return 'text-blue-600'
+      case 4:
+        return 'text-purple-600'
+      default:
+        return ''
+    }
+  }
+
+  getMatchesByMeeting(meeting: string, horses: RaceHorse[]): RaceHorse[] {
+    return horses.filter(h => h.meeting === meeting);
+  }
+
   matchNameEN(horse1: string, horse2: string): boolean {
     const pieces = [horse1, horse2].map(h => h
       .toUpperCase()
@@ -40,10 +64,6 @@ export class MatcherComponent implements OnInit {
       if (horse1[0] === horse2[0] && horse1[2] === horse2[2]) return true;
     }
     return false;
-  }
-
-  getMatchesByMeeting(meeting: string, horses: RaceHorse[]): RaceHorse[] {
-    return horses.filter(h => h.meeting === meeting);
   }
 
   get nameMatches(): Matcher[] {

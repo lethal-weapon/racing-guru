@@ -1,14 +1,14 @@
-<div class="m-10 text-center noselect">
+<div class="my-10 text-center noselect">
   <table class="mx-auto table-fixed border-collapse">
     <thead class="text-2xl">
-    <td class="w-24 pb-3 border border-gray-900 border-b-gray-700 border-r-gray-700">
+    <td class="w-16 pb-3 border border-gray-900 border-b-gray-700 border-r-gray-700">
       No.
     </td>
-    <td class="w-32 pb-3 border border-gray-900 border-b-gray-700 border-x-gray-700">
+    <td class="w-28 pb-3 border border-gray-900 border-b-gray-700 border-x-gray-700">
       Kind
     </td>
     <td *ngFor="let meeting of meetings; let index = index; let last = last"
-        class="w-64 pb-3 border border-gray-900 border-b-gray-700"
+        class="w-{{index === 0 ? 64 : 72}} pb-3 border border-gray-900 border-b-gray-700"
         [class.text-yellow-400]="index === 1"
         [class.border-x-gray-700]="!last"
     >
@@ -32,11 +32,16 @@
         <div *ngFor="let m of getMatchesByMeeting(meeting, match.horses)"
              class="flex flex-row text-center"
         >
-          <div class="basis-5/12">
+          <div class="basis-{{getWinOddsString(m).length > 0 ? 4 : 5}}/12">
             {{m.trainer}}
           </div>
-          <div class="basis-7/12">
+          <div class="basis-{{getWinOddsString(m).length > 0 ? 5 : 7}}/12 {{getPlacingColor(m)}}">
             {{m.horseNameCH}}
+          </div>
+          <div *ngIf="getWinOddsString(m).length > 0"
+               class="basis-3/12"
+          >
+            {{getWinOddsString(m)}}
           </div>
         </div>
       </td>
