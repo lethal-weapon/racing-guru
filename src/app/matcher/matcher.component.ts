@@ -21,9 +21,26 @@ export class MatcherComponent implements OnInit {
     this.repo.fetchRacehorses();
   }
 
-  getWinOddsString(horse: RaceHorse): string {
-    if (horse.winOdds) return `${horse.winOdds}`;
-    return '';
+  isIncreaseHeight(match: Matcher): boolean {
+    return match.horses.length > 6;
+  }
+
+  getHorseProfileUrl(code: string): string {
+    return `
+        https://racing.hkjc.com/racing/information/
+        English/Horse/Horse.aspx?HorseNo=${code}
+    `.replace(/\s/g, '');
+  }
+
+  getColumnWidth(index: number): string {
+    switch (index) {
+      case 0:
+        return 'w-64'
+      case 1:
+        return 'w-80'
+      default:
+        return 'w-72'
+    }
   }
 
   getPlacingColor(horse: RaceHorse): string {
@@ -93,7 +110,9 @@ export class MatcherComponent implements OnInit {
       matches.push({kind: 'NameCH', horses: existing});
     }
 
-    return matches;
+    return matches.sort(
+      (m1, m2) => m1.horses.length - m2.horses.length
+    );
   }
 
   get exactMatches(): Matcher[] {

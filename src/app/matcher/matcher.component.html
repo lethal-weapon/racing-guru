@@ -8,7 +8,7 @@
       Kind
     </td>
     <td *ngFor="let meeting of meetings; let index = index; let last = last"
-        class="w-{{index === 0 ? 64 : 72}} pb-3 border border-gray-900 border-b-gray-700"
+        class="{{getColumnWidth(index)}} pb-3 border border-gray-900 border-b-gray-700"
         [class.text-yellow-400]="index === 1"
         [class.border-x-gray-700]="!last"
     >
@@ -19,29 +19,41 @@
     <tr *ngFor="let match of matches; let index = index"
         class="hover:bg-gray-800"
     >
-      <td class="">
+      <td class=""
+          [class.py-2]="isIncreaseHeight(match)"
+      >
         {{index + 1}}
       </td>
-      <td class="italic border border-gray-900 border-x-gray-700">
+      <td class="italic border border-gray-900 border-x-gray-700"
+          [class.py-2]="isIncreaseHeight(match)"
+      >
         {{match.kind}}
       </td>
-      <td *ngFor="let meeting of meetings; let last = last"
+      <td *ngFor="let meeting of meetings; let mIndex = index; let last = last"
           class="border border-gray-900"
           [class.border-x-gray-700]="!last"
+          [class.py-2]="isIncreaseHeight(match)"
       >
-        <div *ngFor="let m of getMatchesByMeeting(meeting, match.horses)"
+        <div *ngFor="let h of getMatchesByMeeting(meeting, match.horses)"
              class="flex flex-row text-center"
         >
-          <div class="basis-{{getWinOddsString(m).length > 0 ? 4 : 5}}/12">
-            {{m.trainer}}
+          <div class="{{h.winOdds ? (mIndex === 1 ? 'basis-3/12': 'basis-4/12') : 'basis-5/12'}}">
+            {{h.trainer}}
           </div>
-          <div class="basis-{{getWinOddsString(m).length > 0 ? 5 : 7}}/12 {{getPlacingColor(m)}}">
-            {{m.horseNameCH}}
+          <div class="{{h.winOdds ? (mIndex === 1 ? 'basis-6/12': 'basis-5/12') : 'basis-7/12'}} {{getPlacingColor(h)}}">
+            <span *ngIf="mIndex === 1">
+              {{h.race === 10 ? 'X': h.race}}/{{h.order}}
+            </span>
+            <a [href]="getHorseProfileUrl(h.horse)"
+               target="_blank"
+            >
+              {{h.horseNameCH}}
+            </a>
           </div>
-          <div *ngIf="getWinOddsString(m).length > 0"
+          <div *ngIf="h.winOdds"
                class="basis-3/12"
           >
-            {{getWinOddsString(m)}}
+            {{h.winOdds}}
           </div>
         </div>
       </td>
