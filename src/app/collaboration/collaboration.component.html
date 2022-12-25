@@ -1,0 +1,53 @@
+<div class="my-10 text-center noselect">
+  <table class="mx-auto table-fixed border-collapse"
+         (mouseleave)="setHoveredTrainer('')"
+  >
+    <thead>
+    <th class="w-16 h-7 border border-gray-600">
+      <i class="fa fa-handshake-o"></i>
+    </th>
+    <th *ngFor="let trainer of trainers"
+        class="w-20 h-7 border border-gray-600"
+        (mouseenter)="setHoveredTrainer(trainer)"
+        [class.border-r-red-900]="isBoundaryPerson(trainer)"
+        [class.bg-gray-800]="hoveredTrainer === trainer"
+    >
+      {{trainer}}
+    </th>
+    </thead>
+    <tbody>
+    <tr *ngFor="let jockey of jockeys"
+        class="hover:bg-gray-800"
+    >
+      <td class="h-7 border border-gray-600 font-bold"
+          [class.border-b-red-900]="isBoundaryPerson(jockey)"
+      >
+        {{jockey}}
+      </td>
+      <td *ngFor="let trainer of trainers"
+          class="h-7 border border-gray-700"
+          (mouseenter)="setHoveredTrainer(trainer)"
+          [class.border-b-red-900]="isBoundaryPerson(jockey)"
+          [class.border-r-red-900]="isBoundaryPerson(trainer)"
+          [class.bg-gray-800]="hoveredTrainer === trainer"
+          tooltip="{{getDisplayTooltip(jockey, trainer)}}"
+          [hideDelay]="0"
+      >
+        <span *ngIf="getDisplay(jockey, trainer)[0].value > 0"
+              class="{{getDisplay(jockey, trainer)[0].style}}"
+        >
+          {{getDisplay(jockey, trainer)[0].value}}
+        </span>
+        <span *ngIf="getDisplay(jockey, trainer)[0].value > 0">
+          /
+        </span>
+        <span *ngIf="getDisplay(jockey, trainer)[1].value > 0"
+              class="{{getDisplay(jockey, trainer)[1].style}}"
+        >
+          {{getDisplay(jockey, trainer)[1].value}}
+        </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

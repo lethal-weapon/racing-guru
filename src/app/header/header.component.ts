@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
     {title: 'Trend', link: '/trend'},
     {title: 'Pool', link: '/pool'},
     {title: 'Matcher', link: '/matcher'},
+    {title: 'C11N', link: '/collaboration'},
     {title: 'People', link: '/people'},
   ]
 

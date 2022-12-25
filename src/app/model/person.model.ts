@@ -55,8 +55,8 @@ export const JOCKEYS = [
 
 export const TRAINERS = [
   new Person('CAS', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony'),
-  new Person('LFC', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie'),
   new Person('SJJ', 'Size', 'John', 'J. Size', 'AUS', '', ''),
+  new Person('LFC', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie'),
   new Person('YPF', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky'),
   new Person('WDJ', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', ''),
 

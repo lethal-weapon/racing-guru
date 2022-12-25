@@ -9,6 +9,7 @@ import {Statistics} from './statistics.model';
 import {FinalPool, TimeSeriesPool} from './pool.model';
 import {FinalDividend} from './dividend.model';
 import {RaceHorse} from './racehorse.model';
+import {Collaboration} from './collaboration.model';
 
 @Injectable()
 export class RestDataSource {
@@ -29,6 +30,10 @@ export class RestDataSource {
 
   getStatistics(): Observable<Statistics[]> {
     return this.http.get<Statistics[]>(`${this.baseUrl}/performance/statistics`);
+  }
+
+  getCollaborations(): Observable<Collaboration[]> {
+    return this.http.get<Collaboration[]>(`${this.baseUrl}/performance/collaborations`);
   }
 
   getFinalPools(): Observable<FinalPool[]> {
