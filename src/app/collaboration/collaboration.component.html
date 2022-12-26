@@ -1,4 +1,4 @@
-<div class="my-10 text-center noselect">
+<div class="mt-6 text-center noselect">
   <table class="mx-auto table-fixed border-collapse"
          (mouseleave)="setHoveredTrainer('')"
   >
@@ -9,8 +9,11 @@
     <th *ngFor="let trainer of trainers"
         class="w-20 h-7 border border-gray-600"
         (mouseenter)="setHoveredTrainer(trainer)"
+        (click)="setActivePerson(trainer)"
         [class.border-r-red-900]="isBoundaryPerson(trainer)"
         [class.bg-gray-800]="hoveredTrainer === trainer"
+        [class.text-yellow-400]="activePerson === trainer"
+        [class.cursor-pointer]="activePerson !== trainer"
     >
       {{trainer}}
     </th>
@@ -20,7 +23,10 @@
         class="hover:bg-gray-800"
     >
       <td class="h-7 border border-gray-600 font-bold"
+          (click)="setActivePerson(jockey)"
           [class.border-b-red-900]="isBoundaryPerson(jockey)"
+          [class.text-yellow-400]="activePerson === jockey"
+          [class.cursor-pointer]="activePerson !== jockey"
       >
         {{jockey}}
       </td>
@@ -46,6 +52,48 @@
         >
           {{getDisplay(jockey, trainer)[1].value}}
         </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-4 text-center noselect">
+  <div class="mb-4 text-3xl text-yellow-400">
+    {{activePersonName}}
+  </div>
+  <table class="mx-auto table-fixed border-collapse">
+    <thead>
+    <th class="w-20 border border-gray-600">
+      <i class="fa fa-calendar"></i>
+    </th>
+    <th *ngFor="let partner of partners"
+        class="w-20 border border-gray-600"
+    >
+      {{partner}}
+    </th>
+    </thead>
+    <tbody>
+    <tr *counter="let row of maxPartnerRows">
+      <td class="border border-gray-700">
+        {{row}}
+      </td>
+      <td *ngFor="let partner of partners"
+          [class.border]="getStarter(partner, row)"
+          [class.border-gray-700]="getStarter(partner, row)"
+      >
+        <div *ngIf="getStarter(partner, row)">
+          <span *ngIf="getStarter(partner, row)?.winOdds"
+                class="{{getPlacingColor(getStarter(partner, row)?.placing)}}"
+          >
+            {{getStarter(partner, row)?.winOdds}}
+          </span>
+          <span *ngIf="!getStarter(partner, row)?.winOdds"
+                class="text-yellow-400"
+          >
+            <i class="fa fa-question"></i>
+          </span>
+        </div>
       </td>
     </tr>
     </tbody>

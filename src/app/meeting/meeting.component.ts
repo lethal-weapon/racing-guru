@@ -50,6 +50,12 @@ export class MeetingComponent implements OnInit {
       const index = this.repo.findMeetings().indexOf(mostRecentOne);
       if (!index) return 0;
 
+      const nearestMeeting = this.repo.findMeetings()[0].meeting;
+      const raceTime = new Date(nearestMeeting).getTime();
+      const currTime = new Date().getTime();
+      const diff = Math.floor((currTime - raceTime) / 1000);
+      if (diff > 86400) return index;
+
       return index === 0 ? index : index - 1;
     }
 
