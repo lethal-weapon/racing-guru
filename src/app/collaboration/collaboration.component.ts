@@ -26,6 +26,16 @@ export class CollaborationComponent implements OnInit {
   setHoveredTrainer = (hovered: string) =>
     this.hoveredTrainer = hovered;
 
+  getStarterTooltip(starter: CollaborationStarter | undefined): string {
+    if (!starter) return '';
+    return `
+      <div class="w-32 text-center">
+        <div>${starter.meeting} #${starter.race}</div>
+        <div>${starter.horseNameCH}</div>
+      </div>
+    `
+  }
+
   getDisplayTooltip(jockey: string, trainer: string): string {
     const coll = this.getCollaboration(jockey, trainer);
     const stat = [coll.seconds, coll.thirds, coll.fourths];
@@ -68,8 +78,15 @@ export class CollaborationComponent implements OnInit {
     ].includes(person);
   }
 
-  getPlacingColor(placing: number | undefined): string {
-    switch (placing) {
+  isSpecialRace(meeting: string, race: number): boolean {
+    if (meeting === '2022-11-20' && race === 9) return true;
+    if (meeting === '2022-12-24' && race === 5) return true;
+    return false;
+  }
+
+  getPlacingColor(starter: CollaborationStarter | undefined): string {
+    if (!starter) return ''
+    switch (starter?.placing) {
       case 1:
         return 'text-red-600'
       case 2:
@@ -78,8 +95,13 @@ export class CollaborationComponent implements OnInit {
         return 'text-blue-600'
       case 4:
         return 'text-purple-600'
-      case undefined:
-        return 'text-yellow-400'
+      case null:
+      case undefined: {
+        if (this.isSpecialRace(starter.meeting, starter.race)) {
+          return '';
+        }
+        return 'text-yellow-400';
+      }
       default:
         return ''
     }

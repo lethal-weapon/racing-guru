@@ -1,4 +1,4 @@
-<div class="mt-6 text-center noselect">
+<div class="mt-10 text-center noselect">
   <table class="mx-auto table-fixed border-collapse"
          (mouseleave)="setHoveredTrainer('')"
   >
@@ -68,7 +68,8 @@
       <i class="fa fa-calendar"></i>
     </th>
     <th *ngFor="let partner of partners"
-        class="w-20 border border-gray-600"
+        class="w-20 border border-gray-600 cursor-pointer"
+        (click)="setActivePerson(partner)"
     >
       {{partner}}
     </th>
@@ -79,12 +80,15 @@
         {{row}}
       </td>
       <td *ngFor="let partner of partners"
+          [class.cursor-grab]="getStarter(partner, row)"
           [class.border]="getStarter(partner, row)"
           [class.border-gray-700]="getStarter(partner, row)"
+          tooltip="{{getStarterTooltip(getStarter(partner, row))}}"
+          [hideDelay]="0"
       >
         <div *ngIf="getStarter(partner, row)">
           <span *ngIf="getStarter(partner, row)?.winOdds"
-                class="{{getPlacingColor(getStarter(partner, row)?.placing)}}"
+                class="{{getPlacingColor(getStarter(partner, row))}}"
           >
             {{getStarter(partner, row)?.winOdds}}
           </span>
