@@ -13,11 +13,11 @@ import {ONE_MILLION} from '../constants/numbers';
 })
 export class RacecardComponent implements OnInit {
   racecards: Racecard[] = [];
+  remainingTime: string = '---';
 
   activeDraw: number = 0;
   activeTrainer: string = '';
-
-  remainingTime: string = '---';
+  activeRace: number = 1;
 
   constructor(private socket: WebsocketService) {
     socket.racecards.subscribe(data => {
@@ -63,6 +63,15 @@ export class RacecardComponent implements OnInit {
 
   setActiveTrainer = (clicked: string) =>
     this.activeTrainer = this.activeTrainer === clicked ? '' : clicked
+
+  setActiveRace = (clicked: number) =>
+    this.activeRace = clicked
+
+  getRaceBadgeStyle(race: number): string {
+    return this.activeRace === race
+      ? `text-yellow-400 border-yellow-400`
+      : `border-gray-600 hover:border-yellow-400 cursor-pointer`;
+  }
 
   isHighlightEarning(jockey: string): boolean {
     return this.getMeetingEarning(jockey) >= 12;
@@ -133,6 +142,12 @@ export class RacecardComponent implements OnInit {
       .order;
 
     return order === favouredOrder;
+  }
+
+  getActiveStarterWinPlaceOdds(starter: Starter): WinPlaceOdds {
+    const racecard = this.racecards.filter(r => r.race === this.activeRace).pop();
+    if (!racecard) return {order: starter.order, win: 0, place: 0};
+    return this.getWinPlaceOdds(starter.jockey, racecard);
   }
 
   getWinPlaceOdds(jockey: string, racecard: Racecard): WinPlaceOdds {
@@ -251,7 +266,7 @@ export class RacecardComponent implements OnInit {
 
   isBoundaryJockey(jockey: string): boolean {
     let specials = []
-    for (const j of ['BA', 'BAM', 'PMF', 'CLR']) {
+    for (const j of ['BA', 'YML', 'BV']) {
       if (this.jockeys.includes(j)) {
         specials.push(j);
       } else {
@@ -267,27 +282,27 @@ export class RacecardComponent implements OnInit {
     return specials.includes(jockey);
   }
 
-  getNextRaceRecommendation(jockey: string): number {
-    if (!this.next) return 0;
-    if (!this.next.odds) return 0;
-    if (!this.rideThisRace(jockey, this.next)) return 0;
-
-    const wp = this.getWinPlaceOdds(jockey, this.next);
-    if (wp.win == 0 || wp.place == 0) return 0;
-
-    const qqpWP = this.getQQPWinPlaceOdds(wp.order, this.next);
-    const wpci = 3 * wp.place / wp.win;
-    const wqwr = wp.win / qqpWP[0];
-    const pqpr = wp.place / qqpWP[1];
-    let score: number = 0;
-
-    if (wpci >= 0.6 && wpci <= 1.2) score += 1;
-    if (Math.abs(1 - wqwr) <= 0.2) score += 1;
-    if (Math.abs(1 - wqwr) <= 0.1) score += 1;
-    if (Math.abs(1 - pqpr) <= 0.2) score += 1;
-
-    return score >= 3 ? wp.order : 0;
-  }
+  // getNextRaceRecommendation(jockey: string): number {
+  //   if (!this.next) return 0;
+  //   if (!this.next.odds) return 0;
+  //   if (!this.rideThisRace(jockey, this.next)) return 0;
+  //
+  //   const wp = this.getWinPlaceOdds(jockey, this.next);
+  //   if (wp.win == 0 || wp.place == 0) return 0;
+  //
+  //   const qqpWP = this.getQQPWinPlaceOdds(wp.order, this.next);
+  //   const wpci = 3 * wp.place / wp.win;
+  //   const wqwr = wp.win / qqpWP[0];
+  //   const pqpr = wp.place / qqpWP[1];
+  //   let score: number = 0;
+  //
+  //   if (wpci >= 0.6 && wpci <= 1.2) score += 1;
+  //   if (Math.abs(1 - wqwr) <= 0.2) score += 1;
+  //   if (Math.abs(1 - wqwr) <= 0.1) score += 1;
+  //   if (Math.abs(1 - pqpr) <= 0.2) score += 1;
+  //
+  //   return score >= 3 ? wp.order : 0;
+  // }
 
   formatRaceGrade(grade: string): string {
     const clean = grade
@@ -299,16 +314,12 @@ export class RacecardComponent implements OnInit {
   }
 
   getStarterTooltip(jockey: string, racecard: Racecard): string {
-    const starter = racecard.starters.filter(s => s.jockey === jockey).pop()
-    // @ts-ignore
-    const horseNameEN = starter.horseNameEN
-    // @ts-ignore
-    const horseNameCH = starter.horseNameCH
-
+    const starter = racecard.starters.filter(s => s.jockey === jockey).pop();
+    if (!starter) return '';
     return `
       <div class="w-44 text-center">
-        <div>${horseNameCH}</div>
-        <div>${horseNameEN}</div>
+        <div>${starter.horseNameCH}</div>
+        <div>${starter.horseNameEN}</div>
       </div>
     `;
   }
@@ -378,6 +389,20 @@ export class RacecardComponent implements OnInit {
   get next(): Racecard {
     // @ts-ignore
     return this.racecards.filter(r => !r.dividend?.win).shift();
+  }
+
+  get activeStarters(): Starter[] {
+    const racecard = this.racecards.filter(r => r.race === this.activeRace).pop();
+    if (!racecard) return [];
+
+    return racecard.starters.sort((s1, s2) => {
+      const odds1 = this.getWinPlaceOdds(s1.jockey, racecard);
+      const odds2 = this.getWinPlaceOdds(s2.jockey, racecard);
+
+      return odds1.win - odds2.win
+        || odds1.place - odds2.place
+        || this.jockeys.indexOf(s1.jockey) - this.jockeys.indexOf(s2.jockey);
+    });
   }
 
   get starters(): Starter[] {

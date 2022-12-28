@@ -56,13 +56,13 @@
   <tr *ngFor="let race of racecards">
     <td class="border border-gray-700"
         [class.text-yellow-400]="isSpecialRace(race)"
-        [class.border-b-red-900]="race.race === lastRace || race.race === maxRace"
+        [class.border-b-red-900]="race.race === lastRace"
         tooltip="{{getRaceTooltip(race)}}"
         [hideDelay]="0"
     >
       <div class="hover:underline">
         <a [href]="race.resultUrl" target="_blank">
-          {{race.race == 10 ? 'X' : race.race}}
+          {{race.race == 10 ? 'X' : (race.race == 11 ? 'E' : race.race)}}
           {{formatRaceGrade(race.grade)}}
         </a>
       </div>
@@ -75,7 +75,7 @@
     <td *ngFor="let jockey of jockeys"
         class="border border-gray-700 hover:bg-gray-800 text-sm {{getPlacingColor(jockey, race)}}"
         [class.border-r-red-900]="isBoundaryJockey(jockey)"
-        [class.border-b-red-900]="race.race === lastRace || race.race === maxRace"
+        [class.border-b-red-900]="race.race === lastRace"
         [class.border-b-gray-900]="hideBottomBorder(jockey, race)"
         [class.border-r-gray-900]="hideRightBorder(jockey, race)"
     >
@@ -143,25 +143,52 @@
     </td>
   </tr>
   </tbody>
-  <tfoot>
-  <tr>
-    <td class="border border-gray-700">
-      <i class="fa fa-heart"></i>
-    </td>
-    <td *ngFor="let jockey of jockeys"
-        class="border border-gray-700 text-yellow-400"
-        [class.border-r-red-900]="isBoundaryJockey(jockey)"
-    >
-      <span *ngIf="getNextRaceRecommendation(jockey) > 0"
-            class="animate__animated animate__bounceIn animate__slow"
-      >
-        {{getNextRaceRecommendation(jockey)}}
-      </span>
-    </td>
-  </tr>
-  </tfoot>
 </table>
 
-<div class="my-10">
-  <app-meeting></app-meeting>
+<!--<div class="my-10">-->
+<!--  <app-meeting></app-meeting>-->
+<!--</div>-->
+
+<div class="mx-10 my-6 flex flex-row justify-evenly noselect">
+  <div *counter="let race of maxRace"
+       class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(race)}}"
+       (click)="setActiveRace(race)"
+  >
+    Race {{race}}
+  </div>
+</div>
+
+<div class="mx-4 grid grid-cols-2 gap-x-4 gap-y-8 noselect">
+  <div *ngFor="let starter of activeStarters"
+       class="px-4 pt-2 pb-2.5 rounded-2xl shadow-md shadow-sky-700/50 flex flex-row items-center hover:shadow-sky-700"
+  >
+    <div class="w-10 h-10 pt-1 text-xl text-center rounded-full border border-gray-700">
+      {{starter.order}}
+    </div>
+    <div class="w-32 mx-2">
+      <div class="">
+        {{starter.horseNameCH}}
+      </div>
+      <div class="text-sm">
+        {{starter.horseNameEN}}
+      </div>
+    </div>
+    <div class="w-10 h-10 pt-1 text-xl text-center border border-gray-700">
+      {{starter.draw}}
+    </div>
+    <div class="w-12 mx-2 text-lg text-center">
+      <div class="">
+        {{starter.jockey}}
+      </div>
+      <div class="">
+        {{starter.trainer}}
+      </div>
+    </div>
+    <div class="w-20 text-center text-2xl text-red-600">
+      {{getActiveStarterWinPlaceOdds(starter).win}}W
+    </div>
+    <div class="w-20 text-center text-2xl text-blue-600">
+      {{getActiveStarterWinPlaceOdds(starter).place}}P
+    </div>
+  </div>
 </div>

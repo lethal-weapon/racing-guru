@@ -74,7 +74,7 @@ export class CollaborationComponent implements OnInit {
 
   isBoundaryPerson(person: string): boolean {
     return [
-      'BA', 'PMF', 'CLR', 'WDJ', 'YTP', 'TKH'
+      'BA', 'YML', 'BV', 'WDJ', 'YTP', 'TKH'
     ].includes(person);
   }
 
