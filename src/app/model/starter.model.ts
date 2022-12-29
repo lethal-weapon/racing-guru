@@ -10,3 +10,13 @@ export class Starter {
   ) {
   }
 }
+
+export interface PastStarter {
+  horse   : string,
+  jockey  : string,
+  trainer : string,
+  meeting : string,
+  venue   : string,
+  placing : number,
+  winOdds : number
+}

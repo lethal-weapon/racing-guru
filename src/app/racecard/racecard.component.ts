@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {WebsocketService} from '../model/websocket.service';
-import {Starter} from '../model/starter.model';
+import {PastStarter, Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/order.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
@@ -47,6 +47,7 @@ export class RacecardComponent implements OnInit {
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), 3_000);
     setInterval(() => this.updateRemainingTime(), 5_000);
+    this.repo.fetchPastStarters();
     this.repo.fetchCollaborations();
   }
 
@@ -60,7 +61,7 @@ export class RacecardComponent implements OnInit {
     const currTime = new Date().getTime();
     const diff = Math.floor((raceTime - currTime) / 1000);
     if (diff <= 999) this.remainingTime = `${diff} sec`
-    else if (diff <= 3600) this.remainingTime = `${Math.floor(diff / 60)} min`
+    else if (diff <= 7200) this.remainingTime = `${Math.floor(diff / 60)} min`
     else this.remainingTime = `${Math.floor(diff / 3600)} hrs`
   }
 
@@ -73,7 +74,13 @@ export class RacecardComponent implements OnInit {
   setActiveRace = (clicked: number) =>
     this.activeRace = clicked
 
-  getPastStarters(current: Starter): CollaborationStarter[] {
+  getPastHorseStarters(current: Starter): PastStarter[] {
+    return this.repo.findPastStarters()
+      .filter(s => s.horse === current.horse)
+      .slice(0, 12);
+  }
+
+  getPastCollaborationStarters(current: Starter): CollaborationStarter[] {
     return (
       this.repo.findCollaborations()
         .filter(c => c.jockey === current.jockey && c.trainer === current.trainer)
@@ -90,7 +97,7 @@ export class RacecardComponent implements OnInit {
   getRaceBadgeStyle(race: number): string {
     return this.activeRace === race
       ? `text-yellow-400 border-yellow-400`
-      : `border-gray-600 hover:border-yellow-400 cursor-pointer`;
+      : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`;
   }
 
   isHighlightEarning(jockey: string): boolean {
@@ -323,6 +330,10 @@ export class RacecardComponent implements OnInit {
       }
     }
     return specials.includes(jockey);
+  }
+
+  formatMeeting(meeting: string): string {
+    return meeting.replace(/^\d{4}-/g, '')
   }
 
   formatRaceGrade(grade: string): string {

@@ -8,6 +8,7 @@ import {FinalPool, TimeSeriesPool} from './pool.model';
 import {FinalDividend} from './dividend.model';
 import {RaceHorse} from './racehorse.model';
 import {Collaboration} from './collaboration.model';
+import {PastStarter} from './starter.model';
 
 @Injectable()
 export class RestRepository {
@@ -19,6 +20,7 @@ export class RestRepository {
   private finalDividends: FinalDividend[] = [];
   private racehorses: RaceHorse[] = [];
   private collaborations: Collaboration[] = [];
+  private pastStarters: PastStarter[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -31,6 +33,10 @@ export class RestRepository {
   findFinalDividends = () => this.finalDividends
   findRacehorses = () => this.racehorses
   findCollaborations = () => this.collaborations
+  findPastStarters = () => this.pastStarters
+
+  fetchPastStarters = () =>
+    this.source.getPastStarters().subscribe(data => this.pastStarters = data)
 
   fetchCollaborations = () =>
     this.source.getCollaborations().subscribe(data => this.collaborations = data)
