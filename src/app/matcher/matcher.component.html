@@ -42,7 +42,7 @@
           </div>
           <div class="{{h.winOdds ? (mIndex === 1 ? 'basis-6/12': 'basis-5/12') : 'basis-7/12'}} {{getPlacingColor(h)}}">
             <span *ngIf="mIndex === 1">
-              {{h.race === 10 ? 'X': h.race}}/{{h.order}}
+              {{h.race === 10 ? 'X': (h.race === 11 ? 'E' : h.race)}}/{{h.order}}
             </span>
             <a [href]="getHorseProfileUrl(h.horse)"
                target="_blank"

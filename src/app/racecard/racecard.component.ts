@@ -6,6 +6,8 @@ import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/order.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {ONE_MILLION} from '../constants/numbers';
+import {RestRepository} from '../model/rest.repository';
+import {CollaborationStarter} from '../model/collaboration.model';
 
 @Component({
   selector: 'app-racecard',
@@ -19,18 +21,21 @@ export class RacecardComponent implements OnInit {
   activeTrainer: string = '';
   activeRace: number = 1;
 
-  constructor(private socket: WebsocketService) {
+  constructor(
+    private socket: WebsocketService,
+    private repo: RestRepository
+  ) {
     socket.racecards.subscribe(data => {
       if (this.racecards.length !== data.length) this.racecards = data;
       else {
         this.racecards.forEach(r => {
-          const new_card = data.filter(d => d.race === r.race).pop();
-          if (new_card && new_card !== r) {
-            if (new_card.time !== r.time) r.time = new_card.time;
-            if (new_card.starters !== r.starters) r.starters = new_card.starters;
-            if (new_card.pool !== r.pool) r.pool = new_card.pool;
-            if (new_card.odds !== r.odds) r.odds = new_card.odds;
-            if (new_card.dividend !== r.dividend) r.dividend = new_card.dividend;
+          const newCard = data.filter(d => d.race === r.race).pop();
+          if (newCard && newCard !== r) {
+            if (newCard.time !== r.time) r.time = newCard.time;
+            if (newCard.starters !== r.starters) r.starters = newCard.starters;
+            if (newCard.pool !== r.pool) r.pool = newCard.pool;
+            if (newCard.odds !== r.odds) r.odds = newCard.odds;
+            if (newCard.dividend !== r.dividend) r.dividend = newCard.dividend;
           }
         })
       }
@@ -42,6 +47,7 @@ export class RacecardComponent implements OnInit {
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), 3_000);
     setInterval(() => this.updateRemainingTime(), 5_000);
+    this.repo.fetchCollaborations();
   }
 
   updateRemainingTime = () => {
@@ -66,6 +72,20 @@ export class RacecardComponent implements OnInit {
 
   setActiveRace = (clicked: number) =>
     this.activeRace = clicked
+
+  getPastStarters(current: Starter): CollaborationStarter[] {
+    return (
+      this.repo.findCollaborations()
+        .filter(c => c.jockey === current.jockey && c.trainer === current.trainer)
+        .pop()
+        ?.starters || []
+    )
+      .filter(s => s.meeting !== this.currentMeeting)
+      .sort((r1, r2) =>
+        r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
+      )
+      .slice(0, 21);
+  }
 
   getRaceBadgeStyle(race: number): string {
     return this.activeRace === race
@@ -142,6 +162,29 @@ export class RacecardComponent implements OnInit {
       .order;
 
     return order === favouredOrder;
+  }
+
+  getActiveStarterIndicators(starter: Starter): Array<{ indicator: string, preferred: boolean }> {
+    const racecard = this.racecards.filter(r => r.race === this.activeRace).pop();
+    if (!racecard) return [];
+
+    const wp = this.getActiveStarterWinPlaceOdds(starter);
+    if (wp.win == 0 || wp.place == 0) return [
+      {indicator: 'CI', preferred: false},
+      {indicator: 'W/QW', preferred: false},
+      {indicator: 'P/QP', preferred: false},
+    ];
+
+    const qqpWP = this.getQQPWinPlaceOdds(starter.order, racecard);
+    const wpci = 3 * wp.place / wp.win;
+    const wqwr = wp.win / qqpWP[0];
+    const pqpr = wp.place / qqpWP[1];
+
+    return [
+      {indicator: 'CI', preferred: wpci >= 0.6 && wpci <= 1.2},
+      {indicator: 'W/QW', preferred: Math.abs(1 - wqwr) <= 0.2},
+      {indicator: 'P/QP', preferred: Math.abs(1 - pqpr) <= 0.2},
+    ]
   }
 
   getActiveStarterWinPlaceOdds(starter: Starter): WinPlaceOdds {
@@ -266,7 +309,7 @@ export class RacecardComponent implements OnInit {
 
   isBoundaryJockey(jockey: string): boolean {
     let specials = []
-    for (const j of ['BA', 'YML', 'BV']) {
+    for (const j of ['BA', 'CCY', 'BV']) {
       if (this.jockeys.includes(j)) {
         specials.push(j);
       } else {
@@ -281,28 +324,6 @@ export class RacecardComponent implements OnInit {
     }
     return specials.includes(jockey);
   }
-
-  // getNextRaceRecommendation(jockey: string): number {
-  //   if (!this.next) return 0;
-  //   if (!this.next.odds) return 0;
-  //   if (!this.rideThisRace(jockey, this.next)) return 0;
-  //
-  //   const wp = this.getWinPlaceOdds(jockey, this.next);
-  //   if (wp.win == 0 || wp.place == 0) return 0;
-  //
-  //   const qqpWP = this.getQQPWinPlaceOdds(wp.order, this.next);
-  //   const wpci = 3 * wp.place / wp.win;
-  //   const wqwr = wp.win / qqpWP[0];
-  //   const pqpr = wp.place / qqpWP[1];
-  //   let score: number = 0;
-  //
-  //   if (wpci >= 0.6 && wpci <= 1.2) score += 1;
-  //   if (Math.abs(1 - wqwr) <= 0.2) score += 1;
-  //   if (Math.abs(1 - wqwr) <= 0.1) score += 1;
-  //   if (Math.abs(1 - pqpr) <= 0.2) score += 1;
-  //
-  //   return score >= 3 ? wp.order : 0;
-  // }
 
   formatRaceGrade(grade: string): string {
     const clean = grade
@@ -419,6 +440,12 @@ export class RacecardComponent implements OnInit {
   get jockeys(): string[] {
     const meetingJockeys = new Set(this.starters.map(s => s.jockey));
     return JOCKEYS.map(j => j.code).filter(j => meetingJockeys.has(j));
+  }
+
+  get currentMeeting(): string {
+    const racecard = this.racecards.find(r => r.race === 1);
+    if (!racecard) return '---';
+    return racecard.meeting;
   }
 
   get meetingSummary(): string {

@@ -1,149 +1,149 @@
-<div class="m-5 px-10 flex flex-row justify-between noselect">
-  <div class="px-6 py-4 text-xl bg-gray-800 shadow-xl rounded-3xl border border-gray-900 hover:border-gray-600">
-    {{(meetingSummary.split('x').shift() || '').trim()}}
-    <br>
-    {{(meetingSummary.split('x').pop() || '').trim()}}
-  </div>
-  <div *ngIf="pools.length > 0"
-       class="p-2 text-xl rounded-3xl border border-gray-500 hover:border-yellow-400"
-  >
-    <table>
-      <tr *counter="let row of (pools.length / 4)">
-        <td *ngFor="let obj of pools.slice((row-1) * 4, (row-1) * 4 + 4)"
-            class="p-1"
-        >
-          <div class="flex flex-row justify-between hover:text-yellow-400">
-            <div class="px-2 font-bold">{{obj.pool}}&#58;</div>
-            <div class="px-2">${{obj.amount}}M</div>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <div class="pt-2 text-center">
-    <div class="text-2xl">
-      NEXT RACE
-    </div>
-    <div class="pt-2 text-4xl text-red-600">
-      {{remainingTime}}
-    </div>
-  </div>
-</div>
+<!--<div class="m-5 px-10 flex flex-row justify-between noselect">-->
+<!--  <div class="px-6 py-4 text-xl bg-gray-800 shadow-xl rounded-3xl border border-gray-900 hover:border-gray-600">-->
+<!--    {{(meetingSummary.split('x').shift() || '').trim()}}-->
+<!--    <br>-->
+<!--    {{(meetingSummary.split('x').pop() || '').trim()}}-->
+<!--  </div>-->
+<!--  <div *ngIf="pools.length > 0"-->
+<!--       class="p-2 text-xl rounded-3xl border border-gray-500 hover:border-yellow-400"-->
+<!--  >-->
+<!--    <table>-->
+<!--      <tr *counter="let row of (pools.length / 4)">-->
+<!--        <td *ngFor="let obj of pools.slice((row-1) * 4, (row-1) * 4 + 4)"-->
+<!--            class="p-1"-->
+<!--        >-->
+<!--          <div class="flex flex-row justify-between hover:text-yellow-400">-->
+<!--            <div class="px-2 font-bold">{{obj.pool}}&#58;</div>-->
+<!--            <div class="px-2">${{obj.amount}}M</div>-->
+<!--          </div>-->
+<!--        </td>-->
+<!--      </tr>-->
+<!--    </table>-->
+<!--  </div>-->
+<!--  <div class="pt-2 text-center">-->
+<!--    <div class="text-2xl">-->
+<!--      NEXT RACE-->
+<!--    </div>-->
+<!--    <div class="pt-2 text-4xl text-red-600">-->
+<!--      {{remainingTime}}-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
 
-<table class="mx-auto table-fixed border-collapse border border-gray-500 text-center noselect">
-  <thead>
-  <th class="w-20 border border-gray-600"
-      [class.border-b-red-900]="nextRace === 1"
-  >
-    <i class="fa fa-dollar fa-lg"></i>
-  </th>
-  <th *ngFor="let jockey of jockeys"
-      class="w-20 border border-gray-600"
-      [class.border-r-red-900]="isBoundaryJockey(jockey)"
-      [class.border-b-red-900]="nextRace === 1"
-  >
-    <div class=""
-         [class.text-yellow-400]="isHighlightEarning(jockey)"
-    >
-      {{getMeetingEarning(jockey) === 0 ? '-' : getMeetingEarning(jockey)}}
-    </div>
-    <div class="">
-      {{jockey}}
-    </div>
-  </th>
-  </thead>
-  <tbody>
-  <tr *ngFor="let race of racecards">
-    <td class="border border-gray-700"
-        [class.text-yellow-400]="isSpecialRace(race)"
-        [class.border-b-red-900]="race.race === lastRace"
-        tooltip="{{getRaceTooltip(race)}}"
-        [hideDelay]="0"
-    >
-      <div class="hover:underline">
-        <a [href]="race.resultUrl" target="_blank">
-          {{race.race == 10 ? 'X' : (race.race == 11 ? 'E' : race.race)}}
-          {{formatRaceGrade(race.grade)}}
-        </a>
-      </div>
-      <div class="hover:underline">
-        <a [href]="race.videoUrl" target="_blank">
-          {{race.distance}}
-        </a>
-      </div>
-    </td>
-    <td *ngFor="let jockey of jockeys"
-        class="border border-gray-700 hover:bg-gray-800 text-sm {{getPlacingColor(jockey, race)}}"
-        [class.border-r-red-900]="isBoundaryJockey(jockey)"
-        [class.border-b-red-900]="race.race === lastRace"
-        [class.border-b-gray-900]="hideBottomBorder(jockey, race)"
-        [class.border-r-gray-900]="hideRightBorder(jockey, race)"
-    >
-      <div *ngIf="rideThisRace(jockey, race)"
-           class="flex flex-col"
-           tooltip="{{getStarterTooltip(jockey, race)}}"
-           [hideDelay]="0"
-      >
-        <div class="flex flex-row justify-between">
-          <div class="w-5 h-5 rounded-full border border-gray-700">
-            {{getStarter(jockey, race).order}}
-          </div>
-          <div>
-            <a [href]="getHorseProfileUrl(getStarter(jockey, race).horse)"
-               target="_blank"
-            >
-              {{getStarter(jockey, race).horse[0]}}
-            </a>
-          </div>
-          <div class="w-5 h-5 border cursor-pointer"
-               [class.border-gray-700]="activeDraw !== getStarter(jockey, race).draw"
-               [class.text-yellow-400]="activeDraw === getStarter(jockey, race).draw"
-               [class.border-yellow-400]="activeDraw === getStarter(jockey, race).draw"
-               (click)="setActiveDraw(getStarter(jockey, race).draw)"
-          >
-            {{getStarter(jockey, race).draw}}
-          </div>
-        </div>
-        <div class="flex flex-row justify-evenly">
-          <div *ngIf="isTrainerLastRace(jockey, race)"
-               class="text-yellow-400"
-          >
-            &#952;
-          </div>
-          <div class="cursor-pointer"
-               [class.italic]="emphasiseTrainer(jockey, race)"
-               [class.underline]="emphasiseTrainer(jockey, race)"
-               [class.font-bold]="activeTrainer === getTrainer(jockey, race)"
-               [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race)"
-               (click)="setActiveTrainer(getTrainer(jockey, race))"
-          >
-            {{getTrainer(jockey, race)}}
-          </div>
-          <div *ngIf="isFavoured(jockey, race)"
-               class="text-yellow-400"
-          >
-            &#937;
-          </div>
-        </div>
-        <div class="flex flex-row justify-around"
-             [class.font-bold]="race.race == nextRace"
-        >
-          <div class=""
-               [class.text-red-600]="(race.race == nextRace) || (isComingFavoured(jockey, race))"
-          >
-            {{getWinPlaceOdds(jockey, race).win}}
-          </div>
-          <div class=""
-               [class.text-blue-600]="race.race == nextRace"
-          >
-            {{getWinPlaceOdds(jockey, race).place}}
-          </div>
-        </div>
-      </div>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<!--<table class="mx-auto table-fixed border-collapse border border-gray-500 text-center noselect">-->
+<!--  <thead>-->
+<!--  <th class="w-20 border border-gray-600"-->
+<!--      [class.border-b-red-900]="nextRace === 1"-->
+<!--  >-->
+<!--    <i class="fa fa-dollar fa-lg"></i>-->
+<!--  </th>-->
+<!--  <th *ngFor="let jockey of jockeys"-->
+<!--      class="w-20 border border-gray-600"-->
+<!--      [class.border-r-red-900]="isBoundaryJockey(jockey)"-->
+<!--      [class.border-b-red-900]="nextRace === 1"-->
+<!--  >-->
+<!--    <div class=""-->
+<!--         [class.text-yellow-400]="isHighlightEarning(jockey)"-->
+<!--    >-->
+<!--      {{getMeetingEarning(jockey) === 0 ? '-' : getMeetingEarning(jockey)}}-->
+<!--    </div>-->
+<!--    <div class="">-->
+<!--      {{jockey}}-->
+<!--    </div>-->
+<!--  </th>-->
+<!--  </thead>-->
+<!--  <tbody>-->
+<!--  <tr *ngFor="let race of racecards">-->
+<!--    <td class="border border-gray-700"-->
+<!--        [class.text-yellow-400]="isSpecialRace(race)"-->
+<!--        [class.border-b-red-900]="race.race === lastRace"-->
+<!--        tooltip="{{getRaceTooltip(race)}}"-->
+<!--        [hideDelay]="0"-->
+<!--    >-->
+<!--      <div class="hover:underline">-->
+<!--        <a [href]="race.resultUrl" target="_blank">-->
+<!--          {{race.race == 10 ? 'X' : (race.race == 11 ? 'E' : race.race)}}-->
+<!--          {{formatRaceGrade(race.grade)}}-->
+<!--        </a>-->
+<!--      </div>-->
+<!--      <div class="hover:underline">-->
+<!--        <a [href]="race.videoUrl" target="_blank">-->
+<!--          {{race.distance}}-->
+<!--        </a>-->
+<!--      </div>-->
+<!--    </td>-->
+<!--    <td *ngFor="let jockey of jockeys"-->
+<!--        class="border border-gray-700 hover:bg-gray-800 text-sm {{getPlacingColor(jockey, race)}}"-->
+<!--        [class.border-r-red-900]="isBoundaryJockey(jockey)"-->
+<!--        [class.border-b-red-900]="race.race === lastRace"-->
+<!--        [class.border-b-gray-900]="hideBottomBorder(jockey, race)"-->
+<!--        [class.border-r-gray-900]="hideRightBorder(jockey, race)"-->
+<!--    >-->
+<!--      <div *ngIf="rideThisRace(jockey, race)"-->
+<!--           class="flex flex-col"-->
+<!--           tooltip="{{getStarterTooltip(jockey, race)}}"-->
+<!--           [hideDelay]="0"-->
+<!--      >-->
+<!--        <div class="flex flex-row justify-between">-->
+<!--          <div class="w-5 h-5 rounded-full border border-gray-700">-->
+<!--            {{getStarter(jockey, race).order}}-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <a [href]="getHorseProfileUrl(getStarter(jockey, race).horse)"-->
+<!--               target="_blank"-->
+<!--            >-->
+<!--              {{getStarter(jockey, race).horse[0]}}-->
+<!--            </a>-->
+<!--          </div>-->
+<!--          <div class="w-5 h-5 border cursor-pointer"-->
+<!--               [class.border-gray-700]="activeDraw !== getStarter(jockey, race).draw"-->
+<!--               [class.text-yellow-400]="activeDraw === getStarter(jockey, race).draw"-->
+<!--               [class.border-yellow-400]="activeDraw === getStarter(jockey, race).draw"-->
+<!--               (click)="setActiveDraw(getStarter(jockey, race).draw)"-->
+<!--          >-->
+<!--            {{getStarter(jockey, race).draw}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="flex flex-row justify-evenly">-->
+<!--          <div *ngIf="isTrainerLastRace(jockey, race)"-->
+<!--               class="text-yellow-400"-->
+<!--          >-->
+<!--            &#952;-->
+<!--          </div>-->
+<!--          <div class="cursor-pointer"-->
+<!--               [class.italic]="emphasiseTrainer(jockey, race)"-->
+<!--               [class.underline]="emphasiseTrainer(jockey, race)"-->
+<!--               [class.font-bold]="activeTrainer === getTrainer(jockey, race)"-->
+<!--               [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race)"-->
+<!--               (click)="setActiveTrainer(getTrainer(jockey, race))"-->
+<!--          >-->
+<!--            {{getTrainer(jockey, race)}}-->
+<!--          </div>-->
+<!--          <div *ngIf="isFavoured(jockey, race)"-->
+<!--               class="text-yellow-400"-->
+<!--          >-->
+<!--            &#937;-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="flex flex-row justify-around"-->
+<!--             [class.font-bold]="race.race == nextRace"-->
+<!--        >-->
+<!--          <div class=""-->
+<!--               [class.text-red-600]="(race.race == nextRace) || (isComingFavoured(jockey, race))"-->
+<!--          >-->
+<!--            {{getWinPlaceOdds(jockey, race).win}}-->
+<!--          </div>-->
+<!--          <div class=""-->
+<!--               [class.text-blue-600]="race.race == nextRace"-->
+<!--          >-->
+<!--            {{getWinPlaceOdds(jockey, race).place}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </td>-->
+<!--  </tr>-->
+<!--  </tbody>-->
+<!--</table>-->
 
 <!--<div class="my-10">-->
 <!--  <app-meeting></app-meeting>-->
@@ -158,37 +158,80 @@
   </div>
 </div>
 
-<div class="mx-4 grid grid-cols-2 gap-x-4 gap-y-8 noselect">
+<div class="mx-4 grid grid-cols-2 gap-4 noselect">
   <div *ngFor="let starter of activeStarters"
-       class="px-4 pt-2 pb-2.5 rounded-2xl shadow-md shadow-sky-700/50 flex flex-row items-center hover:shadow-sky-700"
+       class="px-4 pt-2 pb-2.5 text-center rounded-2xl shadow-md shadow-sky-700/50 hover:shadow-sky-600"
   >
-    <div class="w-10 h-10 pt-1 text-xl text-center rounded-full border border-gray-700">
-      {{starter.order}}
-    </div>
-    <div class="w-32 mx-2">
-      <div class="">
-        {{starter.horseNameCH}}
+    <div class="flex flex-row items-center">
+      <div class="w-10 h-10 pt-1 text-xl rounded-full border border-gray-700">
+        {{starter.order}}
       </div>
-      <div class="text-sm">
-        {{starter.horseNameEN}}
+      <div class="w-40 mx-2 text-left">
+        <div class="text-lg">
+          {{starter.horseNameCH}}
+        </div>
+        <div class="text-sm">
+          {{starter.horseNameEN}}
+        </div>
+      </div>
+      <div class="w-10 h-10 pt-1 text-xl border border-gray-700">
+        {{starter.draw}}
+      </div>
+      <div class="w-16 text-xl font-mono">
+        <div class="">
+          {{starter.jockey}}
+        </div>
+        <div class="">
+          {{starter.trainer}}
+        </div>
+      </div>
+      <div class="w-16 text-red-600">
+      <span class="text-2xl">
+        {{getActiveStarterWinPlaceOdds(starter).win}}
+      </span>
+        <sup>W</sup>
+      </div>
+      <div class="w-16 text-blue-600">
+      <span class="text-2xl">
+        {{getActiveStarterWinPlaceOdds(starter).place}}
+      </span>
+        <sup>P</sup>
+      </div>
+      <div class="flex flex-row">
+        <div *ngFor="let o of getActiveStarterIndicators(starter)"
+             class="w-16"
+        >
+          <div *ngIf="o.preferred" class="text-yellow-400">
+            <i class="fa fa-check"></i>
+          </div>
+          <div *ngIf="!o.preferred" class="invisible">
+            <i class="fa fa-minus"></i>
+          </div>
+          <div class="text-sm">
+            {{o.indicator}}
+          </div>
+        </div>
       </div>
     </div>
-    <div class="w-10 h-10 pt-1 text-xl text-center border border-gray-700">
-      {{starter.draw}}
-    </div>
-    <div class="w-12 mx-2 text-lg text-center">
-      <div class="">
-        {{starter.jockey}}
+    <div class="my-1">
+      <div *ngIf="getPastStarters(starter).length === 0"
+           class="text-yellow-400 text-lg"
+      >
+        1st collaboration this season
       </div>
-      <div class="">
-        {{starter.trainer}}
+      <div *ngIf="getPastStarters(starter).length > 0"
+           class="grid grid-cols-7 gap-x-2 text-sm"
+      >
+        <div *ngFor="let ps of getPastStarters(starter)"
+             [class.text-red-600]="ps?.placing === 1"
+             [class.text-green-600]="ps?.placing === 2"
+             [class.text-blue-600]="ps?.placing === 3"
+             [class.text-purple-600]="ps?.placing === 4"
+        >
+          {{ps?.winOdds}}
+          {{ps.horseNameCH}}
+        </div>
       </div>
-    </div>
-    <div class="w-20 text-center text-2xl text-red-600">
-      {{getActiveStarterWinPlaceOdds(starter).win}}W
-    </div>
-    <div class="w-20 text-center text-2xl text-blue-600">
-      {{getActiveStarterWinPlaceOdds(starter).place}}P
     </div>
   </div>
 </div>
