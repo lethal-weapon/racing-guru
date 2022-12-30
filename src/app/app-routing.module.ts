@@ -12,12 +12,12 @@ import {CollaborationComponent} from './collaboration/collaboration.component';
 
 const routes: Routes = [
   {path: 'racecard', component: RacecardComponent},
-  {path: 'dividend', component: DividendComponent},
-  {path: 'earning', component: EarningComponent},
   {path: 'trend', component: TrendComponent},
-  {path: 'pool', component: PoolComponent},
+  {path: 'dividend', component: DividendComponent},
   {path: 'matcher', component: MatcherComponent},
   {path: 'collaboration', component: CollaborationComponent},
+  {path: 'earning', component: EarningComponent},
+  {path: 'pool', component: PoolComponent},
   {path: 'people', component: PeopleComponent},
   {path: '**', component: RacecardComponent}
 ];

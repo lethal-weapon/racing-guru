@@ -39,9 +39,9 @@ export const JOCKEYS = [
 
   new Person('HEL', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', ''),
   new Person('FEL', 'Ferraris', 'Luke', 'L. Ferraris', 'SAF', 'Club', ''),
-  new Person('MMR', 'Maia', 'Ruan', 'R. Maia', 'BRZ', 'Club', ''),
   new Person('BHW', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William'),
   new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', ''),
+  new Person('MMR', 'Maia', 'Ruan', 'R. Maia', 'BRZ', 'Club', ''),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
   new Person('BV', 'Borges', 'Vagner', 'V. Borges', 'BRZ', 'Club', ''),
 
@@ -67,16 +67,16 @@ export const TRAINERS = [
   new Person('YTP', 'Yung', 'Tin-pang', 'B. Yung', 'HK', '', 'Benno'),
 
   new Person('NPC', 'Ng', 'Pang-chi', 'P. Ng', 'HK', '', 'Pierre'),
-  new Person('HAD', 'Hall', 'David', 'D. Hall', 'AUS', '', ''),
   new Person('HDA', 'Hayes', 'David', 'D. Hayes', 'AUS', '', ''),
+  new Person('HAD', 'Hall', 'David', 'D. Hall', 'AUS', '', ''),
   new Person('YCH', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis'),
   new Person('TKH', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy'),
 
   new Person('MKL', 'Man', 'Ka-leung', 'M. Man', 'HK', '', 'Manfred'),
+  new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', ''),
   new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter'),
   new Person('CCW', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael'),
   new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', ''),
-  new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', ''),
   new Person('TYS', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me'),
   new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony'),
   // new Person('OSP', 'OSullivan', 'Paul', 'P. OSullivan', 'NZ', '', ''),

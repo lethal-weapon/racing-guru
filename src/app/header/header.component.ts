@@ -8,12 +8,12 @@ import {Router} from '@angular/router';
 export class HeaderComponent implements OnInit {
   pages: Array<{ title: string, link: string }> = [
     {title: 'Racecard', link: '/'},
-    {title: 'Dividend', link: '/dividend'},
-    {title: 'Earning', link: '/earning'},
     {title: 'Trend', link: '/trend'},
-    {title: 'Pool', link: '/pool'},
+    {title: 'Dividend', link: '/dividend'},
     {title: 'Matcher', link: '/matcher'},
     {title: 'C11N', link: '/collaboration'},
+    {title: 'Earning', link: '/earning'},
+    {title: 'Pool', link: '/pool'},
     {title: 'People', link: '/people'},
   ]
 

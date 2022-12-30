@@ -9,7 +9,6 @@ import {CounterDirective} from './directives/counter.directive';
 import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
-import {MeetingComponent} from './meeting/meeting.component';
 import {EarningComponent} from './earning/earning.component';
 import {PoolComponent} from './pool/pool.component';
 import {PeopleComponent} from './people/people.component';
@@ -25,7 +24,6 @@ import {CollaborationComponent} from './collaboration/collaboration.component';
     HeaderComponent,
     FooterComponent,
     RacecardComponent,
-    MeetingComponent,
     EarningComponent,
     PoolComponent,
     PeopleComponent,
