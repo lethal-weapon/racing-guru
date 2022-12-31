@@ -17,8 +17,8 @@ export class RacecardComponent implements OnInit {
   racecards: Racecard[] = [];
   remainingTime: string = '---';
 
-  activeDraw: number = 0;
   activeTrainer: string = '';
+  activeDraw: number = 0;
   activeRace: number = 1;
 
   constructor(
@@ -65,11 +65,11 @@ export class RacecardComponent implements OnInit {
     else this.remainingTime = `${Math.floor(diff / 3600)} hrs`
   }
 
-  setActiveDraw = (clicked: number) =>
-    this.activeDraw = this.activeDraw === clicked ? 0 : clicked
-
   setActiveTrainer = (clicked: string) =>
     this.activeTrainer = this.activeTrainer === clicked ? '' : clicked
+
+  setActiveDraw = (clicked: number) =>
+    this.activeDraw = this.activeDraw === clicked ? 0 : clicked
 
   setActiveRace = (clicked: number) =>
     this.activeRace = clicked
@@ -87,7 +87,10 @@ export class RacecardComponent implements OnInit {
         .pop()
         ?.starters || []
     )
-      .filter(s => s.meeting !== this.currentMeeting)
+      .filter(s => {
+        if (s.meeting !== this.currentMeeting) return true;
+        return s.meeting === this.currentMeeting && s.race <= this.lastRace;
+      })
       .sort((r1, r2) =>
         r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
       )
@@ -133,8 +136,7 @@ export class RacecardComponent implements OnInit {
   }
 
   getPlacing(jockey: string, racecard: Racecard): number {
-    if (!racecard.dividend) return 0;
-    if (!racecard.dividend.quartet) return 0;
+    if (!racecard?.dividend?.quartet) return 0;
 
     const orders = racecard.dividend.quartet[0].orders;
     const order = this.getStarter(jockey, racecard)?.order;
@@ -188,9 +190,9 @@ export class RacecardComponent implements OnInit {
     const pqpr = wp.place / qqpWP[1];
 
     return [
-      {indicator: 'CI', preferred: wpci >= 0.6 && wpci <= 1.2},
-      {indicator: 'W/QW', preferred: Math.abs(1 - wqwr) <= 0.2},
-      {indicator: 'P/QP', preferred: Math.abs(1 - pqpr) <= 0.2},
+      {indicator: 'CI', preferred: wpci >= 0.6 && wpci <= 1.25},
+      {indicator: 'W/QW', preferred: Math.abs(1 - wqwr) <= 0.175},
+      {indicator: 'P/QP', preferred: Math.abs(1 - pqpr) <= 0.25},
     ]
   }
 

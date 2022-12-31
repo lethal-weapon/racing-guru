@@ -12,7 +12,7 @@ export class PoolComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeGroup: string = this.poolGroups[0];
 
-  activeMeeting: string = '2022-12-14';
+  activeMeeting: string = '2023-01-01';
   timeSeriesViewModeInAmount: boolean = false;
 
   constructor(private repo: RestRepository) {
@@ -89,8 +89,7 @@ export class PoolComponent implements OnInit {
 
   formatAmount(amount: number): string {
     if (amount === 0) return '';
-    const precision = this.activeSection === this.sections[1] ? 1 : 2;
-    let rounded = (amount / ONE_MILLION).toFixed(precision);
+    let rounded = (amount / ONE_MILLION).toFixed(1);
 
     while (rounded.length > 0 && rounded.endsWith('0')) {
       rounded = rounded.slice(0, rounded.length - 1)
