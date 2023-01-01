@@ -89,7 +89,7 @@ export class RacecardComponent implements OnInit {
     )
       .filter(s => {
         if (s.meeting !== this.currentMeeting) return true;
-        return s.meeting === this.currentMeeting && s.race <= this.lastRace;
+        return s.meeting === this.currentMeeting && s.race < this.activeRace;
       })
       .sort((r1, r2) =>
         r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
@@ -108,12 +108,13 @@ export class RacecardComponent implements OnInit {
   }
 
   getMeetingEarning(jockey: string): number {
-    const earning = this.racecards
-      .filter(r => this.getPlacing(jockey, r) > 0)
-      .map(r => this.getRaceEarning(jockey, r))
-      .reduce((prev, curr) => prev + curr, 0)
-      .toFixed(1);
-    return parseFloat(earning);
+    return parseFloat(
+      this.racecards
+        .filter(r => this.getPlacing(jockey, r) > 0)
+        .map(r => this.getRaceEarning(jockey, r))
+        .reduce((prev, curr) => prev + curr, 0)
+        .toFixed(1)
+    );
   }
 
   getRaceEarning(jockey: string, racecard: Racecard): number {
@@ -126,13 +127,10 @@ export class RacecardComponent implements OnInit {
       const pla = racecard.dividend?.place?.filter(p => p.order === order).pop();
       if (placing === 1) return win?.odds || 0;
       if (placing === 2) return (pla?.odds || 0) + (odds.win / 10);
-      return pla?.odds || 0;
-
-    } else if (placing === 4) {
-      return odds.win / 10;
+      return pla?.odds || (odds.win / 10);
     }
 
-    return 0;
+    return placing === 4 ? odds.win / 10 : 0;
   }
 
   getPlacing(jockey: string, racecard: Racecard): number {
@@ -152,6 +150,14 @@ export class RacecardComponent implements OnInit {
       'text-blue-600', 'text-purple-600',
     ];
     return placing > 0 ? colors[placing - 1] : '';
+  }
+
+  getPlacingBorderBackground(jockey: string, racecard: Racecard): string {
+    return [
+      'border border-gray-700',
+      'bg-red-800', 'bg-green-800',
+      'bg-blue-800', 'bg-purple-800',
+    ][this.getPlacing(jockey, racecard)];
   }
 
   isComingFavoured(jockey: string, racecard: Racecard): boolean {
@@ -174,9 +180,6 @@ export class RacecardComponent implements OnInit {
   }
 
   getActiveStarterIndicators(starter: Starter): Array<{ indicator: string, preferred: boolean }> {
-    const racecard = this.racecards.filter(r => r.race === this.activeRace).pop();
-    if (!racecard) return [];
-
     const wp = this.getActiveStarterWinPlaceOdds(starter);
     if (wp.win == 0 || wp.place == 0) return [
       {indicator: 'CI', preferred: false},
@@ -184,22 +187,21 @@ export class RacecardComponent implements OnInit {
       {indicator: 'P/QP', preferred: false},
     ];
 
-    const qqpWP = this.getQQPWinPlaceOdds(starter.order, racecard);
+    const qqpWP = this.getQQPWinPlaceOdds(starter.order, this.activeRacecard);
     const wpci = 3 * wp.place / wp.win;
     const wqwr = wp.win / qqpWP[0];
     const pqpr = wp.place / qqpWP[1];
 
     return [
       {indicator: 'CI', preferred: wpci >= 0.6 && wpci <= 1.25},
-      {indicator: 'W/QW', preferred: Math.abs(1 - wqwr) <= 0.175},
+      {indicator: 'W/QW', preferred: Math.abs(1 - wqwr) <= 0.2},
       {indicator: 'P/QP', preferred: Math.abs(1 - pqpr) <= 0.25},
     ]
   }
 
   getActiveStarterWinPlaceOdds(starter: Starter): WinPlaceOdds {
-    const racecard = this.racecards.filter(r => r.race === this.activeRace).pop();
-    if (!racecard) return {order: starter.order, win: 0, place: 0};
-    return this.getWinPlaceOdds(starter.jockey, racecard);
+    if (!this.activeRacecard) return {order: starter.order, win: 0, place: 0};
+    return this.getWinPlaceOdds(starter.jockey, this.activeRacecard);
   }
 
   getWinPlaceOdds(jockey: string, racecard: Racecard): WinPlaceOdds {
@@ -425,13 +427,17 @@ export class RacecardComponent implements OnInit {
     return this.racecards.filter(r => !r.dividend?.win).shift();
   }
 
-  get activeStarters(): Starter[] {
-    const racecard = this.racecards.filter(r => r.race === this.activeRace).pop();
-    if (!racecard) return [];
+  get activeRacecard(): Racecard {
+    // @ts-ignore
+    return this.racecards.filter(r => r.race === this.activeRace).pop();
+  }
 
-    return racecard.starters.sort((s1, s2) => {
-      const odds1 = this.getWinPlaceOdds(s1.jockey, racecard);
-      const odds2 = this.getWinPlaceOdds(s2.jockey, racecard);
+  get activeStarters(): Starter[] {
+    if (!this.activeRacecard) return [];
+
+    return this.activeRacecard.starters.sort((s1, s2) => {
+      const odds1 = this.getWinPlaceOdds(s1.jockey, this.activeRacecard);
+      const odds2 = this.getWinPlaceOdds(s2.jockey, this.activeRacecard);
 
       return odds1.win - odds2.win
         || odds1.place - odds2.place
