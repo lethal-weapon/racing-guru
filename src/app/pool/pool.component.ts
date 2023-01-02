@@ -168,7 +168,7 @@ export class PoolComponent implements OnInit {
   }
 
   get activeMeetingFinalRace(): number {
-    return this.activeMeetingFinalPools.pop()?.race || 9;
+    return this.activeMeetingFinalPools.pop()?.race || 11;
   }
 
   get activeMeetingFinalPools(): FinalPool[] {
