@@ -36,6 +36,7 @@ export class RacecardComponent implements OnInit {
             if (newCard.pool !== r.pool) r.pool = newCard.pool;
             if (newCard.odds !== r.odds) r.odds = newCard.odds;
             if (newCard.dividend !== r.dividend) r.dividend = newCard.dividend;
+            if (newCard.favorite !== r.favorite) r.favorite = newCard.favorite;
           }
         })
       }
@@ -179,24 +180,22 @@ export class RacecardComponent implements OnInit {
     return order === favouredOrder;
   }
 
-  getActiveStarterIndicators(starter: Starter): Array<{ indicator: string, preferred: boolean }> {
+  isActiveBanker(starter: Starter): boolean {
+    return this.activeRacecard.favorite.bankers.includes(starter.order);
+  }
+
+  isActiveSelection(starter: Starter): boolean {
+    return this.activeRacecard.favorite.selections.includes(starter.order);
+  }
+
+  isPreferredWQWR(starter: Starter): boolean {
     const wp = this.getActiveStarterWinPlaceOdds(starter);
-    if (wp.win == 0 || wp.place == 0) return [
-      {indicator: 'CI', preferred: false},
-      {indicator: 'W/QW', preferred: false},
-      {indicator: 'P/QP', preferred: false},
-    ];
+    if (wp.win == 0 || wp.place == 0) return false;
 
     const qqpWP = this.getQQPWinPlaceOdds(starter.order, this.activeRacecard);
-    const wpci = 3 * wp.place / wp.win;
     const wqwr = wp.win / qqpWP[0];
-    const pqpr = wp.place / qqpWP[1];
 
-    return [
-      {indicator: 'CI', preferred: wpci >= 0.6 && wpci <= 1.25},
-      {indicator: 'W/QW', preferred: Math.abs(1 - wqwr) <= 0.2},
-      {indicator: 'P/QP', preferred: Math.abs(1 - pqpr) <= 0.25},
-    ]
+    return Math.abs(1 - wqwr) <= 0.2;
   }
 
   getActiveStarterWinPlaceOdds(starter: Starter): WinPlaceOdds {

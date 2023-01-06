@@ -193,18 +193,38 @@
         </span>
         <sup>P</sup>
       </div>
-      <div class="flex flex-row">
-        <div *ngFor="let o of getActiveStarterIndicators(starter)"
-             class="w-12"
-        >
-          <div *ngIf="o.preferred" class="text-yellow-400">
-            <i class="fa fa-check"></i>
+      <div class="flex flex-row text-lg">
+        <div class="w-16">
+          <div *ngIf="isPreferredWQWR(starter)" class="text-yellow-400">
+            <i class="fa fa-thumbs-up"></i>
           </div>
-          <div *ngIf="!o.preferred" class="invisible">
-            <i class="fa fa-minus"></i>
+          <div *ngIf="!isPreferredWQWR(starter)">
+            <i class="fa fa-thumbs-o-up"></i>
           </div>
           <div class="text-sm">
-            {{o.indicator}}
+            W/QW
+          </div>
+        </div>
+        <div class="w-12">
+          <div *ngIf="isActiveBanker(starter)" class="text-yellow-400">
+            <i class="fa fa-heart"></i>
+          </div>
+          <div *ngIf="!isActiveBanker(starter)">
+            <i class="fa fa-heart-o"></i>
+          </div>
+          <div class="text-sm">
+            B.
+          </div>
+        </div>
+        <div class="w-12">
+          <div *ngIf="isActiveSelection(starter)" class="text-yellow-400">
+            <i class="fa fa-star"></i>
+          </div>
+          <div *ngIf="!isActiveSelection(starter)">
+            <i class="fa fa-star-o"></i>
+          </div>
+          <div class="text-sm">
+            S.
           </div>
         </div>
       </div>
