@@ -9,6 +9,7 @@ import {FinalDividend} from './dividend.model';
 import {RaceHorse} from './racehorse.model';
 import {Collaboration} from './collaboration.model';
 import {PastStarter} from './starter.model';
+import {FavoritePost} from "./favorite.model";
 
 @Injectable()
 export class RestRepository {
@@ -91,6 +92,11 @@ export class RestRepository {
           }
         })
       }
+    });
+  }
+
+  saveFavorite = (favorite: FavoritePost) => {
+    this.source.saveFavorite(favorite).subscribe(data => {
     });
   }
 

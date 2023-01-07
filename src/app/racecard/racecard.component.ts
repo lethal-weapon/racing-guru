@@ -180,6 +180,29 @@ export class RacecardComponent implements OnInit {
     return order === favouredOrder;
   }
 
+  toggleFavorite = (starter: Starter, onBanker: boolean) => {
+    const order = starter.order;
+    let bankers = this.activeRacecard.favorite.bankers.map(b => b);
+    let selections = this.activeRacecard.favorite.selections.map(s => s);
+
+    if (onBanker) {
+      selections = selections.filter(s => s !== order);
+      if (bankers.includes(order)) bankers = bankers.filter(b => b !== order);
+      else bankers.push(order);
+    } else {
+      bankers = bankers.filter(b => b !== order);
+      if (selections.includes(order)) selections = selections.filter(s => s !== order);
+      else selections.push(order);
+    }
+
+    this.repo.saveFavorite({
+      meeting: this.currentMeeting,
+      race: this.activeRace,
+      bankers: bankers,
+      selections: selections
+    });
+  }
+
   isActiveBanker(starter: Starter): boolean {
     return this.activeRacecard.favorite.bankers.includes(starter.order);
   }

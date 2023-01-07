@@ -11,6 +11,7 @@ import {FinalDividend} from './dividend.model';
 import {RaceHorse} from './racehorse.model';
 import {Collaboration} from './collaboration.model';
 import {PastStarter} from './starter.model';
+import {FavoritePost} from './favorite.model';
 
 @Injectable()
 export class RestDataSource {
@@ -61,6 +62,10 @@ export class RestDataSource {
 
   getRacehorses(): Observable<RaceHorse[]> {
     return this.http.get<RaceHorse[]>(`${this.baseUrl}/racehorses`);
+  }
+
+  saveFavorite(favorite: FavoritePost): Observable<FavoritePost> {
+    return this.http.post<FavoritePost>(`${this.baseUrl}/favorite`, favorite);
   }
 
 }
