@@ -10,9 +10,12 @@ import {RestRepository} from '../model/rest.repository';
 })
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
+  activeSubsection: string = this.subsections[0];
   activeVenue: string = '';
   activePerson: string = '';
   isRefreshButtonEnable: boolean = true;
+
+  meetingIndex: number = 0;
 
   constructor(private repo: RestRepository) {
   }
@@ -23,6 +26,9 @@ export class TrendComponent implements OnInit {
 
   setActiveSection = (clicked: string) =>
     this.activeSection = clicked
+
+  setActiveSubsection = (clicked: string) =>
+    this.activeSubsection = clicked
 
   setActiveVenue = (clicked: string) =>
     this.activeVenue = this.activeVenue == clicked ? '' : clicked
@@ -38,8 +44,36 @@ export class TrendComponent implements OnInit {
     }
   }
 
+  shiftMeeting = (length: number) => {
+    const ws = this.windowSize;
+    const maxIndex = this.meetings.length - ws;
+
+    switch (length) {
+      case -99:
+        this.meetingIndex = 0;
+        break;
+      case 99:
+        this.meetingIndex = maxIndex;
+        break;
+      case -1:
+        if (this.meetingIndex > 0) this.meetingIndex -= 1;
+        break;
+      case 1:
+        if (this.meetingIndex < maxIndex) this.meetingIndex += 1;
+        break;
+      case -ws:
+        if (this.meetingIndex >= ws) this.meetingIndex -= ws;
+        else this.meetingIndex = 0;
+        break;
+      case ws:
+        if (this.meetingIndex < maxIndex - ws) this.meetingIndex += ws;
+        else this.meetingIndex = maxIndex;
+        break;
+    }
+  }
+
   getSectionStyle(section: string): string {
-    return this.activeSection === section
+    return [this.activeSection, this.activeSubsection].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
   }
@@ -131,12 +165,12 @@ export class TrendComponent implements OnInit {
     );
   }
 
-  isJTBoundaryPerson(person: string): boolean {
-    return person === 'MA';
+  isBoundaryPerson(person: string): boolean {
+    return ['WDJ', 'YTP', 'TKH', 'BA', 'CCY', 'BV'].includes(person);
   }
 
-  isBoundaryPerson(person: string): boolean {
-    return ['WDJ', 'YTP', 'TKH', 'TEK', 'CCY', 'BV'].includes(person);
+  get controlStyle(): string {
+    return `w-12 cursor-pointer transition hover:text-yellow-400`;
   }
 
   get overviews(): Array<{ title: string, link: string }> {
@@ -159,18 +193,9 @@ export class TrendComponent implements OnInit {
   }
 
   get persons(): string[] {
-    let participants = new Set();
-    let people: string[] = [];
-
-    for (const m of this.windowMeetings) {
-      for (const s of m.persons) {
-        participants.add(s.person)
-      }
-    }
-
-    TRAINERS.filter(p => participants.has(p.code)).forEach(p => people.push(p.code));
-    JOCKEYS.filter(p => participants.has(p.code)).forEach(p => people.push(p.code));
-    return people;
+    return this.activeSubsection === this.subsections[0]
+      ? TRAINERS.map(t => t.code)
+      : JOCKEYS.map(j => j.code);
   }
 
   get placings(): Array<{ placing: string, key: string, color: string, width: string }> {
@@ -188,12 +213,22 @@ export class TrendComponent implements OnInit {
     return 7;
   }
 
+  get windowSize(): number {
+    return 8;
+  }
+
   get windowMeetings(): Meeting[] {
-    return this.meetings.slice(0, 8);
+    return this.meetings.slice(
+      this.meetingIndex, this.meetingIndex + this.windowSize
+    );
   }
 
   get meetings(): Meeting[] {
     return this.repo.findMeetings();
+  }
+
+  get subsections(): string[] {
+    return ['Trainers', 'Jockeys'];
   }
 
   get sections(): string[] {
