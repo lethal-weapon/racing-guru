@@ -21,6 +21,8 @@ export class RacecardComponent implements OnInit {
   activeDraw: number = 0;
   activeRace: number = 1;
 
+  hoveredJockey: string = '';
+
   constructor(
     private socket: WebsocketService,
     private repo: RestRepository
@@ -65,6 +67,9 @@ export class RacecardComponent implements OnInit {
     else if (diff <= 7200) this.remainingTime = `${Math.floor(diff / 60)} min`
     else this.remainingTime = `${Math.floor(diff / 3600)} hrs`
   }
+
+  setHoveredJockey = (hovered: string) =>
+    this.hoveredJockey = hovered;
 
   setActiveTrainer = (clicked: string) =>
     this.activeTrainer = this.activeTrainer === clicked ? '' : clicked
@@ -215,10 +220,29 @@ export class RacecardComponent implements OnInit {
     const wp = this.getActiveStarterWinPlaceOdds(starter);
     if (wp.win == 0 || wp.place == 0) return false;
 
-    const qqpWP = this.getQQPWinPlaceOdds(starter.order, this.activeRacecard);
-    const wqwr = wp.win / qqpWP[0];
-
+    const qw = this.getActiveStarterQWOdds(starter)
+    const wqwr = wp.win / qw;
     return Math.abs(1 - wqwr) <= 0.2;
+  }
+
+  getActiveStarterQWOdds(starter: Starter): number {
+    const qqpWP = this.getQQPWinPlaceOdds(starter.order, this.activeRacecard);
+    return parseFloat(qqpWP[0].toFixed(2));
+  }
+
+  getActiveStarterQQPOdds(starterA: Starter, starterB: Starter): number[] {
+    if (!this.activeRacecard?.odds) return [0, 0];
+    const qin = this.activeRacecard.odds?.quinella;
+    const qpl = this.activeRacecard.odds?.quinellaPlace;
+
+    return [qin, qpl].map(pairs => {
+      if (!pairs) return 0;
+      return pairs
+        .filter(p => p.orders.includes(starterA.order))
+        .filter(p => p.orders.includes(starterB.order))
+        .pop()
+        ?.odds || 0;
+    });
   }
 
   getActiveStarterWinPlaceOdds(starter: Starter): WinPlaceOdds {
