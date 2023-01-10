@@ -219,10 +219,14 @@ export class RacecardComponent implements OnInit {
   isPreferredWQWR(starter: Starter): boolean {
     const wp = this.getActiveStarterWinPlaceOdds(starter);
     if (wp.win == 0 || wp.place == 0) return false;
+    if (wp.win > 30) return false;
 
-    const qw = this.getActiveStarterQWOdds(starter)
-    const wqwr = wp.win / qw;
-    return Math.abs(1 - wqwr) <= 0.2;
+    const winOdds = wp.win;
+    const quinellaWinOdds = this.getActiveStarterQWOdds(starter)
+    if (quinellaWinOdds > winOdds) return false;
+
+    return (winOdds - quinellaWinOdds < 2) ||
+      Math.abs(1 - winOdds / quinellaWinOdds) <= 0.2;
   }
 
   getActiveStarterQWOdds(starter: Starter): number {
