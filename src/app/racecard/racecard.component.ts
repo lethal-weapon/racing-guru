@@ -221,12 +221,14 @@ export class RacecardComponent implements OnInit {
     if (wp.win == 0 || wp.place == 0) return false;
     if (wp.win > 30) return false;
 
-    const winOdds = wp.win;
-    const quinellaWinOdds = this.getActiveStarterQWOdds(starter)
-    if (quinellaWinOdds > winOdds) return false;
+    const W = wp.win;
+    const QW = this.getActiveStarterQWOdds(starter)
+    if (QW > W) return false;
 
-    return (winOdds - quinellaWinOdds < 2) ||
-      Math.abs(1 - winOdds / quinellaWinOdds) <= 0.2;
+    if (W < 10 && (W - QW <= 2)) {
+      return true;
+    }
+    return Math.abs(1 - W / QW) <= 0.2;
   }
 
   getActiveStarterQWOdds(starter: Starter): number {
@@ -277,6 +279,20 @@ export class RacecardComponent implements OnInit {
         .map(o => PAYOUT_RATE / o)
         .reduce((prev, curr) => prev + curr, 0);
     });
+  }
+
+  getQQPCellColor(starterA: Starter, starterB: Starter): string {
+    if (starterA.order === starterB.order) return ``;
+
+    const bankerA = this.isActiveBanker(starterA);
+    const bankerB = this.isActiveBanker(starterB);
+    const selectionA = this.isActiveSelection(starterA);
+    const selectionB = this.isActiveSelection(starterB);
+
+    if (bankerA && bankerB) return `bg-gray-400`;
+    if ((bankerA && selectionB) || (bankerB && selectionA)) return `bg-gray-600`;
+    if (selectionA && selectionB) return `bg-gray-600`;
+    return ``;
   }
 
   getTrainer(jockey: string, racecard: Racecard): string {

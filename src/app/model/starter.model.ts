@@ -6,7 +6,8 @@ export class Starter {
     public jockey      : string,
     public trainer     : string,
     public horseNameEN : string,
-    public horseNameCH : string
+    public horseNameCH : string,
+    public bonusRun    : boolean
   ) {
   }
 }

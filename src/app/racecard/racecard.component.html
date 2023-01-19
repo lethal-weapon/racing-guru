@@ -162,7 +162,7 @@
       <div class="w-10 h-10 pt-1 text-xl rounded-full {{getPlacingBorderBackground(starter.jockey, activeRacecard)}}">
         {{starter.order}}
       </div>
-      <div class="w-40 mx-2 text-left">
+      <div class="w-44 mx-2 text-left">
         <div class="text-lg">
           {{starter.horseNameCH}}
         </div>
@@ -194,15 +194,12 @@
         <sup>P</sup>
       </div>
       <div class="flex flex-row text-lg">
-        <div class="w-16">
-          <div *ngIf="isPreferredWQWR(starter)" class="text-yellow-400">
-            <i class="fa fa-thumbs-up"></i>
-          </div>
-          <div *ngIf="!isPreferredWQWR(starter)">
-            <i class="fa fa-thumbs-o-up"></i>
+        <div class="w-12">
+          <div [class.text-yellow-400]="starter.bonusRun">
+            <i class="fa fa-dollar"></i>
           </div>
           <div class="text-sm">
-            W/QW
+            B.R.
           </div>
         </div>
         <div class="w-12">
@@ -310,8 +307,20 @@
       <div class="">
         {{starter.trainer}}
       </div>
-      <div class="">
-        {{starter.order}}
+      <div class="flex flex-row justify-evenly">
+        <div>
+          {{starter.order}}
+        </div>
+        <div *ngIf="isActiveBanker(starter)"
+             class="text-yellow-400"
+        >
+          <i class="fa fa-heart"></i>
+        </div>
+        <div *ngIf="isActiveSelection(starter)"
+             class="text-yellow-400"
+        >
+          <i class="fa fa-star"></i>
+        </div>
       </div>
     </td>
   </tr>
@@ -343,7 +352,7 @@
       </div>
     </td>
     <td *ngFor="let starterB of activeStarters; let indexB = index"
-        class="border border-gray-700"
+        class="border border-gray-700 {{indexB > indexA ? getQQPCellColor(starterA, starterB) : ''}}"
         [class.bg-gray-800]="hoveredJockey === starterB.jockey"
         (mouseenter)="setHoveredJockey(starterB.jockey)"
     >
