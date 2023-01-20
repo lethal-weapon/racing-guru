@@ -293,8 +293,8 @@
 >
   <tr class="font-bold">
     <td class="w-40 border border-gray-700">
-      <div>1<sup>st</sup></div>
       <div>2<sup>nd</sup></div>
+      <div>1<sup>st</sup></div>
     </td>
     <td *ngFor="let starter of activeStarters"
         class="w-20 border border-gray-700"
@@ -352,7 +352,7 @@
       </div>
     </td>
     <td *ngFor="let starterB of activeStarters; let indexB = index"
-        class="border border-gray-700 {{indexB > indexA ? getQQPCellColor(starterA, starterB) : ''}}"
+        class="border border-gray-700 {{getQQPCellColor(starterA, starterB)}}"
         [class.bg-gray-800]="hoveredJockey === starterB.jockey"
         (mouseenter)="setHoveredJockey(starterB.jockey)"
     >
@@ -363,13 +363,15 @@
           {{getActiveStarterQQPOdds(starterA, starterB)[0]}}
         </div>
         <div *ngIf="indexB > indexA">
-          {{getActiveStarterQQPOdds(starterA, starterB)[1]}}
+          <span *ngIf="getActiveStarterQQPOdds(starterA, starterB)[1] > 0">
+            {{getActiveStarterQQPOdds(starterA, starterB)[1]}}
+          </span>
         </div>
-        <div>
-
+        <div *ngIf="indexA > indexB">
+          {{getActiveStarterFCTOdds(starterA, starterB)[0]}}
         </div>
-        <div>
-
+        <div *ngIf="indexA > indexB">
+          {{getActiveStarterFCTOdds(starterA, starterB)[1]}}
         </div>
       </div>
     </td>

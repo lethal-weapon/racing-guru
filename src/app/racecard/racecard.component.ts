@@ -219,13 +219,13 @@ export class RacecardComponent implements OnInit {
   isPreferredWQWR(starter: Starter): boolean {
     const wp = this.getActiveStarterWinPlaceOdds(starter);
     if (wp.win == 0 || wp.place == 0) return false;
-    if (wp.win > 30) return false;
+    if (wp.win > 40) return false;
 
     const W = wp.win;
     const QW = this.getActiveStarterQWOdds(starter)
     if (QW > W) return false;
 
-    if (W < 10 && (W - QW <= 2)) {
+    if (W < 10 && (W - QW <= 1.5)) {
       return true;
     }
     return Math.abs(1 - W / QW) <= 0.2;
@@ -234,6 +234,20 @@ export class RacecardComponent implements OnInit {
   getActiveStarterQWOdds(starter: Starter): number {
     const qqpWP = this.getQQPWinPlaceOdds(starter.order, this.activeRacecard);
     return parseFloat(qqpWP[0].toFixed(2));
+  }
+
+  getActiveStarterFCTOdds(starterA: Starter, starterB: Starter): number[] {
+    const fct = this.activeRacecard?.odds?.forecast;
+    if (!fct) return [0, 0];
+
+    const pairs = fct.filter(comb =>
+      comb.orders.includes(starterA.order) &&
+      comb.orders.includes(starterB.order)
+    )
+
+    if (pairs.length !== 2) return [0, 0];
+    if (pairs[0].orders[0] === starterA.order) return pairs.map(p => p.odds);
+    return pairs.reverse().map(p => p.odds);
   }
 
   getActiveStarterQQPOdds(starterA: Starter, starterB: Starter): number[] {
@@ -470,7 +484,7 @@ export class RacecardComponent implements OnInit {
       {pool: 'FT', amount: (pool.forecast / ONE_MILLION).toFixed(2)},
       {pool: 'TCE', amount: (pool.tierce / ONE_MILLION).toFixed(2)},
       {pool: 'P', amount: (pool.place / ONE_MILLION).toFixed(2)},
-      {pool: 'QP', amount: (pool.quinellaPlace / ONE_MILLION).toFixed(2)},
+      {pool: 'QP', amount: ((pool?.quinellaPlace || 0) / ONE_MILLION).toFixed(2)},
       {pool: 'FQ', amount: (pool.quartet / ONE_MILLION).toFixed(2)},
       {pool: 'DBL', amount: ((pool?.double || 0) / ONE_MILLION).toFixed(2)},
     ]
