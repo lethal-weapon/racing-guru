@@ -445,6 +445,7 @@ export class RacecardComponent implements OnInit {
       .replace('(', '')
       .replace(')', '')
       .replace('HANDICAP', '')
+      .replace('CHINESE NEW YEAR', 'CNY')
       .replace('INTERNATIONAL JOCKEYS\' CHAMPIONSHIP', 'IJC')
       .trim();
 
