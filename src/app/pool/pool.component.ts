@@ -12,7 +12,7 @@ export class PoolComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeGroup: string = this.poolGroups[0];
 
-  activeMeeting: string = '2023-01-01';
+  activeMeeting: string = '2023-01-29';
   timeSeriesViewModeInAmount: boolean = false;
 
   constructor(private repo: RestRepository) {

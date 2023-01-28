@@ -219,7 +219,6 @@ export class RacecardComponent implements OnInit {
   isPreferredWQWR(starter: Starter): boolean {
     const wp = this.getActiveStarterWinPlaceOdds(starter);
     if (wp.win == 0 || wp.place == 0) return false;
-    if (wp.win > 40) return false;
 
     const W = wp.win;
     const QW = this.getActiveStarterQWOdds(starter)
@@ -400,7 +399,7 @@ export class RacecardComponent implements OnInit {
 
   isBoundaryJockey(jockey: string): boolean {
     let specials = []
-    for (const j of ['BA', 'CCY', 'BV']) {
+    for (const j of ['BA', 'KJL', 'CCY', 'BV']) {
       if (this.jockeys.includes(j)) {
         specials.push(j);
       } else {
@@ -425,6 +424,7 @@ export class RacecardComponent implements OnInit {
       .replace('(', '')
       .replace(')', '')
       .replace('RESTRICTED', '')
+      .replace('4 YEAR OLDS', '4Y')
       .trim();
     return `${clean[0]}${clean.slice(-1)}`
   }
