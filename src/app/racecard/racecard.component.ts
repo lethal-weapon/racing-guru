@@ -275,8 +275,9 @@ export class RacecardComponent implements OnInit {
     // @ts-ignore
     if (!racecard.odds) return {order: order, win: 0, place: 0}
 
-    // @ts-ignore
-    return racecard.odds.winPlace.filter(o => o.order === order).pop();
+    return racecard.odds.winPlace
+      .filter(o => o.order === order)
+      .pop() || {order: order, win: 0, place: 0};
   }
 
   getQQPWinPlaceOdds(order: number, racecard: Racecard): number[] {
