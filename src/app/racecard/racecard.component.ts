@@ -168,10 +168,10 @@ export class RacecardComponent implements OnInit {
 
   isComingFavoured(jockey: string, racecard: Racecard): boolean {
     if (racecard.race < this.nextRace) return false;
-    return this.isFavoured(jockey, racecard);
+    return this.isPublicFavorite(jockey, racecard);
   }
 
-  isFavoured(jockey: string, racecard: Racecard): boolean {
+  isPublicFavorite(jockey: string, racecard: Racecard): boolean {
     if (!racecard.odds) return false;
 
     const order = this.getStarter(jockey, racecard).order;
@@ -183,6 +183,16 @@ export class RacecardComponent implements OnInit {
       .order;
 
     return order === favouredOrder;
+  }
+
+  isPersonalFavorite(starter: Starter, racecard: Racecard): boolean {
+    return racecard.favorite.bankers.includes(starter.order)
+      || racecard.favorite.selections.includes(starter.order);
+  }
+
+  toggleFavoriteInTable = (race: number, starter: Starter) => {
+    this.activeRace = race;
+    this.toggleFavorite(starter, false);
   }
 
   toggleFavorite = (starter: Starter, onBanker: boolean) => {
