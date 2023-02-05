@@ -58,7 +58,7 @@ export class CollaborationComponent implements OnInit {
       let style = '';
       if (index === 0 && v >= 3) style = 'text-red-600';
       if (index === 1 && v >= 20) style = 'text-yellow-400';
-      if (index === 1 && v <= 5 && coll.wins === 0) style = 'text-gray-700';
+      if (index === 1 && v <= 10 && coll.wins === 0) style = 'text-gray-700';
       return {
         value: v,
         style: style
