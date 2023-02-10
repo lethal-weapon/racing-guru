@@ -2,7 +2,6 @@ import {Pool} from './pool.model';
 import {Odds} from './odds.model';
 import {Starter} from './starter.model';
 import {Dividend} from './dividend.model';
-import {Favorite} from './favorite.model';
 
 export class Racecard {
   constructor(
@@ -18,7 +17,7 @@ export class Racecard {
     public videoUrl   : string,
     public resultUrl  : string,
     public starters   : Starter[],
-    public favorite   : Favorite,
+    public favorites  : number[],
     public course    ?: string,
     public pool      ?: Pool,
     public odds      ?: Odds,

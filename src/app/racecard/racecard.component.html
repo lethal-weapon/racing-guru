@@ -208,33 +208,26 @@
           </div>
         </div>
         <div class="w-12">
-          <div class="cursor-pointer"
-               (click)="toggleFavorite(starter, true)"
-          >
-            <span *ngIf="isActiveBanker(starter)" class="text-yellow-400">
-              <i class="fa fa-heart"></i>
-            </span>
-            <span *ngIf="!isActiveBanker(starter)">
-              <i class="fa fa-heart-o"></i>
-            </span>
+          <div>
+            <i class="fa fa-sticky-note-o"></i>
           </div>
           <div class="text-sm">
-            B.
+            N.
           </div>
         </div>
         <div class="w-12">
           <div class="cursor-pointer"
-               (click)="toggleFavorite(starter, false)"
+               (click)="toggleFavorite(starter)"
           >
-            <span *ngIf="isActiveSelection(starter)" class="text-yellow-400">
+            <span *ngIf="isActiveFavorite(starter)" class="text-yellow-400">
               <i class="fa fa-star"></i>
             </span>
-            <span *ngIf="!isActiveSelection(starter)">
+            <span *ngIf="!isActiveFavorite(starter)">
               <i class="fa fa-star-o"></i>
             </span>
           </div>
           <div class="text-sm">
-            S.
+            F.
           </div>
         </div>
       </div>
@@ -316,12 +309,7 @@
         <div>
           {{starter.order}}
         </div>
-        <div *ngIf="isActiveBanker(starter)"
-             class="text-yellow-400"
-        >
-          <i class="fa fa-heart"></i>
-        </div>
-        <div *ngIf="isActiveSelection(starter)"
+        <div *ngIf="isActiveFavorite(starter)"
              class="text-yellow-400"
         >
           <i class="fa fa-star"></i>

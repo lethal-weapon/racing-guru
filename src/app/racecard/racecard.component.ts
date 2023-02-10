@@ -38,7 +38,7 @@ export class RacecardComponent implements OnInit {
             if (newCard.pool !== r.pool) r.pool = newCard.pool;
             if (newCard.odds !== r.odds) r.odds = newCard.odds;
             if (newCard.dividend !== r.dividend) r.dividend = newCard.dividend;
-            if (newCard.favorite !== r.favorite) r.favorite = newCard.favorite;
+            if (newCard.favorites !== r.favorites) r.favorites = newCard.favorites;
           }
         })
       }
@@ -186,44 +186,33 @@ export class RacecardComponent implements OnInit {
   }
 
   isPersonalFavorite(starter: Starter, racecard: Racecard): boolean {
-    return racecard.favorite.bankers.includes(starter.order)
-      || racecard.favorite.selections.includes(starter.order);
+    return racecard.favorites.includes(starter.order);
+  }
+
+  isActiveFavorite(starter: Starter): boolean {
+    return this.activeRacecard.favorites.includes(starter.order);
   }
 
   toggleFavoriteInTable = (race: number, starter: Starter) => {
     this.activeRace = race;
-    this.toggleFavorite(starter, false);
+    this.toggleFavorite(starter);
   }
 
-  toggleFavorite = (starter: Starter, onBanker: boolean) => {
+  toggleFavorite = (starter: Starter) => {
     const order = starter.order;
-    let bankers = this.activeRacecard.favorite.bankers.map(b => b);
-    let selections = this.activeRacecard.favorite.selections.map(s => s);
+    let newFavorites = this.activeRacecard.favorites.map(f => f);
 
-    if (onBanker) {
-      selections = selections.filter(s => s !== order);
-      if (bankers.includes(order)) bankers = bankers.filter(b => b !== order);
-      else bankers.push(order);
+    if (newFavorites.includes(order)) {
+      newFavorites = newFavorites.filter(f => f !== order)
     } else {
-      bankers = bankers.filter(b => b !== order);
-      if (selections.includes(order)) selections = selections.filter(s => s !== order);
-      else selections.push(order);
+      newFavorites.push(order)
     }
 
     this.repo.saveFavorite({
       meeting: this.currentMeeting,
       race: this.activeRace,
-      bankers: bankers,
-      selections: selections
+      favorites: newFavorites
     });
-  }
-
-  isActiveBanker(starter: Starter): boolean {
-    return this.activeRacecard.favorite.bankers.includes(starter.order);
-  }
-
-  isActiveSelection(starter: Starter): boolean {
-    return this.activeRacecard.favorite.selections.includes(starter.order);
   }
 
   isPreferredWQWR(starter: Starter): boolean {
@@ -307,16 +296,11 @@ export class RacecardComponent implements OnInit {
 
   getQQPCellColor(starterA: Starter, starterB: Starter): string {
     if (starterA.order === starterB.order) return ``;
+    const isBothFavorite =
+      this.isActiveFavorite(starterA) &&
+      this.isActiveFavorite(starterB)
 
-    const bankerA = this.isActiveBanker(starterA);
-    const bankerB = this.isActiveBanker(starterB);
-    const selectionA = this.isActiveSelection(starterA);
-    const selectionB = this.isActiveSelection(starterB);
-
-    if (bankerA && bankerB) return `bg-gray-400`;
-    if ((bankerA && selectionB) || (bankerB && selectionA)) return `bg-gray-600`;
-    if (selectionA && selectionB) return `bg-gray-600`;
-    return ``;
+    return isBothFavorite ? `bg-gray-600` : ``;
   }
 
   getTrainer(jockey: string, racecard: Racecard): string {
