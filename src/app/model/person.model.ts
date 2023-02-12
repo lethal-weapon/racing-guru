@@ -41,9 +41,9 @@ export const JOCKEYS = [
   new Person('FEL', 'Ferraris', 'Luke', 'L. Ferraris', 'SAF', 'Club', ''),
   new Person('BHW', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William'),
   new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', ''),
+  new Person('BV', 'Borges', 'Vagner', 'V. Borges', 'BRZ', 'Club', ''),
   new Person('MMR', 'Maia', 'Ruan', 'R. Maia', 'BRZ', 'Club', ''),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
-  new Person('BV', 'Borges', 'Vagner', 'V. Borges', 'BRZ', 'Club', ''),
 
   new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith'),
   new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred'),

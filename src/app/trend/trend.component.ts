@@ -166,7 +166,7 @@ export class TrendComponent implements OnInit {
   }
 
   isBoundaryPerson(person: string): boolean {
-    return ['WDJ', 'YTP', 'TKH', 'BA', 'KJL', 'CCY', 'BV'].includes(person);
+    return ['WDJ', 'YTP', 'TKH', 'BA', 'KJL', 'CCY', 'CLR'].includes(person);
   }
 
   get controlStyle(): string {
