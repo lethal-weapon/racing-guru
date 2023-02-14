@@ -36,6 +36,7 @@ export const JOCKEYS = [
   new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew'),
   new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry'),
   new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus'),
+  new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith'),
 
   new Person('HEL', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', ''),
   new Person('FEL', 'Ferraris', 'Luke', 'L. Ferraris', 'SAF', 'Club', ''),
@@ -45,7 +46,6 @@ export const JOCKEYS = [
   new Person('MMR', 'Maia', 'Ruan', 'R. Maia', 'BRZ', 'Club', ''),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
 
-  new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith'),
   new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred'),
   new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack'),
   new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor'),
@@ -54,23 +54,23 @@ export const JOCKEYS = [
 ]
 
 export const TRAINERS = [
-  new Person('CAS', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony'),
   new Person('SJJ', 'Size', 'John', 'J. Size', 'AUS', '', ''),
   new Person('LFC', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie'),
-  new Person('YPF', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky'),
-  new Person('WDJ', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', ''),
+  new Person('NPC', 'Ng', 'Pang-chi', 'P. Ng', 'HK', '', 'Pierre'),
+  new Person('HDA', 'Hayes', 'David', 'D. Hayes', 'AUS', '', ''),
+  new Person('HAD', 'Hall', 'David', 'D. Hall', 'AUS', '', ''),
 
+  new Person('YPF', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky'),
   new Person('SCS', 'Shum', 'Chap-shing', 'D. Shum', 'HK', '', 'Danny'),
   new Person('LKW', 'Lui', 'Kin-wai', 'F. Lui', 'HK', '', 'Francis'),
   new Person('FC', 'Fownes', 'Caspar', 'C. Fownes', 'GB', '', ''),
   new Person('SWY', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris'),
-  new Person('YTP', 'Yung', 'Tin-pang', 'B. Yung', 'HK', '', 'Benno'),
 
-  new Person('NPC', 'Ng', 'Pang-chi', 'P. Ng', 'HK', '', 'Pierre'),
-  new Person('HDA', 'Hayes', 'David', 'D. Hayes', 'AUS', '', ''),
-  new Person('HAD', 'Hall', 'David', 'D. Hall', 'AUS', '', ''),
+  new Person('CAS', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony'),
+  new Person('WDJ', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', ''),
   new Person('YCH', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis'),
   new Person('TKH', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy'),
+  new Person('YTP', 'Yung', 'Tin-pang', 'B. Yung', 'HK', '', 'Benno'),
 
   new Person('MKL', 'Man', 'Ka-leung', 'M. Man', 'HK', '', 'Manfred'),
   new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', ''),

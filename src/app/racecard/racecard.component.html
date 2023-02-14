@@ -169,7 +169,11 @@
       </div>
       <div class="w-44 mx-2 text-left">
         <div class="text-lg">
-          {{starter.horseNameCH}}
+          <a [href]="getHorseProfileUrl(starter.horse)"
+             target="_blank"
+          >
+            {{starter.horseNameCH}}
+          </a>
         </div>
         <div class="text-sm">
           {{starter.horseNameEN}}
