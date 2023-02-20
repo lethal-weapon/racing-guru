@@ -299,7 +299,7 @@
       <div>1<sup>st</sup></div>
     </td>
     <td *ngFor="let starter of activeStarters"
-        class="w-20 border border-gray-700"
+        class="w-20 border border-gray-700 {{getPlacingColor(starter.jockey, activeRacecard)}}"
         [class.bg-gray-800]="hoveredJockey === starter.jockey"
         (mouseenter)="setHoveredJockey(starter.jockey)"
     >
@@ -356,19 +356,45 @@
       <div *ngIf="starterA.order !== starterB.order"
            class="grid grid-cols-2"
       >
-        <div *ngIf="indexB > indexA">
-          {{getActiveStarterQQPOdds(starterA, starterB)[0]}}
-        </div>
-        <div *ngIf="indexB > indexA">
-          <span *ngIf="getActiveStarterQQPOdds(starterA, starterB)[1] > 0">
-            {{getActiveStarterQQPOdds(starterA, starterB)[1]}}
+        <div *ngIf="indexB > indexA"
+             [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
+        >
+          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[0]">
+            {{getActiveStarterQQPOdds(starterA, starterB)[0]}}
+          </span>
+          <span *ngIf="!isQQPOddsWithinRange(starterA, starterB)[0]">
+            -
           </span>
         </div>
-        <div *ngIf="indexA > indexB">
-          {{getActiveStarterFCTOdds(starterA, starterB)[0]}}
+        <div *ngIf="indexB > indexA"
+             [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
+        >
+          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[1]">
+            {{getActiveStarterQQPOdds(starterA, starterB)[1]}}
+          </span>
+          <span *ngIf="!isQQPOddsWithinRange(starterA, starterB)[1]">
+            -
+          </span>
         </div>
-        <div *ngIf="indexA > indexB">
-          {{getActiveStarterFCTOdds(starterA, starterB)[1]}}
+        <div *ngIf="indexA > indexB"
+             [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
+        >
+          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[0]">
+            {{getActiveStarterFCTOdds(starterA, starterB)[0]}}
+          </span>
+          <span *ngIf="!isFCTOddsWithinRange(starterA, starterB)[0]">
+            -
+          </span>
+        </div>
+        <div *ngIf="indexA > indexB"
+             [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
+        >
+          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[1]">
+            {{getActiveStarterFCTOdds(starterA, starterB)[1]}}
+          </span>
+          <span *ngIf="!isFCTOddsWithinRange(starterA, starterB)[1]">
+            -
+          </span>
         </div>
       </div>
     </td>

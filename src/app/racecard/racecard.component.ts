@@ -234,6 +234,17 @@ export class RacecardComponent implements OnInit {
     return parseFloat(qqpWP[0].toFixed(2));
   }
 
+  isFinalFCTCombination(starterA: Starter, starterB: Starter): boolean {
+    const placings = [starterA, starterB]
+      .map(s => this.getPlacing(s.jockey, this.activeRacecard));
+    return placings[0] === 1 && placings[1] === 2;
+  }
+
+  isFCTOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
+    return this.getActiveStarterFCTOdds(starterA, starterB)
+      .map(o => o > 0 && o < 300);
+  }
+
   getActiveStarterFCTOdds(starterA: Starter, starterB: Starter): number[] {
     const fct = this.activeRacecard?.odds?.forecast;
     if (!fct) return [0, 0];
@@ -246,6 +257,25 @@ export class RacecardComponent implements OnInit {
     if (pairs.length !== 2) return [0, 0];
     if (pairs[0].orders[0] === starterA.order) return pairs.map(p => p.odds);
     return pairs.reverse().map(p => p.odds);
+  }
+
+  isFinalQQPCombination(starterA: Starter, starterB: Starter): boolean[] {
+    const placingSum = [starterA, starterB]
+      .map(s => this.getPlacing(s.jockey, this.activeRacecard))
+      .map(p => [0, 4].includes(p) ? 9 : p)
+      .reduce((prev, curr) => prev + curr, 0);
+    return [
+      placingSum === 3,
+      [3, 4, 5].includes(placingSum),
+    ]
+  }
+
+  isQQPOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
+    const qqp = this.getActiveStarterQQPOdds(starterA, starterB);
+    return [
+      qqp[0] > 0 && qqp[0] < 150,
+      qqp[1] > 0 && qqp[1] < 75,
+    ]
   }
 
   getActiveStarterQQPOdds(starterA: Starter, starterB: Starter): number[] {
