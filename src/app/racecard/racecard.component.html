@@ -359,40 +359,40 @@
         <div *ngIf="indexB > indexA"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
         >
-          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[0]">
+          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0]">
             {{getActiveStarterQQPOdds(starterA, starterB)[0]}}
           </span>
-          <span *ngIf="!isQQPOddsWithinRange(starterA, starterB)[0]">
+          <span *ngIf="!(isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0])">
             -
           </span>
         </div>
         <div *ngIf="indexB > indexA"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
         >
-          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[1]">
+          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1]">
             {{getActiveStarterQQPOdds(starterA, starterB)[1]}}
           </span>
-          <span *ngIf="!isQQPOddsWithinRange(starterA, starterB)[1]">
+          <span *ngIf="!(isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1])">
             -
           </span>
         </div>
         <div *ngIf="indexA > indexB"
              [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
         >
-          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[0]">
+          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB)">
             {{getActiveStarterFCTOdds(starterA, starterB)[0]}}
           </span>
-          <span *ngIf="!isFCTOddsWithinRange(starterA, starterB)[0]">
+          <span *ngIf="!(isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB))">
             -
           </span>
         </div>
         <div *ngIf="indexA > indexB"
              [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
         >
-          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[1]">
+          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA)">
             {{getActiveStarterFCTOdds(starterA, starterB)[1]}}
           </span>
-          <span *ngIf="!isFCTOddsWithinRange(starterA, starterB)[1]">
+          <span *ngIf="!(isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA))">
             -
           </span>
         </div>
