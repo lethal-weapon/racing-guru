@@ -351,6 +351,7 @@
     <td *ngFor="let starterB of activeStarters; let indexB = index"
         class="border border-gray-700 {{getQQPCellColor(starterA, starterB)}}"
         [class.bg-gray-800]="hoveredJockey === starterB.jockey"
+        [class.diagonal-line]="starterA.order === starterB.order"
         (mouseenter)="setHoveredJockey(starterB.jockey)"
     >
       <div *ngIf="starterA.order !== starterB.order"

@@ -25,3 +25,7 @@ body {
   -ms-user-select:none !important;
   user-select:none !important;
 }
+
+.diagonal-line {
+  background:linear-gradient(to right top, #111827 0%, #111827 49.9%, #ffffff 50%, #ffffff 51%, #111827 51.1%, #111827 100%);
+}
