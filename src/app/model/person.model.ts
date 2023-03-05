@@ -18,7 +18,6 @@ export const JOCKEYS = [
   new Person('TEK', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', ''),
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', ''),
 
-  // new Person('MNJ', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', ''),
   // new Person('MOJ', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', ''),
   // new Person('SHB', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', ''),
   // new Person('MR', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', ''),
@@ -29,13 +28,14 @@ export const JOCKEYS = [
   // new Person('BUW', 'Buick', 'William', 'W. Buick', 'DEN', 'Club', ''),
   // new Person('LC', 'Lemaire', 'Christophe', 'C. Lemaire', 'FR', 'Club', ''),
   // new Person('BAM', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', ''),
+  // new Person('MNJ', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', ''),
 
   new Person('HCY', 'Ho', 'Chak-yiu', 'V. Ho', 'HK', 'Freelance', 'Vincent'),
   new Person('CML', 'Chadwick', 'Matthew L.', 'M. Chadwick', 'HK', 'Freelance', 'Lee'),
   new Person('LDE', 'Leung', 'Ka-chun', 'D. Leung', 'HK', 'Freelance', 'Derek'),
-  new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew'),
   new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry'),
   new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus'),
+  new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew'),
   new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith'),
 
   new Person('HEL', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', ''),

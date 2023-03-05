@@ -83,7 +83,7 @@ export class RacecardComponent implements OnInit {
   getPastHorseStarters(current: Starter): PastStarter[] {
     return this.repo.findPastStarters()
       .filter(s => s.horse === current.horse)
-      .slice(0, 12);
+      .slice(0, 16);
   }
 
   getPastCollaborationStarters(current: Starter): CollaborationStarter[] {
@@ -100,7 +100,7 @@ export class RacecardComponent implements OnInit {
       .sort((r1, r2) =>
         r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
       )
-      .slice(0, 21);
+      .slice(0, 24);
   }
 
   getRaceBadgeStyle(race: number): string {
