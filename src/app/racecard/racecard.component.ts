@@ -5,7 +5,7 @@ import {PastStarter, Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/order.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {ONE_MILLION} from '../constants/numbers';
+import {ONE_MILLION, PAYOUT_RATE} from '../constants/numbers';
 import {RestRepository} from '../model/rest.repository';
 import {CollaborationStarter} from '../model/collaboration.model';
 
@@ -100,7 +100,7 @@ export class RacecardComponent implements OnInit {
       .sort((r1, r2) =>
         r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
       )
-      .slice(0, 24);
+      .slice(0, 28);
   }
 
   getRaceBadgeStyle(race: number): string {
@@ -298,6 +298,23 @@ export class RacecardComponent implements OnInit {
     return this.getWinPlaceOdds(starter.jockey, this.activeRacecard);
   }
 
+  getActiveStarterWQPInvestments(starter: Starter): Array<{ percent: string, amount: string }> {
+    const pool = this.activeRacecard?.pool;
+    if (!pool) return [];
+
+    const WP = this.getActiveStarterWinPlaceOdds(starter);
+    const QW = this.getActiveStarterQWOdds(starter);
+
+    return [
+      {odds: WP.win, amount: pool.win},
+      {odds: QW, amount: pool.quinella},
+      {odds: 3 * WP.place, amount: pool.place}
+    ].map(o => ({
+      percent: `${(100 * PAYOUT_RATE / o.odds).toFixed(1)}%`,
+      amount: `$${(o.amount * PAYOUT_RATE / o.odds / ONE_MILLION).toFixed(2)}M`
+    }));
+  }
+
   getWinPlaceOdds(jockey: string, racecard: Racecard): WinPlaceOdds {
     const order = this.getStarter(jockey, racecard).order;
 
@@ -310,7 +327,6 @@ export class RacecardComponent implements OnInit {
   }
 
   getQQPWinPlaceOdds(order: number, racecard: Racecard): number[] {
-    const PAYOUT_RATE = 0.825;
     const qin = racecard.odds?.quinella;
     const qpl = racecard.odds?.quinellaPlace;
 
