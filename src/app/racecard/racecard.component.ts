@@ -317,13 +317,12 @@ export class RacecardComponent implements OnInit {
 
   getWinPlaceOdds(jockey: string, racecard: Racecard): WinPlaceOdds {
     const order = this.getStarter(jockey, racecard).order;
-
-    // @ts-ignore
-    if (!racecard.odds) return {order: order, win: 0, place: 0}
+    const defaultValue = {order: order, win: 0, place: 0};
+    if (!racecard.odds) return defaultValue;
 
     return racecard.odds.winPlace
       .filter(o => o.order === order)
-      .pop() || {order: order, win: 0, place: 0};
+      .pop() || defaultValue;
   }
 
   getQQPWinPlaceOdds(order: number, racecard: Racecard): number[] {

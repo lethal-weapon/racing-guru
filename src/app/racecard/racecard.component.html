@@ -136,12 +136,12 @@
           <div class=""
                [class.text-red-600]="(race.race == nextRace) || (isComingFavoured(jockey, race))"
           >
-            {{getWinPlaceOdds(jockey, race).win}}
+            {{getWinPlaceOdds(jockey, race).win == 0 ? '-' : getWinPlaceOdds(jockey, race).win}}
           </div>
           <div class=""
                [class.text-blue-600]="race.race == nextRace"
           >
-            {{getWinPlaceOdds(jockey, race).place}}
+            {{getWinPlaceOdds(jockey, race).place == 0 ? '-' : getWinPlaceOdds(jockey, race).place}}
           </div>
         </div>
       </div>
@@ -211,13 +211,13 @@
         {{starter.horseTotal1st}}-{{starter.horseTotal2nd}}-{{starter.horseTotal3rd}}/{{starter.horseTotalRuns}}
       </div>
     </div>
-    <div class="w-20 text-red-600">
+    <div class="w-24 text-red-600">
       <span class="text-3xl">
         {{getActiveStarterWinPlaceOdds(starter).win}}
       </span>
       <sup>W</sup>
     </div>
-    <div class="w-20 text-blue-600">
+    <div class="w-24 text-blue-600">
       <span class="text-3xl">
         {{getActiveStarterWinPlaceOdds(starter).place}}
       </span>
