@@ -1,0 +1,129 @@
+<div class="mx-10 my-8 flex flex-row justify-evenly noselect">
+  <div *counter="let race of maxRace"
+       class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(race)}}"
+       (click)="setActiveRace(race)"
+  >
+    Race {{race}}
+  </div>
+</div>
+
+<div class="mx-10 my-6 flex flex-row items-start noselect">
+  <div class="w-1/2 px-4 grid grid-cols-2 gap-6">
+    <div *ngFor="let starter of activeStarters"
+         class="pt-2 pb-2.5 grid grid-cols-4 justify-items-center text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
+    >
+      <div class="w-8 h-8 pt-0.5 rounded-full border border-gray-700">
+        {{starter.order}}
+      </div>
+      <div class="text-lg">
+        {{starter.horseNameCH}}
+      </div>
+      <div class="text-xl text-red-600">
+        {{getActiveStarterWinPlaceOdds(starter).win}}
+      </div>
+      <div class="text-xl text-blue-600">
+        {{getActiveStarterWinPlaceOdds(starter).place}}
+      </div>
+      <div class="text-xl font-mono"
+           [class.font-bold]="hoveredCombination.includes(starter.order)"
+           [class.text-yellow-400]="hoveredCombination.includes(starter.order)"
+      >
+        {{starter.jockey}}
+      </div>
+      <div class="text-xl font-mono"
+           [class.font-bold]="hoveredCombination.includes(starter.order)"
+           [class.text-yellow-400]="hoveredCombination.includes(starter.order)"
+      >
+        {{starter.trainer}}
+      </div>
+      <div class="text-lg cursor-pointer"
+           (click)="selectAsBanker(starter)"
+      >
+        <span *ngIf="isBankerStarter(starter)" class="text-yellow-400">
+          <i class="fa fa-heart"></i>
+        </span>
+        <span *ngIf="!isBankerStarter(starter)">
+          <i class="fa fa-heart-o"></i>
+        </span>
+      </div>
+      <div class="text-lg cursor-pointer"
+           (click)="toggleTrash(starter)"
+      >
+        <span *ngIf="isUnwantedStarter(starter)" class="text-purple-400">
+          <i class="fa fa-trash"></i>
+        </span>
+        <span *ngIf="!isUnwantedStarter(starter)">
+          <i class="fa fa-trash-o"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="w-1/2 px-4">
+    <table class="mx-auto table-fixed border-collapse border border-gray-500 text-center noselect"
+           (mouseleave)="hoveredCombination = [0]"
+    >
+      <thead>
+      <th class="w-16 border border-gray-600">
+        #
+      </th>
+      <th *ngFor="let o of ordinals"
+          class="w-20 border border-gray-600"
+      >
+        {{o.ordinal}}<sup>{{o.superScript}}</sup>
+      </th>
+      <th class="w-20 border border-gray-600">
+        Wgt.
+      </th>
+      <th class="w-20 border border-gray-600">
+        FF@
+      </th>
+      </thead>
+      <tbody>
+      <tr *ngFor="let top4 of currentPageTop4Starters; let index = index"
+          class="hover:bg-gray-800"
+          (mouseenter)="hoveredCombination = top4.combination"
+      >
+        <td class="border border-gray-700">
+          {{index + 1}}
+        </td>
+        <td *ngFor="let order of top4.combination"
+            class="border border-gray-700"
+            [class.text-yellow-400]="isBankerOrder(order)"
+        >
+          {{order}}
+        </td>
+        <td class="border border-gray-700 italic"
+            [class.text-green-600]="top4.weight >= preferredWeight"
+        >
+          {{top4.weight}}
+        </td>
+        <td class="border border-gray-700">
+          -
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="mx-4 mt-3 flex flex-row justify-around text-center text-2xl">
+      <div class="text-yellow-400">
+        {{top4Starters.length}} Comb.
+      </div>
+      <div class="flex flex-row">
+        <div class="">
+          <i class="fa fa-hand-o-left"></i>
+        </div>
+        <div class="px-4">
+          <i class="fa fa-arrow-left"></i>
+        </div>
+        <div class="px-2">
+          {{currentPage}} / {{totalPages}}
+        </div>
+        <div class="px-4">
+          <i class="fa fa-arrow-right"></i>
+        </div>
+        <div class="">
+          <i class="fa fa-hand-o-right"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

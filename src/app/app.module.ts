@@ -16,6 +16,7 @@ import {DividendComponent} from './dividend/dividend.component';
 import {TrendComponent} from './trend/trend.component';
 import {MatcherComponent} from './matcher/matcher.component';
 import {CollaborationComponent} from './collaboration/collaboration.component';
+import {Top4sComponent} from './top4s/top4s.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {CollaborationComponent} from './collaboration/collaboration.component';
     DividendComponent,
     TrendComponent,
     MatcherComponent,
-    CollaborationComponent
+    CollaborationComponent,
+    Top4sComponent
   ],
   imports: [
     BrowserModule,

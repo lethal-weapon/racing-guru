@@ -7,3 +7,4 @@ export const ONE_HUNDRED_THOUSAND = 100_000
 export const ONE_MILLION = 1_000_000
 
 export const PAYOUT_RATE = 0.825;
+export const MAX_RACE_PER_MEETING = 11;
