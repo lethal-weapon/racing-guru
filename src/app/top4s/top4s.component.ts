@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {Clipboard} from '@angular/cdk/clipboard';
 
 import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
@@ -21,7 +22,7 @@ export class Top4sComponent implements OnInit {
 
   activeRace: number = 1;
   currentPage: number = 1;
-  bankers: Map<number, number> = new Map();
+  bankers: Map<number, number[]> = new Map();
   trashes: Map<number, number[]> = new Map();
 
   ordinals: Array<{ ordinal: number, superScript: string }> = [
@@ -32,6 +33,7 @@ export class Top4sComponent implements OnInit {
   ]
 
   constructor(
+    private clipboard: Clipboard,
     private socket: WebsocketService
   ) {
     socket.racecards.subscribe(data => {
@@ -43,7 +45,7 @@ export class Top4sComponent implements OnInit {
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), 3_000);
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
-      this.bankers.set(race, 1);
+      this.bankers.set(race, [1]);
       this.trashes.set(race, []);
     }
   }
@@ -51,9 +53,23 @@ export class Top4sComponent implements OnInit {
   setActiveRace = (clicked: number) =>
     this.activeRace = clicked
 
-  selectAsBanker = (starter: Starter) => {
-    if (this.isUnwantedStarter(starter)) this.toggleTrash(starter);
-    this.bankers.set(this.activeRace, starter.order);
+  toggleBanker = (starter: Starter) => {
+    const order = starter.order;
+    let bankers = this.bankers.get(this.activeRace) || [1];
+
+    if (bankers.includes(order)) {
+      if (bankers.length > 1) {
+        bankers = bankers.filter(b => b !== order);
+        this.bankers.set(this.activeRace, bankers);
+      }
+      return;
+    }
+
+    if (bankers.length < 4) {
+      if (this.isUnwantedStarter(starter)) this.toggleTrash(starter);
+      bankers.push(order);
+      this.bankers.set(this.activeRace, bankers);
+    }
   }
 
   toggleTrash = (starter: Starter) => {
@@ -72,15 +88,16 @@ export class Top4sComponent implements OnInit {
     if (!this.activeRacecard?.dividend?.quartet) return;
 
     const orders = this.activeRacecard.dividend.quartet[0].orders;
-    const winner = this.activeStarters.filter(s => s.order === orders[0]).pop();
-    if (!winner) return;
-
     this.currentPage = 1;
-    this.selectAsBanker(winner);
-    this.activeStarters
-      .filter(s => !orders.includes(s.order))
-      .filter(s => !this.isUnwantedStarter(s))
-      .forEach(s => this.toggleTrash(s));
+    this.bankers.set(this.activeRace, orders);
+    this.trashes.set(this.activeRace, []);
+  }
+
+  resetStarterState = () => {
+    const favorite = this.activeStarters[0].order;
+    this.currentPage = 1;
+    this.bankers.set(this.activeRace, [favorite]);
+    this.trashes.set(this.activeRace, []);
   }
 
   trashBottom6Starters = () => {
@@ -91,14 +108,29 @@ export class Top4sComponent implements OnInit {
       .forEach(s => this.toggleTrash(s));
   }
 
-  resetStarterState = () => {
-    this.currentPage = 1;
-    this.trashes.set(this.activeRace, []);
-    this.selectAsBanker(this.activeStarters[0]);
+  copyRecommendedBets = () => {
+    const bets = this.recommendedTop4Starters
+      .map(s => `ff:${s.combination.join()}`)
+      .join(`;`);
+    this.clipboard.copy(bets);
+  }
+
+  copyShownBets = () => {
+    const bankers = this.bankers.get(this.activeRace) || [1];
+    const unwanted = this.trashes.get(this.activeRace) || [];
+    const selections = this.activeStarters
+      .map(s => s.order)
+      .filter(o => !unwanted.includes(o))
+      .filter(o => !bankers.includes(o))
+      .sort((n1, n2) => n1 - n2)
+      .join();
+
+    if (bankers.length === 4) this.clipboard.copy(`ff:${bankers.join()}`);
+    else this.clipboard.copy(`ff:${bankers.join()}>${selections}|$100`);
   }
 
   isBankerOrder(order: number): boolean {
-    return this.bankers.get(this.activeRace) === order;
+    return (this.bankers.get(this.activeRace) || []).includes(order);
   }
 
   isBankerStarter(starter: Starter): boolean {
@@ -113,6 +145,10 @@ export class Top4sComponent implements OnInit {
     if (!this.activeRacecard?.dividend?.quartet) return false;
     return this.activeRacecard.dividend.quartet[0].orders
       .every(o => combination.includes(o));
+  }
+
+  isWithinPreferredWeightRange(weight: number): boolean {
+    return weight >= 18 && weight <= 25;
   }
 
   getPlacing(starter: Starter): number {
@@ -149,10 +185,6 @@ export class Top4sComponent implements OnInit {
       .pop() || defaultValue;
   }
 
-  isWithinPreferredWeightRange(weight: number): boolean {
-    return weight >= 8 && weight <= 10;
-  }
-
   getTeamWeight(team: string[]): number {
     let totalWeight = 0;
 
@@ -173,6 +205,10 @@ export class Top4sComponent implements OnInit {
     return totalWeight;
   }
 
+  get recommendedTop4Starters(): Top4Starter[] {
+    return this.top4Starters.filter(s => this.isWithinPreferredWeightRange(s.weight));
+  }
+
   get currentPageTop4Starters(): Top4Starter[] {
     const fromIndex = this.pageSize * (this.currentPage - 1);
     const toIndex = this.pageSize * this.currentPage;
@@ -183,29 +219,7 @@ export class Top4sComponent implements OnInit {
   }
 
   get top4Starters(): Top4Starter[] {
-    const banker = this.bankers.get(this.activeRace) || 1;
-    const unwanted = this.trashes.get(this.activeRace) || [];
-    const orders = this.activeStarters
-      .map(s => s.order)
-      .filter(o => !unwanted.includes(o))
-      .filter(o => o !== banker)
-      .sort((n1, n2) => n1 - n2);
-
-    let combinations = new Set<number[]>;
-    for (let i = 0; i < orders.length; i++) {
-      const numberA = orders[i];
-      for (let j = i + 1; j < orders.length; j++) {
-        const numberB = orders[j];
-        for (let k = j + 1; k < orders.length; k++) {
-          const numberC = orders[k];
-          const combination = [banker, numberA, numberB, numberC]
-            .sort((n1, n2) => n1 - n2);
-          combinations.add(combination);
-        }
-      }
-    }
-
-    return Array.from(combinations)
+    return this.allPossibleCombinations
       .map(c => {
         let team = new Set<string>;
         c.map(n => this.activeStarters.find(s => s.order === n))
@@ -222,6 +236,47 @@ export class Top4sComponent implements OnInit {
         }
       })
       .sort((s1, s2) => s2.weight - s1.weight);
+  }
+
+  get allPossibleCombinations(): number[][] {
+    const sorter = (n1: number, n2: number) => n1 - n2;
+    const bankers = this.bankers.get(this.activeRace) || [1];
+    const unwanted = this.trashes.get(this.activeRace) || [];
+    const selections = this.activeStarters
+      .map(s => s.order)
+      .filter(o => !unwanted.includes(o))
+      .filter(o => !bankers.includes(o))
+      .sort(sorter);
+
+    let combinations = new Set<number[]>;
+    if (bankers.length === 4) combinations.add(bankers.sort(sorter));
+    else {
+      for (let i = 0; i < selections.length; i++) {
+        if (bankers.length === 3) {
+          combinations.add(
+            [bankers[0], bankers[1], bankers[2], selections[i]].sort(sorter)
+          );
+          continue
+        }
+
+        for (let j = i + 1; j < selections.length; j++) {
+          if (bankers.length === 2) {
+            combinations.add(
+              [bankers[0], bankers[1], selections[i], selections[j]].sort(sorter)
+            );
+            continue
+          }
+
+          for (let k = j + 1; k < selections.length; k++) {
+            combinations.add(
+              [bankers[0], selections[i], selections[j], selections[k]].sort(sorter)
+            );
+          }
+        }
+      }
+    }
+
+    return Array.from(combinations);
   }
 
   get activeStarters(): Starter[] {

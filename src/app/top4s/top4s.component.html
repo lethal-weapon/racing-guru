@@ -28,6 +28,18 @@
       >
         Trash B6
       </div>
+      <div
+        class="px-4 pt-1.5 pb-2 rounded-2xl text-green-600 border border-gray-600 hvr-grow-shadow cursor-pointer"
+        (click)="copyRecommendedBets()"
+      >
+        Copy
+      </div>
+      <div
+        class="px-4 pt-1.5 pb-2 rounded-2xl text-yellow-400 border border-gray-600 hvr-grow-shadow cursor-pointer"
+        (click)="copyShownBets()"
+      >
+        Copy
+      </div>
     </div>
     <div class="grid grid-cols-2 gap-x-6 gap-y-4">
       <div *ngFor="let starter of activeStarters"
@@ -56,7 +68,7 @@
           {{starter.trainer}}
         </div>
         <div class="text-lg cursor-pointer"
-             (click)="selectAsBanker(starter)"
+             (click)="toggleBanker(starter)"
         >
         <span *ngIf="isBankerStarter(starter)" class="text-yellow-400">
           <i class="fa fa-heart"></i>
@@ -71,7 +83,7 @@
         <span *ngIf="isUnwantedStarter(starter)" class="text-red-600">
           <i class="fa fa-times"></i>
         </span>
-        <span *ngIf="!isUnwantedStarter(starter)">
+          <span *ngIf="!isUnwantedStarter(starter)">
           <i class="fa fa-trash-o"></i>
         </span>
         </div>
@@ -80,8 +92,14 @@
   </div>
   <div class="w-1/2 px-4">
     <div class="mb-2 flex flex-row text-center text-2xl">
-      <div class="w-1/2 text-yellow-400">
-        {{top4Starters.length}} Comb.
+      <div class="w-1/2">
+        <span class="text-green-600">
+          {{recommendedTop4Starters.length}}
+        </span>
+        /
+        <span class="text-yellow-400">
+          {{top4Starters.length}} Comb.
+        </span>
       </div>
       <div class="w-1/2 flex flex-row">
         <div class="px-3 hover:text-yellow-400"
