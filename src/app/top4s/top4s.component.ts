@@ -20,11 +20,9 @@ export class Top4sComponent implements OnInit {
   racecards: Racecard[] = [];
 
   activeRace: number = 1;
+  currentPage: number = 1;
   bankers: Map<number, number> = new Map();
   trashes: Map<number, number[]> = new Map();
-
-  currentPage: number = 1;
-  hoveredCombination: number[] = [];
 
   ordinals: Array<{ ordinal: number, superScript: string }> = [
     {ordinal: 1, superScript: 'st'},
@@ -70,6 +68,35 @@ export class Top4sComponent implements OnInit {
     this.trashes.set(this.activeRace, unwanted);
   }
 
+  findFirstFourResult = () => {
+    if (!this.activeRacecard?.dividend?.quartet) return;
+
+    const orders = this.activeRacecard.dividend.quartet[0].orders;
+    const winner = this.activeStarters.filter(s => s.order === orders[0]).pop();
+    if (!winner) return;
+
+    this.currentPage = 1;
+    this.selectAsBanker(winner);
+    this.activeStarters
+      .filter(s => !orders.includes(s.order))
+      .filter(s => !this.isUnwantedStarter(s))
+      .forEach(s => this.toggleTrash(s));
+  }
+
+  trashBottom6Starters = () => {
+    this.currentPage = 1;
+    this.activeStarters
+      .filter((s, i) => i >= this.activeStarters.length - 6)
+      .filter(s => !this.isUnwantedStarter(s))
+      .forEach(s => this.toggleTrash(s));
+  }
+
+  resetStarterState = () => {
+    this.currentPage = 1;
+    this.trashes.set(this.activeRace, []);
+    this.selectAsBanker(this.activeStarters[0]);
+  }
+
   isBankerOrder(order: number): boolean {
     return this.bankers.get(this.activeRace) === order;
   }
@@ -80,6 +107,30 @@ export class Top4sComponent implements OnInit {
 
   isUnwantedStarter(starter: Starter): boolean {
     return (this.trashes.get(this.activeRace) || []).includes(starter.order);
+  }
+
+  isFirstFourPlacing(combination: number[]): boolean {
+    if (!this.activeRacecard?.dividend?.quartet) return false;
+    return this.activeRacecard.dividend.quartet[0].orders
+      .every(o => combination.includes(o));
+  }
+
+  getPlacing(starter: Starter): number {
+    if (!this.activeRacecard?.dividend?.quartet) return 0;
+
+    const orders = this.activeRacecard.dividend.quartet[0].orders;
+    const order = starter.order;
+
+    if (!orders.includes(order)) return 0;
+    return orders.indexOf(order) + 1;
+  }
+
+  getPlacingBorderBackground(starter: Starter): string {
+    return [
+      'border border-gray-700',
+      'bg-red-800', 'bg-green-800',
+      'bg-blue-800', 'bg-purple-800',
+    ][this.getPlacing(starter)];
   }
 
   getRaceBadgeStyle(race: number): string {
@@ -96,6 +147,10 @@ export class Top4sComponent implements OnInit {
     return this.activeRacecard.odds.winPlace
       .filter(o => o.order === order)
       .pop() || defaultValue;
+  }
+
+  isWithinPreferredWeightRange(weight: number): boolean {
+    return weight >= 8 && weight <= 10;
   }
 
   getTeamWeight(team: string[]): number {
@@ -134,7 +189,7 @@ export class Top4sComponent implements OnInit {
       .map(s => s.order)
       .filter(o => !unwanted.includes(o))
       .filter(o => o !== banker)
-      .sort();
+      .sort((n1, n2) => n1 - n2);
 
     let combinations = new Set<number[]>;
     for (let i = 0; i < orders.length; i++) {
@@ -143,7 +198,8 @@ export class Top4sComponent implements OnInit {
         const numberB = orders[j];
         for (let k = j + 1; k < orders.length; k++) {
           const numberC = orders[k];
-          const combination = [banker, numberA, numberB, numberC].sort();
+          const combination = [banker, numberA, numberB, numberC]
+            .sort((n1, n2) => n1 - n2);
           combinations.add(combination);
         }
       }
@@ -170,7 +226,15 @@ export class Top4sComponent implements OnInit {
 
   get activeStarters(): Starter[] {
     if (!this.activeRacecard) return [];
-    return this.activeRacecard.starters.sort((s1, s2) => s1.order - s2.order);
+
+    return this.activeRacecard.starters.sort((s1, s2) => {
+      const odds1 = this.getActiveStarterWinPlaceOdds(s1);
+      const odds2 = this.getActiveStarterWinPlaceOdds(s2);
+
+      return odds1.win - odds2.win
+        || odds1.place - odds2.place
+        || s1.order - s2.order
+    });
   }
 
   get activeRacecard(): Racecard {
@@ -191,9 +255,5 @@ export class Top4sComponent implements OnInit {
 
   get pageSize(): number {
     return 24;
-  }
-
-  get preferredWeight(): number {
-    return 9;
   }
 }
