@@ -165,7 +165,7 @@
             [class.font-bold]="isFirstFourPlacing(top4.combination)"
             [class.text-yellow-400]="isFirstFourPlacing(top4.combination)"
         >
-          -
+          {{getFirstFourOdds(top4.combination) == 0 ? '-' : getFirstFourOdds(top4.combination)}}
         </td>
         <td class="border border-gray-700 italic"
             [class.bg-gray-800]="isFirstFourPlacing(top4.combination)"

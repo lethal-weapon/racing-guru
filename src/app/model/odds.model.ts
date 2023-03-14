@@ -5,9 +5,9 @@ export class Odds {
     public winPlace       : WinPlaceOdds[],
     public quinella       : Combination[],
     public forecast       : Combination[],
+    public firstFour      : Combination[],
     public quinellaPlace ?: Combination[],
     // public trio           : Combination[],
-    // public firstFour      : Combination[],
     // public double        ?: Combination[]
   ) {
   }

@@ -151,6 +151,17 @@ export class Top4sComponent implements OnInit {
     return weight >= 18 && weight <= 25;
   }
 
+  getFirstFourOdds(combination: number[]): number {
+    const ffOdds = this.activeRacecard.odds?.firstFour;
+    if (!ffOdds) return 0;
+
+    const odds = ffOdds.filter(
+      comb => comb.orders.every(s => combination.includes(s))
+    ).pop()?.odds || 0;
+
+    return odds > 0 && odds < 999 ? odds : 0;
+  }
+
   getPlacing(starter: Starter): number {
     if (!this.activeRacecard?.dividend?.quartet) return 0;
 
