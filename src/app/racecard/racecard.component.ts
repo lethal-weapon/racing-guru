@@ -140,11 +140,14 @@ export class RacecardComponent implements OnInit {
   }
 
   getPlacing(jockey: string, racecard: Racecard): number {
-    if (!racecard?.dividend?.quartet) return 0;
+    const tierce = racecard?.dividend?.tierce;
+    const quartet = racecard?.dividend?.quartet;
+    if (!tierce) return 0;
 
-    const orders = racecard.dividend.quartet[0].orders;
+    let orders = tierce[0].orders;
+    if (quartet) orders = quartet[0].orders;
+
     const order = this.getStarter(jockey, racecard)?.order;
-
     if (!orders.includes(order)) return 0;
     return orders.indexOf(order) + 1;
   }
@@ -439,7 +442,7 @@ export class RacecardComponent implements OnInit {
 
   isBoundaryJockey(jockey: string): boolean {
     let specials = []
-    for (const j of ['BA', 'KJL', 'YML', 'CLR']) {
+    for (const j of ['BA', 'LDM', 'KJL', 'YML', 'CLR']) {
       if (this.jockeys.includes(j)) {
         specials.push(j);
       } else {
@@ -526,7 +529,7 @@ export class RacecardComponent implements OnInit {
       {pool: 'TCE', amount: (pool.tierce / ONE_MILLION).toFixed(2)},
       {pool: 'P', amount: (pool.place / ONE_MILLION).toFixed(2)},
       {pool: 'QP', amount: ((pool?.quinellaPlace || 0) / ONE_MILLION).toFixed(2)},
-      {pool: 'FQ', amount: (pool.quartet / ONE_MILLION).toFixed(2)},
+      {pool: 'FQ', amount: ((pool?.quartet || 0) / ONE_MILLION).toFixed(2)},
       {pool: 'DBL', amount: ((pool?.double || 0) / ONE_MILLION).toFixed(2)},
     ]
   }
