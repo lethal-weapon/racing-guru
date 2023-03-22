@@ -228,11 +228,13 @@ export const RELATIONSHIPS: Relationship[] = [
 
   {personA: 'PZ', personB: 'BH', weight: 3},
   {personA: 'PZ', personB: 'CLR', weight: 2},
+  {personA: 'PZ', personB: 'HCY', weight: 3},
   {personA: 'BH', personB: 'CLR', weight: 2},
   {personA: 'DSS', personB: 'CML', weight: 1},
   {personA: 'DSS', personB: 'BHW', weight: 1},
   {personA: 'DSS', personB: 'BV', weight: 1},
   {personA: 'DSS', personB: 'MMR', weight: 1},
+  {personA: 'DSS', personB: 'CCY', weight: 2},
   {personA: 'TEK', personB: 'HEL', weight: 1},
   {personA: 'TEK', personB: 'FEL', weight: 1},
   {personA: 'TEK', personB: 'BV', weight: 1},
