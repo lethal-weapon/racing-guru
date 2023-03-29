@@ -597,7 +597,7 @@ export class RacecardComponent implements OnInit {
 
     const date = racecard.meeting;
     const venue = racecard.venue;
-    const course = this.racecards.find(r => r.course)?.course;
+    const course = this.racecards.find(r => r.course)?.course || 'AWT';
     const total = this.racecards.length;
     const dayOfWeek = new Date(date)
       .toLocaleDateString('en-US', {weekday: 'short'})
