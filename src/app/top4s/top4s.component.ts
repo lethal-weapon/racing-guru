@@ -147,19 +147,26 @@ export class Top4sComponent implements OnInit {
       .every(o => combination.includes(o));
   }
 
-  isWithinPreferredWeightRange(weight: number): boolean {
-    return weight >= 18 && weight <= 25;
+  isRecommendedTop4Starter(starter: Top4Starter): boolean {
+    return starter.weight >= 15
+      && starter.weight <= 28
+      && this.getFirstFourOdds(starter.combination) >= 50;
   }
 
   getFirstFourOdds(combination: number[]): number {
     const ffOdds = this.activeRacecard.odds?.firstFour;
     if (!ffOdds) return 0;
 
-    const odds = ffOdds.filter(
+    let odds = ffOdds.filter(
       comb => comb.orders.every(s => combination.includes(s))
     ).pop()?.odds || 0;
 
-    return odds > 0 && odds < 999 ? odds : 0;
+    if (this.isFirstFourPlacing(combination)) {
+      // @ts-ignore
+      odds = this.activeRacecard?.dividend?.firstFour[0].odds;
+    }
+
+    return odds;
   }
 
   getPlacing(starter: Starter): number {
@@ -217,7 +224,7 @@ export class Top4sComponent implements OnInit {
   }
 
   get recommendedTop4Starters(): Top4Starter[] {
-    return this.top4Starters.filter(s => this.isWithinPreferredWeightRange(s.weight));
+    return this.top4Starters.filter(s => this.isRecommendedTop4Starter(s));
   }
 
   get currentPageTop4Starters(): Top4Starter[] {

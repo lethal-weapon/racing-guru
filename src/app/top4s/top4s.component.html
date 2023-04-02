@@ -1,4 +1,4 @@
-<div class="mx-10 my-8 flex flex-row justify-evenly noselect">
+<div class="mx-10 mt-8 flex flex-row justify-evenly noselect">
   <div *counter="let race of maxRace"
        class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(race)}}"
        (click)="setActiveRace(race)"
@@ -7,7 +7,7 @@
   </div>
 </div>
 
-<div class="mx-10 flex flex-row items-start noselect">
+<div class="mx-10 mt-6 flex flex-row items-start noselect">
   <div class="w-1/2 px-4">
     <div class="mb-4 flex flex-row justify-evenly">
       <div
@@ -165,13 +165,17 @@
             [class.font-bold]="isFirstFourPlacing(top4.combination)"
             [class.text-yellow-400]="isFirstFourPlacing(top4.combination)"
         >
-          {{getFirstFourOdds(top4.combination) == 0 ? '-' : getFirstFourOdds(top4.combination)}}
+          {{
+          [0, 999].includes(getFirstFourOdds(top4.combination))
+            ? '-'
+            : getFirstFourOdds(top4.combination)
+          }}
         </td>
         <td class="border border-gray-700 italic"
             [class.bg-gray-800]="isFirstFourPlacing(top4.combination)"
             [class.font-bold]="isFirstFourPlacing(top4.combination)"
             [class.text-yellow-400]="isFirstFourPlacing(top4.combination)"
-            [class.text-green-600]="!isFirstFourPlacing(top4.combination) && isWithinPreferredWeightRange(top4.weight)"
+            [class.text-green-600]="!isFirstFourPlacing(top4.combination) && isRecommendedTop4Starter(top4)"
         >
           {{top4.weight}}
         </td>
