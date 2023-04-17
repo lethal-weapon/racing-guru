@@ -468,6 +468,7 @@ export class RacecardComponent implements OnInit {
       .replace(')', '')
       .replace('RESTRICTED', '')
       .replace('4 YEAR OLDS', '4Y')
+      .replace('GRIFFIN RACE', 'GF')
       .trim();
     return `${clean[0]}${clean.slice(-1)}`
   }
