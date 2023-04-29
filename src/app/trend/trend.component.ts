@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 
+import {RestRepository} from '../model/rest.repository';
 import {Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {RestRepository} from '../model/rest.repository';
+import {BOUNDARY_PERSONS} from '../constants/persons';
 
 @Component({
   selector: 'app-trend',
@@ -144,7 +145,7 @@ export class TrendComponent implements OnInit {
         .filter(p => category.map(p => p.code).includes(p.person))
         .sort((p1, p2) => p2.earnings - p1.earnings)
         .forEach(p => {
-          if (board.length < (index + 1) * this.maxTopPlayers) {
+          if (board.length < (index + 1) * this.topPlayerSize) {
             board.push(p);
           }
         });
@@ -166,7 +167,7 @@ export class TrendComponent implements OnInit {
   }
 
   isBoundaryPerson(person: string): boolean {
-    return ['HAD', 'SWY', 'YTP', 'BA', 'LDM', 'KJL', 'YML', 'CLR'].includes(person);
+    return BOUNDARY_PERSONS.includes(person);
   }
 
   get controlStyle(): string {
@@ -209,7 +210,7 @@ export class TrendComponent implements OnInit {
     ]
   }
 
-  get maxTopPlayers(): number {
+  get topPlayerSize(): number {
     return 7;
   }
 

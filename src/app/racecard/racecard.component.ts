@@ -6,6 +6,7 @@ import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/order.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {ONE_MILLION, PAYOUT_RATE} from '../constants/numbers';
+import {BOUNDARY_JOCKEYS} from "../constants/persons";
 import {RestRepository} from '../model/rest.repository';
 import {CollaborationStarter} from '../model/collaboration.model';
 
@@ -442,7 +443,7 @@ export class RacecardComponent implements OnInit {
 
   isBoundaryJockey(jockey: string): boolean {
     let specials = []
-    for (const j of ['BA', 'LDM', 'KJL', 'YML', 'CLR']) {
+    for (const j of BOUNDARY_JOCKEYS) {
       if (this.jockeys.includes(j)) {
         specials.push(j);
       } else {

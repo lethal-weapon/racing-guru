@@ -166,7 +166,7 @@
     <div class="text-lg text-center flex flex-row justify-evenly items-center">
       <div *ngFor="let ps of getOnBoardPersons(meeting); let index = index"
            class="p-1 border border-2 rounded-xl"
-           [class.ml-10]="index === maxTopPlayers"
+           [class.ml-10]="index === topPlayerSize"
            [class.border-gray-900]="activePerson !== ps.person"
            [class.border-yellow-400]="activePerson == ps.person"
            (click)="setActivePerson(ps.person)"

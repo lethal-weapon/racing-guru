@@ -1,0 +1,10 @@
+export const BOUNDARY_JOCKEYS = [
+  'BA', 'DC', 'LDM', 'KJL', 'YML', 'CLR'
+];
+
+export const BOUNDARY_TRAINERS = [
+  'HAD', 'SWY', 'YTP'
+];
+
+export const BOUNDARY_PERSONS =
+  BOUNDARY_JOCKEYS.concat(BOUNDARY_TRAINERS);

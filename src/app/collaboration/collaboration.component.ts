@@ -2,8 +2,12 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {Collaboration, CollaborationStarter, DEFAULT_COLLABORATION}
-  from '../model/collaboration.model';
+import {BOUNDARY_PERSONS} from '../constants/persons';
+import {
+  Collaboration,
+  CollaborationStarter,
+  DEFAULT_COLLABORATION
+} from '../model/collaboration.model';
 
 @Component({
   selector: 'app-collaboration',
@@ -73,9 +77,7 @@ export class CollaborationComponent implements OnInit {
   }
 
   isBoundaryPerson(person: string): boolean {
-    return [
-      'BA', 'LDM', 'YML', 'CLR', 'HAD', 'SWY', 'YTP'
-    ].includes(person);
+    return BOUNDARY_PERSONS.includes(person);
   }
 
   isSpecialRace(meeting: string, race: number): boolean {
