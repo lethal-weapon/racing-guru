@@ -445,7 +445,9 @@ export class RacecardComponent implements OnInit {
     let specials = []
     for (const j of BOUNDARY_JOCKEYS) {
       if (this.jockeys.includes(j)) {
-        specials.push(j);
+        if (this.jockeys.indexOf(j) !== this.jockeys.length - 1) {
+          specials.push(j);
+        }
       } else {
         let priorIndex = JOCKEYS.map(j => j.code).indexOf(j);
         let priorJockey = j;
