@@ -1,5 +1,5 @@
 export const BOUNDARY_JOCKEYS = [
-  'BA', 'DC', 'LDM', 'KJL', 'YML', 'CLR'
+  'BA', 'YML', 'CLR'
 ];
 
 export const BOUNDARY_TRAINERS = [

@@ -18,11 +18,10 @@ export const JOCKEYS = [
   new Person('TEK', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', ''),
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', ''),
 
-  new Person('MOJ', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', ''),
-  new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
-  new Person('MTA', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', ''),
-  new Person('DC', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', ''),
-
+  // new Person('MOJ', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', ''),
+  // new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', ''),
+  // new Person('MTA', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', ''),
+  // new Person('DC', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', ''),
   // new Person('MR', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', ''),
   // new Person('SHB', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', ''),
   // new Person('LDM', 'Lane', 'Damian', 'D. Lane', 'AUS', 'Club', ''),
@@ -39,6 +38,7 @@ export const JOCKEYS = [
   new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry'),
   new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus'),
   new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew'),
+  new Person('WEC', 'Wong', 'Chi-wang', 'E. Wong', 'HK', 'Freelance', 'Ellis'),
   new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith'),
 
   new Person('HEL', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', ''),
@@ -47,12 +47,13 @@ export const JOCKEYS = [
   new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', ''),
   new Person('BV', 'Borges', 'Vagner', 'V. Borges', 'BRZ', 'Club', ''),
   new Person('MMR', 'Maia', 'Ruan', 'R. Maia', 'BRZ', 'Club', ''),
+  new Person('AVB', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', ''),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
 
   new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred'),
+  new Person('MHT', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan'),
   new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack'),
   new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor'),
-  new Person('MHT', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan'),
   new Person('LHW', 'Lai', 'Hoi-wing', 'A. Lai', 'HK', 'Freelance', 'Alex'),
 ]
 
@@ -87,7 +88,7 @@ export const TRAINERS = [
 
 export const NEW_PEOPLE =
   JOCKEYS
-    .filter(j => ['DSS', 'CCY', 'BH', 'MNJ'].includes(j.code))
+    .filter(j => ['BH', 'DSS', 'CCY'].includes(j.code))
     .concat(TRAINERS.filter(t => ['NPC', 'RW'].includes(t.code)))
 
 export const GONE_PEOPLE =
