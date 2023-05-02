@@ -7,14 +7,15 @@ import {Router} from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   pages: Array<{ title: string, link: string }> = [
-    {title: 'Racecard', link: '/'},
+    {title: 'Meeting', link: '/'},
+    {title: 'Racecard', link: '/racecard'},
+    {title: 'Odds', link: '/odds'},
     {title: 'Trend', link: '/trend'},
-    {title: 'Dividend', link: '/dividend'},
-    {title: 'Top4s', link: '/top4s'},
+
+    // {title: 'Dividend', link: '/dividend'},
+    // {title: 'Top4s', link: '/top4s'},
     {title: 'Matcher', link: '/matcher'},
     {title: 'C11N', link: '/collaboration'},
-    {title: 'Earning', link: '/earning'},
-    {title: 'Pool', link: '/pool'},
     {title: 'People', link: '/people'},
   ]
 
@@ -41,5 +42,4 @@ export class HeaderComponent implements OnInit {
   get currentUrl(): string {
     return this.router.url;
   }
-
 }

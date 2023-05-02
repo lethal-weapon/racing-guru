@@ -1,3 +1,6 @@
+export const THREE_SECONDS = 3_000;
+export const FIVE_SECONDS = 5_000;
+
 export const FIVE_HUNDRED = 500;
 export const ONE_THOUSAND = 1_000;
 export const FIVE_THOUSAND = 5_000;

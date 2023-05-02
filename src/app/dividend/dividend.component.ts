@@ -6,7 +6,7 @@ import {FinalDividend} from '../model/dividend.model';
 import {
   FIVE_HUNDRED, FIVE_THOUSAND, ONE_THOUSAND,
   TEN_THOUSAND, TWENTY_THOUSAND
-} from '../constants/numbers';
+} from '../util/numbers';
 
 @Component({
   selector: 'app-dividend',

@@ -5,7 +5,7 @@ import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
 import {WinPlaceOdds} from '../model/order.model';
-import {MAX_RACE_PER_MEETING} from '../constants/numbers';
+import {MAX_RACE_PER_MEETING} from '../util/numbers';
 import {RELATIONSHIPS} from '../model/relationship.model';
 
 interface Top4Starter {

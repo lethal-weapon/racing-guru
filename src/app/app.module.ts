@@ -9,14 +9,14 @@ import {CounterDirective} from './directives/counter.directive';
 import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
-import {EarningComponent} from './earning/earning.component';
-import {PoolComponent} from './pool/pool.component';
 import {PeopleComponent} from './people/people.component';
 import {DividendComponent} from './dividend/dividend.component';
 import {TrendComponent} from './trend/trend.component';
 import {MatcherComponent} from './matcher/matcher.component';
 import {CollaborationComponent} from './collaboration/collaboration.component';
 import {Top4sComponent} from './top4s/top4s.component';
+import {MeetingComponent} from './meeting/meeting.component';
+import {OddsComponent} from './odds/odds.component';
 
 @NgModule({
   declarations: [
@@ -24,12 +24,12 @@ import {Top4sComponent} from './top4s/top4s.component';
     CounterDirective,
     HeaderComponent,
     FooterComponent,
+    MeetingComponent,
     RacecardComponent,
-    EarningComponent,
-    PoolComponent,
+    OddsComponent,
+    TrendComponent,
     PeopleComponent,
     DividendComponent,
-    TrendComponent,
     MatcherComponent,
     CollaborationComponent,
     Top4sComponent
