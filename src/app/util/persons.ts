@@ -1,3 +1,7 @@
+import {JOCKEYS} from '../model/person.model';
+
+export const JOCKEY_CODES = JOCKEYS.map(j => j.code);
+
 export const BOUNDARY_JOCKEYS = [
   'BA', 'YML', 'CLR'
 ];

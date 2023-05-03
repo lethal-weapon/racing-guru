@@ -1,1 +1,120 @@
-<p>odds works!</p>
+<div class="my-8 flex flex-row justify-evenly noselect">
+  <div *counter="let race of getMaxRace(this.racecards)"
+       class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
+       (click)="activeRace = race"
+  >
+    Race {{race}}
+  </div>
+</div>
+
+<table class="mx-auto table-fixed text-center border-collapse border border-gray-700 noselect"
+       (mouseleave)="hoveredJockey = ''"
+>
+  <tr class="font-bold">
+    <td class="w-40 border border-gray-700">
+      <div>2<sup>nd</sup></div>
+      <div>1<sup>st</sup></div>
+    </td>
+    <td *ngFor="let starter of getStarters(this.activeRacecard)"
+        class="w-20 border border-gray-700 {{getPlacingColor(starter.jockey, activeRacecard)}}"
+        [class.bg-gray-800]="hoveredJockey === starter.jockey"
+        (mouseenter)="hoveredJockey = starter.jockey"
+    >
+      <div>
+        {{starter.jockey}}
+      </div>
+      <div>
+        {{starter.trainer}}
+      </div>
+      <div class="flex flex-row justify-evenly">
+        <div>
+          {{starter.order}}
+        </div>
+        <div *ngIf="isFavorite(starter, this.activeRacecard)"
+             class="text-yellow-400"
+        >
+          <i class="fa fa-star"></i>
+        </div>
+      </div>
+    </td>
+  </tr>
+  <tr *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700 font-bold">
+      <div class="grid grid-cols-4">
+        <div class="text-red-600">
+          {{getStarterWinPlaceOdds(starterA, this.activeRacecard).win}}
+        </div>
+        <div class="col-span-2">
+          {{starterA.horseNameCH}}
+        </div>
+        <div class="">
+          {{starterA.order}}
+        </div>
+        <div class="text-blue-600">
+          {{getStarterWinPlaceOdds(starterA, this.activeRacecard).place}}
+        </div>
+        <div class="col-span-2 text-green-600">
+          {{getStarterQWOdds(starterA, this.activeRacecard)}}
+        </div>
+        <div *ngIf="isPreferredWQWR(starterA)"
+             class="text-yellow-400"
+        >
+          <i class="fa fa-thumbs-up"></i>
+        </div>
+      </div>
+    </td>
+    <td *ngFor="let starterB of getStarters(this.activeRacecard); let indexB = index"
+        class="border border-gray-700 {{getQQPCellColor(starterA, starterB)}}"
+        [class.bg-gray-800]="hoveredJockey === starterB.jockey"
+        [class.diagonal-line]="starterA.order === starterB.order"
+        (mouseenter)="hoveredJockey = starterB.jockey"
+    >
+      <div *ngIf="starterA.order !== starterB.order"
+           class="grid grid-cols-2"
+      >
+        <div *ngIf="indexB > indexA"
+             [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
+        >
+          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0]">
+            {{getActiveStarterQQPOdds(starterA, starterB)[0]}}
+          </span>
+          <span *ngIf="!(isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0])">
+            -
+          </span>
+        </div>
+        <div *ngIf="indexB > indexA"
+             [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
+        >
+          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1]">
+            {{getActiveStarterQQPOdds(starterA, starterB)[1]}}
+          </span>
+          <span *ngIf="!(isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1])">
+            -
+          </span>
+        </div>
+        <div *ngIf="indexA > indexB"
+             [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
+        >
+          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB)">
+            {{getActiveStarterFCTOdds(starterA, starterB)[0]}}
+          </span>
+          <span *ngIf="!(isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB))">
+            -
+          </span>
+        </div>
+        <div *ngIf="indexA > indexB"
+             [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
+        >
+          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA)">
+            {{getActiveStarterFCTOdds(starterA, starterB)[1]}}
+          </span>
+          <span *ngIf="!(isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA))">
+            -
+          </span>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>

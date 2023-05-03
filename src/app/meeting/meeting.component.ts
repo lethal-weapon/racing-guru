@@ -5,10 +5,19 @@ import {WebsocketService} from '../model/websocket.service';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {Starter} from '../model/starter.model';
 import {RestRepository} from '../model/rest.repository';
-import {WinPlaceOdds} from '../model/order.model';
 import {ONE_MILLION, THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_JOCKEYS} from '../util/persons';
-import {getHorseProfileUrl, toMillion} from '../util/functions';
+import {
+  toMillion,
+  getPlacing,
+  getStarter,
+  getTrainer,
+  getWinPlaceOdds,
+  getHorseProfileUrl,
+  getPlacingColor,
+  getCurrentMeeting,
+  getNewFavorites
+} from '../util/functions';
 
 @Component({
   selector: 'app-meeting',
@@ -21,13 +30,20 @@ export class MeetingComponent implements OnInit {
   activeTrainer: string = '';
   activeDraw: number = 0;
 
+  protected readonly getStarter = getStarter;
+  protected readonly getTrainer = getTrainer;
+  protected readonly getWinPlaceOdds = getWinPlaceOdds;
+  protected readonly getPlacingColor = getPlacingColor;
   protected readonly getHorseProfileUrl = getHorseProfileUrl;
 
   constructor(
     private socket: WebsocketService,
     private repo: RestRepository
   ) {
-    socket.racecards.subscribe(data => this.racecards = data);
+    socket.racecards.subscribe(data => {
+      this.racecards = data;
+      this.racecards.sort((r1, r2) => r1.race - r2.race);
+    });
   }
 
   ngOnInit(): void {
@@ -59,19 +75,10 @@ export class MeetingComponent implements OnInit {
   }
 
   toggleFavorite = (starter: Starter, racecard: Racecard) => {
-    const order = starter.order;
-    let favorites = racecard.favorites.map(f => f);
-
-    if (favorites.includes(order)) {
-      favorites = favorites.filter(f => f !== order)
-    } else {
-      favorites.push(order)
-    }
-
     this.repo.saveFavorite({
-      meeting: this.currentMeeting,
+      meeting: getCurrentMeeting(this.racecards),
       race: racecard.race,
-      favorites: favorites
+      favorites: getNewFavorites(starter, racecard)
     });
   }
 
@@ -91,13 +98,12 @@ export class MeetingComponent implements OnInit {
   isPublicFavorite(jockey: string, racecard: Racecard): boolean {
     if (!racecard.odds) return false;
 
-    const order = this.getStarter(jockey, racecard).order;
-    // @ts-ignore
+    const order = getStarter(jockey, racecard).order;
     const favouredOrder = racecard.odds.winPlace
       .map(o => o)
       .sort((o1, o2) => o1.win - o2.win)
       .shift()
-      .order;
+      ?.order;
 
     return order === favouredOrder;
   }
@@ -105,7 +111,7 @@ export class MeetingComponent implements OnInit {
   getMeetingEarning(jockey: string): number {
     return parseFloat(
       this.racecards
-        .filter(r => this.getPlacing(jockey, r) > 0)
+        .filter(r => getPlacing(jockey, r) > 0)
         .map(r => this.getRaceEarning(jockey, r))
         .reduce((prev, curr) => prev + curr, 0)
         .toFixed(1)
@@ -113,7 +119,7 @@ export class MeetingComponent implements OnInit {
   }
 
   getRaceEarning(jockey: string, racecard: Racecard): number {
-    const placing = this.getPlacing(jockey, racecard);
+    const placing = getPlacing(jockey, racecard);
     const odds = this.getWinPlaceOdds(jockey, racecard);
     const order = odds.order;
 
@@ -128,51 +134,10 @@ export class MeetingComponent implements OnInit {
     return placing === 4 ? odds.win / 10 : 0;
   }
 
-  getPlacing(jockey: string, racecard: Racecard): number {
-    const tierce = racecard?.dividend?.tierce;
-    const quartet = racecard?.dividend?.quartet;
-    if (!tierce) return 0;
-
-    let orders = tierce[0].orders;
-    if (quartet) orders = quartet[0].orders;
-
-    const order = this.getStarter(jockey, racecard)?.order;
-    if (!orders.includes(order)) return 0;
-    return orders.indexOf(order) + 1;
-  }
-
-  getPlacingColor(jockey: string, racecard: Racecard): string {
-    const placing = this.getPlacing(jockey, racecard);
-    const colors = [
-      'text-red-600', 'text-green-600',
-      'text-blue-600', 'text-purple-600',
-    ];
-    return placing > 0 ? colors[placing - 1] : '';
-  }
-
-  getWinPlaceOdds(jockey: string, racecard: Racecard): WinPlaceOdds {
-    const order = this.getStarter(jockey, racecard).order;
-    const defaultValue = {order: order, win: 0, place: 0};
-    if (!racecard.odds) return defaultValue;
-
-    return racecard.odds.winPlace
-      .filter(o => o.order === order)
-      .pop() || defaultValue;
-  }
-
-  getTrainer(jockey: string, racecard: Racecard): string {
-    return this.getStarter(jockey, racecard).trainer;
-  }
-
-  getStarter(jockey: string, racecard: Racecard): Starter {
-    // @ts-ignore
-    return racecard.starters.filter(s => s.jockey === jockey).pop();
-  }
-
   isTrainerLastRace(jockey: string, racecard: Racecard): boolean {
     if (racecard.race === this.maxRace) return false;
 
-    const trainer = this.getTrainer(jockey, racecard);
+    const trainer = getTrainer(jockey, racecard);
     return racecard === this.racecards
       .filter(r => r.starters.map(s => s.trainer).includes(trainer))
       .pop();
@@ -183,7 +148,7 @@ export class MeetingComponent implements OnInit {
     if (this.isTrainerLastRace(jockey, racecard)) return false;
 
     const next = racecard.race + 1;
-    const trainer = this.getTrainer(jockey, racecard);
+    const trainer = getTrainer(jockey, racecard);
 
     // @ts-ignore
     return !this.racecards
@@ -319,7 +284,6 @@ export class MeetingComponent implements OnInit {
   }
 
   get pools(): Array<{ pool: string, amount: string }> {
-    // @ts-ignore
     const pool = (this.next || this.racecards[this.racecards.length - 1])?.pool;
     if (!pool) return [];
 
@@ -335,9 +299,9 @@ export class MeetingComponent implements OnInit {
     ]
   }
 
-  get summary(): string {
+  get summary(): string[] {
     const racecard = this.racecards.find(r => r.race === 1);
-    if (!racecard) return '---';
+    if (!racecard) return [];
 
     const date = racecard.meeting;
     const venue = racecard.venue;
@@ -351,16 +315,10 @@ export class MeetingComponent implements OnInit {
     const jockeys = this.jockeys.length;
     const trainers = this.trainers.length;
 
-    return `
-        ${dayOfWeek}, ${date}, ${venue}, ${course} Course x
-        ${total} Races, ${jockeys} Jockeys, ${trainers} Trainers, ${horses} Horses
-    `;
-  }
-
-  get currentMeeting(): string {
-    const racecard = this.racecards.find(r => r.race === 1);
-    if (!racecard) return '---';
-    return racecard.meeting;
+    return [
+      `${dayOfWeek}, ${date}, ${venue}, ${course} Course`,
+      `${total} Races, ${jockeys} Jockeys, ${trainers} Trainers, ${horses} Horses`
+    ];
   }
 
   get trainers(): string[] {
