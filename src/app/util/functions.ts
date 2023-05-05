@@ -14,11 +14,8 @@ export const getNewFavorites = (starter: Starter, racecard: Racecard): number[] 
   const order = starter.order;
   let favorites = racecard.favorites.map(f => f);
 
-  if (favorites.includes(order)) {
-    favorites = favorites.filter(f => f !== order);
-  } else {
-    favorites.push(order);
-  }
+  if (favorites.includes(order)) favorites = favorites.filter(f => f !== order);
+  else favorites.push(order);
 
   return favorites;
 }

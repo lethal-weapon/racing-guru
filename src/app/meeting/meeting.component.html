@@ -1,4 +1,8 @@
-<div class="my-8 flex flex-row justify-evenly noselect">
+<div class="flex flex-row justify-evenly noselect"
+     [class.my-8]="maxRace <= 9"
+     [class.my-6]="maxRace === 10"
+     [class.my-4]="maxRace === 11"
+>
   <div *ngIf="summary.length > 0"
        class="px-6 py-4 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
     {{summary[0]}}
@@ -140,6 +144,38 @@
           </div>
         </div>
       </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<table class="mx-auto table-fixed border-collapse border border-gray-700 text-center noselect"
+       [class.mt-12]="maxRace <= 9"
+       [class.mt-6]="maxRace === 10"
+>
+  <thead>
+  <th class="w-20 border border-gray-700">
+    Draw
+  </th>
+  <th *counter="let draw of maxDraw"
+      class="w-20 border border-gray-700"
+  >
+    {{draw}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let m of drawPlacings; let index = index">
+    <td class="border border-gray-700 font-bold {{m.color}}">
+      {{m.placing}}
+    </td>
+    <td *counter="let draw of maxDraw"
+        class="border border-gray-700 {{m.color}}"
+    >
+      {{
+      getDrawPerformance(draw, index + 1) > 0
+        ? getDrawPerformance(draw, index + 1)
+        : ''
+      }}
     </td>
   </tr>
   </tbody>

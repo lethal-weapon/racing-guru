@@ -37,7 +37,6 @@ export const JOCKEYS = [
   new Person('LDE', 'Leung', 'Ka-chun', 'D. Leung', 'HK', 'Freelance', 'Derek'),
   new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry'),
   new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus'),
-  new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew'),
   new Person('WEC', 'Wong', 'Chi-wang', 'E. Wong', 'HK', 'Freelance', 'Ellis'),
   new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith'),
 
@@ -51,6 +50,7 @@ export const JOCKEYS = [
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
 
   new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred'),
+  new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew'),
   new Person('MHT', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan'),
   new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack'),
   new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor'),

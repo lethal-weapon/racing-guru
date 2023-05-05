@@ -283,6 +283,21 @@ export class MeetingComponent implements OnInit {
     `;
   }
 
+  getDrawPerformance = (draw: number, placing: number): number =>
+    this.racecards.filter(r => {
+      const jockey = r.starters.find(s => s.draw === draw)?.jockey;
+      return jockey && placing === getPlacing(jockey, r);
+    }).length
+
+  get drawPlacings(): Array<{ placing: string, color: string }> {
+    return [
+      {placing: 'W', color: 'text-red-600'},
+      {placing: 'Q', color: 'text-green-600'},
+      {placing: 'P', color: 'text-blue-600'},
+      {placing: 'F', color: 'text-purple-600'},
+    ];
+  }
+
   get pools(): Array<{ pool: string, amount: string }> {
     const pool = (this.next || this.racecards[this.racecards.length - 1])?.pool;
     if (!pool) return [];
@@ -335,6 +350,13 @@ export class MeetingComponent implements OnInit {
     return this.racecards
       .map(r => r.starters)
       .reduce((prev, curr) => prev.concat(curr), []);
+  }
+
+  get maxDraw(): number {
+    return this.starters
+      .map(s => s.draw)
+      .sort((d1, d2) => d1 - d2)
+      .pop() || 14;
   }
 
   get maxRace(): number {
