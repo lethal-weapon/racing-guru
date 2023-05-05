@@ -356,7 +356,7 @@ export class MeetingComponent implements OnInit {
     return this.starters
       .map(s => s.draw)
       .sort((d1, d2) => d1 - d2)
-      .pop() || 14;
+      .pop() || 0;
   }
 
   get maxRace(): number {

@@ -1,4 +1,8 @@
-<div class="my-8 flex flex-row justify-evenly noselect">
+<div class="flex flex-row justify-evenly noselect"
+     [class.my-8]="maxStarterOrder <= 12"
+     [class.my-6]="maxStarterOrder === 13"
+     [class.my-4]="maxStarterOrder === 14"
+>
   <div *counter="let race of getMaxRace(this.racecards)"
        class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
        (click)="activeRace = race"
@@ -49,7 +53,7 @@
         <div class="col-span-2">
           {{starterA.horseNameCH}}
         </div>
-        <div class="">
+        <div>
           {{starterA.order}}
         </div>
         <div class="text-blue-600">
@@ -78,7 +82,7 @@
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
         >
           <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0]">
-            {{getActiveStarterQQPOdds(starterA, starterB)[0]}}
+            {{getStarterQQPOdds(starterA, starterB)[0]}}
           </span>
           <span *ngIf="!(isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0])">
             -
@@ -88,7 +92,7 @@
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
         >
           <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1]">
-            {{getActiveStarterQQPOdds(starterA, starterB)[1]}}
+            {{getStarterQQPOdds(starterA, starterB)[1]}}
           </span>
           <span *ngIf="!(isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1])">
             -
@@ -98,7 +102,7 @@
              [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
         >
           <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB)">
-            {{getActiveStarterFCTOdds(starterA, starterB)[0]}}
+            {{getStarterFCTOdds(starterA, starterB)[0]}}
           </span>
           <span *ngIf="!(isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB))">
             -
@@ -108,7 +112,7 @@
              [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
         >
           <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA)">
-            {{getActiveStarterFCTOdds(starterA, starterB)[1]}}
+            {{getStarterFCTOdds(starterA, starterB)[1]}}
           </span>
           <span *ngIf="!(isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA))">
             -
@@ -118,3 +122,7 @@
     </td>
   </tr>
 </table>
+
+<div class="mt-2 noselect">
+
+</div>
