@@ -11,6 +11,10 @@ export const ONE_MILLION = 1_000_000;
 export const PAYOUT_RATE = 0.825;
 export const MAX_RACE_PER_MEETING = 11;
 
-export const DISPLAY_QIN_ODDS = 125;
-export const DISPLAY_QPL_ODDS = 60;
-export const DISPLAY_FCT_ODDS = 225;
+export const DEFAULT_MIN_QPL_ODDS = 10;
+export const DEFAULT_MIN_QIN_ODDS = 20;
+export const DEFAULT_MIN_FCT_ODDS = 30;
+
+export const DEFAULT_MAX_QPL_ODDS = 60;
+export const DEFAULT_MAX_QIN_ODDS = 120;
+export const DEFAULT_MAX_FCT_ODDS = 180;

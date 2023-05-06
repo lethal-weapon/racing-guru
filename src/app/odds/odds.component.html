@@ -1,7 +1,7 @@
 <div class="flex flex-row justify-evenly noselect"
-     [class.my-8]="maxStarterOrder <= 12"
-     [class.my-6]="maxStarterOrder === 13"
-     [class.my-4]="maxStarterOrder === 14"
+     [class.my-8]="maxMeetingStarterOrder <= 12"
+     [class.my-6]="maxMeetingStarterOrder === 13"
+     [class.my-4]="maxMeetingStarterOrder === 14"
 >
   <div *counter="let race of getMaxRace(this.racecards)"
        class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
@@ -9,6 +9,10 @@
   >
     Race {{race}}
   </div>
+</div>
+
+<div class="my-2 noselect">
+
 </div>
 
 <table class="mx-auto table-fixed text-center border-collapse border border-gray-700 noselect"
@@ -27,7 +31,7 @@
       <div>
         {{starter.jockey}}
       </div>
-      <div>
+      <div class="{{getTrainerColor(starter.trainer)}}">
         {{starter.trainer}}
       </div>
       <div class="flex flex-row justify-evenly">
@@ -122,7 +126,3 @@
     </td>
   </tr>
 </table>
-
-<div class="mt-2 noselect">
-
-</div>

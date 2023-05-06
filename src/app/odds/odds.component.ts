@@ -1,14 +1,19 @@
 import {Component, OnInit} from '@angular/core';
-import {Clipboard} from "@angular/cdk/clipboard";
+import {Clipboard} from '@angular/cdk/clipboard';
 
 import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
+import {COLORS} from '../util/colors';
 import {
-  DISPLAY_FCT_ODDS,
-  DISPLAY_QIN_ODDS,
-  DISPLAY_QPL_ODDS,
-  THREE_SECONDS
+  THREE_SECONDS,
+  MAX_RACE_PER_MEETING,
+  DEFAULT_MIN_QPL_ODDS,
+  DEFAULT_MAX_QPL_ODDS,
+  DEFAULT_MIN_QIN_ODDS,
+  DEFAULT_MAX_QIN_ODDS,
+  DEFAULT_MIN_FCT_ODDS,
+  DEFAULT_MAX_FCT_ODDS
 } from '../util/numbers';
 import {
   getMaxRace,
@@ -21,6 +26,24 @@ import {
   isFavorite
 } from '../util/functions';
 
+interface OddsRange {
+  minQPL: number,
+  maxQPL: number,
+  minQIN: number,
+  maxQIN: number,
+  minFCT: number,
+  maxFCT: number
+}
+
+const DEFAULT_RANGE: OddsRange = {
+  minQPL: DEFAULT_MIN_QPL_ODDS,
+  maxQPL: DEFAULT_MAX_QPL_ODDS,
+  minQIN: DEFAULT_MIN_QIN_ODDS,
+  maxQIN: DEFAULT_MAX_QIN_ODDS,
+  minFCT: DEFAULT_MIN_FCT_ODDS,
+  maxFCT: DEFAULT_MAX_FCT_ODDS
+}
+
 @Component({
   selector: 'app-odds',
   templateUrl: './odds.component.html'
@@ -30,6 +53,8 @@ export class OddsComponent implements OnInit {
 
   activeRace: number = 1;
   hoveredJockey: string = '';
+
+  ranges: Map<number, OddsRange> = new Map();
 
   protected readonly isFavorite = isFavorite;
   protected readonly getMaxRace = getMaxRace;
@@ -51,6 +76,9 @@ export class OddsComponent implements OnInit {
 
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
+    for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
+      this.ranges.set(race, {...DEFAULT_RANGE});
+    }
   }
 
   isPreferredWQWR(starter: Starter): boolean {
@@ -86,14 +114,14 @@ export class OddsComponent implements OnInit {
   isQQPOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
     const qqp = this.getStarterQQPOdds(starterA, starterB);
     return [
-      qqp[0] > 0 && qqp[0] < DISPLAY_QIN_ODDS,
-      qqp[1] > 0 && qqp[1] < DISPLAY_QPL_ODDS,
+      qqp[0] >= this.activeRange.minQIN && qqp[0] <= this.activeRange.maxQIN,
+      qqp[1] >= this.activeRange.minQPL && qqp[1] <= this.activeRange.maxQPL,
     ];
   }
 
   isFCTOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
     return this.getStarterFCTOdds(starterA, starterB)
-      .map(o => o > 0 && o < DISPLAY_FCT_ODDS);
+      .map(o => o >= this.activeRange.minFCT && o < this.activeRange.maxFCT);
   }
 
   getStarterQQPOdds(starterA: Starter, starterB: Starter): number[] {
@@ -134,16 +162,37 @@ export class OddsComponent implements OnInit {
     return isBothFavorite ? `bg-gray-600` : ``;
   }
 
+  getTrainerColor(trainer: string): string {
+    const index = this.trainersWithMoreThanOneStarter.indexOf(trainer);
+    return index === -1
+      ? ''
+      : COLORS[index];
+  }
+
+  get trainersWithMoreThanOneStarter(): string[] {
+    return this.activeRacecard?.starters
+        .map(s => s.trainer)
+        .filter((t, i, a) => a.indexOf(t) !== i)
+        .filter((t, i, a) => a.indexOf(t) === i)
+      || [];
+  }
+
   get copyButtonStyle(): string {
     return `px-4 pt-1.5 pb-2 rounded-2xl border border-gray-600 ` +
       `hover:border-yellow-400 hvr-grow-shadow cursor-pointer`;
   }
 
-  get maxStarterOrder(): number {
-    return this.activeRacecard.starters
+  get maxMeetingStarterOrder(): number {
+    return this.racecards
+      .map(r => r.starters)
+      .reduce((prev, curr) => prev.concat(curr), [])
       .map(s => s.order)
       .sort((o1, o2) => o1 - o2)
       .pop() || 14;
+  }
+
+  get activeRange(): OddsRange {
+    return this.ranges.get(this.activeRace) || DEFAULT_RANGE;
   }
 
   get activeRacecard(): Racecard {

@@ -3,6 +3,7 @@ import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/order.model';
 import {Starter} from '../model/starter.model';
 import {JOCKEY_CODES} from './persons';
+import {COLORS} from './colors';
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
@@ -105,11 +106,7 @@ export const getPlacing = (jockey: string, racecard: Racecard): number => {
 
 export const getPlacingColor = (jockey: string, racecard: Racecard): string => {
   const placing = getPlacing(jockey, racecard);
-  const colors = [
-    'text-red-600', 'text-green-600',
-    'text-blue-600', 'text-purple-600',
-  ];
-  return placing > 0 ? colors[placing - 1] : '';
+  return placing > 0 ? COLORS[placing - 1] : '';
 }
 
 export const getPlacingBorderBackground = (jockey: string, racecard: Racecard): string =>
