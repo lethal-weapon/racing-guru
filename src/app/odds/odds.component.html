@@ -1,7 +1,7 @@
 <div class="flex flex-row justify-evenly noselect"
-     [class.my-8]="maxMeetingStarterOrder <= 12"
-     [class.my-6]="maxMeetingStarterOrder === 13"
-     [class.my-4]="maxMeetingStarterOrder === 14"
+     [class.mt-8]="maxMeetingStarterOrder <= 12"
+     [class.mt-6]="maxMeetingStarterOrder === 13"
+     [class.mt-4]="maxMeetingStarterOrder === 14"
 >
   <div *counter="let race of getMaxRace(this.racecards)"
        class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
@@ -11,8 +11,60 @@
   </div>
 </div>
 
-<div class="my-2 noselect">
-
+<div class="my-4 grid grid-cols-3 noselect">
+  <div *ngFor="let c of rangeControls"
+       class="flex flex-row justify-evenly items-center px-14 text-center"
+  >
+    <div class="flex flex-col gap-y-1">
+      <div class="{{buttonStyle}}"
+           (click)="adjustOdds(c.pool, c.step, true, false)"
+      >
+        <i class="fa fa-minus"></i>
+      </div>
+      <div class="text-2xl">
+        {{c.minOdds}}
+      </div>
+      <div class="{{buttonStyle}}"
+           (click)="adjustOdds(c.pool, c.step, true, true)"
+      >
+        <i class="fa fa-plus"></i>
+      </div>
+    </div>
+    <div class="text-2xl">
+      &#8828;
+    </div>
+    <div class="flex flex-col gap-y-1">
+      <div class="{{buttonStyle}}">
+        {{getInRangeCombinations(c.pool).length}}
+      </div>
+      <div class="text-2xl">
+        {{c.pool}}
+      </div>
+      <div class="{{buttonStyle}}"
+           (click)="copyBets(c.pool)"
+      >
+        <i class="fa fa-copy"></i>
+      </div>
+    </div>
+    <div class="text-2xl">
+      &#8828;
+    </div>
+    <div class="flex flex-col gap-y-1">
+      <div class="{{buttonStyle}}"
+           (click)="adjustOdds(c.pool, c.step, false, false)"
+      >
+        <i class="fa fa-minus"></i>
+      </div>
+      <div class="text-2xl">
+        {{c.maxOdds}}
+      </div>
+      <div class="{{buttonStyle}}"
+           (click)="adjustOdds(c.pool, c.step, false, true)"
+      >
+        <i class="fa fa-plus"></i>
+      </div>
+    </div>
+  </div>
 </div>
 
 <table class="mx-auto table-fixed text-center border-collapse border border-gray-700 noselect"

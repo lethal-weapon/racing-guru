@@ -13,7 +13,10 @@ import {
   DEFAULT_MIN_QIN_ODDS,
   DEFAULT_MAX_QIN_ODDS,
   DEFAULT_MIN_FCT_ODDS,
-  DEFAULT_MAX_FCT_ODDS
+  DEFAULT_MAX_FCT_ODDS,
+  QPL_ODDS_STEP,
+  QIN_ODDS_STEP,
+  FCT_ODDS_STEP
 } from '../util/numbers';
 import {
   getMaxRace,
@@ -33,6 +36,13 @@ interface OddsRange {
   maxQIN: number,
   minFCT: number,
   maxFCT: number
+}
+
+interface RangeControl {
+  pool: string,
+  step: number,
+  minOdds: number,
+  maxOdds: number
 }
 
 const DEFAULT_RANGE: OddsRange = {
@@ -81,6 +91,43 @@ export class OddsComponent implements OnInit {
     }
   }
 
+  copyBets(pool: string) {
+    const cmd = pool.startsWith('F') ? 'fs' : pool.toLowerCase();
+    const separator = cmd === 'fs' ? '-' : ',';
+
+    const bets = this.getInRangeCombinations(pool)
+      .map(c => `${cmd}:${c.join(separator)}`)
+      .join(`;`);
+    this.clipboard.copy(bets);
+  }
+
+  adjustOdds(pool: string, step: number, onMin: boolean, toAdd: boolean) {
+    const field = (onMin ? 'min' : 'max').concat(pool);
+    const fieldReverse = (!onMin ? 'min' : 'max').concat(pool);
+
+    // @ts-ignore
+    const fieldValue = this.activeRange[field] || 0;
+    // @ts-ignore
+    const fieldReverseValue = this.activeRange[fieldReverse] || 0;
+
+    if (fieldValue === 0 || fieldReverseValue === 0) return;
+
+    let newFieldValue = fieldValue;
+    if (toAdd) {
+      if (!onMin) newFieldValue += step;
+      else if (fieldValue + step < fieldReverseValue) newFieldValue += step;
+    } else {
+      if (onMin && fieldValue - step > 0) newFieldValue -= step;
+      else if (!onMin && fieldValue - step > fieldReverseValue) newFieldValue -= step;
+    }
+
+    let newRange = {...this.activeRange};
+    // @ts-ignore
+    newRange[field] = newFieldValue;
+
+    this.ranges.set(this.activeRace, newRange);
+  }
+
   isPreferredWQWR(starter: Starter): boolean {
     const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);
     if (wp.win == 0 || wp.place == 0) return false;
@@ -121,7 +168,25 @@ export class OddsComponent implements OnInit {
 
   isFCTOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
     return this.getStarterFCTOdds(starterA, starterB)
-      .map(o => o >= this.activeRange.minFCT && o < this.activeRange.maxFCT);
+      .map(o => o >= this.activeRange.minFCT && o <= this.activeRange.maxFCT);
+  }
+
+  getInRangeCombinations(pool: string): number[][] {
+    const odds = this.activeRacecard?.odds;
+    let combs = odds?.quinellaPlace;
+    if (pool === 'QIN') combs = odds?.quinella;
+    else if (pool === 'FCT') combs = odds?.forecast;
+
+    if (!combs) return [];
+
+    // @ts-ignore
+    const min = this.activeRange[`min${pool}`] || 0;
+    // @ts-ignore
+    const max = this.activeRange[`max${pool}`] || 0;
+
+    return combs
+      .filter(c => c.odds >= min && c.odds <= max)
+      .map(c => c.orders);
   }
 
   getStarterQQPOdds(starterA: Starter, starterB: Starter): number[] {
@@ -177,11 +242,6 @@ export class OddsComponent implements OnInit {
       || [];
   }
 
-  get copyButtonStyle(): string {
-    return `px-4 pt-1.5 pb-2 rounded-2xl border border-gray-600 ` +
-      `hover:border-yellow-400 hvr-grow-shadow cursor-pointer`;
-  }
-
   get maxMeetingStarterOrder(): number {
     return this.racecards
       .map(r => r.starters)
@@ -198,5 +258,33 @@ export class OddsComponent implements OnInit {
   get activeRacecard(): Racecard {
     // @ts-ignore
     return this.racecards.find(r => r.race === this.activeRace);
+  }
+
+  get rangeControls(): RangeControl[] {
+    return [
+      {
+        'pool': 'QPL',
+        'step': QPL_ODDS_STEP,
+        'minOdds': this.activeRange.minQPL,
+        'maxOdds': this.activeRange.maxQPL
+      },
+      {
+        'pool': 'QIN',
+        'step': QIN_ODDS_STEP,
+        'minOdds': this.activeRange.minQIN,
+        'maxOdds': this.activeRange.maxQIN
+      },
+      {
+        'pool': 'FCT',
+        'step': FCT_ODDS_STEP,
+        'minOdds': this.activeRange.minFCT,
+        'maxOdds': this.activeRange.maxFCT
+      },
+    ];
+  }
+
+  get buttonStyle(): string {
+    return `px-4 py-0.5 rounded-xl border border-gray-600 ` +
+      `hover:border-yellow-400 cursor-pointer`;
   }
 }
