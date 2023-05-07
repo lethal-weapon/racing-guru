@@ -38,6 +38,12 @@ interface OddsRange {
   maxFCT: number
 }
 
+interface Bet {
+  qpl: number[][],
+  qin: number[][],
+  fct: number[][]
+}
+
 interface RangeControl {
   pool: string,
   step: number,
@@ -54,6 +60,12 @@ const DEFAULT_RANGE: OddsRange = {
   maxFCT: DEFAULT_MAX_FCT_ODDS
 }
 
+const DEFAULT_BET: Bet = {
+  qpl: [],
+  qin: [],
+  fct: []
+}
+
 @Component({
   selector: 'app-odds',
   templateUrl: './odds.component.html'
@@ -64,6 +76,7 @@ export class OddsComponent implements OnInit {
   activeRace: number = 1;
   hoveredJockey: string = '';
 
+  bets: Map<number, Bet> = new Map();
   ranges: Map<number, OddsRange> = new Map();
 
   protected readonly isFavorite = isFavorite;
@@ -88,6 +101,7 @@ export class OddsComponent implements OnInit {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.ranges.set(race, {...DEFAULT_RANGE});
+      this.bets.set(race, {...DEFAULT_BET});
     }
   }
 
@@ -99,6 +113,24 @@ export class OddsComponent implements OnInit {
       .map(c => `${cmd}:${c.join(separator)}`)
       .join(`;`);
     this.clipboard.copy(bets);
+  }
+
+  toggleBet(pool: string, starterA: Starter, starterB: Starter) {
+    // @ts-ignore
+    let newPairs = [...this.activeBet[pool]] || [];
+    const pair = [starterA, starterB].map(s => s.order);
+
+    if (newPairs.some(p => p[0] === pair[0] && p[1] === pair[1])) {
+      newPairs = newPairs.filter(p => !(p[0] === pair[0] && p[1] === pair[1]));
+    } else {
+      newPairs.push(pair);
+    }
+
+    let newBets = {...this.activeBet};
+    // @ts-ignore
+    newBets[pool] = newPairs;
+
+    this.bets.set(this.activeRace, newBets);
   }
 
   adjustOdds(pool: string, step: number, onMin: boolean, toAdd: boolean) {
@@ -171,6 +203,17 @@ export class OddsComponent implements OnInit {
       .map(o => o >= this.activeRange.minFCT && o <= this.activeRange.maxFCT);
   }
 
+  getPairStyle(pool: string, starterA: Starter, starterB: Starter): string {
+    // @ts-ignore
+    const pairs = this.activeBet[pool] || [];
+    const pair = [starterA, starterB].map(s => s.order);
+
+    // @ts-ignore
+    return pairs.some(p => p[0] === pair[0] && p[1] === pair[1])
+      ? 'border border-gray-700'
+      : '';
+  }
+
   getInRangeCombinations(pool: string): number[][] {
     const odds = this.activeRacecard?.odds;
     let combs = odds?.quinellaPlace;
@@ -227,11 +270,11 @@ export class OddsComponent implements OnInit {
     return isBothFavorite ? `bg-gray-600` : ``;
   }
 
-  getTrainerColor(trainer: string): string {
-    const index = this.trainersWithMoreThanOneStarter.indexOf(trainer);
-    return index === -1
-      ? ''
-      : COLORS[index];
+  getTrainerColor(starter: Starter): string {
+    if (getPlacingColor(starter.jockey, this.activeRacecard).length > 0) return '';
+
+    const index = this.trainersWithMoreThanOneStarter.indexOf(starter.trainer);
+    return index === -1 ? '' : `italic ${COLORS[index]}`;
   }
 
   get trainersWithMoreThanOneStarter(): string[] {
@@ -249,6 +292,10 @@ export class OddsComponent implements OnInit {
       .map(s => s.order)
       .sort((o1, o2) => o1 - o2)
       .pop() || 14;
+  }
+
+  get activeBet(): Bet {
+    return this.bets.get(this.activeRace) || DEFAULT_BET;
   }
 
   get activeRange(): OddsRange {

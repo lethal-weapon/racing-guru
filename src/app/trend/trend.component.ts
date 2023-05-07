@@ -4,6 +4,7 @@ import {RestRepository} from '../model/rest.repository';
 import {Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {BOUNDARY_PERSONS} from '../util/persons';
+import {ONE_MINUTE} from "../util/numbers";
 
 @Component({
   selector: 'app-trend',
@@ -23,6 +24,7 @@ export class TrendComponent implements OnInit {
 
   ngOnInit(): void {
     this.repo.fetchMeetings();
+    setInterval(() => this.repo.fetchMeetings(), ONE_MINUTE);
   }
 
   setActiveSection = (clicked: string) =>

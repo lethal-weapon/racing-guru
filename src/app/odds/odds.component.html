@@ -83,7 +83,7 @@
       <div>
         {{starter.jockey}}
       </div>
-      <div class="{{getTrainerColor(starter.trainer)}}">
+      <div class="{{getTrainerColor(starter)}}">
         {{starter.trainer}}
       </div>
       <div class="flex flex-row justify-evenly">
@@ -135,7 +135,9 @@
            class="grid grid-cols-2"
       >
         <div *ngIf="indexB > indexA"
+             class="cursor-pointer {{getPairStyle('qin', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
+             (click)="toggleBet('qin', starterA, starterB)"
         >
           <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0]">
             {{getStarterQQPOdds(starterA, starterB)[0]}}
@@ -145,7 +147,9 @@
           </span>
         </div>
         <div *ngIf="indexB > indexA"
+             class="cursor-pointer {{getPairStyle('qpl', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
+             (click)="toggleBet('qpl', starterA, starterB)"
         >
           <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1]">
             {{getStarterQQPOdds(starterA, starterB)[1]}}
@@ -156,6 +160,7 @@
         </div>
         <div *ngIf="indexA > indexB"
              [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
+             (click)="toggleBet('fct', starterA, starterB)"
         >
           <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB)">
             {{getStarterFCTOdds(starterA, starterB)[0]}}
@@ -166,6 +171,7 @@
         </div>
         <div *ngIf="indexA > indexB"
              [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
+             (click)="toggleBet('fct', starterB, starterA)"
         >
           <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA)">
             {{getStarterFCTOdds(starterA, starterB)[1]}}
