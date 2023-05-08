@@ -11,9 +11,9 @@
   </div>
 </div>
 
-<div class="my-4 grid grid-cols-3 noselect">
+<div class="my-4 grid grid-cols-4 noselect">
   <div *ngFor="let c of rangeControls"
-       class="flex flex-row justify-evenly items-center px-14 text-center"
+       class="flex flex-row justify-evenly items-center px-8 text-center"
   >
     <div class="flex flex-col gap-y-1">
       <div class="{{buttonStyle}}"
@@ -63,6 +63,24 @@
       >
         <i class="fa fa-plus"></i>
       </div>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-4 px-8 py-4 text-center">
+    <div class="text-xl">
+      My Bets:
+    </div>
+    <div class="text-2xl text-red-600">
+      {{selectedBetCount}}
+    </div>
+    <div class="{{buttonStyle}} text-lg pt-1 pb-1.5"
+         (click)="resetBets()"
+    >
+      Reset
+    </div>
+    <div class="{{buttonStyle}} text-lg pt-1 pb-1.5"
+         (click)="copyBets()"
+    >
+      Copy
     </div>
   </div>
 </div>
@@ -159,6 +177,7 @@
           </span>
         </div>
         <div *ngIf="indexA > indexB"
+             class="cursor-pointer {{getPairStyle('fct', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
              (click)="toggleBet('fct', starterA, starterB)"
         >
@@ -170,6 +189,7 @@
           </span>
         </div>
         <div *ngIf="indexA > indexB"
+             class="cursor-pointer {{getPairStyle('fct', starterB, starterA)}}"
              [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
              (click)="toggleBet('fct', starterB, starterA)"
         >

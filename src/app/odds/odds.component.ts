@@ -105,13 +105,22 @@ export class OddsComponent implements OnInit {
     }
   }
 
-  copyBets(pool: string) {
-    const cmd = pool.startsWith('F') ? 'fs' : pool.toLowerCase();
-    const separator = cmd === 'fs' ? '-' : ',';
+  resetBets = () =>
+    this.bets.set(this.activeRace, {...DEFAULT_BET})
 
-    const bets = this.getInRangeCombinations(pool)
-      .map(c => `${cmd}:${c.join(separator)}`)
-      .join(`;`);
+  copyBets = (pool: string = '') => {
+    let bets = '';
+    for (const [key, value] of Object.entries(this.activeBet)) {
+      const cmd = key.startsWith('f') ? 'fs' : key;
+      const sep = cmd === 'fs' ? '-' : ',';
+
+      // @ts-ignore
+      const poolBets = (value || []).map(c => `${cmd}:${c.join(sep)};`).join(``);
+
+      if (pool === '' || pool.toUpperCase() === key.toUpperCase()) {
+        bets = bets.concat(poolBets);
+      }
+    }
     this.clipboard.copy(bets);
   }
 
@@ -210,8 +219,8 @@ export class OddsComponent implements OnInit {
 
     // @ts-ignore
     return pairs.some(p => p[0] === pair[0] && p[1] === pair[1])
-      ? 'border border-gray-700'
-      : '';
+      ? 'border border-gray-400'
+      : 'border border-gray-900';
   }
 
   getInRangeCombinations(pool: string): number[][] {
@@ -292,6 +301,12 @@ export class OddsComponent implements OnInit {
       .map(s => s.order)
       .sort((o1, o2) => o1 - o2)
       .pop() || 14;
+  }
+
+  get selectedBetCount(): number {
+    return Object.values(this.activeBet)
+      .map(v => v.length)
+      .reduce((prev, curr) => prev + curr, 0);
   }
 
   get activeBet(): Bet {
