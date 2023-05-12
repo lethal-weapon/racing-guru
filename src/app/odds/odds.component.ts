@@ -219,7 +219,7 @@ export class OddsComponent implements OnInit {
 
     // @ts-ignore
     return pairs.some(p => p[0] === pair[0] && p[1] === pair[1])
-      ? 'border border-gray-400'
+      ? 'border border-yellow-400'
       : 'border border-gray-900';
   }
 

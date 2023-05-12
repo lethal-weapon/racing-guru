@@ -11,14 +11,14 @@ export const ONE_MILLION = 1_000_000;
 export const PAYOUT_RATE = 0.825;
 export const MAX_RACE_PER_MEETING = 11;
 
-export const DEFAULT_MIN_QPL_ODDS = 10;
-export const DEFAULT_MIN_QIN_ODDS = 20;
-export const DEFAULT_MIN_FCT_ODDS = 30;
+export const DEFAULT_MIN_QPL_ODDS = 14;
+export const DEFAULT_MIN_QIN_ODDS = 24;
+export const DEFAULT_MIN_FCT_ODDS = 48;
 
-export const DEFAULT_MAX_QPL_ODDS = 60;
+export const DEFAULT_MAX_QPL_ODDS = 70;
 export const DEFAULT_MAX_QIN_ODDS = 120;
-export const DEFAULT_MAX_FCT_ODDS = 180;
+export const DEFAULT_MAX_FCT_ODDS = 240;
 
 export const QPL_ODDS_STEP = 2;
-export const QIN_ODDS_STEP = 5;
-export const FCT_ODDS_STEP = 10;
+export const QIN_ODDS_STEP = 4;
+export const FCT_ODDS_STEP = 8;
