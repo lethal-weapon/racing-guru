@@ -5,6 +5,7 @@ import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
 import {COLORS} from '../util/colors';
+import {Relationship, RELATIONSHIPS} from '../model/relationship.model';
 import {
   THREE_SECONDS,
   MAX_RACE_PER_MEETING,
@@ -124,6 +125,60 @@ export class OddsComponent implements OnInit {
     this.clipboard.copy(bets);
   }
 
+  applyConnectionBets = () => {
+    let qpl: number[][] = [];
+    let qin: number[][] = [];
+    let fct: number[][] = [];
+    const starters = getStarters(this.activeRacecard);
+
+    for (let i = 0; i < starters.length; i++) {
+      const starterA = starters[i];
+      const orderA = starterA.order;
+
+      for (let j = i + 1; j < starters.length; j++) {
+        const starterB = starters[j];
+        const orderB = starterB.order;
+        if (!this.isConnected(starterA, starterB)) continue;
+
+        const qqpWithinRange = this.isQQPOddsWithinRange(starterA, starterB);
+        if (qqpWithinRange[0]) qin.push([orderA, orderB]);
+        if (qqpWithinRange[1]) qpl.push([orderA, orderB]);
+
+        const fctWithinRange = this.isFCTOddsWithinRange(starterA, starterB);
+        if (fctWithinRange[0]) fct.push([orderA, orderB]);
+        if (fctWithinRange[1]) fct.push([orderB, orderA]);
+      }
+    }
+
+    this.bets.set(this.activeRace, {qpl, qin, fct})
+  }
+
+  isConnected = (starterA: Starter, starterB: Starter): boolean => {
+    const jockeyA = starterA.jockey;
+    const jockeyB = starterB.jockey;
+    const trainerA = starterA.trainer;
+    const trainerB = starterB.trainer;
+    if (trainerA === trainerB) return true;
+
+    const pair1Rel = this.findRelationship(jockeyA, trainerB);
+    const pair2Rel = this.findRelationship(jockeyB, trainerA);
+    const jockeyRel = this.findRelationship(jockeyA, jockeyB);
+    const trainerRel = this.findRelationship(trainerA, trainerB);
+
+    return pair1Rel.weight + pair2Rel.weight >= 4
+      || jockeyRel.weight + pair1Rel.weight >= 5
+      || jockeyRel.weight + pair2Rel.weight >= 5
+      || trainerRel.weight + pair1Rel.weight >= 5
+      || trainerRel.weight + pair2Rel.weight >= 5;
+  }
+
+  findRelationship = (personA: string, personB: string): Relationship =>
+    RELATIONSHIPS.find(r =>
+      (r.personA === personA && r.personB === personB) ||
+      (r.personA === personB && r.personB === personA)
+    )
+    || {personA: personA, personB: personB, weight: 0}
+
   toggleBet(pool: string, starterA: Starter, starterB: Starter) {
     // @ts-ignore
     let newPairs = [...this.activeBet[pool]] || [];
@@ -217,28 +272,22 @@ export class OddsComponent implements OnInit {
     const pairs = this.activeBet[pool] || [];
     const pair = [starterA, starterB].map(s => s.order);
 
-    // @ts-ignore
-    return pairs.some(p => p[0] === pair[0] && p[1] === pair[1])
+    const isSelected = pool === 'fct'
+      // @ts-ignore
+      ? pairs.some(p => p[0] === pair[0] && p[1] === pair[1])
+      // @ts-ignore
+      : pairs.some(p => p.includes(pair[0]) && p.includes(pair[1]));
+
+    return isSelected
       ? 'border border-yellow-400'
       : 'border border-gray-900';
   }
 
-  getInRangeCombinations(pool: string): number[][] {
-    const odds = this.activeRacecard?.odds;
-    let combs = odds?.quinellaPlace;
-    if (pool === 'QIN') combs = odds?.quinella;
-    else if (pool === 'FCT') combs = odds?.forecast;
-
-    if (!combs) return [];
-
-    // @ts-ignore
-    const min = this.activeRange[`min${pool}`] || 0;
-    // @ts-ignore
-    const max = this.activeRange[`max${pool}`] || 0;
-
-    return combs
-      .filter(c => c.odds >= min && c.odds <= max)
-      .map(c => c.orders);
+  getSelectedBetCount(pool: string): number {
+    for (const [key, value] of Object.entries(this.activeBet)) {
+      if (key.toLowerCase() === pool.toLowerCase()) return value.length;
+    }
+    return 0;
   }
 
   getStarterQQPOdds(starterA: Starter, starterB: Starter): number[] {
@@ -303,7 +352,7 @@ export class OddsComponent implements OnInit {
       .pop() || 14;
   }
 
-  get selectedBetCount(): number {
+  get totalSelectedBetCount(): number {
     return Object.values(this.activeBet)
       .map(v => v.length)
       .reduce((prev, curr) => prev + curr, 0);
