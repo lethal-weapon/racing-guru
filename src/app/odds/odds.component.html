@@ -105,6 +105,9 @@
     <td *ngFor="let starter of getStarters(this.activeRacecard)"
         class="w-20 border border-gray-700 {{getPlacingColor(starter.jockey, activeRacecard)}}"
         [class.bg-gray-800]="hoveredJockey === starter.jockey"
+        [class.cursor-pointer]="!isFavorite(starter, this.activeRacecard)"
+        [class.cursor-not-allowed]="isFavorite(starter, this.activeRacecard)"
+        (click)="toggleTrash(starter)"
         (mouseenter)="hoveredJockey = starter.jockey"
     >
       <div>
@@ -116,6 +119,11 @@
       <div class="flex flex-row justify-evenly">
         <div>
           {{starter.order}}
+        </div>
+        <div *ngIf="isTrash(starter)"
+             class="text-gray-500"
+        >
+          <i class="fa fa-trash"></i>
         </div>
         <div *ngIf="isFavorite(starter, this.activeRacecard)"
              class="text-yellow-400"
@@ -162,52 +170,32 @@
            class="grid grid-cols-2"
       >
         <div *ngIf="indexB > indexA"
-             class="cursor-pointer {{getPairStyle('qin', starterA, starterB)}}"
+             class="cursor-pointer border {{getPairBorder('qin', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
              (click)="toggleBet('qin', starterA, starterB)"
         >
-          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0]">
-            {{getStarterQQPOdds(starterA, starterB)[0]}}
-          </span>
-          <span *ngIf="!(isQQPOddsWithinRange(starterA, starterB)[0] || isFinalQQPCombination(starterA, starterB)[0])">
-            -
-          </span>
+          {{ isShowOdds('qin', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[0] : '-' }}
         </div>
         <div *ngIf="indexB > indexA"
-             class="cursor-pointer {{getPairStyle('qpl', starterA, starterB)}}"
+             class="cursor-pointer border {{getPairBorder('qpl', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
              (click)="toggleBet('qpl', starterA, starterB)"
         >
-          <span *ngIf="isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1]">
-            {{getStarterQQPOdds(starterA, starterB)[1]}}
-          </span>
-          <span *ngIf="!(isQQPOddsWithinRange(starterA, starterB)[1] || isFinalQQPCombination(starterA, starterB)[1])">
-            -
-          </span>
+          {{ isShowOdds('qpl', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[1] : '-' }}
         </div>
         <div *ngIf="indexA > indexB"
-             class="cursor-pointer {{getPairStyle('fct', starterA, starterB)}}"
+             class="cursor-pointer border {{getPairBorder('fct', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
              (click)="toggleBet('fct', starterA, starterB)"
         >
-          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB)">
-            {{getStarterFCTOdds(starterA, starterB)[0]}}
-          </span>
-          <span *ngIf="!(isFCTOddsWithinRange(starterA, starterB)[0] || isFinalFCTCombination(starterA, starterB))">
-            -
-          </span>
+          {{ isShowOdds('fct', starterA, starterB) ? getStarterFCTOdds(starterA, starterB)[0] : '-' }}
         </div>
         <div *ngIf="indexA > indexB"
-             class="cursor-pointer {{getPairStyle('fct', starterB, starterA)}}"
+             class="cursor-pointer border {{getPairBorder('fct', starterB, starterA)}}"
              [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
              (click)="toggleBet('fct', starterB, starterA)"
         >
-          <span *ngIf="isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA)">
-            {{getStarterFCTOdds(starterA, starterB)[1]}}
-          </span>
-          <span *ngIf="!(isFCTOddsWithinRange(starterA, starterB)[1] || isFinalFCTCombination(starterB, starterA))">
-            -
-          </span>
+          {{ isShowOdds('fct', starterB, starterA, true) ? getStarterFCTOdds(starterA, starterB)[1] : '-' }}
         </div>
       </div>
     </td>

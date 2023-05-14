@@ -1,9 +1,10 @@
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
+import {JOCKEY_CODES} from './persons';
+import {COLORS} from './colors';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/order.model';
 import {Starter} from '../model/starter.model';
-import {JOCKEY_CODES} from './persons';
-import {COLORS} from './colors';
+import {Relationship, RELATIONSHIPS} from '../model/relationship.model';
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
@@ -120,3 +121,10 @@ export const getRaceBadgeStyle = (activeRace: number, renderRace: number): strin
   activeRace === renderRace
     ? `text-yellow-400 border-yellow-400`
     : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
+
+export const findRelationship = (personA: string, personB: string): Relationship =>
+  RELATIONSHIPS.find(r =>
+    (r.personA === personA && r.personB === personB) ||
+    (r.personA === personB && r.personB === personA)
+  )
+  || {personA: personA, personB: personB, weight: 0}

@@ -5,7 +5,6 @@ import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
 import {COLORS} from '../util/colors';
-import {Relationship, RELATIONSHIPS} from '../model/relationship.model';
 import {
   THREE_SECONDS,
   MAX_RACE_PER_MEETING,
@@ -27,7 +26,8 @@ import {
   getStarterQWOdds,
   getStarterWinPlaceOdds,
   getStarters,
-  isFavorite
+  isFavorite,
+  findRelationship
 } from '../util/functions';
 
 interface OddsRange {
@@ -79,6 +79,7 @@ export class OddsComponent implements OnInit {
 
   bets: Map<number, Bet> = new Map();
   ranges: Map<number, OddsRange> = new Map();
+  trashes: Map<number, number[]> = new Map();
 
   protected readonly isFavorite = isFavorite;
   protected readonly getMaxRace = getMaxRace;
@@ -101,8 +102,9 @@ export class OddsComponent implements OnInit {
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
-      this.ranges.set(race, {...DEFAULT_RANGE});
       this.bets.set(race, {...DEFAULT_BET});
+      this.ranges.set(race, {...DEFAULT_RANGE});
+      this.trashes.set(race, []);
     }
   }
 
@@ -134,10 +136,12 @@ export class OddsComponent implements OnInit {
     for (let i = 0; i < starters.length; i++) {
       const starterA = starters[i];
       const orderA = starterA.order;
+      if (this.isTrash(starterA)) continue;
 
       for (let j = i + 1; j < starters.length; j++) {
         const starterB = starters[j];
         const orderB = starterB.order;
+        if (this.isTrash(starterB)) continue;
         if (!this.isConnected(starterA, starterB)) continue;
 
         const qqpWithinRange = this.isQQPOddsWithinRange(starterA, starterB);
@@ -153,33 +157,9 @@ export class OddsComponent implements OnInit {
     this.bets.set(this.activeRace, {qpl, qin, fct})
   }
 
-  isConnected = (starterA: Starter, starterB: Starter): boolean => {
-    const jockeyA = starterA.jockey;
-    const jockeyB = starterB.jockey;
-    const trainerA = starterA.trainer;
-    const trainerB = starterB.trainer;
-    if (trainerA === trainerB) return true;
+  toggleBet = (pool: string, starterA: Starter, starterB: Starter) => {
+    if (this.isTrash(starterA) || this.isTrash(starterB)) return;
 
-    const pair1Rel = this.findRelationship(jockeyA, trainerB);
-    const pair2Rel = this.findRelationship(jockeyB, trainerA);
-    const jockeyRel = this.findRelationship(jockeyA, jockeyB);
-    const trainerRel = this.findRelationship(trainerA, trainerB);
-
-    return pair1Rel.weight + pair2Rel.weight >= 4
-      || jockeyRel.weight + pair1Rel.weight >= 5
-      || jockeyRel.weight + pair2Rel.weight >= 5
-      || trainerRel.weight + pair1Rel.weight >= 5
-      || trainerRel.weight + pair2Rel.weight >= 5;
-  }
-
-  findRelationship = (personA: string, personB: string): Relationship =>
-    RELATIONSHIPS.find(r =>
-      (r.personA === personA && r.personB === personB) ||
-      (r.personA === personB && r.personB === personA)
-    )
-    || {personA: personA, personB: personB, weight: 0}
-
-  toggleBet(pool: string, starterA: Starter, starterB: Starter) {
     // @ts-ignore
     let newPairs = [...this.activeBet[pool]] || [];
     const pair = [starterA, starterB].map(s => s.order);
@@ -197,7 +177,19 @@ export class OddsComponent implements OnInit {
     this.bets.set(this.activeRace, newBets);
   }
 
-  adjustOdds(pool: string, step: number, onMin: boolean, toAdd: boolean) {
+  toggleTrash = (starter: Starter) => {
+    if (isFavorite(starter, this.activeRacecard)) return;
+
+    const order = starter.order;
+    let unwanted = this.trashes.get(this.activeRace) || [];
+
+    if (unwanted.includes(order)) unwanted = unwanted.filter(e => e !== order);
+    else unwanted.push(order);
+
+    this.trashes.set(this.activeRace, unwanted);
+  }
+
+  adjustOdds = (pool: string, step: number, onMin: boolean, toAdd: boolean) => {
     const field = (onMin ? 'min' : 'max').concat(pool);
     const fieldReverse = (!onMin ? 'min' : 'max').concat(pool);
 
@@ -224,7 +216,30 @@ export class OddsComponent implements OnInit {
     this.ranges.set(this.activeRace, newRange);
   }
 
-  isPreferredWQWR(starter: Starter): boolean {
+  isConnected = (starterA: Starter, starterB: Starter): boolean => {
+    const jockeyA = starterA.jockey;
+    const jockeyB = starterB.jockey;
+    const trainerA = starterA.trainer;
+    const trainerB = starterB.trainer;
+    if (trainerA === trainerB) return true;
+
+    const crossWgt1 = findRelationship(jockeyA, trainerB).weight;
+    const crossWgt2 = findRelationship(jockeyB, trainerA).weight;
+    const jockeyWgt = findRelationship(jockeyA, jockeyB).weight;
+    const trainerWgt = findRelationship(trainerA, trainerB).weight;
+
+    return crossWgt1 + crossWgt2 >= 4
+      || jockeyWgt + trainerWgt >= 4
+      || jockeyWgt + crossWgt1 >= 5
+      || jockeyWgt + crossWgt2 >= 5
+      || trainerWgt + crossWgt1 >= 5
+      || trainerWgt + crossWgt2 >= 5;
+  }
+
+  isTrash = (starter: Starter): boolean =>
+    this.activeTrash.includes(starter.order);
+
+  isPreferredWQWR = (starter: Starter): boolean => {
     const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);
     if (wp.win == 0 || wp.place == 0) return false;
 
@@ -235,6 +250,23 @@ export class OddsComponent implements OnInit {
     return W < 10 && (W - QW <= 1.5)
       ? true
       : Math.abs(1 - W / QW) <= 0.2;
+  }
+
+  isShowOdds = (pool: string, starterA: Starter, starterB: Starter, isReverse: boolean = false): boolean => {
+    if (this.isTrash(starterA) || this.isTrash(starterB)) return false;
+
+    const qqpInRange = this.isQQPOddsWithinRange(starterA, starterB);
+    const qqpFinal = this.isFinalQQPCombination(starterA, starterB);
+    const fctInRange = this.isFCTOddsWithinRange(starterA, starterB);
+    const fctFinal = this.isFinalFCTCombination(starterA, starterB);
+
+    if (pool === 'qin') return qqpInRange[0] || qqpFinal[0];
+    if (pool === 'qpl') return qqpInRange[1] || qqpFinal[1];
+    if (pool === 'fct') return isReverse
+      ? fctInRange[1] || fctFinal
+      : fctInRange[0] || fctFinal;
+
+    return true;
   }
 
   isFinalQQPCombination(starterA: Starter, starterB: Starter): boolean[] {
@@ -267,7 +299,7 @@ export class OddsComponent implements OnInit {
       .map(o => o >= this.activeRange.minFCT && o <= this.activeRange.maxFCT);
   }
 
-  getPairStyle(pool: string, starterA: Starter, starterB: Starter): string {
+  getPairBorder(pool: string, starterA: Starter, starterB: Starter): string {
     // @ts-ignore
     const pairs = this.activeBet[pool] || [];
     const pair = [starterA, starterB].map(s => s.order);
@@ -278,9 +310,7 @@ export class OddsComponent implements OnInit {
       // @ts-ignore
       : pairs.some(p => p.includes(pair[0]) && p.includes(pair[1]));
 
-    return isSelected
-      ? 'border border-yellow-400'
-      : 'border border-gray-900';
+    return isSelected ? 'border-yellow-400' : 'border-gray-900';
   }
 
   getSelectedBetCount(pool: string): number {
@@ -364,6 +394,10 @@ export class OddsComponent implements OnInit {
 
   get activeRange(): OddsRange {
     return this.ranges.get(this.activeRace) || DEFAULT_RANGE;
+  }
+
+  get activeTrash(): number[] {
+    return this.trashes.get(this.activeRace) || [];
   }
 
   get activeRacecard(): Racecard {
