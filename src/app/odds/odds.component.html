@@ -161,7 +161,8 @@
       </div>
     </td>
     <td *ngFor="let starterB of getStarters(this.activeRacecard); let indexB = index"
-        class="border border-gray-700 {{getQQPCellColor(starterA, starterB)}}"
+        class="border border-gray-700"
+        [class.bg-gray-600]="isBothFavorite(starterA, starterB)"
         [class.bg-gray-800]="hoveredJockey === starterB.jockey"
         [class.diagonal-line]="starterA.order === starterB.order"
         (mouseenter)="hoveredJockey = starterB.jockey"

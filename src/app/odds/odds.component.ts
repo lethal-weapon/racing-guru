@@ -269,6 +269,11 @@ export class OddsComponent implements OnInit {
     return true;
   }
 
+  isBothFavorite = (starterA: Starter, starterB: Starter): boolean =>
+    starterA.order !== starterB.order &&
+    isFavorite(starterA, this.activeRacecard) &&
+    isFavorite(starterB, this.activeRacecard)
+
   isFinalQQPCombination(starterA: Starter, starterB: Starter): boolean[] {
     const placingSum = [starterA, starterB]
       .map(s => getPlacing(s.jockey, this.activeRacecard))
@@ -347,15 +352,6 @@ export class OddsComponent implements OnInit {
     if (pairs.length !== 2) return [0, 0];
     if (pairs[0].orders[0] === starterA.order) return pairs.map(p => p.odds);
     return pairs.reverse().map(p => p.odds);
-  }
-
-  getQQPCellColor(starterA: Starter, starterB: Starter): string {
-    if (starterA.order === starterB.order) return ``;
-    const isBothFavorite =
-      isFavorite(starterA, this.activeRacecard) &&
-      isFavorite(starterB, this.activeRacecard)
-
-    return isBothFavorite ? `bg-gray-600` : ``;
   }
 
   getTrainerColor(starter: Starter): string {
