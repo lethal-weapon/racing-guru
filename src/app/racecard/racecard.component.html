@@ -21,11 +21,11 @@
            [href]="getHorseProfileUrl(starter.horse)"
            [hideDelay]="0"
         >
-          {{starter.horseNameCH}}
+          {{getHorse(starter).nameCH}}
         </a>
       </div>
       <div class="text-sm">
-        {{starter.horseNameEN}}
+        {{getHorse(starter).nameEN}}
       </div>
     </div>
     <div class="w-10 h-10 pt-1 text-xl border border-gray-700">
@@ -37,13 +37,11 @@
     <div class="w-12 mx-2 text-2xl font-mono">
       {{starter.trainer}}
     </div>
-    <div class="w-10 text-xl"
-         [class.text-yellow-400]="starter.bonusRun"
-    >
-      <i class="fa fa-dollar"></i>
+    <div class="w-10 text-xl">
+      <i class="fa fa-question"></i>
     </div>
     <div class="w-44 mx-2 text-sm">
-      {{starter.ownerCH}}
+      {{getHorse(starter).ownerCH}}
     </div>
     <div class="w-12 ml-4">
       <img src="https://racing.hkjc.com/racing/content/Images/RaceColor/{{starter.horse}}.gif"
@@ -53,10 +51,10 @@
     </div>
     <div class="w-28">
       <div>
-        {{starter.age}}YO, {{starter.origin}}
+        {{getHorse(starter).age}}YO, {{getHorse(starter).origin}}
       </div>
       <div>
-        {{starter.horseTotal1st}}-{{starter.horseTotal2nd}}-{{starter.horseTotal3rd}}/{{starter.horseTotalRuns}}
+        {{getHorseStatistics(starter)}}
       </div>
     </div>
     <div class="w-24 text-red-600">

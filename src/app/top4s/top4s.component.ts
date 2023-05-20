@@ -4,7 +4,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
-import {WinPlaceOdds} from '../model/order.model';
+import {WinPlaceOdds} from '../model/odds.model';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
 import {RELATIONSHIPS} from '../model/relationship.model';
 

@@ -1,4 +1,4 @@
-import {Singular, Combination} from './order.model';
+import {Singular, Combination} from './odds.model';
 
 export class Dividend {
   constructor(
@@ -14,20 +14,4 @@ export class Dividend {
     public double        ?: Combination[]
   ) {
   }
-}
-
-export interface FinalDividend {
-  meeting : string,
-  race    : number,
-  venue   : string,
-  WIN     : number,
-  QIN     : number,
-  TCE     : number,
-  QTT     : number,
-  persons : PersonPlacing[]
-}
-
-interface PersonPlacing {
-  person  : string,
-  placing : number
 }

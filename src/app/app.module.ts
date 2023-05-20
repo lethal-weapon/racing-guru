@@ -10,7 +10,6 @@ import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {PeopleComponent} from './people/people.component';
-import {DividendComponent} from './dividend/dividend.component';
 import {TrendComponent} from './trend/trend.component';
 import {MatcherComponent} from './matcher/matcher.component';
 import {CollaborationComponent} from './collaboration/collaboration.component';
@@ -29,7 +28,6 @@ import {OddsComponent} from './odds/odds.component';
     OddsComponent,
     TrendComponent,
     PeopleComponent,
-    DividendComponent,
     MatcherComponent,
     CollaborationComponent,
     Top4sComponent

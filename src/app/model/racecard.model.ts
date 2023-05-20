@@ -14,6 +14,7 @@ export class Racecard {
     public distance   : number,
     public prize      : number,
     public track      : string,
+    public url        : string,
     public videoUrl   : string,
     public resultUrl  : string,
     public starters   : Starter[],

@@ -2,7 +2,7 @@ import {ONE_MILLION, PAYOUT_RATE} from './numbers';
 import {JOCKEY_CODES} from './persons';
 import {COLORS} from './colors';
 import {Racecard} from '../model/racecard.model';
-import {WinPlaceOdds} from '../model/order.model';
+import {WinPlaceOdds} from '../model/odds.model';
 import {Starter} from '../model/starter.model';
 import {Relationship, RELATIONSHIPS} from '../model/relationship.model';
 

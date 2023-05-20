@@ -6,7 +6,6 @@ import {RacecardComponent} from './racecard/racecard.component';
 import {OddsComponent} from './odds/odds.component';
 import {TrendComponent} from './trend/trend.component';
 import {PeopleComponent} from './people/people.component';
-import {DividendComponent} from './dividend/dividend.component';
 import {MatcherComponent} from './matcher/matcher.component';
 import {CollaborationComponent} from './collaboration/collaboration.component';
 import {Top4sComponent} from './top4s/top4s.component';
@@ -17,7 +16,6 @@ const routes: Routes = [
   {path: 'odds', component: OddsComponent},
   {path: 'trend', component: TrendComponent},
 
-  {path: 'dividend', component: DividendComponent},
   {path: 'top4s', component: Top4sComponent},
   {path: 'matcher', component: MatcherComponent},
   {path: 'collaboration', component: CollaborationComponent},

@@ -6,62 +6,10 @@ export class Pool {
     public forecast       : number,
     public tierce         : number,
     public trio           : number,
-    public firstFour      : number,
-    public quartet        : number,
+    public firstFour     ?: number,
+    public quartet       ?: number,
     public quinellaPlace ?: number,
     public double        ?: number
   ) {
   }
-}
-
-export interface FinalPool {
-  meeting  : string,
-  race     : number,
-  time     : string,
-  venue    : string,
-  grade    : string,
-  starters : number,
-  WIN      : number,
-  PLA      : number,
-  QIN      : number,
-  QPL      : number,
-  FT       : number,
-  FQ       : number,
-  TCE      : number,
-  DBL      : number
-}
-
-export const DEFAULT_FINAL_POOL: FinalPool = {
-  meeting  : '1999-09-09',
-  race     : 9,
-  time     : '18:45',
-  venue    : 'HV',
-  grade    : '-',
-  starters : 0,
-  WIN      : 0,
-  PLA      : 0,
-  QIN      : 0,
-  QPL      : 0,
-  FT       : 0,
-  FQ       : 0,
-  TCE      : 0,
-  DBL      : 0
-}
-
-export interface TimeSeriesPool {
-  meeting  : string,
-  race     : number,
-  pools    : TimePool[]
-}
-
-export interface TimePool {
-  point : number,
-  WIN   : number,
-  PLA   : number,
-  QIN   : number,
-  QPL   : number,
-  FT    : number,
-  FQ    : number,
-  TCE   : number,
-  DBL   : number
 }

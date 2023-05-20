@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 
 import {WebsocketService} from '../model/websocket.service';
-import {PastStarter, Starter} from '../model/starter.model';
+import {Horse, PastStarter} from '../model/horse.model';
+import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {ONE_MILLION, ONE_MINUTE, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {RestRepository} from '../model/rest.repository';
@@ -49,11 +50,11 @@ export class RacecardComponent implements OnInit {
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
 
-    this.repo.fetchPastStarters();
+    this.repo.fetchHorses();
     this.repo.fetchCollaborations();
 
     setInterval(() => {
-      this.repo.fetchPastStarters();
+      this.repo.fetchHorses();
       this.repo.fetchCollaborations();
     }, ONE_MINUTE);
   }
@@ -69,9 +70,20 @@ export class RacecardComponent implements OnInit {
     });
   }
 
+  getHorse(starter: Starter): Horse {
+    // @ts-ignore
+    return this.repo.findHorses().find(s => s.code === starter.horse)
+  }
+
+  getHorseStatistics(starter: Starter): string {
+    const h = this.getHorse(starter);
+    return `${h.total1st}-${h.total2nd}-${h.total3rd}/${h.totalRuns}`
+  }
+
   getPastHorseStarters(current: Starter): PastStarter[] {
-    return this.repo.findPastStarters()
-      .filter(s => s.horse === current.horse)
+    return this.repo.findHorses()
+      .find(s => s.code === current.horse)
+      ?.pastStarters || []
       .slice(0, 16);
   }
 

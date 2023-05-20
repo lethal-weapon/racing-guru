@@ -40,10 +40,7 @@ export class MeetingComponent implements OnInit {
     private socket: WebsocketService,
     private repo: RestRepository
   ) {
-    socket.racecards.subscribe(data => {
-      this.racecards = data;
-      this.racecards.sort((r1, r2) => r1.race - r2.race);
-    });
+    socket.racecards.subscribe(data => this.racecards = data);
   }
 
   ngOnInit(): void {
@@ -241,12 +238,13 @@ export class MeetingComponent implements OnInit {
   getStarterTooltip(jockey: string, racecard: Racecard): string {
     const starter = racecard.starters.filter(s => s.jockey === jockey).pop();
     if (!starter) return '';
-    return `
-      <div class="w-44 text-center">
-        <div>${starter.horseNameCH}</div>
-        <div>${starter.horseNameEN}</div>
-      </div>
-    `;
+    return ``;
+    // return `
+    //   <div class="w-44 text-center">
+    //     <div>${starter.horseNameCH}</div>
+    //     <div>${starter.horseNameEN}</div>
+    //   </div>
+    // `;
   }
 
   getRaceTooltip(racecard: Racecard): string {
@@ -256,6 +254,7 @@ export class MeetingComponent implements OnInit {
       .replace('HANDICAP', '')
       .replace('CHINESE NEW YEAR', 'CNY')
       .replace('INTERNATIONAL JOCKEYS\' CHAMPIONSHIP', 'IJC')
+      .replace(/\d{4}M/g, '')
       .trim();
 
     const dt = new Date(racecard.time);
