@@ -37,8 +37,8 @@ export class MeetingComponent implements OnInit {
   protected readonly getHorseProfileUrl = getHorseProfileUrl;
 
   constructor(
-    private socket: WebsocketService,
-    private repo: RestRepository
+    private repo: RestRepository,
+    private socket: WebsocketService
   ) {
     socket.racecards.subscribe(data => this.racecards = data);
   }
@@ -48,6 +48,8 @@ export class MeetingComponent implements OnInit {
       this.socket.racecards.next([]);
       this.tick();
     }, THREE_SECONDS);
+
+    this.repo.fetchHorses();
   }
 
   setActiveTrainer = (clicked: string) =>
@@ -236,15 +238,18 @@ export class MeetingComponent implements OnInit {
   }
 
   getStarterTooltip(jockey: string, racecard: Racecard): string {
-    const starter = racecard.starters.filter(s => s.jockey === jockey).pop();
+    const starter = racecard.starters.find(s => s.jockey === jockey);
     if (!starter) return '';
-    return ``;
-    // return `
-    //   <div class="w-44 text-center">
-    //     <div>${starter.horseNameCH}</div>
-    //     <div>${starter.horseNameEN}</div>
-    //   </div>
-    // `;
+
+    const horse = this.repo.findHorses().find(h => h.code === starter.horse);
+    if (!horse) return '';
+
+    return `
+      <div class="w-44 text-center">
+        <div>${horse.nameCH}</div>
+        <div>${horse.nameEN}</div>
+      </div>
+    `;
   }
 
   getRaceTooltip(racecard: Racecard): string {

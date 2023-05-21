@@ -43,7 +43,7 @@ export const getStarter = (jockey: string, racecard: Racecard): Starter => {
 export const getStarters = (racecard: Racecard): Starter[] => {
   if (!racecard) return [];
 
-  return racecard.starters.sort((s1, s2) => {
+  return racecard.starters.filter(s => !s.scratched).sort((s1, s2) => {
     const odds1 = getWinPlaceOdds(s1.jockey, racecard);
     const odds2 = getWinPlaceOdds(s2.jockey, racecard);
 

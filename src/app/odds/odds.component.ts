@@ -29,6 +29,7 @@ import {
   isFavorite,
   findRelationship
 } from '../util/functions';
+import {RestRepository} from "../model/rest.repository";
 
 interface OddsRange {
   minQPL: number,
@@ -90,6 +91,7 @@ export class OddsComponent implements OnInit {
   protected readonly getRaceBadgeStyle = getRaceBadgeStyle;
 
   constructor(
+    private repo: RestRepository,
     private socket: WebsocketService,
     private clipboard: Clipboard
   ) {
@@ -97,6 +99,8 @@ export class OddsComponent implements OnInit {
       this.racecards = data;
       this.racecards.sort((r1, r2) => r1.race - r2.race);
     });
+
+    this.repo.fetchHorses();
   }
 
   ngOnInit(): void {
@@ -360,6 +364,9 @@ export class OddsComponent implements OnInit {
     const index = this.trainersWithMoreThanOneStarter.indexOf(starter.trainer);
     return index === -1 ? '' : `italic ${COLORS[index]}`;
   }
+
+  getHorseNameCH = (horseCode: string): string =>
+    this.repo.findHorses().find(h => h.code === horseCode)?.nameCH || horseCode
 
   get trainersWithMoreThanOneStarter(): string[] {
     return this.activeRacecard?.starters
