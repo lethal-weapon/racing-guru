@@ -24,3 +24,18 @@ export class Horse {
   ) {
   }
 }
+
+export const DEFAULT_HORSE : Horse = {
+  code          : 'TBD',
+  nameEN        : 'TBD',
+  nameCH        : 'TBD',
+  ownerCH       : 'TBD',
+  origin        : 'TBD',
+  age           : 1,
+  total1st      : 0,
+  total2nd      : 0,
+  total3rd      : 0,
+  totalRuns     : 0,
+  targetMeeting : '2000-01-01',
+  pastStarters: []
+}

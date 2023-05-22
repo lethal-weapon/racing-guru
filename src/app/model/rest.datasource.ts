@@ -3,11 +3,11 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
-import {Meeting} from './meeting.model';
-import {Statistics} from './statistics.model';
+import {Horse} from './horse.model';
 import {RaceHorse} from './racehorse.model';
 import {Collaboration} from './collaboration.model';
-import {Horse} from './horse.model';
+import {Meeting} from './meeting.model';
+import {Statistics} from './statistics.model';
 import {FavoritePost} from './favorite.model';
 
 @Injectable()
@@ -19,27 +19,21 @@ export class RestDataSource {
       `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}/${env.API_PREFIX}`;
   }
 
-  getHorses(): Observable<Horse[]> {
-    return this.http.get<Horse[]>(`${this.baseUrl}/horses`);
-  }
+  saveFavorite = (favorite: FavoritePost): Observable<FavoritePost> =>
+    this.http.post<FavoritePost>(`${this.baseUrl}/favorite`, favorite)
 
-  getRacehorses(): Observable<RaceHorse[]> {
-    return this.http.get<RaceHorse[]>(`${this.baseUrl}/racehorses`);
-  }
+  getHorses = (): Observable<Horse[]> =>
+    this.http.get<Horse[]>(`${this.baseUrl}/horses`)
 
-  saveFavorite(favorite: FavoritePost): Observable<FavoritePost> {
-    return this.http.post<FavoritePost>(`${this.baseUrl}/favorite`, favorite);
-  }
+  getRacehorses = (): Observable<RaceHorse[]> =>
+    this.http.get<RaceHorse[]>(`${this.baseUrl}/racehorses`)
 
-  getMeetings(): Observable<Meeting[]> {
-    return this.http.get<Meeting[]>(`${this.baseUrl}/performance/meetings`);
-  }
+  getCollaborations = (): Observable<Collaboration[]> =>
+    this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
 
-  getStatistics(): Observable<Statistics[]> {
-    return this.http.get<Statistics[]>(`${this.baseUrl}/performance/statistics`);
-  }
+  getMeetings = (): Observable<Meeting[]> =>
+    this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
 
-  getCollaborations(): Observable<Collaboration[]> {
-    return this.http.get<Collaboration[]>(`${this.baseUrl}/performance/collaborations`);
-  }
+  getStatistics = (): Observable<Statistics[]> =>
+    this.http.get<Statistics[]>(`${this.baseUrl}/statistics`)
 }

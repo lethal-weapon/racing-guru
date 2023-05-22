@@ -31,16 +31,13 @@
     <div class="w-10 h-10 pt-1 text-xl border border-gray-700">
       {{starter.draw}}
     </div>
-    <div class="w-12 mx-2 text-2xl font-mono">
+    <div class="w-12 ml-3 mr-2 text-2xl font-mono">
       {{starter.jockey}}
     </div>
     <div class="w-12 mx-2 text-2xl font-mono">
       {{starter.trainer}}
     </div>
-    <div class="w-10 text-xl">
-      <i class="fa fa-question"></i>
-    </div>
-    <div class="w-44 mx-2 text-sm">
+    <div class="w-48 mx-3 text-sm">
       {{getHorse(starter).ownerCH}}
     </div>
     <div class="w-12 ml-4">
@@ -105,6 +102,7 @@
            class="grid grid-cols-4 gap-x-1.5 text-sm"
       >
         <div *ngFor="let ps of getPastHorseStarters(starter)"
+             [class.line-through]="ps.placing === 0"
              [class.text-red-600]="ps.placing === 1"
              [class.text-green-600]="ps.placing === 2"
              [class.text-blue-600]="ps.placing === 3"
@@ -113,13 +111,13 @@
           {{formatMeeting(ps.meeting)}}
           {{ps.venue}}
           <span [class.text-yellow-400]="ps.placing > 4 && ps.jockey === starter.jockey">
-            {{ps.jockey}}
+            {{formatPerson(ps.jockey)}}
           </span>
           {{ps.winOdds}}
           <span *ngIf="ps.trainer !== starter.trainer"
                 class="text-yellow-400"
           >
-            {{ps.trainer}}
+            {{formatPerson(ps.trainer)}}
           </span>
         </div>
       </div>

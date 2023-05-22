@@ -14,7 +14,6 @@ export class Person {
 export const JOCKEYS = [
   new Person('PZ', 'Purton', 'Zac', 'Z. Purton', 'AUS', 'Club', ''),
   new Person('BH', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', ''),
-  new Person('DSS', 'DeSousa', 'Silvestre', 'S. DeSousa', 'BRZ', 'Club', ''),
   new Person('TEK', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', ''),
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', ''),
 
@@ -34,6 +33,9 @@ export const JOCKEYS = [
   // new Person('PC', 'Perkins', 'Charles', 'C. Perkins', 'FR', 'Club', ''),
   // new Person('NS', 'Nakano', 'Shogo', 'S. Nakano', 'JPN', 'Club', ''),
   // new Person('CCL', 'Cheung', 'Chi-lap', 'E. Cheung', 'HK', 'Freelance', 'Eric'),
+  // new Person('DSS', 'DeSousa', 'Silvestre', 'S. DeSousa', 'BRZ', 'Club', ''),
+  // new Person('MMR', 'Maia', 'Ruan', 'R. Maia', 'BRZ', 'Club', ''),
+  // new Person('BV', 'Borges', 'Vagner', 'V. Borges', 'BRZ', 'Club', ''),
 
   new Person('HCY', 'Ho', 'Chak-yiu', 'V. Ho', 'HK', 'Freelance', 'Vincent'),
   new Person('CML', 'Chadwick', 'Matthew L.', 'M. Chadwick', 'HK', 'Freelance', 'Lee'),
@@ -47,8 +49,7 @@ export const JOCKEYS = [
   new Person('FEL', 'Ferraris', 'Luke', 'L. Ferraris', 'SAF', 'Club', ''),
   new Person('BHW', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William'),
   new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', ''),
-  new Person('BV', 'Borges', 'Vagner', 'V. Borges', 'BRZ', 'Club', ''),
-  new Person('MMR', 'Maia', 'Ruan', 'R. Maia', 'BRZ', 'Club', ''),
+  new Person('DEE', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', ''),
   new Person('AVB', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', ''),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
 

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {WebsocketService} from '../model/websocket.service';
-import {Horse, PastStarter} from '../model/horse.model';
+import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {ONE_MILLION, ONE_MINUTE, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
@@ -38,13 +38,10 @@ export class RacecardComponent implements OnInit {
   protected readonly getStarterWinPlaceOdds = getStarterWinPlaceOdds;
 
   constructor(
-    private socket: WebsocketService,
-    private repo: RestRepository
+    private repo: RestRepository,
+    private socket: WebsocketService
   ) {
-    socket.racecards.subscribe(data => {
-      this.racecards = data;
-      this.racecards.sort((r1, r2) => r1.race - r2.race);
-    });
+    socket.racecards.subscribe(data => this.racecards = data);
   }
 
   ngOnInit(): void {
@@ -62,33 +59,37 @@ export class RacecardComponent implements OnInit {
   formatMeeting = (meeting: string): string =>
     meeting.replace(/^\d{4}-/g, '')
 
-  toggleFavorite = (starter: Starter) => {
+  formatPerson = (person: string): string =>
+    person.length <= 3
+      ? person
+      : person.split(' ')[1].slice(0, 3).toUpperCase()
+
+  toggleFavorite = (starter: Starter) =>
     this.repo.saveFavorite({
       meeting: getCurrentMeeting(this.racecards),
       race: this.activeRace,
       favorites: getNewFavorites(starter, this.activeRacecard)
-    });
-  }
+    })
 
-  getHorse(starter: Starter): Horse {
-    // @ts-ignore
-    return this.repo.findHorses().find(s => s.code === starter.horse)
-  }
+  getHorse = (starter: Starter): Horse =>
+    this.repo.findHorses()
+      .find(s => s.code === starter.horse) || DEFAULT_HORSE
 
-  getHorseStatistics(starter: Starter): string {
+  getHorseStatistics = (starter: Starter): string => {
     const h = this.getHorse(starter);
     return `${h.total1st}-${h.total2nd}-${h.total3rd}/${h.totalRuns}`
   }
 
-  getPastHorseStarters(current: Starter): PastStarter[] {
-    return this.repo.findHorses()
-      .find(s => s.code === current.horse)
-      ?.pastStarters || []
-      .slice(0, 16);
-  }
+  getPastHorseStarters = (current: Starter): PastStarter[] =>
+    (
+      this.repo.findHorses()
+        .find(s => s.code === current.horse)
+        ?.pastStarters || []
+    )
+      .slice(0, 16)
 
-  getPastCollaborationStarters(current: Starter): CollaborationStarter[] {
-    return (
+  getPastCollaborationStarters = (current: Starter): CollaborationStarter[] =>
+    (
       this.repo.findCollaborations()
         .filter(c => c.jockey === current.jockey && c.trainer === current.trainer)
         .pop()
@@ -101,8 +102,7 @@ export class RacecardComponent implements OnInit {
       .sort((r1, r2) =>
         r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
       )
-      .slice(0, 28);
-  }
+      .slice(0, 28)
 
   getActiveStarterWQPInvestments(starter: Starter): Array<{ percent: string, amount: string }> {
     const pool = this.activeRacecard?.pool;

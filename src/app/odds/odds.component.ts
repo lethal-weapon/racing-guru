@@ -95,16 +95,13 @@ export class OddsComponent implements OnInit {
     private socket: WebsocketService,
     private clipboard: Clipboard
   ) {
-    socket.racecards.subscribe(data => {
-      this.racecards = data;
-      this.racecards.sort((r1, r2) => r1.race - r2.race);
-    });
-
-    this.repo.fetchHorses();
+    socket.racecards.subscribe(data => this.racecards = data);
   }
 
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
+    this.repo.fetchHorses();
+
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.bets.set(race, {...DEFAULT_BET});
       this.ranges.set(race, {...DEFAULT_RANGE});
