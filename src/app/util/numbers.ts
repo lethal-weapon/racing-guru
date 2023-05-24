@@ -22,3 +22,5 @@ export const DEFAULT_MAX_FCT_ODDS = 250;
 export const QPL_ODDS_STEP = 3;
 export const QIN_ODDS_STEP = 5;
 export const FCT_ODDS_STEP = 10;
+
+export const QIN_FCT_DIFF_RATE = 0.15;

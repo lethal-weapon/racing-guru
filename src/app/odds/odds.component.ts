@@ -16,7 +16,8 @@ import {
   DEFAULT_MAX_FCT_ODDS,
   QPL_ODDS_STEP,
   QIN_ODDS_STEP,
-  FCT_ODDS_STEP
+  FCT_ODDS_STEP,
+  QIN_FCT_DIFF_RATE
 } from '../util/numbers';
 import {
   getMaxRace,
@@ -77,6 +78,7 @@ export class OddsComponent implements OnInit {
 
   activeRace: number = 1;
   hoveredJockey: string = '';
+  trackModeOn: boolean = false;
 
   bets: Map<number, Bet> = new Map();
   ranges: Map<number, OddsRange> = new Map();
@@ -99,7 +101,11 @@ export class OddsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
+    setInterval(() => {
+      this.socket.racecards.next([]);
+      if (this.trackModeOn) this.trackQuinellaAndForecast();
+    }, THREE_SECONDS);
+
     this.repo.fetchHorses();
 
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
@@ -129,6 +135,8 @@ export class OddsComponent implements OnInit {
   }
 
   applyConnectionBets = () => {
+    if (this.trackModeOn) return;
+
     let qpl: number[][] = [];
     let qin: number[][] = [];
     let fct: number[][] = [];
@@ -152,6 +160,53 @@ export class OddsComponent implements OnInit {
         const fctWithinRange = this.isFCTOddsWithinRange(starterA, starterB);
         if (fctWithinRange[0]) fct.push([orderA, orderB]);
         if (fctWithinRange[1]) fct.push([orderB, orderA]);
+      }
+    }
+
+    this.bets.set(this.activeRace, {qpl, qin, fct})
+  }
+
+  trackQuinellaAndForecast = () => {
+    let qin: number[][] = [];
+    let fct: number[][] = [];
+    const qpl: number[][] = this.activeBet.qpl;
+    const starters = getStarters(this.activeRacecard);
+
+    for (let i = 0; i < starters.length; i++) {
+      const starterA = starters[i];
+      const orderA = starterA.order;
+      if (this.isTrash(starterA)) continue;
+
+      for (let j = i + 1; j < starters.length; j++) {
+        const starterB = starters[j];
+        const orderB = starterB.order;
+        if (this.isTrash(starterB)) continue;
+
+        const qqpWithinRange = this.isQQPOddsWithinRange(starterA, starterB);
+        const fctWithinRange = this.isFCTOddsWithinRange(starterA, starterB);
+        const conditions = [
+          qqpWithinRange[0],
+          fctWithinRange[0],
+          fctWithinRange[1],
+        ];
+
+        if (conditions.some(c => !c)) continue;
+
+        let pushedQ = false;
+        const Q = this.getStarterQQPOdds(starterA, starterB)[0];
+        const F1 = this.getStarterFCTOdds(starterA, starterB)[0];
+        const F2 = this.getStarterFCTOdds(starterA, starterB)[1];
+
+        if (Math.abs(1 - 2 * Q / F1) <= QIN_FCT_DIFF_RATE) {
+          fct.push([orderA, orderB]);
+          qin.push([orderA, orderB]);
+          pushedQ = true;
+        }
+
+        if (Math.abs(1 - 2 * Q / F2) <= QIN_FCT_DIFF_RATE) {
+          fct.push([orderB, orderA]);
+          if (!pushedQ) qin.push([orderA, orderB]);
+        }
       }
     }
 
@@ -428,7 +483,12 @@ export class OddsComponent implements OnInit {
     ];
   }
 
-  get buttonStyle(): string {
+  get controlButtonStyle(): string {
+    return `px-3 pt-1 pb-1.5 rounded-xl border border-gray-600 ` +
+      `hover:border-yellow-400 cursor-pointer`;
+  }
+
+  get oddsButtonStyle(): string {
     return `px-4 py-0.5 rounded-xl border border-gray-600 ` +
       `hover:border-yellow-400 cursor-pointer`;
   }

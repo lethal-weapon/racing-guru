@@ -16,7 +16,7 @@
        class="flex flex-row justify-evenly items-center px-6 text-center"
   >
     <div class="flex flex-col gap-y-1">
-      <div class="{{buttonStyle}}"
+      <div class="{{oddsButtonStyle}}"
            (click)="adjustOdds(c.pool, c.step, true, false)"
       >
         <i class="fa fa-minus"></i>
@@ -24,7 +24,7 @@
       <div class="text-2xl">
         {{c.minOdds}}
       </div>
-      <div class="{{buttonStyle}}"
+      <div class="{{oddsButtonStyle}}"
            (click)="adjustOdds(c.pool, c.step, true, true)"
       >
         <i class="fa fa-plus"></i>
@@ -34,13 +34,13 @@
       &#8828;
     </div>
     <div class="flex flex-col gap-y-1">
-      <div class="{{buttonStyle}} text-yellow-400">
+      <div class="{{oddsButtonStyle}} text-yellow-400">
         {{getSelectedBetCount(c.pool)}}
       </div>
       <div class="text-2xl">
         {{c.pool}}
       </div>
-      <div class="{{buttonStyle}}"
+      <div class="{{oddsButtonStyle}}"
            (click)="copyBets(c.pool)"
       >
         <i class="fa fa-copy"></i>
@@ -50,7 +50,7 @@
       &#8828;
     </div>
     <div class="flex flex-col gap-y-1">
-      <div class="{{buttonStyle}}"
+      <div class="{{oddsButtonStyle}}"
            (click)="adjustOdds(c.pool, c.step, false, false)"
       >
         <i class="fa fa-minus"></i>
@@ -58,38 +58,41 @@
       <div class="text-2xl">
         {{c.maxOdds}}
       </div>
-      <div class="{{buttonStyle}}"
+      <div class="{{oddsButtonStyle}}"
            (click)="adjustOdds(c.pool, c.step, false, true)"
       >
         <i class="fa fa-plus"></i>
       </div>
     </div>
   </div>
-  <div class="flex flex-col py-4 gap-y-4 items-center">
-    <div class="grid grid-cols-2 gap-x-8">
-      <div class="text-xl text-right">
-        My Bets:
-      </div>
-      <div class="text-2xl text-center text-yellow-400">
-        {{totalSelectedBetCount}}
-      </div>
+  <div class="grid grid-cols-3 px-2 py-4 gap-4 text-center">
+    <div class="{{controlButtonStyle}}"
+         (click)="resetBets()"
+    >
+      Reset
     </div>
-    <div class="flex flex-row justify-center gap-x-3">
-      <div class="{{buttonStyle}} pt-1 pb-1.5"
-           (click)="resetBets()"
-      >
-        Reset
-      </div>
-      <div class="{{buttonStyle}} pt-1 pb-1.5"
-           (click)="copyBets()"
-      >
-        Copy
-      </div>
-      <div class="{{buttonStyle}} pt-1 pb-1.5"
-           (click)="applyConnectionBets()"
-      >
-        Connect
-      </div>
+    <div class="text-lg pt-1">
+      My Bets
+    </div>
+    <div class="text-2xl text-center text-yellow-400">
+      {{totalSelectedBetCount}}
+    </div>
+    <div class="{{controlButtonStyle}}"
+         (click)="copyBets()"
+    >
+      Copy
+    </div>
+    <div class="{{controlButtonStyle}}"
+         (click)="applyConnectionBets()"
+    >
+      CON
+    </div>
+    <div class="{{controlButtonStyle}}"
+         [class.font-bold]="trackModeOn"
+         [class.text-yellow-400]="trackModeOn"
+         (click)="trackModeOn = !trackModeOn"
+    >
+      {{trackModeOn ? 'Stop' : 'Track'}}
     </div>
   </div>
 </div>
