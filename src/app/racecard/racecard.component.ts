@@ -4,9 +4,20 @@ import {WebsocketService} from '../model/websocket.service';
 import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
-import {ONE_MILLION, PAYOUT_RATE, THREE_SECONDS, TWO_MINUTES} from '../util/numbers';
 import {RestRepository} from '../model/rest.repository';
-import {CollaborationStarter} from '../model/collaboration.model';
+import {COMMON_HORSE_ORIGINS} from '../util/strings';
+import {
+  Collaboration,
+  CollaborationStarter,
+  DEFAULT_COLLABORATION
+} from '../model/collaboration.model';
+import {
+  ONE_MILLION,
+  PAYOUT_RATE,
+  SENIOR_HORSE_AGE,
+  THREE_SECONDS,
+  TWO_MINUTES
+} from '../util/numbers';
 import {
   getCurrentMeeting,
   getHorseProfileUrl,
@@ -20,6 +31,24 @@ import {
   isFavorite
 } from '../util/functions';
 
+interface PersonStarter {
+  meeting: string,
+  race: number,
+  partner: string,
+  horse: string,
+  placing: number,
+  winOdds: number
+}
+
+interface PersonSection {
+  person: string
+  wins: number,
+  seconds: number,
+  thirds: number,
+  fourths: number,
+  starters: PersonStarter[]
+}
+
 @Component({
   selector: 'app-racecard',
   templateUrl: './racecard.component.html'
@@ -29,6 +58,8 @@ export class RacecardComponent implements OnInit {
 
   activeRace: number = 1;
 
+  protected readonly SENIOR_HORSE_AGE = SENIOR_HORSE_AGE;
+  protected readonly COMMON_HORSE_ORIGINS = COMMON_HORSE_ORIGINS;
   protected readonly isFavorite = isFavorite;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarters = getStarters;
@@ -78,9 +109,14 @@ export class RacecardComponent implements OnInit {
     this.repo.findHorses()
       .find(s => s.code === starter.horse) || DEFAULT_HORSE
 
+  getCollaboration = (starter: Starter): Collaboration =>
+    this.repo.findCollaborations()
+      .find(c => c.jockey === starter.jockey && c.trainer === starter.trainer)
+    || DEFAULT_COLLABORATION;
+
   getHorseStatistics = (starter: Starter): string => {
     const h = this.getHorse(starter);
-    return `${h.total1st}-${h.total2nd}-${h.total3rd}/${h.totalRuns}`
+    return `${h.total1st}-${h.total2nd}-${h.total3rd}/${h.totalRuns}`;
   }
 
   getPastHorseStarters = (current: Starter): PastStarter[] =>
@@ -106,6 +142,45 @@ export class RacecardComponent implements OnInit {
         r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
       )
       .slice(0, 35)
+
+  getPersonSections = (starter: Starter): PersonSection[] =>
+    [
+      (this.repo.findCollaborations().filter(c => c.jockey === starter.jockey) || []),
+      (this.repo.findCollaborations().filter(c => c.trainer === starter.trainer) || [])
+    ].map((colls, index) => ({
+        person: index === 0 ? starter.jockey : starter.trainer,
+        wins: colls.map(c => c.wins).reduce((prev, curr) => prev + curr, 0),
+        seconds: colls.map(c => c.seconds).reduce((prev, curr) => prev + curr, 0),
+        thirds: colls.map(c => c.thirds).reduce((prev, curr) => prev + curr, 0),
+        fourths: colls.map(c => c.fourths).reduce((prev, curr) => prev + curr, 0),
+        starters: this.getPersonStarters(
+          index === 0 ? starter.jockey : starter.trainer,
+          colls
+        )
+      })
+    )
+
+  getPersonStarters = (person: string, collaborations: Collaboration[]): PersonStarter[] =>
+    collaborations
+      .map(c =>
+        c.starters.map(s => ({
+          meeting: s.meeting,
+          race: s.race,
+          partner: [c.jockey, c.trainer].find(p => p !== person) || '?',
+          horse: s.horseNameCH,
+          placing: s?.placing || 0,
+          winOdds: s?.winOdds || 0
+        }))
+      )
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(s => {
+        if (s.meeting !== getCurrentMeeting(this.racecards)) return true;
+        return s.meeting === getCurrentMeeting(this.racecards) && s.race < this.activeRace;
+      })
+      .sort((r1, r2) =>
+        r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
+      )
+      .slice(0, 20)
 
   getActiveStarterWQPInvestments(starter: Starter): Array<{ percent: string, amount: string }> {
     const pool = this.activeRacecard?.pool;

@@ -11,6 +11,7 @@ export const ONE_MILLION = 1_000_000;
 
 export const PAYOUT_RATE = 0.825;
 export const MAX_RACE_PER_MEETING = 11;
+export const SENIOR_HORSE_AGE = 7;
 
 export const DEFAULT_MIN_QPL_ODDS = 15;
 export const DEFAULT_MIN_QIN_ODDS = 25;

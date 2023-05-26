@@ -1,6 +1,6 @@
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
-import {JOCKEY_CODES} from './persons';
-import {COLORS} from './colors';
+import {JOCKEY_CODES} from './strings';
+import {COLORS} from './strings';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
 import {Starter} from '../model/starter.model';

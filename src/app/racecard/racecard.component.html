@@ -8,7 +8,7 @@
 </div>
 
 <div *ngFor="let starter of getStarters(this.activeRacecard)"
-     class="mx-8 mt-4 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600 noselect"
+     class="mx-8 mt-6 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600 noselect"
 >
   <div class="px-6 flex flex-row items-center">
     <div class="w-10 h-10 pt-1 text-xl rounded-full {{getPlacingBorderBackground(starter.jockey, activeRacecard)}}">
@@ -48,7 +48,13 @@
     </div>
     <div class="w-28">
       <div>
-        {{getHorse(starter).age}}YO, {{getHorse(starter).origin}}
+        <span [class.text-yellow-400]="getHorse(starter).age >= SENIOR_HORSE_AGE">
+          {{getHorse(starter).age}}YO
+        </span>
+        ,
+        <span [class.text-yellow-400]="!COMMON_HORSE_ORIGINS.includes(getHorse(starter).origin)">
+          {{getHorse(starter).origin}}
+        </span>
       </div>
       <div>
         {{getHorseStatistics(starter)}}
@@ -141,6 +147,47 @@
           {{ps?.winOdds === 0 ? '' : ps?.winOdds}}
           {{ps.horseNameCH}}
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="px-4 my-1 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+  <div class="px-2 my-1 flex flex-row">
+    <div *ngFor="let sec of getPersonSections(starter); let index = index"
+         class="w-2/5 px-2 {{index === 0 ? 'order-first' : 'order-last'}}"
+    >
+      <div class="text-center text-xl font-mono">
+        {{sec.person}}
+      </div>
+      <div class="flex flex-row justify-center gap-x-6 text-lg font-mono">
+        <div class="text-red-600">{{sec.wins}}W</div>
+        <div class="text-green-600">{{sec.seconds}}Q</div>
+        <div class="text-blue-600">{{sec.thirds}}P</div>
+        <div class="text-purple-600">{{sec.fourths}}F</div>
+      </div>
+      <div class="grid grid-cols-4 text-sm">
+        <div *ngFor="let ps of sec.starters"
+             [class.line-through]="ps.placing === 0"
+             [class.text-red-600]="ps.placing === 1"
+             [class.text-green-600]="ps.placing === 2"
+             [class.text-blue-600]="ps.placing === 3"
+             [class.text-purple-600]="ps.placing === 4"
+        >
+          {{ps?.winOdds === 0 ? '' : ps?.winOdds}}
+          {{ps.horse}}
+          {{ps.partner}}
+        </div>
+      </div>
+    </div>
+    <div class="w-1/5 px-1">
+      <div class="text-center text-xl font-mono">
+        J/T
+      </div>
+      <div class="flex flex-row justify-center gap-x-5 text-lg font-mono">
+        <div class="text-red-600">{{getCollaboration(starter).wins}}W</div>
+        <div class="text-green-600">{{getCollaboration(starter).seconds}}Q</div>
+        <div class="text-blue-600">{{getCollaboration(starter).thirds}}P</div>
+        <div class="text-purple-600">{{getCollaboration(starter).fourths}}F</div>
+        <div class="text-yellow-400">{{getCollaboration(starter).total}}X</div>
       </div>
     </div>
   </div>

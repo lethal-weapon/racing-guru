@@ -6,7 +6,7 @@ import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {Starter} from '../model/starter.model';
 import {RestRepository} from '../model/rest.repository';
 import {ONE_MILLION, THREE_SECONDS} from '../util/numbers';
-import {BOUNDARY_JOCKEYS} from '../util/persons';
+import {BOUNDARY_JOCKEYS} from '../util/strings';
 import {
   toMillion,
   getPlacing,

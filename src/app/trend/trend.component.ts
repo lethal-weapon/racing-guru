@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {BOUNDARY_PERSONS} from '../util/persons';
+import {BOUNDARY_PERSONS} from '../util/strings';
 import {ONE_MINUTE} from "../util/numbers";
 
 @Component({

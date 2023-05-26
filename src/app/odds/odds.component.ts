@@ -4,7 +4,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
-import {COLORS} from '../util/colors';
+import {COLORS} from '../util/strings';
 import {
   THREE_SECONDS,
   MAX_RACE_PER_MEETING,
