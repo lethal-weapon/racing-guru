@@ -4,7 +4,7 @@ import {WebsocketService} from '../model/websocket.service';
 import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
-import {ONE_MILLION, ONE_MINUTE, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
+import {ONE_MILLION, PAYOUT_RATE, THREE_SECONDS, TWO_MINUTES} from '../util/numbers';
 import {RestRepository} from '../model/rest.repository';
 import {CollaborationStarter} from '../model/collaboration.model';
 import {
@@ -53,11 +53,14 @@ export class RacecardComponent implements OnInit {
     setInterval(() => {
       this.repo.fetchHorses();
       this.repo.fetchCollaborations();
-    }, ONE_MINUTE);
+    }, TWO_MINUTES);
   }
 
   formatMeeting = (meeting: string): string =>
     meeting.replace(/^\d{4}-/g, '')
+
+  formatVenue = (venue: string): string =>
+    ['HV', 'ST'].includes(venue) ? venue : 'OS'
 
   formatPerson = (person: string): string =>
     person.length <= 3
@@ -86,7 +89,7 @@ export class RacecardComponent implements OnInit {
         .find(s => s.code === current.horse)
         ?.pastStarters || []
     )
-      .slice(0, 16)
+      .slice(0, 20)
 
   getPastCollaborationStarters = (current: Starter): CollaborationStarter[] =>
     (
@@ -102,7 +105,7 @@ export class RacecardComponent implements OnInit {
       .sort((r1, r2) =>
         r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
       )
-      .slice(0, 28)
+      .slice(0, 35)
 
   getActiveStarterWQPInvestments(starter: Starter): Array<{ percent: string, amount: string }> {
     const pool = this.activeRacecard?.pool;

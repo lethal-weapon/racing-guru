@@ -109,7 +109,7 @@
              [class.text-purple-600]="ps.placing === 4"
         >
           {{formatMeeting(ps.meeting)}}
-          {{ps.venue}}
+          {{formatVenue(ps.venue)}}
           <span [class.text-yellow-400]="ps.placing > 4 && ps.jockey === starter.jockey">
             {{formatPerson(ps.jockey)}}
           </span>
@@ -132,12 +132,13 @@
            class="grid grid-cols-7 gap-x-2 text-sm"
       >
         <div *ngFor="let ps of getPastCollaborationStarters(starter)"
+             [class.line-through]="ps?.placing === 0"
              [class.text-red-600]="ps?.placing === 1"
              [class.text-green-600]="ps?.placing === 2"
              [class.text-blue-600]="ps?.placing === 3"
              [class.text-purple-600]="ps?.placing === 4"
         >
-          {{ps?.winOdds}}
+          {{ps?.winOdds === 0 ? '' : ps?.winOdds}}
           {{ps.horseNameCH}}
         </div>
       </div>

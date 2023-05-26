@@ -1,5 +1,6 @@
 export const THREE_SECONDS = 3_000;
 export const ONE_MINUTE = 60_000;
+export const TWO_MINUTES = 120_000;
 
 export const FIVE_HUNDRED = 500;
 export const ONE_THOUSAND = 1_000;

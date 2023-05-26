@@ -16,6 +16,7 @@ import {CollaborationComponent} from './collaboration/collaboration.component';
 import {Top4sComponent} from './top4s/top4s.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {OddsComponent} from './odds/odds.component';
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import {OddsComponent} from './odds/odds.component';
     BrowserModule,
     AppRoutingModule,
     ModelModule,
-    TooltipModule
+    TooltipModule,
+    NgOptimizedImage
   ],
   providers: [],
   bootstrap: [AppComponent]
