@@ -2,7 +2,7 @@ import {JOCKEYS} from '../model/person.model';
 
 export const COMMON_HORSE_ORIGINS = [
   'AUS', 'NZ', 'IRE'
-]
+];
 
 export const COLORS = [
   'text-red-600',
