@@ -45,7 +45,6 @@ export const TRAINERS = [
 export const JOCKEYS = [
   new Person('PZ', 'Purton', 'Zac', 'Z. Purton', 'AUS', 'Club', ''),
   new Person('BH', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', ''),
-  new Person('DEE', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', ''),
   new Person('TEK', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', ''),
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', ''),
 
@@ -61,6 +60,7 @@ export const JOCKEYS = [
   new Person('FEL', 'Ferraris', 'Luke', 'L. Ferraris', 'SAF', 'Club', ''),
   new Person('BHW', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William'),
   new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', ''),
+  new Person('DEE', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', ''),
   new Person('AVB', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', ''),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard'),
 
