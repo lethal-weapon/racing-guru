@@ -21,8 +21,7 @@ export interface EarningStarter {
   horse   : string,
   partner : string,
   race    : number,
-  ordinal : number,
-  draw    : number,
+  order   : number,
   placing : number,
   earning : number
 }
