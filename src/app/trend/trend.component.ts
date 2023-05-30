@@ -3,8 +3,8 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {BOUNDARY_PERSONS} from '../util/strings';
-import {ONE_MINUTE} from "../util/numbers";
+import {BOUNDARY_PERSONS, JOCKEY_CODES} from '../util/strings';
+import {ONE_MINUTE} from '../util/numbers';
 
 @Component({
   selector: 'app-trend',
@@ -13,7 +13,6 @@ import {ONE_MINUTE} from "../util/numbers";
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[0];
-  activeVenue: string = '';
   activePerson: string = '';
   isRefreshButtonEnable: boolean = true;
 
@@ -32,9 +31,6 @@ export class TrendComponent implements OnInit {
 
   setActiveSubsection = (clicked: string) =>
     this.activeSubsection = clicked
-
-  setActiveVenue = (clicked: string) =>
-    this.activeVenue = this.activeVenue == clicked ? '' : clicked
 
   setActivePerson = (clicked: string) =>
     this.activePerson = this.activePerson == clicked ? '' : clicked
@@ -75,13 +71,12 @@ export class TrendComponent implements OnInit {
     }
   }
 
-  getSectionStyle(section: string): string {
-    return [this.activeSection, this.activeSubsection].includes(section)
+  getSectionStyle = (section: string): string =>
+    [this.activeSection, this.activeSubsection].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
-  }
 
-  getCellValue(person: string, meeting: string, key: string): string {
+  getCellValue = (person: string, meeting: string, key: string): string => {
     const meetings = this.meetings.filter(m => m.meeting == meeting);
     if (meetings.length !== 1) return '';
 
@@ -100,13 +95,13 @@ export class TrendComponent implements OnInit {
     return value.toString();
   }
 
-  getPastRecordUrl(person: string): string {
+  getPastRecordUrl = (person: string): string => {
     let url = `
       https://racing.hkjc.com/racing/information/
       English/Trainers/TrainerPastRec.aspx?TrainerId=${person}
     `.replace(/\s/g, '');
 
-    if (JOCKEYS.map(j => j.code).includes(person)) {
+    if (JOCKEY_CODES.includes(person)) {
       url = url
         .replace(/Trainer/g, 'Jockey')
         .replace('Jockeys', 'Jockey');
@@ -115,11 +110,11 @@ export class TrendComponent implements OnInit {
     return url;
   }
 
-  getNoWinnerDays(person: string): number {
+  getNoWinnerDays = (person: string): number => {
     const winningMeetings = this.meetings.filter(m => {
       const engaged = m.persons.map(p => p.person).includes(person);
       if (!engaged) return false;
-      return m.persons.filter(p => p.person === person).pop()?.wins || 0 > 0;
+      return m.persons.find(p => p.person === person)?.wins || 0 > 0;
     })
 
     if (winningMeetings.length > 0) {
@@ -140,7 +135,7 @@ export class TrendComponent implements OnInit {
     return 99;
   }
 
-  getOnBoardPersons(meeting: Meeting): PersonSummary[] {
+  getOnBoardPersons = (meeting: Meeting): PersonSummary[] => {
     let board: PersonSummary[] = [];
     [TRAINERS, JOCKEYS].forEach((category, index) => {
       meeting.persons
@@ -155,22 +150,21 @@ export class TrendComponent implements OnInit {
     return board;
   }
 
-  getTurnoverIntensityColor(meeting: Meeting): string {
+  getTurnoverIntensityColor = (meeting: Meeting): string => {
     const avg = this.getAverageTurnoverPerRace(meeting);
     if (avg >= 18.5) return 'bg-blue-600';
     if (avg >= 16.5) return 'bg-green-600';
     return 'bg-red-600';
   }
 
-  getAverageTurnoverPerRace(meeting: Meeting): number {
-    return parseFloat(
-      (meeting.turnover / meeting.races).toFixed(1)
-    );
-  }
+  getAverageTurnoverPerRace = (meeting: Meeting): number =>
+    parseFloat((meeting.turnover / meeting.races).toFixed(1))
 
-  isBoundaryPerson(person: string): boolean {
-    return BOUNDARY_PERSONS.includes(person);
-  }
+  isBoundaryPerson = (person: string): boolean =>
+    BOUNDARY_PERSONS.includes(person);
+
+  formatMeeting = (meeting: string): string =>
+    meeting.replace(/^\d{4}-/g, '')
 
   get controlStyle(): string {
     return `w-12 cursor-pointer transition hover:text-yellow-400`;
@@ -179,8 +173,8 @@ export class TrendComponent implements OnInit {
   get overviews(): Array<{ title: string, link: string }> {
     return this.windowMeetings.map(m => {
         const title = `
-          ${m.meeting.replace(/^\d{4}-/g, '')}
-          ${m.venue} ${m.races}R $${m.turnover}
+          ${this.formatMeeting(m.meeting)}
+          ${m.races}R $${m.turnover}
         `.trim();
 
         const date = m.meeting.replace(/-/g, '/');

@@ -144,40 +144,39 @@
   <div *ngFor="let meeting of meetings"
        class="my-4 flex flex-row justify-around items-center"
   >
-    <div class="px-5 py-3 text-2xl rounded-2xl border"
-         [class.border-gray-800]="activeVenue !== meeting.venue"
-         [class.border-yellow-400]="activeVenue == meeting.venue"
-         (click)="setActiveVenue(meeting.venue)"
-    >
+    <div class="w-64 px-5 pt-2 pb-2.5 text-2xl rounded-2xl border border-gray-700">
       <div class="mb-2 text-center">
-        {{meeting.meeting}}
-        {{meeting.venue}}
+        {{formatMeeting(meeting.meeting)}}
+        &nbsp;
         {{meeting.races}}R
+        &nbsp;
         ${{meeting.turnover}}
       </div>
-      <div class="flex flex-row justify-evenly items-center">
-        <div class="">
+      <div class="flex flex-row items-center">
+        <div class="w-2/3 text-center">
           ${{getAverageTurnoverPerRace(meeting)}}/R
         </div>
-        <div class="w-5 h-5 rounded-full {{getTurnoverIntensityColor(meeting)}}">
+        <div class="w-1/3">
+          <div class="w-5 h-5 rounded-full {{getTurnoverIntensityColor(meeting)}}">
+          </div>
         </div>
       </div>
     </div>
     <div class="text-lg text-center flex flex-row justify-evenly items-center">
       <div *ngFor="let ps of getOnBoardPersons(meeting); let index = index"
-           class="p-1 border border-2 rounded-xl"
+           class="p-1 border-2 rounded-xl"
            [class.ml-10]="index === topPlayerSize"
            [class.border-gray-900]="activePerson !== ps.person"
            [class.border-yellow-400]="activePerson == ps.person"
            (click)="setActivePerson(ps.person)"
       >
-        <div class="">
+        <div>
           <img src="assets/people/{{ps.person}}.jpg"
                alt="{{ps.person}}"
                class="h-16 rounded-xl"
           />
         </div>
-        <div class="">
+        <div>
           {{ps.earnings}}
         </div>
       </div>
