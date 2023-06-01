@@ -5,7 +5,6 @@ import {Horse} from './horse.model';
 import {RaceHorse} from './racehorse.model';
 import {Collaboration} from './collaboration.model';
 import {Meeting} from './meeting.model';
-import {Statistics} from './statistics.model';
 import {FavoritePost} from './favorite.model';
 
 @Injectable()
@@ -14,7 +13,6 @@ export class RestRepository {
   private racehorses: RaceHorse[] = [];
   private collaborations: Collaboration[] = [];
   private meetings: Meeting[] = [];
-  private statistics: Statistics[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -23,7 +21,6 @@ export class RestRepository {
   findRacehorses = () => this.racehorses
   findCollaborations = () => this.collaborations
   findMeetings = () => this.meetings
-  findStatistics = () => this.statistics
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -40,7 +37,4 @@ export class RestRepository {
 
   fetchMeetings = () =>
     this.source.getMeetings().subscribe(data => this.meetings = data)
-
-  fetchStatistics = () =>
-    this.source.getStatistics().subscribe(data => this.statistics = data)
 }

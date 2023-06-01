@@ -7,7 +7,6 @@ import {Horse} from './horse.model';
 import {RaceHorse} from './racehorse.model';
 import {Collaboration} from './collaboration.model';
 import {Meeting} from './meeting.model';
-import {Statistics} from './statistics.model';
 import {FavoritePost} from './favorite.model';
 
 @Injectable()
@@ -33,7 +32,4 @@ export class RestDataSource {
 
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
-
-  getStatistics = (): Observable<Statistics[]> =>
-    this.http.get<Statistics[]>(`${this.baseUrl}/statistics`)
 }

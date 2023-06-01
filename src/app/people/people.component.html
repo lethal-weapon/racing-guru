@@ -24,32 +24,18 @@
       <tbody>
       <tr *ngFor="let person of persons"
           class="text-xl border border-gray-900 hover:bg-gray-800"
-          [class.border-b-red-900]="isBoundaryPerson(person)"
+          [class.border-b-red-900]="isNationalityBoundaryPerson(person)"
       >
         <td class="italic">
           {{person.code}}
-          <sup *ngIf="isNewPlayer(person)">
-            &#43;
-          </sup>
-          <sup *ngIf="isLeavingPlayer(person)">
-            &#45;
-          </sup>
+          <sup *ngIf="NEW_PEOPLE.includes(person)">&#43;</sup>
+          <sup *ngIf="GONE_PEOPLE.includes(person)">&#45;</sup>
         </td>
-        <td class="">
-          {{person.lastName}}
-        </td>
-        <td class="">
-          {{person.firstName}}
-        </td>
-        <td class="">
-          {{person.nickname}}
-        </td>
-        <td class="">
-          {{person.nationality}}
-        </td>
-        <td class=""
-            [class.text-red-600]="isHighlightWinners(getWinners(person))"
-        >
+        <td>{{person.lastName}}</td>
+        <td>{{person.firstName}}</td>
+        <td>{{person.nickname}}</td>
+        <td>{{person.nationality}}</td>
+        <td [class.text-red-600]="isHighlightWinners(getWinners(person))">
           {{getWinners(person)}}
         </td>
       </tr>

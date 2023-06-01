@@ -1,7 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 
-import {JOCKEYS, TRAINERS, NEW_PEOPLE, GONE_PEOPLE, Person} from '../model/person.model';
 import {RestRepository} from '../model/rest.repository';
+import {
+  JOCKEYS,
+  TRAINERS,
+  NEW_PEOPLE,
+  GONE_PEOPLE,
+  Person
+} from '../model/person.model';
 
 @Component({
   selector: 'app-people',
@@ -9,40 +15,31 @@ import {RestRepository} from '../model/rest.repository';
 })
 export class PeopleComponent implements OnInit {
 
+  protected readonly NEW_PEOPLE = NEW_PEOPLE;
+  protected readonly GONE_PEOPLE = GONE_PEOPLE;
+
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    this.repo.fetchStatistics();
+    this.repo.fetchCollaborations();
   }
 
-  getWinners(person: Person): number {
-    const stat = this.repo.findStatistics()
-      .filter(s => s.person === person.code)
-      .pop();
+  getWinners = (person: Person): number =>
+    this.repo.findCollaborations()
+      .filter(c => [c.jockey, c.trainer].includes(person.code))
+      .map(c => c.wins)
+      .reduce((prev, curr) => prev + curr, person.careerWins)
 
-    if (!stat) return 0;
-    return stat.seasonWins + stat.careerWins;
-  }
-
-  isHighlightWinners(wins: number): boolean {
+  isHighlightWinners = (wins: number): boolean => {
     const closeToFifty = Math.abs(50 - wins % 50) <= 5;
     const endWith4Or8Or9 = [4, 8, 9].includes(wins % 10);
 
     return closeToFifty || endWith4Or8Or9;
   }
 
-  isLeavingPlayer(person: Person): boolean {
-    return GONE_PEOPLE.includes(person)
-  }
-
-  isNewPlayer(person: Person): boolean {
-    return NEW_PEOPLE.includes(person)
-  }
-
-  isBoundaryPerson(person: Person): boolean {
-    return ['MA', 'FEL'].includes(person.code);
-  }
+  isNationalityBoundaryPerson = (person: Person): boolean =>
+    ['MA', 'FEL'].includes(person.code);
 
   get attributes(): string[] {
     return ['Code', 'Last', 'First', 'Nick', 'NAT.', 'WINS']
@@ -68,5 +65,4 @@ export class PeopleComponent implements OnInit {
 
     return [trainers, jockeys]
   }
-
 }
