@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Clipboard} from '@angular/cdk/clipboard';
 
+import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
@@ -14,9 +15,12 @@ import {
   DEFAULT_MAX_QIN_ODDS,
   DEFAULT_MIN_FCT_ODDS,
   DEFAULT_MAX_FCT_ODDS,
+  DEFAULT_MIN_DBL_ODDS,
+  DEFAULT_MAX_DBL_ODDS,
   QPL_ODDS_STEP,
   QIN_ODDS_STEP,
   FCT_ODDS_STEP,
+  DBL_ODDS_STEP,
   QIN_FCT_DIFF_RATE
 } from '../util/numbers';
 import {
@@ -30,7 +34,6 @@ import {
   isFavorite,
   findRelationship
 } from '../util/functions';
-import {RestRepository} from "../model/rest.repository";
 
 interface OddsRange {
   minQPL: number,
@@ -39,12 +42,15 @@ interface OddsRange {
   maxQIN: number,
   minFCT: number,
   maxFCT: number
+  minDBL: number,
+  maxDBL: number
 }
 
 interface Bet {
   qpl: number[][],
   qin: number[][],
-  fct: number[][]
+  fct: number[][],
+  dbl: number[][]
 }
 
 interface RangeControl {
@@ -60,13 +66,16 @@ const DEFAULT_RANGE: OddsRange = {
   minQIN: DEFAULT_MIN_QIN_ODDS,
   maxQIN: DEFAULT_MAX_QIN_ODDS,
   minFCT: DEFAULT_MIN_FCT_ODDS,
-  maxFCT: DEFAULT_MAX_FCT_ODDS
+  maxFCT: DEFAULT_MAX_FCT_ODDS,
+  minDBL: DEFAULT_MIN_DBL_ODDS,
+  maxDBL: DEFAULT_MAX_DBL_ODDS
 }
 
 const DEFAULT_BET: Bet = {
   qpl: [],
   qin: [],
-  fct: []
+  fct: [],
+  dbl: []
 }
 
 @Component({
@@ -140,6 +149,7 @@ export class OddsComponent implements OnInit {
     let qpl: number[][] = [];
     let qin: number[][] = [];
     let fct: number[][] = [];
+    let dbl: number[][] = [];
     const starters = getStarters(this.activeRacecard);
 
     for (let i = 0; i < starters.length; i++) {
@@ -163,13 +173,14 @@ export class OddsComponent implements OnInit {
       }
     }
 
-    this.bets.set(this.activeRace, {qpl, qin, fct})
+    this.bets.set(this.activeRace, {qpl, qin, fct, dbl})
   }
 
   trackQuinellaAndForecast = () => {
     let qin: number[][] = [];
     let fct: number[][] = [];
     const qpl: number[][] = this.activeBet.qpl;
+    const dbl: number[][] = this.activeBet.dbl;
     const starters = getStarters(this.activeRacecard);
 
     for (let i = 0; i < starters.length; i++) {
@@ -210,7 +221,7 @@ export class OddsComponent implements OnInit {
       }
     }
 
-    this.bets.set(this.activeRace, {qpl, qin, fct})
+    this.bets.set(this.activeRace, {qpl, qin, fct, dbl})
   }
 
   toggleBet = (pool: string, starterA: Starter, starterB: Starter) => {
@@ -308,16 +319,24 @@ export class OddsComponent implements OnInit {
       : Math.abs(1 - W / QW) <= 0.2;
   }
 
-  isShowOdds = (pool: string, starterA: Starter, starterB: Starter, isReverse: boolean = false): boolean => {
+  isShowOdds = (
+    pool: string,
+    starterA: Starter,
+    starterB: Starter,
+    isReverse: boolean = false
+  ): boolean => {
     if (this.isTrash(starterA) || this.isTrash(starterB)) return false;
 
     const qqpInRange = this.isQQPOddsWithinRange(starterA, starterB);
     const qqpFinal = this.isFinalQQPCombination(starterA, starterB);
     const fctInRange = this.isFCTOddsWithinRange(starterA, starterB);
     const fctFinal = this.isFinalFCTCombination(starterA, starterB);
+    const dblInRange = this.isDBLOddsWithinRange(starterA, starterB);
+    const dblFinal = this.isFinalDBLCombination(starterA, starterB);
 
     if (pool === 'qin') return qqpInRange[0] || qqpFinal[0];
     if (pool === 'qpl') return qqpInRange[1] || qqpFinal[1];
+    if (pool === 'dbl') return dblInRange || dblFinal;
     if (pool === 'fct') return isReverse
       ? fctInRange[1] || fctFinal
       : fctInRange[0] || fctFinal;
@@ -347,6 +366,12 @@ export class OddsComponent implements OnInit {
     return placings[0] === 1 && placings[1] === 2;
   }
 
+  isFinalDBLCombination(starterA: Starter, starterB: Starter): boolean {
+    const placingA = getPlacing(starterA.jockey, this.activeRacecard);
+    const placingB = getPlacing(starterB.jockey, this.activeNextRacecard);
+    return placingA === 1 && placingB === 1;
+  }
+
   isQQPOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
     const qqp = this.getStarterQQPOdds(starterA, starterB);
     return [
@@ -358,6 +383,11 @@ export class OddsComponent implements OnInit {
   isFCTOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
     return this.getStarterFCTOdds(starterA, starterB)
       .map(o => o >= this.activeRange.minFCT && o <= this.activeRange.maxFCT);
+  }
+
+  isDBLOddsWithinRange(starterA: Starter, starterB: Starter): boolean {
+    const dbl = this.getStarterDBLOdds(starterA, starterB);
+    return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
   }
 
   getPairBorder(pool: string, starterA: Starter, starterB: Starter): string {
@@ -410,6 +440,17 @@ export class OddsComponent implements OnInit {
     return pairs.reverse().map(p => p.odds);
   }
 
+  getStarterDBLOdds(starterA: Starter, starterB: Starter): number {
+    const dbl = this.activeRacecard?.odds?.double;
+    if (!dbl) return 0;
+
+    return dbl.find(comb =>
+      comb.orders[0] == starterA.order &&
+      comb.orders[1] == starterB.order
+    )
+      ?.odds || 0;
+  }
+
   getTrainerColor(starter: Starter): string {
     if (getPlacingColor(starter.jockey, this.activeRacecard).length > 0) return '';
 
@@ -458,6 +499,15 @@ export class OddsComponent implements OnInit {
   get activeRacecard(): Racecard {
     // @ts-ignore
     return this.racecards.find(r => r.race === this.activeRace);
+  }
+
+  get activeNextRacecard(): Racecard {
+    // @ts-ignore
+    return this.racecards.find(r => r.race === this.activeRace + 1);
+  }
+
+  get maxRace(): number {
+    return this.racecards.map(r => r.race).pop() || 0;
   }
 
   get rangeControls(): RangeControl[] {

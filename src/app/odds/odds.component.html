@@ -205,3 +205,85 @@
     </td>
   </tr>
 </table>
+
+<div *ngIf="!(maxRace === 0 || maxRace === activeRace)"
+     class="my-4 text-center text-3xl noselect"
+>
+  DOUBLE
+</div>
+
+<table *ngIf="!(maxRace === 0 || maxRace === activeRace)"
+       class="mx-auto table-fixed text-center border-collapse border border-gray-700 noselect"
+       (mouseleave)="hoveredJockey = ''"
+>
+  <tr class="font-bold">
+    <td class="w-40 border border-gray-700">
+      <div>1<sup>st</sup></div>
+      <div>2<sup>nd</sup></div>
+    </td>
+    <td *ngFor="let starterA of getStarters(this.activeRacecard)"
+        class="w-20 border border-gray-700 {{getPlacingColor(starterA.jockey, activeRacecard)}}"
+        [class.bg-gray-800]="hoveredJockey === starterA.jockey"
+        [class.cursor-pointer]="!isFavorite(starterA, this.activeRacecard)"
+        [class.cursor-not-allowed]="isFavorite(starterA, this.activeRacecard)"
+        (click)="toggleTrash(starterA)"
+        (mouseenter)="hoveredJockey = starterA.jockey"
+    >
+      <div>
+        {{starterA.jockey}}
+      </div>
+      <div class="{{getTrainerColor(starterA)}}">
+        {{starterA.trainer}}
+      </div>
+      <div class="flex flex-row justify-evenly">
+        <div>
+          {{starterA.order}}
+        </div>
+        <div *ngIf="isTrash(starterA)"
+             class="text-gray-500"
+        >
+          <i class="fa fa-trash"></i>
+        </div>
+        <div *ngIf="isFavorite(starterA, this.activeRacecard)"
+             class="text-yellow-400"
+        >
+          <i class="fa fa-star"></i>
+        </div>
+      </div>
+      <div class="{{ getPlacingColor(starterA.jockey, activeRacecard) || 'text-red-600' }}">
+        {{getStarterWinPlaceOdds(starterA, this.activeRacecard).win}}
+      </div>
+    </td>
+  </tr>
+  <tr *ngFor="let starterB of getStarters(this.activeNextRacecard)"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700 font-bold {{getPlacingColor(starterB.jockey, activeNextRacecard)}}">
+      <div class="grid grid-cols-3">
+        <div>
+          {{starterB.jockey}}
+        </div>
+        <div>
+          {{starterB.trainer}}
+        </div>
+        <div>
+          {{starterB.order}}
+        </div>
+        <div class="col-span-2">
+          {{getHorseNameCH(starterB.horse)}}
+        </div>
+        <div class="{{ getPlacingColor(starterB.jockey, activeNextRacecard) || 'text-red-600' }}">
+          {{getStarterWinPlaceOdds(starterB, this.activeNextRacecard).win}}
+        </div>
+      </div>
+    </td>
+    <td *ngFor="let starterA of getStarters(this.activeRacecard)"
+        class="border border-gray-700"
+        [class.text-yellow-400]="isFinalDBLCombination(starterA, starterB)"
+        [class.bg-gray-800]="hoveredJockey === starterA.jockey"
+        (mouseenter)="hoveredJockey = starterA.jockey"
+    >
+      {{ isShowOdds('dbl', starterA, starterB) ? getStarterDBLOdds(starterA, starterB) : '-' }}
+    </td>
+  </tr>
+</table>
