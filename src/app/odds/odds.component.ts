@@ -86,8 +86,9 @@ export class OddsComponent implements OnInit {
   racecards: Racecard[] = [];
 
   activeRace: number = 1;
-  hoveredJockey: string = '';
   trackModeOn: boolean = false;
+  onDoubleTable: boolean = false;
+  hoveredJockey: string = '';
 
   bets: Map<number, Bet> = new Map();
   ranges: Map<number, OddsRange> = new Map();
@@ -131,7 +132,7 @@ export class OddsComponent implements OnInit {
     let bets = '';
     for (const [key, value] of Object.entries(this.activeBet)) {
       const cmd = key.startsWith('f') ? 'fs' : key;
-      const sep = cmd === 'fs' ? '-' : ',';
+      const sep = cmd === 'fs' ? '-' : (cmd === 'dbl' ? '/' : ',');
 
       // @ts-ignore
       const poolBets = (value || []).map(c => `${cmd}:${c.join(sep)};`).join(``);
@@ -225,7 +226,9 @@ export class OddsComponent implements OnInit {
   }
 
   toggleBet = (pool: string, starterA: Starter, starterB: Starter) => {
-    if (this.isTrash(starterA) || this.isTrash(starterB)) return;
+    if (this.isTrash(starterA)) return;
+    if (pool !== 'dbl' && this.isTrash(starterB)) return;
+    if (pool === 'dbl' && this.isTrash(starterB, true)) return;
 
     // @ts-ignore
     let newPairs = [...this.activeBet[pool]] || [];
@@ -244,16 +247,18 @@ export class OddsComponent implements OnInit {
     this.bets.set(this.activeRace, newBets);
   }
 
-  toggleTrash = (starter: Starter) => {
-    if (isFavorite(starter, this.activeRacecard)) return;
+  toggleTrash = (starter: Starter, isNextRace: boolean = false) => {
+    const card = isNextRace ? this.activeNextRacecard : this.activeRacecard;
+    if (isFavorite(starter, card)) return;
 
     const order = starter.order;
-    let unwanted = this.trashes.get(this.activeRace) || [];
+    const race = isNextRace ? this.activeRace + 1 : this.activeRace;
+    let unwanted = this.trashes.get(race) || [];
 
     if (unwanted.includes(order)) unwanted = unwanted.filter(e => e !== order);
     else unwanted.push(order);
 
-    this.trashes.set(this.activeRace, unwanted);
+    this.trashes.set(race, unwanted);
   }
 
   adjustOdds = (pool: string, step: number, onMin: boolean, toAdd: boolean) => {
@@ -303,8 +308,10 @@ export class OddsComponent implements OnInit {
       || trainerWgt + crossWgt2 >= 5;
   }
 
-  isTrash = (starter: Starter): boolean =>
-    this.activeTrash.includes(starter.order);
+  isTrash = (starter: Starter, isNextRace: boolean = false): boolean =>
+    isNextRace
+      ? this.activeNextTrash.includes(starter.order)
+      : this.activeTrash.includes(starter.order)
 
   isPreferredWQWR = (starter: Starter): boolean => {
     const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);
@@ -325,18 +332,23 @@ export class OddsComponent implements OnInit {
     starterB: Starter,
     isReverse: boolean = false
   ): boolean => {
-    if (this.isTrash(starterA) || this.isTrash(starterB)) return false;
+
+    if (this.isTrash(starterA)) return false;
+    if (pool !== 'dbl' && this.isTrash(starterB)) return false;
+    if (pool === 'dbl' && this.isTrash(starterB, true)) return false;
 
     const qqpInRange = this.isQQPOddsWithinRange(starterA, starterB);
-    const qqpFinal = this.isFinalQQPCombination(starterA, starterB);
     const fctInRange = this.isFCTOddsWithinRange(starterA, starterB);
-    const fctFinal = this.isFinalFCTCombination(starterA, starterB);
     const dblInRange = this.isDBLOddsWithinRange(starterA, starterB);
+
+    const qqpFinal = this.isFinalQQPCombination(starterA, starterB);
+    const fctFinal = this.isFinalFCTCombination(starterA, starterB);
     const dblFinal = this.isFinalDBLCombination(starterA, starterB);
+    const dblSpecial = this.getDoubleOddsColor(starterA, starterB).length > 0;
 
     if (pool === 'qin') return qqpInRange[0] || qqpFinal[0];
     if (pool === 'qpl') return qqpInRange[1] || qqpFinal[1];
-    if (pool === 'dbl') return dblInRange || dblFinal;
+    if (pool === 'dbl') return dblInRange || dblFinal || dblSpecial;
     if (pool === 'fct') return isReverse
       ? fctInRange[1] || fctFinal
       : fctInRange[0] || fctFinal;
@@ -344,10 +356,17 @@ export class OddsComponent implements OnInit {
     return true;
   }
 
-  isBothFavorite = (starterA: Starter, starterB: Starter): boolean =>
-    starterA.order !== starterB.order &&
-    isFavorite(starterA, this.activeRacecard) &&
-    isFavorite(starterB, this.activeRacecard)
+  isBothFavorite = (starterA: Starter, starterB: Starter, isNextRace: boolean = false): boolean => {
+    if (isNextRace) {
+      return isFavorite(starterA, this.activeRacecard)
+        && isFavorite(starterB, this.activeNextRacecard)
+
+    } else {
+      return starterA.order !== starterB.order
+        && isFavorite(starterA, this.activeRacecard)
+        && isFavorite(starterB, this.activeRacecard);
+    }
+  }
 
   isFinalQQPCombination(starterA: Starter, starterB: Starter): boolean[] {
     const placingSum = [starterA, starterB]
@@ -395,7 +414,7 @@ export class OddsComponent implements OnInit {
     const pairs = this.activeBet[pool] || [];
     const pair = [starterA, starterB].map(s => s.order);
 
-    const isSelected = pool === 'fct'
+    const isSelected = ['fct', 'dbl'].includes(pool)
       // @ts-ignore
       ? pairs.some(p => p[0] === pair[0] && p[1] === pair[1])
       // @ts-ignore
@@ -458,6 +477,20 @@ export class OddsComponent implements OnInit {
     return index === -1 ? '' : `italic ${COLORS[index]}`;
   }
 
+  getDoubleOddsColor(starterA: Starter, starterB: Starter): string {
+    const jockeyA = starterA.jockey;
+    const jockeyB = starterB.jockey;
+    const trainerA = starterA.trainer;
+    const trainerB = starterB.trainer;
+
+    if (this.isFinalDBLCombination(starterA, starterB)) return `text-yellow-400 font-bold`;
+    if (jockeyA === jockeyB && trainerA === trainerB) return `text-red-600`;
+    if (jockeyA === jockeyB) return `text-green-600`;
+    if (trainerA === trainerB) return `text-blue-600`;
+
+    return '';
+  }
+
   getHorseNameCH = (horseCode: string): string =>
     this.repo.findHorses().find(h => h.code === horseCode)?.nameCH || horseCode
 
@@ -494,6 +527,10 @@ export class OddsComponent implements OnInit {
 
   get activeTrash(): number[] {
     return this.trashes.get(this.activeRace) || [];
+  }
+
+  get activeNextTrash(): number[] {
+    return this.trashes.get(this.activeRace + 1) || [];
   }
 
   get activeRacecard(): Racecard {
