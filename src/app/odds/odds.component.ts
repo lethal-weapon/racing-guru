@@ -21,7 +21,8 @@ import {
   QIN_ODDS_STEP,
   FCT_ODDS_STEP,
   DBL_ODDS_STEP,
-  QIN_FCT_DIFF_RATE
+  QIN_FCT_DIFF_RATE,
+  DBL_STARTER_BOUNDARY_ODDS
 } from '../util/numbers';
 import {
   getMaxRace,
@@ -409,6 +410,21 @@ export class OddsComponent implements OnInit {
     return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
   }
 
+  isBoundaryStarter = (starter: Starter, isNextRace: boolean = false): boolean =>
+    starter.order === (this.getStarterOrdersWithinBoundary(isNextRace).pop() || 0)
+
+  isStarterWithinBoundary = (starter: Starter, isNextRace: boolean = false): boolean =>
+    this.getStarterOrdersWithinBoundary(isNextRace).includes(starter.order)
+
+  getStarterOrdersWithinBoundary = (isNextRace: boolean = false): number[] =>
+    (isNextRace ? this.activeNextRacecard : this.activeRacecard)
+      ?.odds
+      ?.winPlace
+      .filter(o => o.win < DBL_STARTER_BOUNDARY_ODDS)
+      .sort((o1, o2) => (o1.win - o2.win) || (o1.place || o2.place) || (o1.order - o2.order))
+      .map(o => o.order)
+    || []
+
   getPairBorder(pool: string, starterA: Starter, starterB: Starter): string {
     // @ts-ignore
     const pairs = this.activeBet[pool] || [];
@@ -487,6 +503,7 @@ export class OddsComponent implements OnInit {
     if (jockeyA === jockeyB && trainerA === trainerB) return `text-red-600`;
     if (jockeyA === jockeyB) return `text-green-600`;
     if (trainerA === trainerB) return `text-blue-600`;
+    if (starterA.order === starterB.order) return `text-purple-600`;
 
     return '';
   }
@@ -566,6 +583,12 @@ export class OddsComponent implements OnInit {
         'step': FCT_ODDS_STEP,
         'minOdds': this.activeRange.minFCT,
         'maxOdds': this.activeRange.maxFCT
+      },
+      {
+        'pool': 'DBL',
+        'step': DBL_ODDS_STEP,
+        'minOdds': this.activeRange.minDBL,
+        'maxOdds': this.activeRange.maxDBL
       },
     ];
   }

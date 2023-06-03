@@ -33,13 +33,13 @@ export const TRAINERS = [
 
   new Person('MKL', 'Man', 'Ka-leung', 'M. Man', 'HK', '', 'Manfred', 580),
   new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
-  new Person('NM', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
   new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', '', 277),
   new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
   new Person('CCW', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael', 321),
   new Person('TYS', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me', 597),
   new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony', 700),
 
+  // new Person('NM', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
   // new Person('OSP', 'OSullivan', 'Paul', 'P. OSullivan', 'NZ', '', '', 0),
 ]
 
@@ -54,7 +54,7 @@ export const JOCKEYS = [
   new Person('LDE', 'Leung', 'Ka-chun', 'D. Leung', 'HK', 'Freelance', 'Derek', 399),
   new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry', 95),
   new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus', 0),
-  new Person('WEC', 'Wong', 'Chi-wang', 'E. Wong', 'HK', 'Freelance', 'Ellis', 0),
+  new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew', 192),
   new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith', 275),
 
   new Person('HEL', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', '', 30),
@@ -65,8 +65,8 @@ export const JOCKEYS = [
   new Person('AVB', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', '', 0),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard', 9),
 
+  new Person('WEC', 'Wong', 'Chi-wang', 'E. Wong', 'HK', 'Freelance', 'Ellis', 0),
   new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred', 53),
-  new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew', 192),
   new Person('MHT', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan', 104),
   new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack', 88),
   new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor', 63),

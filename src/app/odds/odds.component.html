@@ -12,7 +12,7 @@
 </div>
 
 <div class="m-4 grid grid-cols-4 noselect">
-  <div *ngFor="let c of rangeControls"
+  <div *ngFor="let c of rangeControls.slice(0, 3)"
        class="flex flex-row justify-evenly items-center px-6 text-center"
   >
     <div class="flex flex-col gap-y-1">
@@ -207,9 +207,61 @@
 </table>
 
 <div *ngIf="!(maxRace === 0 || maxRace === activeRace)"
-     class="my-4 text-center text-3xl font-bold noselect"
+     class="w-1/4 my-5 mx-auto noselect"
 >
-  DOUBLE
+  <div *ngFor="let c of rangeControls.slice(3, 4)"
+       class="flex flex-row justify-evenly items-center text-center"
+  >
+    <div class="flex flex-col gap-y-1">
+      <div class="{{oddsButtonStyle}}"
+           (click)="adjustOdds(c.pool, c.step, true, false)"
+      >
+        <i class="fa fa-minus"></i>
+      </div>
+      <div class="text-2xl">
+        {{c.minOdds}}
+      </div>
+      <div class="{{oddsButtonStyle}}"
+           (click)="adjustOdds(c.pool, c.step, true, true)"
+      >
+        <i class="fa fa-plus"></i>
+      </div>
+    </div>
+    <div class="text-2xl">
+      &#8828;
+    </div>
+    <div class="flex flex-col gap-y-1">
+      <div class="{{oddsButtonStyle}} text-yellow-400">
+        {{getSelectedBetCount(c.pool)}}
+      </div>
+      <div class="text-2xl">
+        {{c.pool}}
+      </div>
+      <div class="{{oddsButtonStyle}}"
+           (click)="copyBets(c.pool)"
+      >
+        <i class="fa fa-copy"></i>
+      </div>
+    </div>
+    <div class="text-2xl">
+      &#8828;
+    </div>
+    <div class="flex flex-col gap-y-1">
+      <div class="{{oddsButtonStyle}}"
+           (click)="adjustOdds(c.pool, c.step, false, false)"
+      >
+        <i class="fa fa-minus"></i>
+      </div>
+      <div class="text-2xl">
+        {{c.maxOdds}}
+      </div>
+      <div class="{{oddsButtonStyle}}"
+           (click)="adjustOdds(c.pool, c.step, false, true)"
+      >
+        <i class="fa fa-plus"></i>
+      </div>
+    </div>
+  </div>
 </div>
 
 <table *ngIf="!(maxRace === 0 || maxRace === activeRace)"
@@ -225,6 +277,7 @@
     <td *ngFor="let starterA of getStarters(this.activeRacecard)"
         class="w-20 border border-gray-700 {{getPlacingColor(starterA.jockey, activeRacecard)}}"
         [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"
+        [class.border-r-yellow-400]="isBoundaryStarter(starterA)"
         [class.cursor-pointer]="!isFavorite(starterA, this.activeRacecard)"
         [class.cursor-not-allowed]="isFavorite(starterA, this.activeRacecard)"
         (click)="toggleTrash(starterA)"
@@ -259,7 +312,9 @@
   <tr *ngFor="let starterB of getStarters(this.activeNextRacecard)"
       class="hover:bg-gray-800"
   >
-    <td class="py-1 border border-gray-700 font-bold {{getPlacingColor(starterB.jockey, activeNextRacecard)}}">
+    <td class="py-1.5 border border-gray-700 font-bold {{getPlacingColor(starterB.jockey, activeNextRacecard)}}"
+        [class.border-b-yellow-400]="isBoundaryStarter(starterB, true)"
+    >
       <div class="grid grid-cols-3"
            [class.cursor-pointer]="!isFavorite(starterB, this.activeNextRacecard)"
            [class.cursor-not-allowed]="isFavorite(starterB, this.activeNextRacecard)"
@@ -294,6 +349,10 @@
     </td>
     <td *ngFor="let starterA of getStarters(this.activeRacecard)"
         class="text-lg border border-gray-700 {{getDoubleOddsColor(starterA, starterB)}}"
+        [class.italic]="starterA.draw === starterB.draw"
+        [class.underline]="starterA.draw === starterB.draw"
+        [class.border-r-yellow-400]="isBoundaryStarter(starterA) && isStarterWithinBoundary(starterB, true)"
+        [class.border-b-yellow-400]="isBoundaryStarter(starterB, true) && isStarterWithinBoundary(starterA)"
         [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"
         [class.bg-gray-600]="isBothFavorite(starterA, starterB, true)"
         (mouseenter)="hoveredJockey = starterA.jockey"

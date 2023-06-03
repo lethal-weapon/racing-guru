@@ -2,11 +2,6 @@ export const THREE_SECONDS = 3_000;
 export const ONE_MINUTE = 60_000;
 export const TWO_MINUTES = 120_000;
 
-export const FIVE_HUNDRED = 500;
-export const ONE_THOUSAND = 1_000;
-export const FIVE_THOUSAND = 5_000;
-export const TEN_THOUSAND = 10_000;
-export const TWENTY_THOUSAND = 20_000;
 export const ONE_MILLION = 1_000_000;
 
 export const PAYOUT_RATE = 0.825;
@@ -26,6 +21,7 @@ export const DEFAULT_MAX_DBL_ODDS = 150;
 export const QPL_ODDS_STEP = 3;
 export const QIN_ODDS_STEP = 5;
 export const FCT_ODDS_STEP = 10;
-export const DBL_ODDS_STEP = 5;
+export const DBL_ODDS_STEP = 10;
 
 export const QIN_FCT_DIFF_RATE = 0.15;
+export const DBL_STARTER_BOUNDARY_ODDS = 10;
