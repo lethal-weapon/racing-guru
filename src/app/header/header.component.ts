@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {TEN_SECONDS} from '../util/numbers';
 
 @Component({
   selector: 'app-header',
@@ -26,7 +27,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.tick();
-    setInterval(() => this.tick(), 10_000);
+    setInterval(() => this.tick(), TEN_SECONDS);
   }
 
   tick = () => {
