@@ -72,8 +72,8 @@ export class CollaborationComponent implements OnInit {
 
   getCollaboration(jockey: string, trainer: string): Collaboration {
     return this.collaborations
-      .filter(c => c.jockey === jockey && c.trainer === trainer)
-      .pop() || DEFAULT_COLLABORATION
+        .find(c => c.jockey === jockey && c.trainer === trainer)
+      || DEFAULT_COLLABORATION
   }
 
   isBoundaryPerson(person: string): boolean {
