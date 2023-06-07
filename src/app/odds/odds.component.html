@@ -69,7 +69,7 @@
     <div class="{{controlButtonStyle}}"
          (click)="resetBets()"
     >
-      Reset
+      Reset B.
     </div>
     <div class="text-lg pt-1">
       My Bets
@@ -78,14 +78,14 @@
       {{totalSelectedBetCount}}
     </div>
     <div class="{{controlButtonStyle}}"
+         (click)="resetFavorites()"
+    >
+      Reset F.
+    </div>
+    <div class="{{controlButtonStyle}}"
          (click)="copyBets()"
     >
       Copy
-    </div>
-    <div class="{{controlButtonStyle}}"
-         (click)="applyConnectionBets()"
-    >
-      CON
     </div>
     <div class="{{controlButtonStyle}}"
          [class.font-bold]="trackModeOn"

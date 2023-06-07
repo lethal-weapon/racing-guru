@@ -33,7 +33,7 @@ import {
   getStarterWinPlaceOdds,
   getStarters,
   isFavorite,
-  findRelationship
+  getCurrentMeeting
 } from '../util/functions';
 
 interface OddsRange {
@@ -129,6 +129,13 @@ export class OddsComponent implements OnInit {
   resetBets = () =>
     this.bets.set(this.activeRace, {...DEFAULT_BET})
 
+  resetFavorites = () =>
+    this.repo.saveFavorite({
+      meeting: getCurrentMeeting(this.racecards),
+      race: this.activeRace,
+      favorites: []
+    })
+
   copyBets = (pool: string = '') => {
     let bets = '';
     for (const [key, value] of Object.entries(this.activeBet)) {
@@ -143,39 +150,6 @@ export class OddsComponent implements OnInit {
       }
     }
     this.clipboard.copy(bets);
-  }
-
-  applyConnectionBets = () => {
-    if (this.trackModeOn) return;
-
-    let qpl: number[][] = [];
-    let qin: number[][] = [];
-    let fct: number[][] = [];
-    let dbl: number[][] = [];
-    const starters = getStarters(this.activeRacecard);
-
-    for (let i = 0; i < starters.length; i++) {
-      const starterA = starters[i];
-      const orderA = starterA.order;
-      if (this.isTrash(starterA)) continue;
-
-      for (let j = i + 1; j < starters.length; j++) {
-        const starterB = starters[j];
-        const orderB = starterB.order;
-        if (this.isTrash(starterB)) continue;
-        if (!this.isConnected(starterA, starterB)) continue;
-
-        const qqpWithinRange = this.isQQPOddsWithinRange(starterA, starterB);
-        if (qqpWithinRange[0]) qin.push([orderA, orderB]);
-        if (qqpWithinRange[1]) qpl.push([orderA, orderB]);
-
-        const fctWithinRange = this.isFCTOddsWithinRange(starterA, starterB);
-        if (fctWithinRange[0]) fct.push([orderA, orderB]);
-        if (fctWithinRange[1]) fct.push([orderB, orderA]);
-      }
-    }
-
-    this.bets.set(this.activeRace, {qpl, qin, fct, dbl})
   }
 
   trackQuinellaAndForecast = () => {
@@ -289,26 +263,6 @@ export class OddsComponent implements OnInit {
     this.ranges.set(this.activeRace, newRange);
   }
 
-  isConnected = (starterA: Starter, starterB: Starter): boolean => {
-    const jockeyA = starterA.jockey;
-    const jockeyB = starterB.jockey;
-    const trainerA = starterA.trainer;
-    const trainerB = starterB.trainer;
-    if (trainerA === trainerB) return true;
-
-    const crossWgt1 = findRelationship(jockeyA, trainerB).weight;
-    const crossWgt2 = findRelationship(jockeyB, trainerA).weight;
-    const jockeyWgt = findRelationship(jockeyA, jockeyB).weight;
-    const trainerWgt = findRelationship(trainerA, trainerB).weight;
-
-    return crossWgt1 + crossWgt2 >= 4
-      || jockeyWgt + trainerWgt >= 4
-      || jockeyWgt + crossWgt1 >= 5
-      || jockeyWgt + crossWgt2 >= 5
-      || trainerWgt + crossWgt1 >= 5
-      || trainerWgt + crossWgt2 >= 5;
-  }
-
   isTrash = (starter: Starter, isNextRace: boolean = false): boolean =>
     isNextRace
       ? this.activeNextTrash.includes(starter.order)
@@ -357,7 +311,12 @@ export class OddsComponent implements OnInit {
     return true;
   }
 
-  isBothFavorite = (starterA: Starter, starterB: Starter, isNextRace: boolean = false): boolean => {
+  isBothFavorite = (
+    starterA: Starter,
+    starterB: Starter,
+    isNextRace: boolean = false
+  ): boolean => {
+
     if (isNextRace) {
       return isFavorite(starterA, this.activeRacecard)
         && isFavorite(starterB, this.activeNextRacecard)
@@ -369,7 +328,7 @@ export class OddsComponent implements OnInit {
     }
   }
 
-  isFinalQQPCombination(starterA: Starter, starterB: Starter): boolean[] {
+  isFinalQQPCombination = (starterA: Starter, starterB: Starter): boolean[] => {
     const placingSum = [starterA, starterB]
       .map(s => getPlacing(s.jockey, this.activeRacecard))
       .map(p => [0, 4].includes(p) ? 9 : p)
@@ -380,19 +339,19 @@ export class OddsComponent implements OnInit {
     ];
   }
 
-  isFinalFCTCombination(starterA: Starter, starterB: Starter): boolean {
+  isFinalFCTCombination = (starterA: Starter, starterB: Starter): boolean => {
     const placings = [starterA, starterB]
       .map(s => getPlacing(s.jockey, this.activeRacecard));
     return placings[0] === 1 && placings[1] === 2;
   }
 
-  isFinalDBLCombination(starterA: Starter, starterB: Starter): boolean {
+  isFinalDBLCombination = (starterA: Starter, starterB: Starter): boolean => {
     const placingA = getPlacing(starterA.jockey, this.activeRacecard);
     const placingB = getPlacing(starterB.jockey, this.activeNextRacecard);
     return placingA === 1 && placingB === 1;
   }
 
-  isQQPOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
+  isQQPOddsWithinRange = (starterA: Starter, starterB: Starter): boolean[] => {
     const qqp = this.getStarterQQPOdds(starterA, starterB);
     return [
       qqp[0] >= this.activeRange.minQIN && qqp[0] <= this.activeRange.maxQIN,
@@ -400,12 +359,12 @@ export class OddsComponent implements OnInit {
     ];
   }
 
-  isFCTOddsWithinRange(starterA: Starter, starterB: Starter): boolean[] {
-    return this.getStarterFCTOdds(starterA, starterB)
+  isFCTOddsWithinRange = (starterA: Starter, starterB: Starter): boolean[] =>
+    this
+      .getStarterFCTOdds(starterA, starterB)
       .map(o => o >= this.activeRange.minFCT && o <= this.activeRange.maxFCT);
-  }
 
-  isDBLOddsWithinRange(starterA: Starter, starterB: Starter): boolean {
+  isDBLOddsWithinRange = (starterA: Starter, starterB: Starter): boolean => {
     const dbl = this.getStarterDBLOdds(starterA, starterB);
     return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
   }
@@ -425,7 +384,7 @@ export class OddsComponent implements OnInit {
       .map(o => o.order)
     || []
 
-  getPairBorder(pool: string, starterA: Starter, starterB: Starter): string {
+  getPairBorder = (pool: string, starterA: Starter, starterB: Starter): string => {
     // @ts-ignore
     const pairs = this.activeBet[pool] || [];
     const pair = [starterA, starterB].map(s => s.order);
@@ -439,14 +398,14 @@ export class OddsComponent implements OnInit {
     return isSelected ? 'border-yellow-400' : 'border-gray-900';
   }
 
-  getSelectedBetCount(pool: string): number {
+  getSelectedBetCount = (pool: string): number => {
     for (const [key, value] of Object.entries(this.activeBet)) {
       if (key.toLowerCase() === pool.toLowerCase()) return value.length;
     }
     return 0;
   }
 
-  getStarterQQPOdds(starterA: Starter, starterB: Starter): number[] {
+  getStarterQQPOdds = (starterA: Starter, starterB: Starter): number[] => {
     if (!this.activeRacecard?.odds) return [0, 0];
     const qin = this.activeRacecard.odds?.quinella;
     const qpl = this.activeRacecard.odds?.quinellaPlace;
@@ -461,21 +420,23 @@ export class OddsComponent implements OnInit {
     });
   }
 
-  getStarterFCTOdds(starterA: Starter, starterB: Starter): number[] {
+  getStarterFCTOdds = (starterA: Starter, starterB: Starter): number[] => {
     const fct = this.activeRacecard?.odds?.forecast;
     if (!fct) return [0, 0];
 
     const pairs = fct.filter(comb =>
       comb.orders.includes(starterA.order) &&
       comb.orders.includes(starterB.order)
-    )
+    );
 
     if (pairs.length !== 2) return [0, 0];
-    if (pairs[0].orders[0] === starterA.order) return pairs.map(p => p.odds);
-    return pairs.reverse().map(p => p.odds);
+
+    return pairs[0].orders[0] === starterA.order
+      ? pairs.map(p => p.odds)
+      : pairs.reverse().map(p => p.odds);
   }
 
-  getStarterDBLOdds(starterA: Starter, starterB: Starter): number {
+  getStarterDBLOdds = (starterA: Starter, starterB: Starter): number => {
     const dbl = this.activeRacecard?.odds?.double;
     if (!dbl) return 0;
 
@@ -486,14 +447,14 @@ export class OddsComponent implements OnInit {
       ?.odds || 0;
   }
 
-  getTrainerColor(starter: Starter): string {
+  getTrainerColor = (starter: Starter): string => {
     if (getPlacingColor(starter.jockey, this.activeRacecard).length > 0) return '';
 
     const index = this.trainersWithMoreThanOneStarter.indexOf(starter.trainer);
     return index === -1 ? '' : `italic ${COLORS[index]}`;
   }
 
-  getDoubleOddsColor(starterA: Starter, starterB: Starter): string {
+  getDoubleOddsColor = (starterA: Starter, starterB: Starter): string => {
     const jockeyA = starterA.jockey;
     const jockeyB = starterB.jockey;
     const trainerA = starterA.trainer;
@@ -513,6 +474,7 @@ export class OddsComponent implements OnInit {
 
   get trainersWithMoreThanOneStarter(): string[] {
     return this.activeRacecard?.starters
+        .filter(s => !s.scratched)
         .map(s => s.trainer)
         .filter((t, i, a) => a.indexOf(t) !== i)
         .filter((t, i, a) => a.indexOf(t) === i)
@@ -594,7 +556,7 @@ export class OddsComponent implements OnInit {
   }
 
   get controlButtonStyle(): string {
-    return `px-3 pt-1 pb-1.5 rounded-xl border border-gray-600 ` +
+    return `px-2 pt-1 pb-1.5 rounded-xl border border-gray-600 ` +
       `hover:border-yellow-400 cursor-pointer`;
   }
 
