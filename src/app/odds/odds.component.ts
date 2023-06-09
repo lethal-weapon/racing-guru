@@ -29,7 +29,7 @@ import {
   getPlacing,
   getPlacingColor,
   getRaceBadgeStyle,
-  getStarterQWOdds,
+  getStarterQQPWinPlaceOdds,
   getStarterWinPlaceOdds,
   getStarters,
   isFavorite,
@@ -99,8 +99,8 @@ export class OddsComponent implements OnInit {
   protected readonly getMaxRace = getMaxRace;
   protected readonly getPlacingColor = getPlacingColor;
   protected readonly getStarters = getStarters;
-  protected readonly getStarterQWOdds = getStarterQWOdds;
   protected readonly getStarterWinPlaceOdds = getStarterWinPlaceOdds;
+  protected readonly getStarterQQPWinPlaceOdds = getStarterQQPWinPlaceOdds;
   protected readonly getRaceBadgeStyle = getRaceBadgeStyle;
 
   constructor(
@@ -273,7 +273,7 @@ export class OddsComponent implements OnInit {
     if (wp.win == 0 || wp.place == 0) return false;
 
     const W = wp.win;
-    const QW = getStarterQWOdds(starter, this.activeRacecard)
+    const QW = getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[0];
     if (QW > W) return false;
 
     return W < 10 && (W - QW <= 1.5)

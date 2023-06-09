@@ -14,7 +14,7 @@
     <div class="w-10 h-10 pt-1 text-xl rounded-full {{getPlacingBorderBackground(starter.jockey, activeRacecard)}}">
       {{starter.order}}
     </div>
-    <div class="w-44 ml-4 mr-2 text-left">
+    <div class="w-40 ml-4 mr-2 text-left">
       <div class="text-lg">
         <a target="_blank"
            tooltip="{{starter.horse}}"
@@ -31,13 +31,13 @@
     <div class="w-10 h-10 pt-1 text-xl border border-gray-700">
       {{starter.draw}}
     </div>
-    <div class="w-12 ml-3 mr-2 text-2xl font-mono">
+    <div class="w-12 mx-2 text-2xl font-mono">
       {{starter.jockey}}
     </div>
     <div class="w-12 mx-2 text-2xl font-mono">
       {{starter.trainer}}
     </div>
-    <div class="w-48 mx-3 text-sm">
+    <div class="w-36 mx-3 text-sm">
       {{getHorse(starter).ownerCH}}
     </div>
     <div class="w-12 ml-4">
@@ -60,19 +60,19 @@
         {{getHorseStatistics(starter)}}
       </div>
     </div>
-    <div class="w-24 text-red-600">
+    <div class="w-20 text-red-600">
       <span class="text-3xl">
         {{getStarterWinPlaceOdds(starter, this.activeRacecard).win}}
       </span>
       <sup>W</sup>
     </div>
-    <div class="w-24 text-blue-600">
+    <div class="w-20 text-blue-600">
       <span class="text-3xl">
         {{getStarterWinPlaceOdds(starter, this.activeRacecard).place}}
       </span>
       <sup>P</sup>
     </div>
-    <div class="w-16 text-2xl cursor-pointer"
+    <div class="w-14 text-2xl cursor-pointer"
          (click)="toggleFavorite(starter)"
     >
       <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400">
@@ -83,10 +83,7 @@
       </span>
     </div>
     <div *ngFor="let inv of getActiveStarterWQPInvestments(starter); let index = index"
-         class="w-20"
-         [class.text-red-600]="index === 0"
-         [class.text-green-600]="index === 1"
-         [class.text-blue-600]="index === 2"
+         class="w-20 {{COLORS[index]}}"
     >
       <div>
         {{inv.percent}}

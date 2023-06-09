@@ -5,7 +5,10 @@ import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {RestRepository} from '../model/rest.repository';
-import {COMMON_HORSE_ORIGINS} from '../util/strings';
+import {
+  COLORS,
+  COMMON_HORSE_ORIGINS
+} from '../util/strings';
 import {
   Collaboration,
   CollaborationStarter,
@@ -25,7 +28,7 @@ import {
   getNewFavorites,
   getPlacingBorderBackground,
   getRaceBadgeStyle,
-  getStarterQWOdds,
+  getStarterQQPWinPlaceOdds,
   getStarters,
   getStarterWinPlaceOdds,
   isFavorite
@@ -58,6 +61,7 @@ export class RacecardComponent implements OnInit {
 
   activeRace: number = 1;
 
+  protected readonly COLORS = COLORS;
   protected readonly SENIOR_HORSE_AGE = SENIOR_HORSE_AGE;
   protected readonly COMMON_HORSE_ORIGINS = COMMON_HORSE_ORIGINS;
   protected readonly isFavorite = isFavorite;
@@ -187,12 +191,13 @@ export class RacecardComponent implements OnInit {
     if (!pool) return [];
 
     const WP = getStarterWinPlaceOdds(starter, this.activeRacecard);
-    const QW = getStarterQWOdds(starter, this.activeRacecard);
+    const QQP_WP = getStarterQQPWinPlaceOdds(starter, this.activeRacecard);
 
     return [
       {odds: WP.win, amount: pool.win},
-      {odds: QW, amount: pool.quinella},
-      {odds: 3 * WP.place, amount: pool.place}
+      {odds: QQP_WP[0], amount: pool.quinella},
+      {odds: 3 * WP.place, amount: pool.place},
+      {odds: 3 * QQP_WP[1], amount: pool?.quinellaPlace || 0}
     ].map(o => ({
       percent: `${(100 * PAYOUT_RATE / o.odds).toFixed(1)}%`,
       amount: `$${(o.amount * PAYOUT_RATE / o.odds / ONE_MILLION).toFixed(2)}M`

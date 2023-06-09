@@ -57,15 +57,13 @@ export const getTrainer = (jockey: string, racecard: Racecard): string =>
   getStarter(jockey, racecard).trainer;
 
 export const getWinPlaceOdds = (jockey: string, racecard: Racecard): WinPlaceOdds => {
-
   const order = getStarter(jockey, racecard)?.order || 0;
   const defaultValue = {order: order, win: 0, place: 0};
 
   if (!racecard.odds) return defaultValue;
 
   return racecard.odds.winPlace
-    .filter(o => o.order === order)
-    .pop() || defaultValue;
+    .find(o => o.order === order) || defaultValue;
 }
 
 export const getStarterWinPlaceOdds = (starter: Starter, racecard: Racecard): WinPlaceOdds => {
@@ -73,23 +71,20 @@ export const getStarterWinPlaceOdds = (starter: Starter, racecard: Racecard): Wi
   return getWinPlaceOdds(starter.jockey, racecard);
 }
 
-export const getStarterQWOdds = (starter: Starter, racecard: Racecard): number => {
-  const qqpWP = getQQPWinPlaceOdds(starter.order, racecard);
-  return parseFloat(qqpWP[0].toFixed(2));
-}
-
-export const getQQPWinPlaceOdds = (order: number, racecard: Racecard): number[] => {
+export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard): number[] => {
   const qin = racecard.odds?.quinella;
   const qpl = racecard.odds?.quinellaPlace;
 
-  return [qin, qpl].map(pairs => {
-    if (!pairs) return 1;
-    return 2 * PAYOUT_RATE / pairs
-      .filter(p => p.orders.includes(order))
-      .map(p => p.odds)
-      .map(o => PAYOUT_RATE / o)
-      .reduce((prev, curr) => prev + curr, 0);
-  });
+  return [qin, qpl]
+    .map(pairs => {
+      if (!pairs) return 1;
+      return 2 * PAYOUT_RATE / pairs
+        .filter(p => p.orders.includes(starter.order))
+        .map(p => p.odds)
+        .map(o => PAYOUT_RATE / o)
+        .reduce((prev, curr) => prev + curr, 0);
+    })
+    .map(o => parseFloat(o.toFixed(2)))
 }
 
 export const getPlacing = (jockey: string, racecard: Racecard): number => {
