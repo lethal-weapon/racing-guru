@@ -6,6 +6,7 @@ export const TWO_MINUTES = 120_000;
 export const ONE_MILLION = 1_000_000;
 
 export const PAYOUT_RATE = 0.825;
+export const FCT_TRI_PAYOUT_RATE = 0.805;
 export const MAX_RACE_PER_MEETING = 11;
 export const SENIOR_HORSE_AGE = 7;
 

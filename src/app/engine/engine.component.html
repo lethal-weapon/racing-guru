@@ -1,0 +1,70 @@
+<div class="my-8 flex flex-row justify-evenly noselect">
+  <div *counter="let race of getMaxRace(this.racecards)"
+       class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
+       (click)="activeRace = race"
+  >
+    Race {{race}}
+  </div>
+</div>
+
+<div class="mx-6 grid grid-cols-4 gap-4">
+  <div *ngFor="let starter of getStarters(this.activeRacecard)"
+       class="px-4 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600 noselect"
+  >
+    <div class="flex flex-row items-center">
+      <div class="w-8 h-8 pt-0.5 text-lg rounded-full {{getPlacingBorderBackground(starter.jockey, activeRacecard)}}">
+        {{starter.order}}
+      </div>
+      <div class="w-20 ml-3 text-lg text-left">
+        {{getHorseNameCH(starter.horse)}}
+      </div>
+      <div class="w-10 mx-2 text-xl font-mono">
+        {{starter.jockey}}
+      </div>
+      <div class="w-10 mx-2 text-xl font-mono">
+        {{starter.trainer}}
+      </div>
+    </div>
+    <div class="mt-2 flex flex-row items-center">
+      <div class="w-10"
+           [class.invisible]="!isPreferredWQWR(starter)"
+      >
+        <i class="fa fa-lg fa-thumbs-up"></i>
+      </div>
+      <div *ngFor="let inv of getWQPInvestment(starter).slice(0, 2); let index = index"
+           class="w-28 pt-0.5 {{COLORS[index]}}"
+      >
+        {{inv.odds}} ({{inv.percent}})
+      </div>
+    </div>
+    <div class="mt-2 flex flex-row items-center">
+      <div class="w-10"
+           [class.invisible]="!isPreferredPQPR(starter)"
+      >
+        <i class="fa fa-lg fa-thumbs-up"></i>
+      </div>
+      <div *ngFor="let inv of getWQPInvestment(starter).slice(2, 4); let index = index"
+           class="w-28 pt-0.5 {{COLORS[index + 2]}}"
+      >
+        {{inv.odds}} ({{inv.percent}})
+      </div>
+    </div>
+    <div *ngIf="!(maxRace === 0 || maxRace === activeRace)"
+         class="mt-2 flex flex-row items-center"
+    >
+      <div class="w-10"
+           [class.invisible]="!isPreferredWDWR(starter)"
+      >
+        <i class="fa fa-lg fa-thumbs-up"></i>
+      </div>
+      <div class="w-28 pt-0.5">
+        DBL
+      </div>
+      <div class="w-28 pt-0.5 {{COLORS[0]}}">
+        {{ getWQPInvestment(starter)[4].odds }}
+        ({{ getWQPInvestment(starter)[4].percent }})
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -17,6 +17,7 @@ import {Top4sComponent} from './top4s/top4s.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {OddsComponent} from './odds/odds.component';
 import {NgOptimizedImage} from "@angular/common";
+import { EngineComponent } from './engine/engine.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {NgOptimizedImage} from "@angular/common";
     PeopleComponent,
     MatcherComponent,
     CollaborationComponent,
-    Top4sComponent
+    Top4sComponent,
+    EngineComponent
   ],
   imports: [
     BrowserModule,

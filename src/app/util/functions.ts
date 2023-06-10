@@ -1,4 +1,4 @@
-import {ONE_MILLION, PAYOUT_RATE} from './numbers';
+import {ONE_MILLION, PAYOUT_RATE, FCT_TRI_PAYOUT_RATE} from './numbers';
 import {JOCKEY_CODES} from './strings';
 import {COLORS} from './strings';
 import {Racecard} from '../model/racecard.model';
@@ -72,8 +72,8 @@ export const getStarterWinPlaceOdds = (starter: Starter, racecard: Racecard): Wi
 }
 
 export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard): number[] => {
-  const qin = racecard.odds?.quinella;
-  const qpl = racecard.odds?.quinellaPlace;
+  const qin = racecard?.odds?.quinella;
+  const qpl = racecard?.odds?.quinellaPlace;
 
   return [qin, qpl]
     .map(pairs => {
@@ -85,6 +85,19 @@ export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard):
         .reduce((prev, curr) => prev + curr, 0);
     })
     .map(o => parseFloat(o.toFixed(2)))
+}
+
+export const getStarterDBLWinOdds = (starter: Starter, racecard: Racecard): number => {
+  const dbl = racecard?.odds?.double;
+  if (!dbl) return 1;
+
+  const DW = PAYOUT_RATE / dbl
+    .filter(c => c.orders[0] === starter.order)
+    .map(p => p.odds)
+    .map(o => PAYOUT_RATE / o)
+    .reduce((prev, curr) => prev + curr, 0);
+
+  return parseFloat(DW.toFixed(2));
 }
 
 export const getPlacing = (jockey: string, racecard: Racecard): number => {
