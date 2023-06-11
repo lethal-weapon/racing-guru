@@ -9,9 +9,11 @@ import {COLORS} from '../util/strings';
 import {
   THREE_SECONDS,
   PAYOUT_RATE,
-  FCT_TRI_PAYOUT_RATE
+  FCT_TRI_PAYOUT_RATE,
+  MAX_RACE_PER_MEETING
 } from '../util/numbers';
 import {
+  isFavorite,
   getMaxRace,
   getPlacingBorderBackground,
   getRaceBadgeStyle,
@@ -19,7 +21,9 @@ import {
   getStarterWinPlaceOdds,
   getStarterQQPWinPlaceOdds,
   getStarterFCTWQOdds,
-  getStarterDBLWinOdds
+  getStarterDBLWinOdds,
+  getCurrentMeeting,
+  getNewFavorites
 } from '../util/functions';
 
 interface Investment {
@@ -35,8 +39,10 @@ export class EngineComponent implements OnInit {
   racecards: Racecard[] = [];
 
   activeRace: number = 1;
+  bankers: Map<number, number[]> = new Map();
 
   protected readonly COLORS = COLORS;
+  protected readonly isFavorite = isFavorite;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarters = getStarters;
   protected readonly getRaceBadgeStyle = getRaceBadgeStyle;
@@ -53,7 +59,43 @@ export class EngineComponent implements OnInit {
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
     this.repo.fetchHorses();
+
+    for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
+      this.bankers.set(race, []);
+    }
   }
+
+  reset = () => {
+    this.repo.saveFavorite({
+      meeting: getCurrentMeeting(this.racecards),
+      race: this.activeRace,
+      favorites: []
+    })
+    this.bankers.set(this.activeRace, []);
+  }
+
+  toggleFavorite = (starter: Starter) => {
+    const newFavorites = getNewFavorites(starter, this.activeRacecard)
+    const isRemoveBanker = this.isBanker(starter) &&
+      !newFavorites.includes(starter.order);
+
+    this.repo.saveFavorite({
+      meeting: getCurrentMeeting(this.racecards),
+      race: this.activeRace,
+      favorites: newFavorites
+    });
+    if (newFavorites.length === 0 || isRemoveBanker) {
+      this.bankers.set(this.activeRace, []);
+    }
+  }
+
+  toggleBanker = (starter: Starter) => {
+    let newBankers = this.isBanker(starter) ? [] : [starter.order]
+    this.bankers.set(this.activeRace, newBankers);
+  }
+
+  isBanker = (starter: Starter): boolean =>
+    (this.bankers.get(this.activeRace) || []).includes(starter.order);
 
   isPreferredWQWR = (starter: Starter): boolean => {
     const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);
@@ -127,6 +169,10 @@ export class EngineComponent implements OnInit {
 
   getHorseNameCH = (horseCode: string): string =>
     this.repo.findHorses().find(h => h.code === horseCode)?.nameCH || horseCode
+
+  get isBankerExist(): boolean {
+    return (this.bankers.get(this.activeRace) || []).length > 0;
+  }
 
   get activePrevRacecard(): Racecard {
     // @ts-ignore

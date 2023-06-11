@@ -1,4 +1,4 @@
-<div class="my-8 flex flex-row justify-evenly noselect">
+<div class="mt-6 flex flex-row justify-evenly noselect">
   <div *counter="let race of getMaxRace(this.racecards)"
        class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
        (click)="activeRace = race"
@@ -7,9 +7,36 @@
   </div>
 </div>
 
-<div class="mx-6 grid grid-cols-4 gap-4">
+<div class="mt-4 flex flex-row justify-center items-center noselect">
+  <div *ngIf="isBankerExist"
+       class="mx-3 order-2"
+  >
+    <i class="fa fa-2x fa-chevron-right"></i>
+  </div>
+  <ng-container *ngFor="let starter of getStarters(this.activeRacecard)">
+    <div *ngIf="isFavorite(starter, this.activeRacecard)"
+         class="flex flex-col mx-3 items-center cursor-pointer
+                px-3 pt-2 pb-2.5 rounded-xl border transition border-gray-900 hover:border-yellow-400"
+         [class.order-1]="isBanker(starter)"
+         [class.order-3]="!isBanker(starter)"
+         [class.border-yellow-400]="isBanker(starter)"
+         (click)="toggleBanker(starter)"
+    >
+      <div class="mb-2">
+        {{starter.order}}
+        {{getHorseNameCH(starter.horse)}}
+      </div>
+      <img src="https://racing.hkjc.com/racing/content/Images/RaceColor/{{starter.horse}}.gif"
+           alt="Silk"
+           class="block w-12"
+      />
+    </div>
+  </ng-container>
+</div>
+
+<div class="mt-2 mx-6 grid grid-cols-4 gap-4 noselect">
   <div *ngFor="let starter of getStarters(this.activeRacecard)"
-       class="px-4 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600 noselect"
+       class="px-3 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
   >
     <div class="flex flex-row items-center">
       <div class="w-8 h-8 pt-0.5 text-lg rounded-full {{getPlacingBorderBackground(starter.jockey, activeRacecard)}}">
@@ -18,11 +45,21 @@
       <div class="w-20 ml-3 text-lg text-left">
         {{getHorseNameCH(starter.horse)}}
       </div>
-      <div class="w-10 mx-2 text-xl font-mono">
+      <div class="w-8 mx-2 text-xl font-mono">
         {{starter.jockey}}
       </div>
-      <div class="w-10 mx-2 text-xl font-mono">
+      <div class="w-8 mx-2 text-xl font-mono">
         {{starter.trainer}}
+      </div>
+      <div class="w-8 text-lg cursor-pointer"
+           (click)="toggleFavorite(starter)"
+      >
+        <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400">
+          <i class="fa fa-star"></i>
+        </span>
+        <span *ngIf="!isFavorite(starter, this.activeRacecard)">
+          <i class="fa fa-star-o"></i>
+        </span>
       </div>
     </div>
     <div class="mt-2 flex flex-row items-center">
@@ -80,6 +117,17 @@
         </div>
       </div>
     </div>
-
+  </div>
+  <div class="px-4 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
+    <div class="text-lg">
+      Controls
+    </div>
+    <div class="my-2 grid grid-cols-2 gap-4">
+      <div class="px-2 pt-1 pb-1.5 rounded-xl border border-gray-600 hover:border-yellow-400 cursor-pointer"
+           (click)="reset()"
+      >
+        Reset
+      </div>
+    </div>
   </div>
 </div>
