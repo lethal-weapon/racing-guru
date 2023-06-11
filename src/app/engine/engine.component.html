@@ -31,38 +31,53 @@
       >
         <i class="fa fa-lg fa-thumbs-up"></i>
       </div>
-      <div *ngFor="let inv of getWQPInvestment(starter).slice(0, 2); let index = index"
+      <div *ngFor="let inv of getInvestments(starter).slice(0, 2); let index = index"
            class="w-28 pt-0.5 {{COLORS[index]}}"
       >
         {{inv.odds}} ({{inv.percent}})
       </div>
     </div>
-    <div class="mt-2 flex flex-row items-center">
+    <div class="mt-1 flex flex-row items-center">
       <div class="w-10"
            [class.invisible]="!isPreferredPQPR(starter)"
       >
         <i class="fa fa-lg fa-thumbs-up"></i>
       </div>
-      <div *ngFor="let inv of getWQPInvestment(starter).slice(2, 4); let index = index"
+      <div *ngFor="let inv of getInvestments(starter).slice(2, 4); let index = index"
            class="w-28 pt-0.5 {{COLORS[index + 2]}}"
       >
         {{inv.odds}} ({{inv.percent}})
       </div>
     </div>
-    <div *ngIf="!(maxRace === 0 || maxRace === activeRace)"
-         class="mt-2 flex flex-row items-center"
-    >
+    <div class="px-4 my-1 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+    <div class="flex flex-row items-center">
+      <div class="w-10"
+           [class.invisible]="true"
+      >
+        <i class="fa fa-lg fa-thumbs-up"></i>
+      </div>
+      <div *ngFor="let inv of getInvestments(starter).slice(4, 6); let index = index"
+           class="w-28 pt-0.5 {{COLORS[index]}}"
+      >
+        {{inv.odds}} ({{inv.percent}})
+      </div>
+    </div>
+    <div class="px-4 my-1 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+    <div class="flex flex-row items-center">
       <div class="w-10"
            [class.invisible]="!isPreferredWDWR(starter)"
       >
         <i class="fa fa-lg fa-thumbs-up"></i>
       </div>
-      <div class="w-28 pt-0.5">
-        DBL
-      </div>
-      <div class="w-28 pt-0.5 {{COLORS[0]}}">
-        {{ getWQPInvestment(starter)[4].odds }}
-        ({{ getWQPInvestment(starter)[4].percent }})
+      <div *ngFor="let inv of getInvestments(starter).slice(6, 8); let index = index"
+           class="w-28 pt-0.5 {{COLORS[0]}}"
+      >
+        <div *ngIf="index === 0 && activeRace !== maxRace">
+          {{inv.odds}} ({{inv.percent}})
+        </div>
+        <div *ngIf="index === 1 && activeRace !== 1">
+          {{inv.odds}} ({{inv.percent}})
+        </div>
       </div>
     </div>
 

@@ -7,7 +7,6 @@ import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {COLORS} from '../util/strings';
 import {
-  ONE_MILLION,
   THREE_SECONDS,
   PAYOUT_RATE,
   FCT_TRI_PAYOUT_RATE
@@ -19,12 +18,12 @@ import {
   getStarters,
   getStarterWinPlaceOdds,
   getStarterQQPWinPlaceOdds,
+  getStarterFCTWQOdds,
   getStarterDBLWinOdds
 } from '../util/functions';
 
-interface WQPInvestment {
+interface Investment {
   odds: number,
-  amount: string,
   percent: string
 }
 
@@ -75,9 +74,9 @@ export class EngineComponent implements OnInit {
 
     const P = 3 * wp.place;
     const QPP = 3 * getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[1];
-    if (P > 25 || QPP > P) return false;
+    if (P > 30 || QPP > P) return false;
 
-    return P < 9 && (P - QPP <= 1.25)
+    return P < 10 && (P - QPP <= 1.5)
       ? true
       : Math.abs(1 - P / QPP) <= 0.2;
   }
@@ -87,41 +86,52 @@ export class EngineComponent implements OnInit {
     if (wp.win == 0 || wp.place == 0) return false;
 
     const W = wp.win;
-    const DW = getStarterDBLWinOdds(starter, this.activeRacecard);
-    if (W > 30 || DW > 21 || DW > W) return false;
+    if (W > 30) return false;
 
-    return W < 10 && (W - DW <= 3)
-      ? true
-      : Math.abs(1 - W / DW) <= 0.25;
+    const DW = getStarterDBLWinOdds(starter, this.activeRacecard, this.activePrevRacecard);
+    const CDW = DW[0];
+    const PDW = DW[1];
+    if (CDW > 21 || PDW > 21 || CDW > W || PDW > W) return false;
+
+    if (this.activeRace === 1) return Math.abs(1 - W / CDW) >= 0.2;
+    if (this.activeRace === this.maxRace) return Math.abs(1 - W / PDW) >= 0.2;
+
+    return Math.abs(1 - W / CDW) >= 0.2 || Math.abs(1 - CDW / PDW) >= 0.2;
   }
 
-  getWQPInvestment = (starter: Starter): WQPInvestment[] => {
+  getInvestments = (starter: Starter): Investment[] => {
     const pool = this.activeRacecard?.pool;
     if (!pool) return [];
 
     const WP = getStarterWinPlaceOdds(starter, this.activeRacecard);
     const QQP_WP = getStarterQQPWinPlaceOdds(starter, this.activeRacecard);
-    const DW = getStarterDBLWinOdds(starter, this.activeRacecard);
+    const FCT_WQ = getStarterFCTWQOdds(starter, this.activeRacecard);
+    const DW = getStarterDBLWinOdds(starter, this.activeRacecard, this.activePrevRacecard);
 
     return [
-      {odds: WP.win, amount: pool.win},
-      {odds: QQP_WP[0], amount: pool.quinella},
-      {odds: 3 * WP.place, amount: pool.place},
-      {odds: 3 * QQP_WP[1], amount: pool?.quinellaPlace || 0},
-      {odds: DW, amount: pool?.double || 0},
-
-    ].map((o, index) => {
-      const rate = index < 5 ? PAYOUT_RATE : FCT_TRI_PAYOUT_RATE;
-      return {
-        odds: index < 2 || index > 3 ? o.odds : parseFloat((o.odds / 3).toFixed(1)),
-        amount: `$${(o.amount * rate / o.odds / ONE_MILLION).toFixed(2)}M`,
-        percent: `${(100 * rate / o.odds).toFixed(1)}%`
-      }
-    });
+      WP.win,
+      QQP_WP[0],
+      3 * WP.place,
+      3 * QQP_WP[1],
+      ...FCT_WQ,
+      ...DW
+    ]
+      .map((odds, index) => {
+        const rate = [4, 5].includes(index) ? FCT_TRI_PAYOUT_RATE : PAYOUT_RATE;
+        return {
+          odds: parseFloat(odds.toFixed(1)),
+          percent: `${(100 * rate / odds).toFixed(1)}%`
+        }
+      });
   }
 
   getHorseNameCH = (horseCode: string): string =>
     this.repo.findHorses().find(h => h.code === horseCode)?.nameCH || horseCode
+
+  get activePrevRacecard(): Racecard {
+    // @ts-ignore
+    return this.racecards.find(r => r.race === this.activeRace - 1);
+  }
 
   get activeRacecard(): Racecard {
     // @ts-ignore

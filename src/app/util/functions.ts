@@ -75,29 +75,46 @@ export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard):
   const qin = racecard?.odds?.quinella;
   const qpl = racecard?.odds?.quinellaPlace;
 
-  return [qin, qpl]
-    .map(pairs => {
-      if (!pairs) return 1;
-      return 2 * PAYOUT_RATE / pairs
-        .filter(p => p.orders.includes(starter.order))
-        .map(p => p.odds)
-        .map(o => PAYOUT_RATE / o)
-        .reduce((prev, curr) => prev + curr, 0);
-    })
-    .map(o => parseFloat(o.toFixed(2)))
+  return [qin, qpl].map(pairs => {
+    if (!pairs) return 1;
+
+    return 2 * PAYOUT_RATE / pairs
+      .filter(p => p.orders.includes(starter.order))
+      .map(p => PAYOUT_RATE / p.odds)
+      .reduce((prev, curr) => prev + curr, 0);
+  });
 }
 
-export const getStarterDBLWinOdds = (starter: Starter, racecard: Racecard): number => {
+export const getStarterFCTWQOdds = (starter: Starter, racecard: Racecard): number[] => {
+  const fct = racecard?.odds?.forecast;
+
+  return [fct, fct].map((pairs, index) => {
+    if (!pairs) return 1;
+
+    return 2 * FCT_TRI_PAYOUT_RATE / pairs
+      .filter(p => p.orders[index] === starter.order)
+      .map(p => FCT_TRI_PAYOUT_RATE / p.odds)
+      .reduce((prev, curr) => prev + curr, 0);
+  });
+}
+
+export const getStarterDBLWinOdds = (
+  starter: Starter,
+  racecard: Racecard,
+  prevRacecard: Racecard
+): number[] => {
+
   const dbl = racecard?.odds?.double;
-  if (!dbl) return 1;
+  const prevDBL = prevRacecard?.odds?.double;
 
-  const DW = PAYOUT_RATE / dbl
-    .filter(c => c.orders[0] === starter.order)
-    .map(p => p.odds)
-    .map(o => PAYOUT_RATE / o)
-    .reduce((prev, curr) => prev + curr, 0);
+  return [dbl, prevDBL].map((pairs, index) => {
+    if (!pairs) return 1;
 
-  return parseFloat(DW.toFixed(2));
+    return PAYOUT_RATE / pairs
+      .filter(p => p.orders[index] === starter.order)
+      .map(p => PAYOUT_RATE / p.odds)
+      .reduce((prev, curr) => prev + curr, 0);
+  });
 }
 
 export const getPlacing = (jockey: string, racecard: Racecard): number => {
