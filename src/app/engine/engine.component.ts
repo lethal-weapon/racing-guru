@@ -105,9 +105,9 @@ export class EngineComponent implements OnInit {
     const QW = getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[0];
     if (W > 30 || QW > W) return false;
 
-    return W < 10 && (W - QW <= 1.5)
+    return W < 10 && (W - QW >= 0.5)
       ? true
-      : Math.abs(1 - W / QW) <= 0.2;
+      : Math.abs(1 - W / QW) >= 0.1;
   }
 
   isPreferredPQPR = (starter: Starter): boolean => {
@@ -118,9 +118,9 @@ export class EngineComponent implements OnInit {
     const QPP = 3 * getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[1];
     if (P > 30 || QPP > P) return false;
 
-    return P < 10 && (P - QPP <= 1.5)
+    return P < 10 && (P - QPP >= 0.5)
       ? true
-      : Math.abs(1 - P / QPP) <= 0.2;
+      : Math.abs(1 - P / QPP) >= 0.1;
   }
 
   isPreferredWDWR = (starter: Starter): boolean => {
