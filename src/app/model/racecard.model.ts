@@ -1,7 +1,8 @@
+import {Starter} from './starter.model';
 import {Pool} from './pool.model';
 import {Odds} from './odds.model';
-import {Starter} from './starter.model';
 import {Dividend} from './dividend.model';
+import {Signal} from './signal.model';
 
 export class Racecard {
   constructor(
@@ -22,7 +23,8 @@ export class Racecard {
     public course    ?: string,
     public pool      ?: Pool,
     public odds      ?: Odds,
-    public dividend  ?: Dividend
+    public dividend  ?: Dividend,
+    public signal    ?: Signal
   ) {
   }
 }

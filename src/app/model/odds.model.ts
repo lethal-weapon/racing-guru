@@ -1,11 +1,11 @@
 export interface Singular {
-  odds  : number,
-  order : number
+  order : number,
+  odds  : number
 }
 
 export interface Combination {
-  odds   : number,
-  orders : number[]
+  orders : number[],
+  odds   : number
 }
 
 export interface WinPlaceOdds {
@@ -27,7 +27,7 @@ export class Odds {
     public quinella       : Combination[],
     public forecast       : Combination[],
     public trio           : Combination[],
-    public tierce         : TierceInvestment[],
+    public tierce        ?: TierceInvestment[],
     public firstFour     ?: Combination[],
     public quinellaPlace ?: Combination[],
     public double        ?: Combination[]
