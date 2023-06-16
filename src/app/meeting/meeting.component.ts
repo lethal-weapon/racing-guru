@@ -68,7 +68,7 @@ export class MeetingComponent implements OnInit {
     const currTime = new Date().getTime();
     const diff = Math.floor((raceTime - currTime) / 1000);
 
-    if (diff <= 999) this.remainingTime = `${diff} sec`
+    if (diff <= 900) this.remainingTime = `${diff} sec`
     else if (diff <= 7200) this.remainingTime = `${Math.floor(diff / 60)} min`
     else this.remainingTime = `${Math.floor(diff / 3600)} hrs`
   }
@@ -293,7 +293,13 @@ export class MeetingComponent implements OnInit {
       return jockey && placing === getPlacing(jockey, r);
     }).length
 
-  get drawPlacings(): Array<{ placing: string, color: string }> {
+  getOrderPerformance = (order: number, placing: number): number =>
+    this.racecards.filter(r => {
+      const jockey = r.starters.find(s => s.order === order)?.jockey;
+      return jockey && placing === getPlacing(jockey, r);
+    }).length
+
+  get placingMaps(): Array<{ placing: string, color: string }> {
     return [
       {placing: 'W', color: 'text-red-600'},
       {placing: 'Q', color: 'text-green-600'},
@@ -304,14 +310,12 @@ export class MeetingComponent implements OnInit {
 
   get pools(): Array<{ pool: string, amount: string }> {
     const pool = (this.next || this.racecards[this.racecards.length - 1])?.pool;
-    if (!pool) return [];
-
     return [
-      {pool: 'W', amount: toMillion(pool.win)},
-      {pool: 'Q', amount: toMillion(pool.quinella)},
-      {pool: 'FT', amount: toMillion(pool.forecast)},
-      {pool: 'TCE', amount: toMillion(pool.tierce)},
-      {pool: 'P', amount: toMillion(pool.place)},
+      {pool: 'W', amount: toMillion(pool?.win || 0)},
+      {pool: 'Q', amount: toMillion(pool?.quinella || 0)},
+      {pool: 'FT', amount: toMillion(pool?.forecast || 0)},
+      {pool: 'TCE', amount: toMillion(pool?.tierce || 0)},
+      {pool: 'P', amount: toMillion(pool?.place || 0)},
       {pool: 'QP', amount: toMillion(pool?.quinellaPlace || 0)},
       {pool: 'FQ', amount: toMillion(pool?.quartet || 0)},
       {pool: 'DBL', amount: toMillion(pool?.double || 0)},
@@ -360,6 +364,13 @@ export class MeetingComponent implements OnInit {
     return this.starters
       .map(s => s.draw)
       .sort((d1, d2) => d1 - d2)
+      .pop() || 0;
+  }
+
+  get maxOrder(): number {
+    return this.starters
+      .map(s => s.order)
+      .sort((o1, o2) => o1 - o2)
       .pop() || 0;
   }
 

@@ -14,14 +14,14 @@ export interface CombinationSignal {
 
 export class Signal {
   constructor(
-    public win           ?: SingularSignal[],
-    public place         ?: SingularSignal[],
-    public quinella      ?: CombinationSignal[],
-    public quinellaPlace ?: CombinationSignal[],
-    public forecast      ?: CombinationSignal[],
-    public trio          ?: CombinationSignal[],
-    public firstFour     ?: CombinationSignal[],
-    public double        ?: CombinationSignal[]
+    public win           : SingularSignal[],
+    public place         : SingularSignal[],
+    public quinella      : CombinationSignal[],
+    public quinellaPlace : CombinationSignal[],
+    public forecast      : CombinationSignal[],
+    public trio          : CombinationSignal[],
+    public firstFour     : CombinationSignal[],
+    public double        : CombinationSignal[]
   ) {
   }
 }

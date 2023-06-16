@@ -9,9 +9,7 @@
     <br>
     {{summary[1]}}
   </div>
-  <div *ngIf="pools.length > 0"
-       class="p-2 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
-  >
+  <div class="p-2 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
     <table>
       <tr *counter="let row of (pools.length / 4)">
         <td *ngFor="let obj of pools.slice((row-1) * 4, (row-1) * 4 + 4)"
@@ -164,7 +162,7 @@
   </th>
   </thead>
   <tbody>
-  <tr *ngFor="let m of drawPlacings; let index = index">
+  <tr *ngFor="let m of placingMaps; let index = index">
     <td class="border border-gray-700 font-bold {{m.color}}">
       {{m.placing}}
     </td>
@@ -174,6 +172,35 @@
       {{
       getDrawPerformance(draw, index + 1) > 0
         ? getDrawPerformance(draw, index + 1)
+        : ''
+      }}
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<table class="mx-auto mt-10 table-fixed border-collapse border border-gray-700 text-center noselect">
+  <thead>
+  <th class="w-20 border border-gray-700">
+    Order
+  </th>
+  <th *counter="let order of maxOrder"
+      class="w-20 border border-gray-700"
+  >
+    {{order}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let m of placingMaps; let index = index">
+    <td class="border border-gray-700 font-bold {{m.color}}">
+      {{m.placing}}
+    </td>
+    <td *counter="let order of maxOrder"
+        class="border border-gray-700 {{m.color}}"
+    >
+      {{
+      getOrderPerformance(order, index + 1) > 0
+        ? getOrderPerformance(order, index + 1)
         : ''
       }}
     </td>

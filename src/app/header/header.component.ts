@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {TEN_SECONDS} from '../util/numbers';
+import {FIVE_SECONDS} from '../util/numbers';
 
 @Component({
   selector: 'app-header',
@@ -8,10 +8,10 @@ import {TEN_SECONDS} from '../util/numbers';
 })
 export class HeaderComponent implements OnInit {
   pages: Array<{ title: string, link: string }> = [
-    {title: 'Meeting', link: '/'},
+    {title: 'Meeting', link: '/meeting'},
     {title: 'Racecard', link: '/racecard'},
-    {title: 'Engine', link: '/engine'},
     {title: 'Trend', link: '/trend'},
+    {title: 'Engine', link: '/engine'},
     {title: 'Odds', link: '/odds'},
 
     // {title: 'Top4s', link: '/top4s'},
@@ -28,7 +28,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.tick();
-    setInterval(() => this.tick(), TEN_SECONDS);
+    setInterval(() => this.tick(), FIVE_SECONDS);
   }
 
   tick = () => {
