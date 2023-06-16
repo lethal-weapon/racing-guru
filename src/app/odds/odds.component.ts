@@ -21,8 +21,7 @@ import {
   QIN_ODDS_STEP,
   FCT_ODDS_STEP,
   DBL_ODDS_STEP,
-  QIN_FCT_DIFF_RATE,
-  DBL_STARTER_BOUNDARY_ODDS
+  QIN_FCT_DIFF_RATE
 } from '../util/numbers';
 import {
   getMaxRace,
@@ -179,20 +178,16 @@ export class OddsComponent implements OnInit {
 
         if (conditions.some(c => !c)) continue;
 
-        let pushedQ = false;
-        const Q = this.getStarterQQPOdds(starterA, starterB)[0];
+        const Q2 = 2 * this.getStarterQQPOdds(starterA, starterB)[0];
         const F1 = this.getStarterFCTOdds(starterA, starterB)[0];
         const F2 = this.getStarterFCTOdds(starterA, starterB)[1];
 
-        if (Math.abs(1 - 2 * Q / F1) <= QIN_FCT_DIFF_RATE) {
-          fct.push([orderA, orderB]);
-          qin.push([orderA, orderB]);
-          pushedQ = true;
-        }
+        if (F1 > F2 + 10) continue;
 
-        if (Math.abs(1 - 2 * Q / F2) <= QIN_FCT_DIFF_RATE) {
+        if (Q2 > F1 && Q2 < F2 * (1 + QIN_FCT_DIFF_RATE)) {
+          qin.push([orderA, orderB]);
+          fct.push([orderA, orderB]);
           fct.push([orderB, orderA]);
-          if (!pushedQ) qin.push([orderA, orderB]);
         }
       }
     }
@@ -369,20 +364,24 @@ export class OddsComponent implements OnInit {
     return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
   }
 
-  isBoundaryStarter = (starter: Starter, isNextRace: boolean = false): boolean =>
-    starter.order === (this.getStarterOrdersWithinBoundary(isNextRace).pop() || 0)
+  getDBLCellBackground = (currIndex: number, nextIndex: number): string => {
+    const currStarters = getStarters(this.activeRacecard).length;
+    const nextStarters = getStarters(this.activeNextRacecard).length;
 
-  isStarterWithinBoundary = (starter: Starter, isNextRace: boolean = false): boolean =>
-    this.getStarterOrdersWithinBoundary(isNextRace).includes(starter.order)
+    const currCount = Math.min(5, Math.floor(currStarters / 2));
+    const nextCount = Math.min(5, Math.floor(nextStarters / 2));
 
-  getStarterOrdersWithinBoundary = (isNextRace: boolean = false): number[] =>
-    (isNextRace ? this.activeNextRacecard : this.activeRacecard)
-      ?.odds
-      ?.winPlace
-      .filter(o => o.win < DBL_STARTER_BOUNDARY_ODDS)
-      .sort((o1, o2) => (o1.win - o2.win) || (o1.place || o2.place) || (o1.order - o2.order))
-      .map(o => o.order)
-    || []
+    const bound = Math.min(currCount, nextCount);
+    const boundH = currStarters - Math.min(bound, Math.floor(currStarters / 2));
+    const boundV = nextStarters - Math.min(bound, Math.floor(nextStarters / 2));
+
+    if (currIndex + nextIndex === bound - 1) return 'diagonal-reverse-line';
+    if (currIndex >= nextIndex + boundH && nextIndex === currIndex - boundH) return 'diagonal-line';
+    if (nextIndex >= currIndex + boundV && currIndex === nextIndex - boundV) return 'diagonal-line';
+    if (currIndex >= boundH && nextIndex >= boundV) return 'diagonal-reverse-line';
+
+    return '';
+  }
 
   getPairBorder = (pool: string, starterA: Starter, starterB: Starter): string => {
     // @ts-ignore

@@ -29,3 +29,7 @@ body {
 .diagonal-line {
   background:linear-gradient(to right top, #111827 0%, #111827 49.9%, #ffffff 50%, #ffffff 51%, #111827 51.1%, #111827 100%);
 }
+
+.diagonal-reverse-line {
+  background:linear-gradient(to left top, #111827 0%, #111827 49.9%, #ffffff 50%, #ffffff 51%, #111827 51.1%, #111827 100%);
+}

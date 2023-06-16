@@ -277,7 +277,6 @@
     <td *ngFor="let starterA of getStarters(this.activeRacecard)"
         class="w-20 border border-gray-700 {{getPlacingColor(starterA.jockey, activeRacecard)}}"
         [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"
-        [class.border-r-yellow-400]="isBoundaryStarter(starterA)"
         [class.cursor-pointer]="!isFavorite(starterA, this.activeRacecard)"
         [class.cursor-not-allowed]="isFavorite(starterA, this.activeRacecard)"
         (click)="toggleTrash(starterA)"
@@ -309,12 +308,10 @@
       </div>
     </td>
   </tr>
-  <tr *ngFor="let starterB of getStarters(this.activeNextRacecard)"
+  <tr *ngFor="let starterB of getStarters(this.activeNextRacecard); let indexB = index"
       class="hover:bg-gray-800"
   >
-    <td class="py-1.5 border border-gray-700 font-bold {{getPlacingColor(starterB.jockey, activeNextRacecard)}}"
-        [class.border-b-yellow-400]="isBoundaryStarter(starterB, true)"
-    >
+    <td class="py-1.5 border border-gray-700 font-bold {{getPlacingColor(starterB.jockey, activeNextRacecard)}}">
       <div class="grid grid-cols-3"
            [class.cursor-pointer]="!isFavorite(starterB, this.activeNextRacecard)"
            [class.cursor-not-allowed]="isFavorite(starterB, this.activeNextRacecard)"
@@ -347,12 +344,13 @@
         </div>
       </div>
     </td>
-    <td *ngFor="let starterA of getStarters(this.activeRacecard)"
-        class="text-lg border border-gray-700 {{getDoubleOddsColor(starterA, starterB)}}"
+    <td *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"
+        class="text-lg border border-gray-700
+               {{getDoubleOddsColor(starterA, starterB)}}
+               {{getDBLCellBackground(indexA, indexB)}}
+              "
         [class.italic]="starterA.draw === starterB.draw"
         [class.underline]="starterA.draw === starterB.draw"
-        [class.border-r-yellow-400]="isBoundaryStarter(starterA) && isStarterWithinBoundary(starterB, true)"
-        [class.border-b-yellow-400]="isBoundaryStarter(starterB, true) && isStarterWithinBoundary(starterA)"
         [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"
         [class.bg-gray-600]="isBothFavorite(starterA, starterB, true)"
         (mouseenter)="hoveredJockey = starterA.jockey"

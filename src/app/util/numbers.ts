@@ -26,4 +26,3 @@ export const FCT_ODDS_STEP = 10;
 export const DBL_ODDS_STEP = 10;
 
 export const QIN_FCT_DIFF_RATE = 0.15;
-export const DBL_STARTER_BOUNDARY_ODDS = 10;
