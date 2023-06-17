@@ -14,6 +14,7 @@ import {
 } from '../util/numbers';
 import {
   isFavorite,
+  isPreferredWQWR,
   getMaxRace,
   getPlacingBorderBackground,
   getRaceBadgeStyle,
@@ -43,6 +44,7 @@ export class EngineComponent implements OnInit {
 
   protected readonly COLORS = COLORS;
   protected readonly isFavorite = isFavorite;
+  protected readonly isPreferredWQWR = isPreferredWQWR;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarters = getStarters;
   protected readonly getRaceBadgeStyle = getRaceBadgeStyle;
@@ -96,19 +98,6 @@ export class EngineComponent implements OnInit {
 
   isBanker = (starter: Starter): boolean =>
     (this.bankers.get(this.activeRace) || []).includes(starter.order);
-
-  isPreferredWQWR = (starter: Starter): boolean => {
-    const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);
-    if (wp.win == 0 || wp.place == 0) return false;
-
-    const W = wp.win;
-    const QW = getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[0];
-    if (W > 30 || QW > W) return false;
-
-    return W < 10 && (W - QW >= 0.5)
-      ? true
-      : Math.abs(1 - W / QW) >= 0.1;
-  }
 
   isPreferredPQPR = (starter: Starter): boolean => {
     const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);

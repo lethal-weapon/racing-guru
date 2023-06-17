@@ -5,6 +5,7 @@ import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
+import {CombinationSignal} from '../model/signal.model';
 import {COLORS} from '../util/strings';
 import {
   THREE_SECONDS,
@@ -31,8 +32,9 @@ import {
   getStarterQQPWinPlaceOdds,
   getStarterWinPlaceOdds,
   getStarters,
+  getCurrentMeeting,
   isFavorite,
-  getCurrentMeeting
+  isPreferredWQWR
 } from '../util/functions';
 
 interface OddsRange {
@@ -95,6 +97,7 @@ export class OddsComponent implements OnInit {
   trashes: Map<number, number[]> = new Map();
 
   protected readonly isFavorite = isFavorite;
+  protected readonly isPreferredWQWR = isPreferredWQWR;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getPlacingColor = getPlacingColor;
   protected readonly getStarters = getStarters;
@@ -184,7 +187,7 @@ export class OddsComponent implements OnInit {
 
         if (F1 > F2 + 10) continue;
 
-        if (Q2 > F1 && Q2 < F2 * (1 + QIN_FCT_DIFF_RATE)) {
+        if (Q2 > F1 && Math.abs(1 - Q2 / F2) <= QIN_FCT_DIFF_RATE) {
           qin.push([orderA, orderB]);
           fct.push([orderA, orderB]);
           fct.push([orderB, orderA]);
@@ -262,19 +265,6 @@ export class OddsComponent implements OnInit {
     isNextRace
       ? this.activeNextTrash.includes(starter.order)
       : this.activeTrash.includes(starter.order)
-
-  isPreferredWQWR = (starter: Starter): boolean => {
-    const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);
-    if (wp.win == 0 || wp.place == 0) return false;
-
-    const W = wp.win;
-    const QW = getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[0];
-    if (QW > W) return false;
-
-    return W < 10 && (W - QW <= 1.5)
-      ? true
-      : Math.abs(1 - W / QW) <= 0.2;
-  }
 
   isShowOdds = (
     pool: string,
@@ -402,6 +392,29 @@ export class OddsComponent implements OnInit {
       if (key.toLowerCase() === pool.toLowerCase()) return value.length;
     }
     return 0;
+  }
+
+  getCombinationSignals = (starterA: Starter, starterB: Starter): CombinationSignal[][] => {
+    const signal = this.activeRacecard?.signal;
+    if (!signal) return [[], [], [], []];
+
+    return [
+      signal.quinella,
+      signal.quinellaPlace,
+      signal.forecast,
+      signal.double
+    ].map((css, index) =>
+      css
+        .filter((cs) =>
+          index < 2
+            ? cs.orders.includes(starterA.order) && cs.orders.includes(starterB.order)
+            : cs.orders[0] == starterA.order && cs.orders[1] == starterB.order
+        )
+        .sort((cs1, cs2) =>
+          new Date(cs2.detectedAt).getTime() -
+          new Date(cs1.detectedAt).getTime()
+        )
+    );
   }
 
   getStarterQQPOdds = (starterA: Starter, starterB: Starter): number[] => {

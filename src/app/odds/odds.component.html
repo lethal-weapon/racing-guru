@@ -154,9 +154,9 @@
           {{getStarterWinPlaceOdds(starterA, this.activeRacecard).place}}
         </div>
         <div class="col-span-2 text-green-600">
-          {{getStarterQQPWinPlaceOdds(starterA, this.activeRacecard)[0].toFixed(2)}}
+          {{getStarterQQPWinPlaceOdds(starterA, this.activeRacecard)[0].toFixed(1)}}
         </div>
-        <div *ngIf="isPreferredWQWR(starterA)"
+        <div *ngIf="isPreferredWQWR(starterA, this.activeRacecard)"
              class="text-yellow-400"
         >
           <i class="fa fa-thumbs-up"></i>
@@ -174,32 +174,64 @@
            class="grid grid-cols-2"
       >
         <div *ngIf="indexB > indexA"
-             class="cursor-pointer border {{getPairBorder('qin', starterA, starterB)}}"
+             class="flex flex-col cursor-pointer border {{getPairBorder('qin', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
              (click)="toggleBet('qin', starterA, starterB)"
         >
-          {{ isShowOdds('qin', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[0] : '-' }}
+          <div>
+            {{ isShowOdds('qin', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[0] : '-' }}
+          </div>
+          <div class="text-green-600 text-sm">
+            {{ getCombinationSignals(starterA, starterB)[0].length > 0
+            ? getCombinationSignals(starterA, starterB)[0].length
+            : ''
+            }}
+          </div>
         </div>
         <div *ngIf="indexB > indexA"
-             class="cursor-pointer border {{getPairBorder('qpl', starterA, starterB)}}"
+             class="flex flex-col cursor-pointer border {{getPairBorder('qpl', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
              (click)="toggleBet('qpl', starterA, starterB)"
         >
-          {{ isShowOdds('qpl', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[1] : '-' }}
+          <div>
+            {{ isShowOdds('qpl', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[1] : '-' }}
+          </div>
+          <div class="text-green-600 text-sm">
+            {{ getCombinationSignals(starterA, starterB)[1].length > 0
+            ? getCombinationSignals(starterA, starterB)[1].length
+            : ''
+            }}
+          </div>
         </div>
         <div *ngIf="indexA > indexB"
-             class="cursor-pointer border {{getPairBorder('fct', starterA, starterB)}}"
+             class="flex flex-col cursor-pointer border {{getPairBorder('fct', starterA, starterB)}}"
              [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
              (click)="toggleBet('fct', starterA, starterB)"
         >
-          {{ isShowOdds('fct', starterA, starterB) ? getStarterFCTOdds(starterA, starterB)[0] : '-' }}
+          <div>
+            {{ isShowOdds('fct', starterA, starterB) ? getStarterFCTOdds(starterA, starterB)[0] : '-' }}
+          </div>
+          <div class="text-green-600 text-sm">
+            {{ getCombinationSignals(starterA, starterB)[2].length > 0
+            ? getCombinationSignals(starterA, starterB)[2].length
+            : ''
+            }}
+          </div>
         </div>
         <div *ngIf="indexA > indexB"
-             class="cursor-pointer border {{getPairBorder('fct', starterB, starterA)}}"
+             class="flex flex-col cursor-pointer border {{getPairBorder('fct', starterB, starterA)}}"
              [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
              (click)="toggleBet('fct', starterB, starterA)"
         >
-          {{ isShowOdds('fct', starterB, starterA, true) ? getStarterFCTOdds(starterA, starterB)[1] : '-' }}
+          <div>
+            {{ isShowOdds('fct', starterB, starterA, true) ? getStarterFCTOdds(starterA, starterB)[1] : '-' }}
+          </div>
+          <div class="text-green-600 text-sm">
+            {{ getCombinationSignals(starterB, starterA)[2].length > 0
+            ? getCombinationSignals(starterB, starterA)[2].length
+            : ''
+            }}
+          </div>
         </div>
       </div>
     </td>
@@ -345,20 +377,26 @@
       </div>
     </td>
     <td *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"
-        class="text-lg border border-gray-700
-               {{getDoubleOddsColor(starterA, starterB)}}
-               {{getDBLCellBackground(indexA, indexB)}}
-              "
-        [class.italic]="starterA.draw === starterB.draw"
-        [class.underline]="starterA.draw === starterB.draw"
+        class="border border-gray-700 {{getDBLCellBackground(indexA, indexB)}}"
         [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"
         [class.bg-gray-600]="isBothFavorite(starterA, starterB, true)"
         (mouseenter)="hoveredJockey = starterA.jockey"
     >
-      <div class="w-3/4 mx-auto cursor-pointer border {{getPairBorder('dbl', starterA, starterB)}}"
+      <div class="flex flex-col w-3/4 mx-auto cursor-pointer border {{getPairBorder('dbl', starterA, starterB)}}"
            (click)="toggleBet('dbl', starterA, starterB)"
       >
-        {{ isShowOdds('dbl', starterA, starterB) ? getStarterDBLOdds(starterA, starterB) : '-' }}
+        <div class="text-lg {{getDoubleOddsColor(starterA, starterB)}}"
+             [class.italic]="starterA.draw === starterB.draw"
+             [class.underline]="starterA.draw === starterB.draw"
+        >
+          {{ isShowOdds('dbl', starterA, starterB) ? getStarterDBLOdds(starterA, starterB) : '-' }}
+        </div>
+        <div class="text-sm text-yellow-400">
+          {{ getCombinationSignals(starterA, starterB)[3].length > 0
+          ? getCombinationSignals(starterA, starterB)[3].length
+          : ''
+          }}
+        </div>
       </div>
     </td>
   </tr>

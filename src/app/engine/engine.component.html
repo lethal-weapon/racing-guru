@@ -35,6 +35,18 @@
 </div>
 
 <div class="mt-2 mx-6 grid grid-cols-4 gap-4 noselect">
+  <div class="px-4 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
+    <div class="text-lg">
+      Controls
+    </div>
+    <div class="my-2 grid grid-cols-2 gap-4">
+      <div class="px-2 pt-1 pb-1.5 rounded-xl border border-gray-600 hover:border-yellow-400 cursor-pointer"
+           (click)="reset()"
+      >
+        Reset
+      </div>
+    </div>
+  </div>
   <div *ngFor="let starter of getStarters(this.activeRacecard)"
        class="px-3 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
   >
@@ -64,7 +76,7 @@
     </div>
     <div class="mt-2 flex flex-row items-center">
       <div class="w-10"
-           [class.invisible]="!isPreferredWQWR(starter)"
+           [class.invisible]="!isPreferredWQWR(starter, this.activeRacecard)"
       >
         <i class="fa fa-lg fa-thumbs-up"></i>
       </div>
@@ -115,18 +127,6 @@
         <div *ngIf="index === 1 && activeRace !== 1">
           {{inv.odds}} ({{inv.percent}})
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="px-4 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
-    <div class="text-lg">
-      Controls
-    </div>
-    <div class="my-2 grid grid-cols-2 gap-4">
-      <div class="px-2 pt-1 pb-1.5 rounded-xl border border-gray-600 hover:border-yellow-400 cursor-pointer"
-           (click)="reset()"
-      >
-        Reset
       </div>
     </div>
   </div>

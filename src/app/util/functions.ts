@@ -1,10 +1,8 @@
-import {ONE_MILLION, PAYOUT_RATE, FCT_TRI_PAYOUT_RATE} from './numbers';
-import {JOCKEY_CODES} from './strings';
-import {COLORS} from './strings';
+import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
-import {Starter} from '../model/starter.model';
-import {Relationship, RELATIONSHIPS} from '../model/relationship.model';
+import {COLORS, JOCKEY_CODES} from './strings';
+import {ONE_MILLION, PAYOUT_RATE, FCT_TRI_PAYOUT_RATE} from './numbers';
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
@@ -117,6 +115,19 @@ export const getStarterDBLWinOdds = (
   });
 }
 
+export const isPreferredWQWR = (starter: Starter, racecard: Racecard): boolean => {
+  const wp = getStarterWinPlaceOdds(starter, racecard);
+  if (wp.win == 0 || wp.place == 0) return false;
+
+  const W = wp.win;
+  const QW = getStarterQQPWinPlaceOdds(starter, racecard)[0];
+  if (W > 30 || QW > W) return false;
+
+  return W < 10 && (W - QW >= 1)
+    ? true
+    : Math.abs(1 - W / QW) >= 0.1;
+}
+
 export const getPlacing = (jockey: string, racecard: Racecard): number => {
   const tierce = racecard?.dividend?.tierce;
   const quartet = racecard?.dividend?.quartet;
@@ -146,10 +157,3 @@ export const getRaceBadgeStyle = (activeRace: number, renderRace: number): strin
   activeRace === renderRace
     ? `text-yellow-400 border-yellow-400`
     : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
-
-export const findRelationship = (personA: string, personB: string): Relationship =>
-  RELATIONSHIPS.find(r =>
-    (r.personA === personA && r.personB === personB) ||
-    (r.personA === personB && r.personB === personA)
-  )
-  || {personA: personA, personB: personB, weight: 0}
