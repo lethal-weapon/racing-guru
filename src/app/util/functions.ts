@@ -128,6 +128,19 @@ export const isPreferredWQWR = (starter: Starter, racecard: Racecard): boolean =
     : Math.abs(1 - W / QW) >= 0.1;
 }
 
+export const isPreferredPQPR = (starter: Starter, racecard: Racecard): boolean => {
+  const wp = getStarterWinPlaceOdds(starter, racecard);
+  if (wp.win == 0 || wp.place == 0) return false;
+
+  const P = 3 * wp.place;
+  const QPP = 3 * getStarterQQPWinPlaceOdds(starter, racecard)[1];
+  if (P > 30 || QPP > P) return false;
+
+  return P < 10 && (P - QPP >= 1)
+    ? true
+    : Math.abs(1 - P / QPP) >= 0.1;
+}
+
 export const getPlacing = (jockey: string, racecard: Racecard): number => {
   const tierce = racecard?.dividend?.tierce;
   const quartet = racecard?.dividend?.quartet;

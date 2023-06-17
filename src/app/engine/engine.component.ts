@@ -3,6 +3,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
+import {SingularSignal} from '../model/signal.model';
 import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {COLORS} from '../util/strings';
@@ -15,6 +16,7 @@ import {
 import {
   isFavorite,
   isPreferredWQWR,
+  isPreferredPQPR,
   getMaxRace,
   getPlacingBorderBackground,
   getRaceBadgeStyle,
@@ -45,6 +47,7 @@ export class EngineComponent implements OnInit {
   protected readonly COLORS = COLORS;
   protected readonly isFavorite = isFavorite;
   protected readonly isPreferredWQWR = isPreferredWQWR;
+  protected readonly isPreferredPQPR = isPreferredPQPR;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarters = getStarters;
   protected readonly getRaceBadgeStyle = getRaceBadgeStyle;
@@ -99,19 +102,6 @@ export class EngineComponent implements OnInit {
   isBanker = (starter: Starter): boolean =>
     (this.bankers.get(this.activeRace) || []).includes(starter.order);
 
-  isPreferredPQPR = (starter: Starter): boolean => {
-    const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);
-    if (wp.win == 0 || wp.place == 0) return false;
-
-    const P = 3 * wp.place;
-    const QPP = 3 * getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[1];
-    if (P > 30 || QPP > P) return false;
-
-    return P < 10 && (P - QPP >= 0.5)
-      ? true
-      : Math.abs(1 - P / QPP) >= 0.1;
-  }
-
   isPreferredWDWR = (starter: Starter): boolean => {
     const wp = getStarterWinPlaceOdds(starter, this.activeRacecard);
     if (wp.win == 0 || wp.place == 0) return false;
@@ -154,6 +144,22 @@ export class EngineComponent implements OnInit {
           percent: `${(100 * rate / odds).toFixed(1)}%`
         }
       });
+  }
+
+  getSingularSignals = (starter: Starter): SingularSignal[][] => {
+    const signal = this.activeRacecard?.signal;
+    if (!signal) return [[], []];
+
+    return [signal.win, signal.place].map(css =>
+      css
+        .filter((cs) =>
+          cs.order == starter.order
+        )
+        .sort((cs1, cs2) =>
+          new Date(cs2.detectedAt).getTime() -
+          new Date(cs1.detectedAt).getTime()
+        )
+    );
   }
 
   getHorseNameCH = (horseCode: string): string =>
