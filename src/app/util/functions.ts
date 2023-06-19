@@ -1,11 +1,22 @@
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
+import {SingularSignal, CombinationSignal} from '../model/signal.model';
 import {COLORS, JOCKEY_CODES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE, FCT_TRI_PAYOUT_RATE} from './numbers';
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
+
+export const toHourMinute = (datetime: string): string => {
+  const dt = new Date(datetime);
+  let time = `${dt.getHours()}:${dt.getMinutes()}`;
+
+  if (dt.getMinutes() === 0) time += '0';
+  else if (dt.getMinutes() < 10) time = `${dt.getHours()}:0${dt.getMinutes()}`;
+
+  return time;
+}
 
 export const isFavorite = (starter: Starter, racecard: Racecard): boolean =>
   racecard.favorites.includes(starter.order)
@@ -139,6 +150,12 @@ export const isPreferredPQPR = (starter: Starter, racecard: Racecard): boolean =
   return P < 10 && (P - QPP >= 1)
     ? true
     : Math.abs(1 - P / QPP) >= 0.1;
+}
+
+export const getSignalColor = (signals: SingularSignal[] | CombinationSignal[]): string => {
+  if (signals.length > 1) return COLORS[0];
+
+  return COLORS[1];
 }
 
 export const getPlacing = (jockey: string, racecard: Racecard): number => {

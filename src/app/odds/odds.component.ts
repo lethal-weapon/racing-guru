@@ -28,13 +28,15 @@ import {
   getMaxRace,
   getPlacing,
   getPlacingColor,
+  getSignalColor,
   getRaceBadgeStyle,
   getStarterQQPWinPlaceOdds,
   getStarterWinPlaceOdds,
   getStarters,
   getCurrentMeeting,
   isFavorite,
-  isPreferredWQWR
+  isPreferredWQWR,
+  toHourMinute
 } from '../util/functions';
 
 interface OddsRange {
@@ -100,6 +102,7 @@ export class OddsComponent implements OnInit {
   protected readonly isPreferredWQWR = isPreferredWQWR;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getPlacingColor = getPlacingColor;
+  protected readonly getSignalColor = getSignalColor;
   protected readonly getStarters = getStarters;
   protected readonly getStarterWinPlaceOdds = getStarterWinPlaceOdds;
   protected readonly getStarterQQPWinPlaceOdds = getStarterQQPWinPlaceOdds;
@@ -405,7 +408,7 @@ export class OddsComponent implements OnInit {
       signal.double
     ].map((css, index) =>
       css
-        .filter((cs) =>
+        .filter(cs =>
           index < 2
             ? cs.orders.includes(starterA.order) && cs.orders.includes(starterB.order)
             : cs.orders[0] == starterA.order && cs.orders[1] == starterB.order
@@ -416,6 +419,26 @@ export class OddsComponent implements OnInit {
         )
     );
   }
+
+  getSignalTooltip = (starterA: Starter, starterB: Starter): string[] =>
+    this.getCombinationSignals(starterA, starterB).map(css => {
+        if (css.length === 0) return '';
+
+        const changeTable = css.map(cs => `
+          <div class="flex flex-row">
+            <div class="w-12 text-red-600">${toHourMinute(cs.detectedAt)}</div>
+            <div class="w-9">${cs.previousOdds}</div>
+            <div class="w-5">&#8594;</div>
+            <div class="w-9">${cs.currentOdds}</div>
+            <div class="w-9 text-green-600">
+              ${Math.floor(100 * (1 - cs.currentOdds / cs.previousOdds))}%
+            </div>
+          </div>
+        `).join('');
+
+        return `<div class="w-44 flex flex-col"> ${changeTable} </div>`;
+      }
+    );
 
   getStarterQQPOdds = (starterA: Starter, starterB: Starter): number[] => {
     if (!this.activeRacecard?.odds) return [0, 0];
