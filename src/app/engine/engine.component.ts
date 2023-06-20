@@ -152,9 +152,7 @@ export class EngineComponent implements OnInit {
 
     return [signal.win, signal.place].map(css =>
       css
-        .filter((cs) =>
-          cs.order == starter.order
-        )
+        .filter(cs => cs.order == starter.order)
         .sort((cs1, cs2) =>
           new Date(cs2.detectedAt).getTime() -
           new Date(cs1.detectedAt).getTime()

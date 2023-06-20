@@ -8,14 +8,20 @@ import {ONE_MILLION, PAYOUT_RATE, FCT_TRI_PAYOUT_RATE} from './numbers';
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
 
-export const toHourMinute = (datetime: string): string => {
-  const dt = new Date(datetime);
-  let time = `${dt.getHours()}:${dt.getMinutes()}`;
+export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
+  const spotTime = new Date(detectedAt);
+  const diff = Math.floor((raceTime.getTime() - spotTime.getTime()) / 1000);
 
-  if (dt.getMinutes() === 0) time += '0';
-  else if (dt.getMinutes() < 10) time = `${dt.getHours()}:0${dt.getMinutes()}`;
+  const totalSeconds = Math.abs(diff);
+  if (diff <= 0) return `+${totalSeconds}S`;
 
-  return time;
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) return `${hours}H`;
+  if (minutes > 0) return `${minutes}M`;
+  return `${seconds}S`;
 }
 
 export const isFavorite = (starter: Starter, racecard: Racecard): boolean =>
