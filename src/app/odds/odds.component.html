@@ -346,12 +346,15 @@
       <div class="{{ getPlacingColor(starterA.jockey, activeRacecard) || 'text-red-600' }}">
         {{getStarterWinPlaceOdds(starterA, this.activeRacecard).win}}
       </div>
+      <div class="{{getDBLBankerSignalCount(starterA, true) > 0 ? 'text-yellow-400' : ''}}">
+        {{getDBLBankerSignalCount(starterA, true)}}
+      </div>
     </td>
   </tr>
   <tr *ngFor="let starterB of getStarters(this.activeNextRacecard); let indexB = index"
       class="hover:bg-gray-800"
   >
-    <td class="py-1.5 border border-gray-700 font-bold {{getPlacingColor(starterB.jockey, activeNextRacecard)}}">
+    <td class="py-1 border border-gray-700 font-bold {{getPlacingColor(starterB.jockey, activeNextRacecard)}}">
       <div class="grid grid-cols-3"
            [class.cursor-pointer]="!isFavorite(starterB, this.activeNextRacecard)"
            [class.cursor-not-allowed]="isFavorite(starterB, this.activeNextRacecard)"
@@ -365,6 +368,10 @@
         </div>
         <div>
           {{starterB.order}}
+          /
+          <span class="{{getDBLBankerSignalCount(starterB, false) > 0 ? 'text-yellow-400' : ''}}">
+            {{getDBLBankerSignalCount(starterB, false)}}
+          </span>
         </div>
         <div class="col-span-2">
           {{getHorseNameCH(starterB.horse)}}

@@ -397,6 +397,15 @@ export class OddsComponent implements OnInit {
     return 0;
   }
 
+  getDBLBankerSignalCount = (banker: Starter, isFirstLeg: boolean): number =>
+    getStarters(isFirstLeg ? this.activeNextRacecard : this.activeRacecard)
+      .map(leg => this.getCombinationSignals(
+          isFirstLeg ? banker : leg,
+          isFirstLeg ? leg : banker
+        )[3].length
+      )
+      .reduce((prev, curr) => prev + curr, 0);
+
   getCombinationSignals = (starterA: Starter, starterB: Starter): CombinationSignal[][] => {
     const signal = this.activeRacecard?.signal;
     if (!signal) return [[], [], [], []];
