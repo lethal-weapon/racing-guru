@@ -156,10 +156,17 @@
         <div class="col-span-2 text-green-600">
           {{getStarterQQPWinPlaceOdds(starterA, this.activeRacecard)[0].toFixed(1)}}
         </div>
-        <div *ngIf="isPreferredWQWR(starterA, this.activeRacecard)"
-             class="text-yellow-400"
-        >
-          <i class="fa fa-thumbs-up"></i>
+        <div class="flex flex-row justify-evenly">
+          <div *ngIf="getSingularSignals(starterA)[0].length > 0"
+               class="text-red-600"
+          >
+            {{ getSingularSignals(starterA)[0].length }}
+          </div>
+          <div *ngIf="getSingularSignals(starterA)[1].length > 0"
+               class="text-blue-600"
+          >
+            {{ getSingularSignals(starterA)[1].length }}
+          </div>
         </div>
       </div>
     </td>
@@ -343,10 +350,10 @@
           <i class="fa fa-star"></i>
         </div>
       </div>
-      <div class="{{ getPlacingColor(starterA.jockey, activeRacecard) || 'text-red-600' }}">
+      <div class="{{getPlacingColor(starterA.jockey, activeRacecard) || 'text-red-600'}}">
         {{getStarterWinPlaceOdds(starterA, this.activeRacecard).win}}
       </div>
-      <div class="{{getDBLBankerSignalCount(starterA, true) > 0 ? 'text-yellow-400' : ''}}">
+      <div class="{{getDBLBankerSignalCount(starterA, true) > 0 ? 'text-yellow-400' : 'invisible'}}">
         {{getDBLBankerSignalCount(starterA, true)}}
       </div>
     </td>
@@ -366,12 +373,15 @@
         <div>
           {{starterB.trainer}}
         </div>
-        <div>
-          {{starterB.order}}
-          /
-          <span class="{{getDBLBankerSignalCount(starterB, false) > 0 ? 'text-yellow-400' : ''}}">
+        <div class="flex flex-row justify-evenly">
+          <div>
+            {{starterB.order}}
+          </div>
+          <div *ngIf="getDBLBankerSignalCount(starterB, false) > 0"
+               class="text-yellow-400"
+          >
             {{getDBLBankerSignalCount(starterB, false)}}
-          </span>
+          </div>
         </div>
         <div class="col-span-2">
           {{getHorseNameCH(starterB.horse)}}

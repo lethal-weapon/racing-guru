@@ -5,7 +5,7 @@ import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
-import {CombinationSignal} from '../model/signal.model';
+import {SingularSignal, CombinationSignal} from '../model/signal.model';
 import {COLORS} from '../util/strings';
 import {
   THREE_SECONDS,
@@ -35,7 +35,6 @@ import {
   getStarters,
   getCurrentMeeting,
   isFavorite,
-  isPreferredWQWR,
   toRelativeTime
 } from '../util/functions';
 
@@ -99,7 +98,6 @@ export class OddsComponent implements OnInit {
   trashes: Map<number, number[]> = new Map();
 
   protected readonly isFavorite = isFavorite;
-  protected readonly isPreferredWQWR = isPreferredWQWR;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getPlacingColor = getPlacingColor;
   protected readonly getSignalColor = getSignalColor;
@@ -405,6 +403,20 @@ export class OddsComponent implements OnInit {
         )[3].length
       )
       .reduce((prev, curr) => prev + curr, 0);
+
+  getSingularSignals = (starter: Starter): SingularSignal[][] => {
+    const signal = this.activeRacecard?.signal;
+    if (!signal) return [[], []];
+
+    return [signal.win, signal.place].map(css =>
+      css
+        .filter(cs => cs.order == starter.order)
+        .sort((cs1, cs2) =>
+          new Date(cs2.detectedAt).getTime() -
+          new Date(cs1.detectedAt).getTime()
+        )
+    );
+  }
 
   getCombinationSignals = (starterA: Starter, starterB: Starter): CombinationSignal[][] => {
     const signal = this.activeRacecard?.signal;
