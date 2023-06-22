@@ -139,7 +139,10 @@
   <tr *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"
       class="hover:bg-gray-800"
   >
-    <td class="border border-gray-700 font-bold">
+    <td class="border border-gray-700 font-bold"
+        tooltip="{{getSingularSignalTooltip(starterA)}}"
+        [hideDelay]="0"
+    >
       <div class="grid grid-cols-4">
         <div class="text-red-600">
           {{getStarterWinPlaceOdds(starterA, this.activeRacecard).win}}
@@ -160,12 +163,12 @@
           <div *ngIf="getSingularSignals(starterA)[0].length > 0"
                class="text-red-600"
           >
-            {{ getSingularSignals(starterA)[0].length }}
+            {{getSingularSignals(starterA)[0].length}}
           </div>
           <div *ngIf="getSingularSignals(starterA)[1].length > 0"
                class="text-blue-600"
           >
-            {{ getSingularSignals(starterA)[1].length }}
+            {{getSingularSignals(starterA)[1].length}}
           </div>
         </div>
       </div>
@@ -182,7 +185,7 @@
       >
         <div *ngIf="indexB > indexA"
              class="flex flex-col cursor-pointer border {{getPairBorder('qin', starterA, starterB)}}"
-             tooltip="{{getSignalTooltip(starterA, starterB)[0]}}"
+             tooltip="{{getCombinationSignalTooltip(starterA, starterB)[0]}}"
              [hideDelay]="0"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
              (click)="toggleBet('qin', starterA, starterB)"
@@ -199,7 +202,7 @@
         </div>
         <div *ngIf="indexB > indexA"
              class="flex flex-col cursor-pointer border {{getPairBorder('qpl', starterA, starterB)}}"
-             tooltip="{{getSignalTooltip(starterA, starterB)[1]}}"
+             tooltip="{{getCombinationSignalTooltip(starterA, starterB)[1]}}"
              [hideDelay]="0"
              [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
              (click)="toggleBet('qpl', starterA, starterB)"
@@ -216,7 +219,7 @@
         </div>
         <div *ngIf="indexA > indexB"
              class="flex flex-col cursor-pointer border {{getPairBorder('fct', starterA, starterB)}}"
-             tooltip="{{getSignalTooltip(starterA, starterB)[2]}}"
+             tooltip="{{getCombinationSignalTooltip(starterA, starterB)[2]}}"
              [hideDelay]="0"
              [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
              (click)="toggleBet('fct', starterA, starterB)"
@@ -233,7 +236,7 @@
         </div>
         <div *ngIf="indexA > indexB"
              class="flex flex-col cursor-pointer border {{getPairBorder('fct', starterB, starterA)}}"
-             tooltip="{{getSignalTooltip(starterB, starterA)[2]}}"
+             tooltip="{{getCombinationSignalTooltip(starterB, starterA)[2]}}"
              [hideDelay]="0"
              [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
              (click)="toggleBet('fct', starterB, starterA)"
@@ -408,7 +411,7 @@
         (mouseenter)="hoveredJockey = starterA.jockey"
     >
       <div class="flex flex-col w-3/4 mx-auto cursor-pointer border {{getPairBorder('dbl', starterA, starterB)}}"
-           tooltip="{{getSignalTooltip(starterA, starterB)[3]}}"
+           tooltip="{{getCombinationSignalTooltip(starterA, starterB)[3]}}"
            [hideDelay]="0"
            (click)="toggleBet('dbl', starterA, starterB)"
       >

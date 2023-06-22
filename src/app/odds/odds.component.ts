@@ -408,12 +408,11 @@ export class OddsComponent implements OnInit {
     const signal = this.activeRacecard?.signal;
     if (!signal) return [[], []];
 
-    return [signal.win, signal.place].map(css =>
-      css
-        .filter(cs => cs.order == starter.order)
-        .sort((cs1, cs2) =>
-          new Date(cs2.detectedAt).getTime() -
-          new Date(cs1.detectedAt).getTime()
+    return [signal.win, signal.place].map(ss =>
+      ss.filter(s => s.order == starter.order)
+        .sort((s1, s2) =>
+          new Date(s2.detectedAt).getTime() -
+          new Date(s1.detectedAt).getTime()
         )
     );
   }
@@ -441,28 +440,34 @@ export class OddsComponent implements OnInit {
     );
   }
 
-  getSignalTooltip = (starterA: Starter, starterB: Starter): string[] => {
+  toSignalTooltip = (signals: SingularSignal[] | CombinationSignal[]): string => {
+    if (signals.length === 0) return '';
+
     const raceTime = new Date(this.activeRacecard.time);
-    return this.getCombinationSignals(starterA, starterB)
-      .map(css => {
-          if (css.length === 0) return '';
+    const changes = signals.map(s => `
+      <div class="flex flex-row">
+        <div class="w-12 text-red-600">${toRelativeTime(raceTime, s.detectedAt)}</div>
+        <div class="w-9">${s.previousOdds}</div>
+        <div class="w-5">&#8594;</div>
+        <div class="w-9">${s.currentOdds}</div>
+        <div class="w-9 text-green-600">
+          ${Math.floor(100 * (1 - s.currentOdds / s.previousOdds))}%
+        </div>
+      </div>
+    `).join('');
 
-          const changes = css.map(cs => `
-            <div class="flex flex-row">
-              <div class="w-12 text-red-600">${toRelativeTime(raceTime, cs.detectedAt)}</div>
-              <div class="w-9">${cs.previousOdds}</div>
-              <div class="w-5">&#8594;</div>
-              <div class="w-9">${cs.currentOdds}</div>
-              <div class="w-9 text-green-600">
-                ${Math.floor(100 * (1 - cs.currentOdds / cs.previousOdds))}%
-              </div>
-            </div>
-          `).join('');
-
-          return `<div class="w-44 flex flex-col"> ${changes} </div>`;
-        }
-      );
+    return `<div class="w-44 flex flex-col"> ${changes} </div>`;
   }
+
+  getSingularSignalTooltip = (starter: Starter): string =>
+    this.toSignalTooltip(
+      this.getSingularSignals(starter)
+        .reduce((prev, curr) => prev.concat(curr), [])
+    )
+
+  getCombinationSignalTooltip = (starterA: Starter, starterB: Starter): string[] =>
+    this.getCombinationSignals(starterA, starterB)
+      .map(css => this.toSignalTooltip(css))
 
   getStarterQQPOdds = (starterA: Starter, starterB: Starter): number[] => {
     if (!this.activeRacecard?.odds) return [0, 0];
