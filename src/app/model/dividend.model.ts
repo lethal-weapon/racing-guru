@@ -15,3 +15,11 @@ export class Dividend {
   ) {
   }
 }
+
+export const DEFAULT_SINGULARS: Singular[] = [{order: 0, odds: 0}]
+export const DEFAULT_COMBINATIONS: Combination[] = [
+  {orders: [0, 0, 0, 0], odds: 0},
+  {orders: [0, 0, 0, 0], odds: 0},
+  {orders: [0, 0, 0, 0], odds: 0},
+  {orders: [0, 0, 0, 0], odds: 0},
+]

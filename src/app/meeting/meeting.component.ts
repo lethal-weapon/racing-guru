@@ -5,10 +5,12 @@ import {WebsocketService} from '../model/websocket.service';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {Starter} from '../model/starter.model';
 import {RestRepository} from '../model/rest.repository';
+import {DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from "../model/dividend.model";
 import {ONE_MILLION, THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_JOCKEYS} from '../util/strings';
 import {
   toMillion,
+  getMaxRace,
   getPlacing,
   getStarter,
   getTrainer,
@@ -18,6 +20,11 @@ import {
   getCurrentMeeting,
   getNewFavorites
 } from '../util/functions';
+
+interface DividendPool {
+  name: string,
+  threshold: number
+}
 
 @Component({
   selector: 'app-meeting',
@@ -30,6 +37,7 @@ export class MeetingComponent implements OnInit {
   activeTrainer: string = '';
   activeDraw: number = 0;
 
+  protected readonly getMaxRace = getMaxRace;
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;
   protected readonly getWinPlaceOdds = getWinPlaceOdds;
@@ -298,6 +306,84 @@ export class MeetingComponent implements OnInit {
       const jockey = r.starters.find(s => s.order === order)?.jockey;
       return jockey && placing === getPlacing(jockey, r);
     }).length
+
+  getDividendOdds = (race: number, pool: string): number => {
+    const d = this.racecards.find(r => r.race === race)?.dividend;
+    try {
+      switch (pool) {
+        case 'WIN':
+          return (d?.win || DEFAULT_SINGULARS)[0].odds
+        case 'QIN':
+          return Math.floor((d?.quinella || DEFAULT_COMBINATIONS)[0].odds)
+        case 'FCT':
+          return Math.floor((d?.forecast || DEFAULT_COMBINATIONS)[0].odds)
+        case 'TRI':
+          return Math.floor((d?.trio || DEFAULT_COMBINATIONS)[0].odds)
+        case 'F-F':
+          return Math.floor((d?.firstFour || DEFAULT_COMBINATIONS)[0].odds)
+        case 'TCE':
+          return Math.floor((d?.tierce || DEFAULT_COMBINATIONS)[0].odds)
+        case 'QTT':
+          return Math.floor((d?.quartet || DEFAULT_COMBINATIONS)[0].odds)
+
+        case 'PLA-1':
+          return (d?.place || DEFAULT_SINGULARS)[0].odds
+        case 'PLA-2':
+          return (d?.place || DEFAULT_SINGULARS)[1].odds
+        case 'PLA-3':
+          return (d?.place || DEFAULT_SINGULARS)[2].odds
+
+        case 'QPL-1':
+          return (d?.quinellaPlace || DEFAULT_COMBINATIONS)[0].odds
+        case 'QPL-2':
+          return (d?.quinellaPlace || DEFAULT_COMBINATIONS)[1].odds
+        case 'QPL-3':
+          return (d?.quinellaPlace || DEFAULT_COMBINATIONS)[2].odds
+
+        case 'DBL-1':
+          return Math.floor((d?.double || DEFAULT_COMBINATIONS)[0].odds)
+        case 'DBL-2':
+          return (d?.double || DEFAULT_COMBINATIONS)[1].odds
+
+        default:
+          return 0
+      }
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  getDividendTop4 = (race: number): number[] => {
+    const dividend = this.racecards.find(r => r.race === race)?.dividend;
+    const tierce = dividend?.tierce;
+    const quartet = dividend?.quartet;
+
+    if (!tierce) return [];
+    let orders = tierce[0].orders;
+    if (quartet) orders = quartet[0].orders;
+
+    return orders;
+  }
+
+  get dividendPools(): DividendPool[] {
+    return [
+      {name: 'WIN', threshold: 8},
+      {name: 'QIN', threshold: 40},
+      {name: 'FCT', threshold: 80},
+      {name: 'TRI', threshold: 100},
+      {name: 'F-F', threshold: 100},
+      {name: 'TCE', threshold: 300},
+      {name: 'QTT', threshold: 3000},
+      {name: 'PLA-1', threshold: 4},
+      {name: 'PLA-2', threshold: 4},
+      {name: 'PLA-3', threshold: 4},
+      {name: 'QPL-1', threshold: 20},
+      {name: 'QPL-2', threshold: 20},
+      {name: 'QPL-3', threshold: 20},
+      {name: 'DBL-1', threshold: 60},
+      {name: 'DBL-2', threshold: 20},
+    ];
+  }
 
   get placingMaps(): Array<{ placing: string, color: string }> {
     return [

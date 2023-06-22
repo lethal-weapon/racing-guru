@@ -169,11 +169,7 @@
     <td *counter="let draw of maxDraw"
         class="border border-gray-700 {{m.color}}"
     >
-      {{
-      getDrawPerformance(draw, index + 1) > 0
-        ? getDrawPerformance(draw, index + 1)
-        : ''
-      }}
+      {{getDrawPerformance(draw, index + 1) > 0 ? getDrawPerformance(draw, index + 1) : ''}}
     </td>
   </tr>
   </tbody>
@@ -198,11 +194,47 @@
     <td *counter="let order of maxOrder"
         class="border border-gray-700 {{m.color}}"
     >
-      {{
-      getOrderPerformance(order, index + 1) > 0
-        ? getOrderPerformance(order, index + 1)
-        : ''
-      }}
+      {{getOrderPerformance(order, index + 1) > 0 ? getOrderPerformance(order, index + 1) : ''}}
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<table class="mx-auto mt-10 table-fixed border-collapse border border-gray-700 text-center noselect">
+  <thead>
+  <th class="w-16 border border-gray-600">
+    Race
+  </th>
+  <th class="w-32 border border-gray-600 border-r-red-900">
+    Top 4
+  </th>
+  <th *ngFor="let pool of dividendPools"
+      class="w-20 border border-gray-600"
+      [class.border-r-red-900]="['QTT', 'PLA-3', 'QPL-3'].includes(pool.name)"
+  >
+    {{pool.name}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *counter="let race of getMaxRace(this.racecards)"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700">
+      {{race}}
+    </td>
+    <td class="px-1 border border-gray-700 border-r-red-900">
+      <div class="grid grid-cols-4">
+        <div *ngFor="let s of getDividendTop4(race)">
+          {{s}}
+        </div>
+      </div>
+    </td>
+    <td *ngFor="let pool of dividendPools"
+        class="border border-gray-700"
+        [class.border-r-red-900]="['QTT', 'PLA-3', 'QPL-3'].includes(pool.name)"
+        [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
+    >
+      {{getDividendOdds(race, pool.name) > 0 ? getDividendOdds(race, pool.name) : ''}}
     </td>
   </tr>
   </tbody>
