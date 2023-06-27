@@ -23,3 +23,7 @@ export const BOUNDARY_TRAINERS = [
 
 export const BOUNDARY_PERSONS =
   BOUNDARY_JOCKEYS.concat(BOUNDARY_TRAINERS);
+
+export const BOUNDARY_POOLS = [
+  'F-F', 'QTT', 'PLA-3', 'QPL-3'
+];

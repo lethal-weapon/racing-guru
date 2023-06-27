@@ -7,7 +7,7 @@ import {Starter} from '../model/starter.model';
 import {RestRepository} from '../model/rest.repository';
 import {DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from "../model/dividend.model";
 import {ONE_MILLION, THREE_SECONDS} from '../util/numbers';
-import {BOUNDARY_JOCKEYS} from '../util/strings';
+import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS} from '../util/strings';
 import {
   toMillion,
   getMaxRace,
@@ -37,6 +37,7 @@ export class MeetingComponent implements OnInit {
   activeTrainer: string = '';
   activeDraw: number = 0;
 
+  protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;

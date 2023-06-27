@@ -1,10 +1,7 @@
-<div class="flex flex-row justify-evenly noselect"
-     [class.my-8]="maxRace <= 9"
-     [class.my-6]="maxRace === 10"
-     [class.my-4]="maxRace === 11"
->
+<div class="my-4 flex flex-row justify-evenly noselect">
   <div *ngIf="summary.length > 0"
-       class="px-6 py-4 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
+       class="px-6 py-4 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
+  >
     {{summary[0]}}
     <br>
     {{summary[1]}}
@@ -147,60 +144,7 @@
   </tbody>
 </table>
 
-<table class="mx-auto table-fixed border-collapse border border-gray-700 text-center noselect"
-       [class.mt-12]="maxRace <= 9"
-       [class.mt-6]="maxRace === 10"
->
-  <thead>
-  <th class="w-20 border border-gray-700">
-    Draw
-  </th>
-  <th *counter="let draw of maxDraw"
-      class="w-20 border border-gray-700"
-  >
-    {{draw}}
-  </th>
-  </thead>
-  <tbody>
-  <tr *ngFor="let m of placingMaps; let index = index">
-    <td class="border border-gray-700 font-bold {{m.color}}">
-      {{m.placing}}
-    </td>
-    <td *counter="let draw of maxDraw"
-        class="border border-gray-700 {{m.color}}"
-    >
-      {{getDrawPerformance(draw, index + 1) > 0 ? getDrawPerformance(draw, index + 1) : ''}}
-    </td>
-  </tr>
-  </tbody>
-</table>
-
-<table class="mx-auto mt-10 table-fixed border-collapse border border-gray-700 text-center noselect">
-  <thead>
-  <th class="w-20 border border-gray-700">
-    Order
-  </th>
-  <th *counter="let order of maxOrder"
-      class="w-20 border border-gray-700"
-  >
-    {{order}}
-  </th>
-  </thead>
-  <tbody>
-  <tr *ngFor="let m of placingMaps; let index = index">
-    <td class="border border-gray-700 font-bold {{m.color}}">
-      {{m.placing}}
-    </td>
-    <td *counter="let order of maxOrder"
-        class="border border-gray-700 {{m.color}}"
-    >
-      {{getOrderPerformance(order, index + 1) > 0 ? getOrderPerformance(order, index + 1) : ''}}
-    </td>
-  </tr>
-  </tbody>
-</table>
-
-<table class="mx-auto mt-10 table-fixed border-collapse border border-gray-700 text-center noselect">
+<table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center noselect">
   <thead>
   <th class="w-16 border border-gray-600">
     Race
@@ -210,7 +154,7 @@
   </th>
   <th *ngFor="let pool of dividendPools"
       class="w-20 border border-gray-600"
-      [class.border-r-red-900]="['QTT', 'PLA-3', 'QPL-3'].includes(pool.name)"
+      [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
   >
     {{pool.name}}
   </th>
@@ -231,10 +175,64 @@
     </td>
     <td *ngFor="let pool of dividendPools"
         class="border border-gray-700"
-        [class.border-r-red-900]="['QTT', 'PLA-3', 'QPL-3'].includes(pool.name)"
+        [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
         [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
     >
       {{getDividendOdds(race, pool.name) > 0 ? getDividendOdds(race, pool.name) : ''}}
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<table class="mt-10 mx-auto table-fixed border-collapse border border-gray-700 text-center noselect">
+  <thead>
+  <th class="w-20 border border-gray-700">
+    Draw
+  </th>
+  <th *counter="let draw of maxDraw"
+      class="w-20 border border-gray-700"
+  >
+    {{draw}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let m of placingMaps; let index = index"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700 font-bold {{m.color}}">
+      {{m.placing}}
+    </td>
+    <td *counter="let draw of maxDraw"
+        class="border border-gray-700 {{m.color}}"
+    >
+      {{getDrawPerformance(draw, index + 1) > 0 ? getDrawPerformance(draw, index + 1) : ''}}
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<table class="mx-auto table-fixed border-collapse border border-gray-700 text-center noselect">
+  <thead>
+  <th class="w-20 border border-gray-700">
+    Order
+  </th>
+  <th *counter="let order of maxOrder"
+      class="w-20 border border-gray-700"
+  >
+    {{order}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let m of placingMaps; let index = index"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700 font-bold {{m.color}}">
+      {{m.placing}}
+    </td>
+    <td *counter="let order of maxOrder"
+        class="border border-gray-700 {{m.color}}"
+    >
+      {{getOrderPerformance(order, index + 1) > 0 ? getOrderPerformance(order, index + 1) : ''}}
     </td>
   </tr>
   </tbody>
