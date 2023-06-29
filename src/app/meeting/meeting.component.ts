@@ -7,7 +7,7 @@ import {Starter} from '../model/starter.model';
 import {RestRepository} from '../model/rest.repository';
 import {DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from "../model/dividend.model";
 import {ONE_MILLION, THREE_SECONDS} from '../util/numbers';
-import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS} from '../util/strings';
+import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, PLACING_MAPS} from '../util/strings';
 import {
   toMillion,
   getMaxRace,
@@ -37,6 +37,7 @@ export class MeetingComponent implements OnInit {
   activeTrainer: string = '';
   activeDraw: number = 0;
 
+  protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarter = getStarter;
@@ -383,15 +384,6 @@ export class MeetingComponent implements OnInit {
       {name: 'QPL-3', threshold: 20},
       {name: 'DBL-1', threshold: 60},
       {name: 'DBL-2', threshold: 20},
-    ];
-  }
-
-  get placingMaps(): Array<{ placing: string, color: string }> {
-    return [
-      {placing: 'W', color: 'text-red-600'},
-      {placing: 'Q', color: 'text-green-600'},
-      {placing: 'P', color: 'text-blue-600'},
-      {placing: 'F', color: 'text-purple-600'},
     ];
   }
 

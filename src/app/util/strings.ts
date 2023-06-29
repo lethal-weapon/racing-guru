@@ -1,5 +1,10 @@
 import {JOCKEYS} from '../model/person.model';
 
+export interface PlacingMap {
+  placing: string,
+  color: string
+}
+
 export const COMMON_HORSE_ORIGINS = [
   'AUS', 'NZ', 'IRE'
 ];
@@ -11,6 +16,13 @@ export const COLORS = [
   'text-purple-600',
 ];
 
+export const PLACING_MAPS: PlacingMap[] = [
+  {placing: 'W', color: 'text-red-600'},
+  {placing: 'Q', color: 'text-green-600'},
+  {placing: 'P', color: 'text-blue-600'},
+  {placing: 'F', color: 'text-purple-600'}
+];
+
 export const JOCKEY_CODES = JOCKEYS.map(j => j.code);
 
 export const BOUNDARY_JOCKEYS = [
@@ -18,7 +30,7 @@ export const BOUNDARY_JOCKEYS = [
 ];
 
 export const BOUNDARY_TRAINERS = [
-  'HAD', 'MKL', 'TKH'
+  'HAD', 'YTP', 'TKH'
 ];
 
 export const BOUNDARY_PERSONS =

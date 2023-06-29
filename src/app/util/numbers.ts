@@ -9,6 +9,7 @@ export const PAYOUT_RATE = 0.825;
 export const FCT_TRI_PAYOUT_RATE = 0.805;
 export const MAX_RACE_PER_MEETING = 11;
 export const SENIOR_HORSE_AGE = 7;
+export const RECENT_STARTER_COUNT_THRESHOLD = 3;
 
 export const DEFAULT_MIN_QPL_ODDS = 15;
 export const DEFAULT_MIN_QIN_ODDS = 25;

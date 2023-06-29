@@ -5,10 +5,7 @@ import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {RestRepository} from '../model/rest.repository';
-import {
-  COLORS,
-  COMMON_HORSE_ORIGINS
-} from '../util/strings';
+import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
 import {
   Collaboration,
   CollaborationStarter,
@@ -19,7 +16,8 @@ import {
   PAYOUT_RATE,
   SENIOR_HORSE_AGE,
   THREE_SECONDS,
-  TWO_MINUTES
+  TWO_MINUTES,
+  RECENT_STARTER_COUNT_THRESHOLD
 } from '../util/numbers';
 import {
   getCurrentMeeting,
@@ -62,8 +60,10 @@ export class RacecardComponent implements OnInit {
   activeRace: number = 1;
 
   protected readonly COLORS = COLORS;
+  protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly SENIOR_HORSE_AGE = SENIOR_HORSE_AGE;
   protected readonly COMMON_HORSE_ORIGINS = COMMON_HORSE_ORIGINS;
+  protected readonly RECENT_STARTER_COUNT_THRESHOLD = RECENT_STARTER_COUNT_THRESHOLD;
   protected readonly isFavorite = isFavorite;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarters = getStarters;
@@ -164,6 +164,24 @@ export class RacecardComponent implements OnInit {
       })
     )
 
+  getRecentPlacingStarterCounts = (order: number, placing: number): number[] => {
+    const defaultValue = [0, 0, 0];
+    const starter = this.getStarter(order);
+    if (!starter) return defaultValue;
+
+    const counts = this.getPersonSections(starter)
+      .map(psec => psec.starters)
+      .map(ps => ps.filter(s => s.placing === placing).length);
+
+    return [...counts, counts[0] + counts[1]];
+  }
+
+  getRecentPlacingStarterCountTopSum = (order: number): number =>
+    [1, 2, 3, 4]
+      .map(p => this.getRecentPlacingStarterCounts(order, p)[2])
+      .filter(c => c > RECENT_STARTER_COUNT_THRESHOLD)
+      .reduce((prev, curr) => prev + curr, 0)
+
   getPersonStarters = (person: string, collaborations: Collaboration[]): PersonStarter[] =>
     collaborations
       .map(c =>
@@ -202,6 +220,18 @@ export class RacecardComponent implements OnInit {
       percent: `${(100 * PAYOUT_RATE / o.odds).toFixed(1)}%`,
       amount: `$${(o.amount * PAYOUT_RATE / o.odds / ONE_MILLION).toFixed(2)}M`
     }));
+  }
+
+  getStarter = (order: number): Starter =>
+    // @ts-ignore
+    this.activeRacecard.starters.find(s => s.order === order)
+
+  get maxOrder(): number {
+    return this.activeRacecard
+      ?.starters
+      .map(s => s.order)
+      .sort((o1, o2) => o1 - o2)
+      .pop() || 0;
   }
 
   get activeRacecard(): Racecard {

@@ -19,24 +19,24 @@ export const TRAINERS = [
   new Person('HDA', 'Hayes', 'David', 'D. Hayes', 'AUS', '', '', 526),
   new Person('HAD', 'Hall', 'David', 'D. Hall', 'AUS', '', '', 546),
 
+  new Person('CAS', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony', 1413),
   new Person('YPF', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky', 899),
   new Person('LKW', 'Lui', 'Kin-wai', 'F. Lui', 'HK', '', 'Francis', 798),
-  new Person('SCS', 'Shum', 'Chap-shing', 'D. Shum', 'HK', '', 'Danny', 731),
-  new Person('FC', 'Fownes', 'Caspar', 'C. Fownes', 'GB', '', '', 1012),
   new Person('MKL', 'Man', 'Ka-leung', 'M. Man', 'HK', '', 'Manfred', 580),
-
-  new Person('CAS', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony', 1413),
-  new Person('WDJ', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', '', 131),
+  new Person('SCS', 'Shum', 'Chap-shing', 'D. Shum', 'HK', '', 'Danny', 731),
   new Person('YTP', 'Yung', 'Tin-pang', 'B. Yung', 'HK', '', 'Benno', 278),
+
+  new Person('FC', 'Fownes', 'Caspar', 'C. Fownes', 'GB', '', '', 1012),
+  new Person('WDJ', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', '', 131),
   new Person('SWY', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris', 308),
+  new Person('YCH', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis', 797),
   new Person('TKH', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy', 134),
 
-  new Person('YCH', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis', 797),
   new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
-  new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', '', 277),
-  new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
   new Person('CCW', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael', 321),
+  new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
   new Person('TYS', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me', 597),
+  new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', '', 277),
   new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony', 700),
 
   // new Person('NM', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),

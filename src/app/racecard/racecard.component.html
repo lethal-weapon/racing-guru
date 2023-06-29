@@ -7,11 +7,76 @@
   </div>
 </div>
 
+<table class="mx-auto table-fixed border-collapse border border-gray-700 text-center noselect">
+  <thead class="text-xl">
+  <th class="p-4 w-20 border border-gray-700">
+    <i class="fa fa-magic"></i>
+  </th>
+  <th *counter="let order of maxOrder"
+      class="w-20 border border-gray-700"
+  >
+    <div class="flex flex-row justify-center">
+      <div class="w-10 h-10 pt-1 rounded-full
+                {{getPlacingBorderBackground( getStarter(order).jockey, this.activeRacecard )}}
+               "
+      >
+        {{order}}
+      </div>
+    </div>
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let m of PLACING_MAPS; let index = index"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700 text-2xl font-bold {{m.color}}">
+      {{m.placing}}
+    </td>
+    <td *counter="let order of maxOrder"
+        class="px-3 py-2.5 border border-gray-700"
+    >
+      <div class="text-xl
+                  {{ getRecentPlacingStarterCounts(order, index + 1)[2] > RECENT_STARTER_COUNT_THRESHOLD ? m.color : ''}}"
+      >
+        {{getRecentPlacingStarterCounts(order, index + 1)[2]}}
+      </div>
+      <div class="flex flex-row justify-between">
+        <div *ngFor="let c of getRecentPlacingStarterCounts(order, index + 1).slice(0, 2)">
+          <span *ngIf="c > 0">
+            {{c}}
+          </span>
+          <span *ngIf="c === 0">
+            <i class="fa fa-times"></i>
+          </span>
+        </div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td class="border border-gray-700 text-2xl font-bold text-yellow-400">
+      T
+    </td>
+    <td *counter="let order of maxOrder"
+        class="border border-gray-700 text-xl"
+        [class.text-yellow-400]="getRecentPlacingStarterCountTopSum(order) > 9"
+    >
+      <span *ngIf="getRecentPlacingStarterCountTopSum(order) > 0">
+        {{getRecentPlacingStarterCountTopSum(order)}}
+      </span>
+      <span *ngIf="getRecentPlacingStarterCountTopSum(order) === 0">
+        <i class="fa fa-times"></i>
+      </span>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
 <div *ngFor="let starter of getStarters(this.activeRacecard)"
      class="mx-8 mt-6 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600 noselect"
 >
   <div class="px-6 flex flex-row items-center">
-    <div class="w-10 h-10 pt-1 text-xl rounded-full {{getPlacingBorderBackground(starter.jockey, activeRacecard)}}">
+    <div
+      class="w-10 h-10 pt-1 text-xl rounded-full {{getPlacingBorderBackground(starter.jockey, this.activeRacecard)}}">
       {{starter.order}}
     </div>
     <div class="w-40 ml-4 mr-2 text-left">
@@ -175,17 +240,18 @@
         </div>
       </div>
     </div>
-    <div class="w-1/5 px-1">
-      <div class="text-center text-xl font-mono">
+    <div class="w-1/5 px-1 font-mono">
+      <div class="text-center text-xl">
         J/T
       </div>
-      <div class="flex flex-row justify-center gap-x-5 text-lg font-mono">
+      <div class="flex flex-row justify-center gap-x-5 text-lg">
         <div class="text-red-600">{{getCollaboration(starter).wins}}W</div>
         <div class="text-green-600">{{getCollaboration(starter).seconds}}Q</div>
         <div class="text-blue-600">{{getCollaboration(starter).thirds}}P</div>
         <div class="text-purple-600">{{getCollaboration(starter).fourths}}F</div>
         <div class="text-yellow-400">{{getCollaboration(starter).total}}X</div>
       </div>
+      <div class="px-2 my-1 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
     </div>
   </div>
 </div>
