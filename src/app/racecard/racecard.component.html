@@ -17,8 +17,7 @@
   >
     <div class="flex flex-row justify-center">
       <div class="w-10 h-10 pt-1 rounded-full
-                {{getPlacingBorderBackground( getStarter(order).jockey, this.activeRacecard )}}
-               "
+                  {{getPlacingBorderBackground(getStarter(order).jockey, this.activeRacecard)}}"
       >
         {{order}}
       </div>
@@ -26,17 +25,15 @@
   </th>
   </thead>
   <tbody>
-  <tr *ngFor="let m of PLACING_MAPS; let index = index"
-      class="hover:bg-gray-800"
-  >
+  <tr *ngFor="let m of PLACING_MAPS; let index = index">
     <td class="border border-gray-700 text-2xl font-bold {{m.color}}">
       {{m.placing}}
     </td>
     <td *counter="let order of maxOrder"
-        class="px-3 py-2.5 border border-gray-700"
+        class="px-3 py-2 border border-gray-700"
     >
       <div class="text-xl
-                  {{ getRecentPlacingStarterCounts(order, index + 1)[2] > RECENT_STARTER_COUNT_THRESHOLD ? m.color : ''}}"
+                  {{getRecentPlacingStarterCounts(order, index + 1)[2] > RECENT_STARTER_COUNT_THRESHOLD ? m.color : ''}}"
       >
         {{getRecentPlacingStarterCounts(order, index + 1)[2]}}
       </div>
@@ -56,14 +53,14 @@
     <td class="border border-gray-700 text-2xl font-bold text-yellow-400">
       T
     </td>
-    <td *counter="let order of maxOrder"
+    <td *ngFor="let sum of recentPlacingStarterCountTopSum"
         class="border border-gray-700 text-xl"
-        [class.text-yellow-400]="getRecentPlacingStarterCountTopSum(order) > 9"
+        [class.text-yellow-400]="sum > 9 || sum === 0"
     >
-      <span *ngIf="getRecentPlacingStarterCountTopSum(order) > 0">
-        {{getRecentPlacingStarterCountTopSum(order)}}
+      <span *ngIf="sum > 0">
+        {{sum}}
       </span>
-      <span *ngIf="getRecentPlacingStarterCountTopSum(order) === 0">
+      <span *ngIf="sum === 0">
         <i class="fa fa-times"></i>
       </span>
     </td>

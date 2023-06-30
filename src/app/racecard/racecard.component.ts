@@ -169,18 +169,17 @@ export class RacecardComponent implements OnInit {
     const starter = this.getStarter(order);
     if (!starter) return defaultValue;
 
-    const counts = this.getPersonSections(starter)
-      .map(psec => psec.starters)
+    const counts = [
+      (this.repo.findCollaborations().filter(c => c.jockey === starter.jockey) || []),
+      (this.repo.findCollaborations().filter(c => c.trainer === starter.trainer) || [])
+    ]
+      .map((colls, index) =>
+        this.getPersonStarters(index === 0 ? starter.jockey : starter.trainer, colls)
+      )
       .map(ps => ps.filter(s => s.placing === placing).length);
 
     return [...counts, counts[0] + counts[1]];
   }
-
-  getRecentPlacingStarterCountTopSum = (order: number): number =>
-    [1, 2, 3, 4]
-      .map(p => this.getRecentPlacingStarterCounts(order, p)[2])
-      .filter(c => c > RECENT_STARTER_COUNT_THRESHOLD)
-      .reduce((prev, curr) => prev + curr, 0)
 
   getPersonStarters = (person: string, collaborations: Collaboration[]): PersonStarter[] =>
     collaborations
@@ -225,6 +224,18 @@ export class RacecardComponent implements OnInit {
   getStarter = (order: number): Starter =>
     // @ts-ignore
     this.activeRacecard.starters.find(s => s.order === order)
+
+  get recentPlacingStarterCountTopSum(): number[] {
+    return this.activeRacecard?.starters
+      .map(s => s.order)
+      .sort((o1, o2) => o1 - o2)
+      .map(o =>
+        [1, 2, 3, 4]
+          .map(p => this.getRecentPlacingStarterCounts(o, p)[2])
+          .filter(c => c > RECENT_STARTER_COUNT_THRESHOLD)
+          .reduce((prev, curr) => prev + curr, 0)
+      );
+  }
 
   get maxOrder(): number {
     return this.activeRacecard
