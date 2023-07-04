@@ -40,6 +40,7 @@ export const TRAINERS = [
   new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony', 700),
 
   // new Person('NM', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
+  // new Person('MWK', 'Mo', 'Wai-kit', 'C. Mo', 'HK', '', 'Cody', 0),
   // new Person('OSP', 'OSullivan', 'Paul', 'P. OSullivan', 'NZ', '', '', 0),
 ]
 
