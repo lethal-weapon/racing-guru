@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {Meeting, PersonSummary} from '../model/meeting.model';
+import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {BOUNDARY_PERSONS, JOCKEY_CODES} from '../util/strings';
-import {ONE_MINUTE} from '../util/numbers';
+import {BOUNDARY_PERSONS, COLORS} from '../util/strings';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../util/numbers';
+import {DEFAULT_HORSE, Horse} from "../model/horse.model";
 
 @Component({
   selector: 'app-trend',
@@ -13,15 +14,17 @@ import {ONE_MINUTE} from '../util/numbers';
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[0];
-  activePerson: string = '';
+  activePerson: string = 'WDJ';
   isRefreshButtonEnable: boolean = true;
-
   meetingIndex: number = 0;
+
+  protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
+    this.repo.fetchHorses();
     this.repo.fetchMeetings();
     setInterval(() => this.repo.fetchMeetings(), ONE_MINUTE);
   }
@@ -71,6 +74,23 @@ export class TrendComponent implements OnInit {
     }
   }
 
+  getStarterHorse = (starter: EarningStarter): Horse =>
+    this.repo.findHorses()
+      .find(s => s.code === starter.horse) || DEFAULT_HORSE
+
+  getStarterColor = (starter: EarningStarter): string => {
+    const placing = starter?.placing;
+    if (placing > 0 && placing < 5) return COLORS[placing - 1];
+    return '';
+  }
+
+  getStarters = (meeting: Meeting, race: number): EarningStarter[] => {
+    return meeting.persons
+      .find(p => p.person === this.activePerson)
+      ?.starters
+      .filter(s => s.race === race) || [];
+  }
+
   getSectionStyle = (section: string): string =>
     [this.activeSection, this.activeSubsection].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
@@ -82,32 +102,15 @@ export class TrendComponent implements OnInit {
 
     const persons = meetings[0].persons.filter(p => p.person == person);
     if (persons.length !== 1) {
-      if (['engagements', 'earnings'].includes(key)) return 'X';
-      return '';
+      return ['engagements', 'earnings'].includes(key) ? 'X' : '';
     }
 
     // @ts-ignore
     const value = persons[0][key]
     if (value == 0) {
-      if (['engagements', 'earnings'].includes(key)) return 'X';
-      return '';
+      return ['engagements', 'earnings'].includes(key) ? 'X' : '';
     }
     return value.toString();
-  }
-
-  getPastRecordUrl = (person: string): string => {
-    let url = `
-      https://racing.hkjc.com/racing/information/
-      English/Trainers/TrainerPastRec.aspx?TrainerId=${person}
-    `.replace(/\s/g, '');
-
-    if (JOCKEY_CODES.includes(person)) {
-      url = url
-        .replace(/Trainer/g, 'Jockey')
-        .replace('Jockeys', 'Jockey');
-    }
-
-    return url;
   }
 
   getNoWinnerDays = (person: string): number => {
@@ -160,15 +163,11 @@ export class TrendComponent implements OnInit {
   getAverageTurnoverPerRace = (meeting: Meeting): number =>
     parseFloat((meeting.turnover / meeting.races).toFixed(1))
 
-  isBoundaryPerson = (person: string): boolean =>
-    BOUNDARY_PERSONS.includes(person);
-
   formatMeeting = (meeting: string): string =>
     meeting.replace(/^\d{4}-/g, '')
 
-  get controlStyle(): string {
-    return `w-12 cursor-pointer transition hover:text-yellow-400`;
-  }
+  isBoundaryPerson = (person: string): boolean =>
+    BOUNDARY_PERSONS.includes(person);
 
   get overviews(): Array<{ title: string, link: string }> {
     return this.windowMeetings.map(m => {
@@ -187,6 +186,14 @@ export class TrendComponent implements OnInit {
         return {title: title, link: link}
       }
     )
+  }
+
+  get activePersonName(): string {
+    const person = JOCKEYS.concat(TRAINERS)
+      .find(p => p.code === this.activePerson);
+
+    if (!person) return '';
+    return `${person.lastName}, ${person.firstName}`;
   }
 
   get persons(): string[] {
@@ -220,8 +227,16 @@ export class TrendComponent implements OnInit {
     );
   }
 
+  get performanceMeetings(): Meeting[] {
+    return this.meetings.slice(0, 18);
+  }
+
   get meetings(): Meeting[] {
     return this.repo.findMeetings();
+  }
+
+  get controlStyle(): string {
+    return `w-12 cursor-pointer transition hover:text-yellow-400`;
   }
 
   get subsections(): string[] {

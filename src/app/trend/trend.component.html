@@ -1,6 +1,6 @@
 <div class="mx-24 mt-6 text-center text-2xl bg-gray-800 rounded-full flex flex-row justify-between noselect">
   <div *ngFor="let section of sections"
-       class="w-full py-3 rounded-full {{getSectionStyle(section)}}"
+       class="w-full py-2.5 rounded-full {{getSectionStyle(section)}}"
        (click)="setActiveSection(section)"
   >
     {{section}}
@@ -98,15 +98,12 @@
       </ng-container>
     </tr>
     <tr *ngFor="let person of persons">
-      <td class="border border-gray-700"
+      <td class="border border-gray-700 cursor-pointer"
+          (click)="setActivePerson(person)"
+          [class.text-yellow-400]="activePerson === person"
           [class.border-b-gray-400]="isBoundaryPerson(person)"
       >
-        <a class="hover:underline"
-           target="_blank"
-           [href]="getPastRecordUrl(person)"
-        >
-          {{person}}
-        </a>
+        {{person}}
       </td>
       <td class="border border-gray-700"
           [class.border-b-gray-400]="isBoundaryPerson(person)"
@@ -136,6 +133,49 @@
       </ng-container>
     </tr>
   </table>
+  <div class="mt-4">
+    <div class="mb-4 text-3xl text-yellow-400">
+      {{activePersonName}}
+    </div>
+    <table class="mx-auto table-fixed border-collapse">
+      <thead>
+      <th class="w-16 border border-gray-600">
+        <i class="fa fa-calendar"></i>
+      </th>
+      <th *ngFor="let pm of performanceMeetings"
+          class="w-20 border border-gray-600"
+      >
+        {{formatMeeting(pm.meeting)}}
+      </th>
+      </thead>
+      <tbody>
+      <tr *counter="let race of MAX_RACE_PER_MEETING">
+        <td class="border border-gray-700 text-xl font-mono">
+          {{race === 10 ? 'X' : race === 11 ? 'E' : race}}
+        </td>
+        <td *ngFor="let pm of performanceMeetings"
+            class="border border-gray-700 hover:bg-gray-800 text-sm font-mono"
+        >
+          <div *ngFor="let starter of getStarters(pm, race)"
+               class="flex flex-col {{getStarterColor(starter)}}"
+          >
+            <div>
+              {{getStarterHorse(starter).nameCH}}
+            </div>
+            <div class="flex flex-row justify-evenly">
+              <div>
+                {{starter.partner}}
+              </div>
+              <div *ngIf="starter?.earning || 0 > 0">
+                {{starter.earning}}
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div *ngIf="activeSection === sections[1]"
