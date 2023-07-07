@@ -164,7 +164,7 @@
       class="hover:bg-gray-800"
   >
     <td class="border border-gray-700">
-      {{race}}
+      {{race === 10 ? 'X' : race === 11 ? 'E' : race}}
     </td>
     <td class="px-1 border border-gray-700 border-r-red-900">
       <div class="grid grid-cols-4">

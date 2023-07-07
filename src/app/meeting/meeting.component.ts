@@ -78,7 +78,7 @@ export class MeetingComponent implements OnInit {
     const currTime = new Date().getTime();
     const diff = Math.floor((raceTime - currTime) / 1000);
 
-    if (diff <= 900) this.remainingTime = `${diff} sec`
+    if (diff <= 600) this.remainingTime = `${diff} sec`
     else if (diff <= 7200) this.remainingTime = `${Math.floor(diff / 60)} min`
     else this.remainingTime = `${Math.floor(diff / 3600)} hrs`
   }

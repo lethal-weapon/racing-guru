@@ -39,3 +39,16 @@ export const BOUNDARY_PERSONS =
 export const BOUNDARY_POOLS = [
   'F-F', 'QTT', 'PLA-3', 'QPL-3'
 ];
+
+export const BOUNDARY_MEETINGS = [
+  '2023-07-01',
+  '2023-06-04',
+  '2023-05-03',
+  '2023-04-02',
+  '2023-03-01',
+  '2023-02-01',
+  '2023-01-01',
+  '2022-12-04',
+  '2022-11-06',
+  '2022-10-01',
+];

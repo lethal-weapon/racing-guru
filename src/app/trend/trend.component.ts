@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {BOUNDARY_PERSONS, COLORS} from '../util/strings';
+import {BOUNDARY_MEETINGS, BOUNDARY_PERSONS, COLORS} from '../util/strings';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../util/numbers';
 import {DEFAULT_HORSE, Horse} from "../model/horse.model";
 
@@ -167,7 +167,10 @@ export class TrendComponent implements OnInit {
     meeting.replace(/^\d{4}-/g, '')
 
   isBoundaryPerson = (person: string): boolean =>
-    BOUNDARY_PERSONS.includes(person);
+    BOUNDARY_PERSONS.includes(person)
+
+  isBoundaryMeeting = (meeting: string): boolean =>
+    BOUNDARY_MEETINGS.includes(meeting)
 
   get overviews(): Array<{ title: string, link: string }> {
     return this.windowMeetings.map(m => {
@@ -225,10 +228,6 @@ export class TrendComponent implements OnInit {
     return this.meetings.slice(
       this.meetingIndex, this.meetingIndex + this.windowSize
     );
-  }
-
-  get performanceMeetings(): Meeting[] {
-    return this.meetings.slice(0, 18);
   }
 
   get meetings(): Meeting[] {

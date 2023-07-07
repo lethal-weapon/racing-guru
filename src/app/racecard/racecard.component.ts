@@ -16,7 +16,7 @@ import {
   PAYOUT_RATE,
   SENIOR_HORSE_AGE,
   THREE_SECONDS,
-  TWO_MINUTES,
+  ONE_MINUTE,
   RECENT_STARTER_COUNT_THRESHOLD
 } from '../util/numbers';
 import {
@@ -85,10 +85,7 @@ export class RacecardComponent implements OnInit {
     this.repo.fetchHorses();
     this.repo.fetchCollaborations();
 
-    setInterval(() => {
-      this.repo.fetchHorses();
-      this.repo.fetchCollaborations();
-    }, TWO_MINUTES);
+    setInterval(() => this.repo.fetchCollaborations(), ONE_MINUTE);
   }
 
   formatMeeting = (meeting: string): string =>
