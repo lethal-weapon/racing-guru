@@ -5,9 +5,9 @@ import {WebsocketService} from '../model/websocket.service';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {Starter} from '../model/starter.model';
 import {RestRepository} from '../model/rest.repository';
-import {DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from "../model/dividend.model";
-import {ONE_MILLION, THREE_SECONDS} from '../util/numbers';
+import {DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from '../model/dividend.model';
 import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, PLACING_MAPS} from '../util/strings';
+import {ONE_MILLION, THREE_SECONDS} from '../util/numbers';
 import {
   toMillion,
   getMaxRace,
@@ -79,8 +79,21 @@ export class MeetingComponent implements OnInit {
     const diff = Math.floor((raceTime - currTime) / 1000);
 
     if (diff <= 600) this.remainingTime = `${diff} sec`
-    else if (diff <= 7200) this.remainingTime = `${Math.floor(diff / 60)} min`
+    else if (diff <= 5400) this.remainingTime = `${Math.floor(diff / 60)} min`
     else this.remainingTime = `${Math.floor(diff / 3600)} hrs`
+
+    let audioName = '';
+    if (diff >= 899 && diff <= 901) audioName = '15-min-horse'
+    else if (diff >= 599 && diff <= 601) audioName = '10-min-door'
+    else if (diff >= 299 && diff <= 301) audioName = '5-min-rooster'
+    else if (diff >= 179 && diff <= 181) audioName = '3-min-instrument'
+    else if (diff >= 59 && diff <= 61) audioName = '1-min-alarm'
+
+    if (audioName.length > 0) {
+      let audio = new Audio(`../../assets/audio/${audioName}.wav`);
+      audio.load();
+      audio.play();
+    }
   }
 
   toggleFavorite = (starter: Starter, racecard: Racecard) => {
