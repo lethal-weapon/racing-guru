@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {NgOptimizedImage} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
 import {TooltipModule} from 'ng2-tooltip-directive';
 
@@ -11,13 +12,10 @@ import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {PeopleComponent} from './people/people.component';
 import {TrendComponent} from './trend/trend.component';
-import {MatcherComponent} from './matcher/matcher.component';
 import {CollaborationComponent} from './collaboration/collaboration.component';
 import {Top4sComponent} from './top4s/top4s.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {OddsComponent} from './odds/odds.component';
-import {NgOptimizedImage} from "@angular/common";
-import { EngineComponent } from './engine/engine.component';
 
 @NgModule({
   declarations: [
@@ -30,10 +28,8 @@ import { EngineComponent } from './engine/engine.component';
     OddsComponent,
     TrendComponent,
     PeopleComponent,
-    MatcherComponent,
     CollaborationComponent,
-    Top4sComponent,
-    EngineComponent
+    Top4sComponent
   ],
   imports: [
     BrowserModule,

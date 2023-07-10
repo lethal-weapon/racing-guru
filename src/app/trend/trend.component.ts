@@ -4,7 +4,7 @@ import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {BOUNDARY_MEETINGS, BOUNDARY_PERSONS, COLORS} from '../util/strings';
-import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../util/numbers';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
 import {DEFAULT_HORSE, Horse} from "../model/horse.model";
 
 @Component({
@@ -42,7 +42,7 @@ export class TrendComponent implements OnInit {
     if (this.isRefreshButtonEnable) {
       this.isRefreshButtonEnable = false;
       this.repo.fetchMeetings();
-      setTimeout(() => this.isRefreshButtonEnable = true, 10_000);
+      setTimeout(() => this.isRefreshButtonEnable = true, TEN_SECONDS);
     }
   }
 

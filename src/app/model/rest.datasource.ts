@@ -4,10 +4,9 @@ import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
 import {Horse} from './horse.model';
-import {RaceHorse} from './racehorse.model';
-import {Collaboration} from './collaboration.model';
 import {Meeting} from './meeting.model';
 import {FavoritePost} from './favorite.model';
+import {Collaboration} from './collaboration.model';
 
 @Injectable()
 export class RestDataSource {
@@ -24,12 +23,9 @@ export class RestDataSource {
   getHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses`)
 
-  getRacehorses = (): Observable<RaceHorse[]> =>
-    this.http.get<RaceHorse[]>(`${this.baseUrl}/racehorses`)
+  getMeetings = (): Observable<Meeting[]> =>
+    this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
 
   getCollaborations = (): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
-
-  getMeetings = (): Observable<Meeting[]> =>
-    this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
 }
