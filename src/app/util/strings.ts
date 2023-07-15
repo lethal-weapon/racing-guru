@@ -5,6 +5,11 @@ export interface PlacingMap {
   color: string
 }
 
+export interface RatingFactorMap {
+  factor: string,
+  abbreviation: string
+}
+
 export const COMMON_HORSE_ORIGINS = [
   'AUS', 'NZ', 'IRE'
 ];
@@ -21,6 +26,19 @@ export const PLACING_MAPS: PlacingMap[] = [
   {placing: 'Q', color: 'text-green-600'},
   {placing: 'P', color: 'text-blue-600'},
   {placing: 'F', color: 'text-purple-600'}
+];
+
+export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
+  {factor: 'familiarity', abbreviation: 'F9Y'},
+  {factor: 'collaboration', abbreviation: 'C11N'},
+  {factor: 'individualContinuity', abbreviation: 'ICO'},
+  {factor: 'individualLookAhead', abbreviation: 'ILA'},
+  {factor: 'individualAbsorption', abbreviation: 'IAB'},
+  {factor: 'collaboratedContinuity', abbreviation: 'CCO'},
+  {factor: 'collaboratedLookAhead', abbreviation: 'CLA'},
+  {factor: 'horseAbsorption', abbreviation: 'HAB'},
+  {factor: 'horseOwner', abbreviation: 'OWN'},
+  {factor: 'occasion', abbreviation: 'O6N'},
 ];
 
 export const JOCKEY_CODES = JOCKEYS.map(j => j.code);

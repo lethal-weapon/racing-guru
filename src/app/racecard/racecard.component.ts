@@ -2,10 +2,16 @@ import {Component, OnInit} from '@angular/core';
 
 import {WebsocketService} from '../model/websocket.service';
 import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
-import {Starter} from '../model/starter.model';
+import {Rating, Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {RestRepository} from '../model/rest.repository';
-import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
+import {
+  COLORS,
+  COMMON_HORSE_ORIGINS,
+  PLACING_MAPS,
+  RATING_FACTOR_MAPS,
+  RatingFactorMap
+} from '../util/strings';
 import {
   Collaboration,
   CollaborationStarter,
@@ -16,8 +22,7 @@ import {
   PAYOUT_RATE,
   SENIOR_HORSE_AGE,
   THREE_SECONDS,
-  ONE_MINUTE,
-  RECENT_STARTER_COUNT_THRESHOLD
+  ONE_MINUTE
 } from '../util/numbers';
 import {
   getCurrentMeeting,
@@ -63,7 +68,6 @@ export class RacecardComponent implements OnInit {
   protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly SENIOR_HORSE_AGE = SENIOR_HORSE_AGE;
   protected readonly COMMON_HORSE_ORIGINS = COMMON_HORSE_ORIGINS;
-  protected readonly RECENT_STARTER_COUNT_THRESHOLD = RECENT_STARTER_COUNT_THRESHOLD;
   protected readonly isFavorite = isFavorite;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarters = getStarters;
@@ -161,23 +165,6 @@ export class RacecardComponent implements OnInit {
       })
     )
 
-  getRecentPlacingStarterCounts = (order: number, placing: number): number[] => {
-    const defaultValue = [0, 0, 0];
-    const starter = this.getStarter(order);
-    if (!starter) return defaultValue;
-
-    const counts = [
-      (this.repo.findCollaborations().filter(c => c.jockey === starter.jockey) || []),
-      (this.repo.findCollaborations().filter(c => c.trainer === starter.trainer) || [])
-    ]
-      .map((colls, index) =>
-        this.getPersonStarters(index === 0 ? starter.jockey : starter.trainer, colls)
-      )
-      .map(ps => ps.filter(s => s.placing === placing).length);
-
-    return [...counts, counts[0] + counts[1]];
-  }
-
   getPersonStarters = (person: string, collaborations: Collaboration[]): PersonStarter[] =>
     collaborations
       .map(c =>
@@ -218,20 +205,17 @@ export class RacecardComponent implements OnInit {
     }));
   }
 
+  getRating = (order: number, factor: string): Rating | undefined => {
+    return this.getStarter(order)?.ratings.find(r => r.factor === factor);
+  }
+
   getStarter = (order: number): Starter =>
     // @ts-ignore
     this.activeRacecard.starters.find(s => s.order === order)
 
-  get recentPlacingStarterCountTopSum(): number[] {
-    return this.activeRacecard?.starters
-      .map(s => s.order)
-      .sort((o1, o2) => o1 - o2)
-      .map(o =>
-        [1, 2, 3, 4]
-          .map(p => this.getRecentPlacingStarterCounts(o, p)[2])
-          .filter(c => c > RECENT_STARTER_COUNT_THRESHOLD)
-          .reduce((prev, curr) => prev + curr, 0)
-      );
+  get ratingFactors(): RatingFactorMap[] {
+    const supportedFactors = getStarters(this.activeRacecard).pop()?.ratings.map(r => r.factor);
+    return RATING_FACTOR_MAPS.filter(m => (supportedFactors || []).includes(m.factor));
   }
 
   get maxOrder(): number {

@@ -25,44 +25,31 @@
   </th>
   </thead>
   <tbody>
-  <tr *ngFor="let m of PLACING_MAPS; let index = index">
-    <td class="border border-gray-700 text-2xl font-bold {{m.color}}">
-      {{m.placing}}
+  <tr *ngFor="let factor of ratingFactors">
+    <td class="p-2 border border-gray-700 text-2xl font-mono cursor-help"
+        tooltip="{{factor.factor.toUpperCase()}}"
+        [hideDelay]="0"
+    >
+      {{factor.abbreviation}}
     </td>
     <td *counter="let order of maxOrder"
-        class="px-3 py-2 border border-gray-700"
+        class="border border-gray-700"
+        [class.diagonal-line]="getStarter(order)?.scratched"
     >
-      <div class="text-xl
-                  {{getRecentPlacingStarterCounts(order, index + 1)[2] > RECENT_STARTER_COUNT_THRESHOLD ? m.color : ''}}"
-      >
-        {{getRecentPlacingStarterCounts(order, index + 1)[2]}}
-      </div>
-      <div class="flex flex-row justify-between">
-        <div *ngFor="let c of getRecentPlacingStarterCounts(order, index + 1).slice(0, 2)">
-          <span *ngIf="c > 0">
-            {{c}}
-          </span>
-          <span *ngIf="c === 0">
-            <i class="fa fa-times"></i>
-          </span>
+      <div class="flex flex-row">
+        <div class="w-3/5 text-center text-2xl"
+             [class.text-red-600]="getRating(order, factor.factor)?.grade === 'A'"
+             [class.text-green-600]="getRating(order, factor.factor)?.grade === 'B'"
+             [class.invisible]="getRating(order, factor.factor)?.grade === 'X'"
+        >
+          {{getRating(order, factor.factor)?.grade}}
+        </div>
+        <div class="w-2/5 text-sm pt-2.5"
+             [class.invisible]="getRating(order, factor.factor)?.score === 0"
+        >
+          {{getRating(order, factor.factor)?.score}}
         </div>
       </div>
-    </td>
-  </tr>
-  <tr>
-    <td class="border border-gray-700 text-2xl font-bold text-yellow-400">
-      T
-    </td>
-    <td *ngFor="let sum of recentPlacingStarterCountTopSum"
-        class="border border-gray-700 text-xl"
-        [class.text-yellow-400]="sum > 9 || sum === 0"
-    >
-      <span *ngIf="sum > 0">
-        {{sum}}
-      </span>
-      <span *ngIf="sum === 0">
-        <i class="fa fa-times"></i>
-      </span>
     </td>
   </tr>
   </tbody>
