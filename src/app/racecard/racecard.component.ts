@@ -8,7 +8,6 @@ import {RestRepository} from '../model/rest.repository';
 import {
   COLORS,
   COMMON_HORSE_ORIGINS,
-  PLACING_MAPS,
   RATING_FACTOR_MAPS,
   RatingFactorMap
 } from '../util/strings';
@@ -65,7 +64,6 @@ export class RacecardComponent implements OnInit {
   activeRace: number = 1;
 
   protected readonly COLORS = COLORS;
-  protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly SENIOR_HORSE_AGE = SENIOR_HORSE_AGE;
   protected readonly COMMON_HORSE_ORIGINS = COMMON_HORSE_ORIGINS;
   protected readonly isFavorite = isFavorite;
