@@ -1,0 +1,58 @@
+<table class="my-8 mx-auto table-fixed border-collapse border border-gray-600 text-center noselect">
+  <thead class="text-xl">
+  <th *ngFor="let field of fields; let index = index"
+      class="border border-gray-600 px-8 py-2"
+  >
+    {{field}}
+  </th>
+  </thead>
+  <tbody class="text-lg">
+  <tr *ngFor="let tyield of yields">
+    <td class="border border-gray-700 py-2 cursor-grab"
+        tooltip="{{tyield.description}}"
+        [hideDelay]="0"
+    >
+      {{tyield.version}}
+    </td>
+    <td class="border border-gray-700 py-2">
+      <span class="text-green-600">
+        {{countMeetings(tyield)[0]}}
+      </span>
+      /
+      {{countMeetings(tyield)[1]}}
+    </td>
+    <td class="border border-gray-700 py-2">
+      <span class="text-green-600">
+        {{countRaces(tyield)[0]}}
+      </span>
+      /
+      {{countRaces(tyield)[1]}}
+    </td>
+    <td class="border border-gray-700 py-2">
+      <span class="text-green-600">
+        {{countBetlines(tyield)[0]}}
+      </span>
+      /
+      {{countBetlines(tyield)[1]}}
+    </td>
+    <td class="border border-gray-700 py-2 text-red-600">
+      -{{tyield.debit | currency:'USD':'symbol':'1.0-0'}}
+    </td>
+    <td class="border border-gray-700 py-2 text-green-600">
+      +{{tyield.credit | currency:'USD':'symbol':'1.0-0'}}
+    </td>
+    <td class="border border-gray-700 py-2"
+        [class.text-red-600]="tyield.credit < tyield.debit"
+        [class.text-green-600]="tyield.credit > tyield.debit"
+    >
+      {{(tyield.credit - tyield.debit) | currency:'USD':'symbol':'1.0-0'}}
+    </td>
+    <td class="border border-gray-700 py-2"
+        [class.text-red-600]="getReturnOnInvestment(tyield) < 0"
+        [class.text-green-600]="getReturnOnInvestment(tyield) > 0"
+    >
+      {{getReturnOnInvestment(tyield)}}
+    </td>
+  </tr>
+  </tbody>
+</table>

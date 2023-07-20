@@ -7,6 +7,7 @@ import {Horse} from './horse.model';
 import {Meeting} from './meeting.model';
 import {FavoritePost} from './favorite.model';
 import {Collaboration} from './collaboration.model';
+import {TesterYield} from './backtest.model';
 
 @Injectable()
 export class RestDataSource {
@@ -19,6 +20,9 @@ export class RestDataSource {
 
   saveFavorite = (favorite: FavoritePost): Observable<FavoritePost> =>
     this.http.post<FavoritePost>(`${this.baseUrl}/favorite`, favorite)
+
+  getYields = (): Observable<TesterYield[]> =>
+    this.http.get<TesterYield[]>(`${this.baseUrl}/backtest`)
 
   getHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses`)

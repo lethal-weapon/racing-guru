@@ -16,6 +16,7 @@ export class Starter {
     public trainer    : string,
     public scratched  : boolean,
     public ratings    : Rating[],
+    public chance    ?: number,
     public placing   ?: number,
     public winOdds   ?: number
   ) {

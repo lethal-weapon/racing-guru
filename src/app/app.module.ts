@@ -16,6 +16,7 @@ import {CollaborationComponent} from './collaboration/collaboration.component';
 import {Top4sComponent} from './top4s/top4s.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {OddsComponent} from './odds/odds.component';
+import {BacktestComponent} from './backtest/backtest.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import {OddsComponent} from './odds/odds.component';
     TrendComponent,
     PeopleComponent,
     CollaborationComponent,
-    Top4sComponent
+    Top4sComponent,
+    BacktestComponent
   ],
   imports: [
     BrowserModule,

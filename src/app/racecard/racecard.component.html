@@ -34,7 +34,7 @@
     </td>
     <td *counter="let order of maxOrder"
         class="border border-gray-700"
-        [class.diagonal-line]="getStarter(order)?.scratched"
+        [class.diagonal-line]="getStarter(order).scratched"
     >
       <div class="flex flex-row">
         <div class="w-3/5 text-center text-2xl"
