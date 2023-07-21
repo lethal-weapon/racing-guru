@@ -5,8 +5,10 @@ import {Directive, Input, SimpleChanges, TemplateRef, ViewContainerRef} from '@a
 })
 export class CounterDirective {
 
-  constructor(private container: ViewContainerRef,
-              private template: TemplateRef<Object>) {
+  constructor(
+    private container: ViewContainerRef,
+    private template: TemplateRef<Object>
+  ) {
   }
 
   @Input('counterOf')
