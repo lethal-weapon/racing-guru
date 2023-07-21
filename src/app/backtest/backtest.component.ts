@@ -8,7 +8,7 @@ import {MeetingYield, TesterYield} from '../model/backtest.model';
   templateUrl: './backtest.component.html'
 })
 export class BacktestComponent implements OnInit {
-  activeVersion = '';
+  activeVersion = 'Alpha';
 
   constructor(private repo: RestRepository) {
   }
@@ -16,9 +16,6 @@ export class BacktestComponent implements OnInit {
   ngOnInit(): void {
     this.repo.fetchYields();
   }
-
-  setActiveVersion = (clicked: string) =>
-    this.activeVersion = this.activeVersion === clicked ? '' : clicked
 
   getReturnOnInvestment = (tyield: TesterYield | MeetingYield): number =>
     parseFloat((tyield.credit / tyield.debit - 1).toFixed(2))
@@ -30,19 +27,31 @@ export class BacktestComponent implements OnInit {
     return [positive.length, betRaces.length, total];
   }
 
+  countBetlinesOnMeeting = (myield: MeetingYield): number[] => {
+    const betlines = myield.races
+      .map(r => r.betlines)
+      .reduce((prev, curr) => prev.concat(curr), []);
+
+    const positive = betlines.filter(b => b.credit > b.debit).length;
+    return [positive, betlines.length];
+  }
+
   countMeetings = (tyield: TesterYield): number[] => {
     const total = tyield.meetings.length;
-    const positive = tyield.meetings.filter(m => m.credit > m.debit).length;
+    const positive = tyield.meetings
+      .filter(m => m.debit > 0 && m.credit > m.debit)
+      .length;
     return [positive, total];
   }
 
   countRaces = (tyield: TesterYield): number[] => {
-    const races = tyield.meetings
-      .map(m => m.races.filter(r => r.debit > 0))
+    const totalRaces = tyield.meetings
+      .map(m => m.races)
       .reduce((prev, curr) => prev.concat(curr), []);
 
-    const positive = races.filter(r => r.credit > r.debit).length;
-    return [positive, races.length];
+    const betRaces = totalRaces.filter(r => r.debit > 0);
+    const positive = betRaces.filter(r => r.credit > r.debit).length;
+    return [positive, betRaces.length, totalRaces.length];
   }
 
   countBetlines = (tyield: TesterYield): number[] => {
@@ -54,6 +63,27 @@ export class BacktestComponent implements OnInit {
 
     const positive = betlines.filter(b => b.credit > b.debit).length;
     return [positive, betlines.length];
+  }
+
+  getMeetingROIColor = (myield: MeetingYield): string => {
+    const roi = this.getReturnOnInvestment(myield);
+    return roi < 0
+      ? 'text-red-600'
+      : roi >= this.minMeetingROI
+        ? 'text-yellow-400'
+        : 'text-green-600';
+  }
+
+  getTesterROIColor = (tyield: TesterYield): string => {
+    const roi = this.getReturnOnInvestment(tyield);
+    if (roi < 0) return 'text-red-600';
+
+    const rank = this.yields
+      .map(y => this.getReturnOnInvestment(y))
+      .sort((r1, r2) => r2 - r1)
+      .indexOf(roi);
+
+    return rank > -1 && rank < 5 ? 'text-yellow-400' : 'text-green-600';
   }
 
   get meetingFields(): string[] {
@@ -75,6 +105,12 @@ export class BacktestComponent implements OnInit {
     ];
   }
 
+  get activeTesterDescription(): string {
+    return this.yields
+      .find(ty => ty.version === this.activeVersion)
+      ?.description || 'Betting Magic';
+  }
+
   get meetingYields(): MeetingYield[] {
     return this.yields
       .find(ty => ty.version === this.activeVersion)
@@ -86,5 +122,9 @@ export class BacktestComponent implements OnInit {
       y.credit = Math.floor(y.credit);
       return y;
     });
+  }
+
+  get minMeetingROI(): number {
+    return 3;
   }
 }
