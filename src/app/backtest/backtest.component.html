@@ -1,7 +1,7 @@
 <table class="my-8 mx-auto table-fixed border-collapse border border-gray-600 text-center noselect">
   <thead class="text-xl">
   <th *ngFor="let field of fields; let index = index"
-      class="border border-gray-600 py-2"
+      class="border border-gray-600 py-1.5"
       [class.px-4]="[1].includes(index)"
       [class.px-8]="![0,1,2].includes(index)"
       [class.px-12]="[0,2].includes(index)"
@@ -13,7 +13,7 @@
   <tr *ngFor="let tyield of yields"
       class="hover:bg-gray-800 "
   >
-    <td class="border border-gray-700 py-2 cursor-pointer"
+    <td class="border border-gray-700 py-1.5 cursor-pointer"
         tooltip="{{tyield.description}}"
         [hideDelay]="0"
         [class.font-bold]="activeVersion === tyield.version"
@@ -23,7 +23,7 @@
     >
       {{tyield.version}}
     </td>
-    <td class="border border-gray-700 py-2"
+    <td class="border border-gray-700 py-1.5"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
     >
       <div class="grid grid-cols-3 gap-x-1 px-6">
@@ -36,7 +36,7 @@
         </div>
       </div>
     </td>
-    <td class="border border-gray-700 py-2"
+    <td class="border border-gray-700 py-1.5"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
     >
       <span class="text-green-600">
@@ -47,7 +47,7 @@
       /
       {{countRaces(tyield)[2]}}
     </td>
-    <td class="border border-gray-700 py-2"
+    <td class="border border-gray-700 py-1.5"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
     >
       <div class="w-11/12 mx-auto grid grid-cols-3 px-2">
@@ -60,24 +60,24 @@
         </div>
       </div>
     </td>
-    <td class="border border-gray-700 py-2 text-red-600"
+    <td class="border border-gray-700 py-1.5 text-red-600"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
     >
       -{{tyield.debit | currency:'USD':'symbol':'1.0-0'}}
     </td>
-    <td class="border border-gray-700 py-2 text-green-600"
+    <td class="border border-gray-700 py-1.5 text-green-600"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
     >
       +{{tyield.credit | currency:'USD':'symbol':'1.0-0'}}
     </td>
-    <td class="border border-gray-700 py-2"
+    <td class="border border-gray-700 py-1.5"
         [class.text-red-600]="tyield.credit < tyield.debit"
         [class.text-green-600]="tyield.credit > tyield.debit"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
     >
       {{(tyield.credit - tyield.debit) | currency:'USD':'symbol':'1.0-0'}}
     </td>
-    <td class="border border-gray-700 py-2 {{getTesterROIColor(tyield)}}"
+    <td class="border border-gray-700 py-1.5 {{getTesterROIColor(tyield)}}"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
     >
       {{getReturnOnInvestment(tyield)}}
