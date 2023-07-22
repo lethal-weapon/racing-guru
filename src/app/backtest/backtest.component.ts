@@ -8,7 +8,7 @@ import {MeetingYield, TesterYield} from '../model/backtest.model';
   templateUrl: './backtest.component.html'
 })
 export class BacktestComponent implements OnInit {
-  activeVersion = 'Alpha';
+  activeVersion = 'AlphaW-S1';
 
   constructor(private repo: RestRepository) {
   }
@@ -84,6 +84,16 @@ export class BacktestComponent implements OnInit {
       .indexOf(roi);
 
     return rank > -1 && rank < 5 ? 'text-yellow-400' : 'text-green-600';
+  }
+
+  get boundaryVersions(): string[] {
+    return [
+      'AlphaP-S1',
+      'BetaQ-L4',
+      'BetaQ-B1-L4',
+      'BetaQP-L4',
+      // 'BetaQP-B1-L5',
+    ]
   }
 
   get meetingFields(): string[] {
