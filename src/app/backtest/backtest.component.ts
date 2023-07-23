@@ -8,7 +8,7 @@ import {MeetingYield, TesterYield} from '../model/backtest.model';
   templateUrl: './backtest.component.html'
 })
 export class BacktestComponent implements OnInit {
-  activeVersion = 'AlphaW-S1';
+  activeVersion = 'W-L1';
 
   constructor(private repo: RestRepository) {
   }
@@ -88,11 +88,14 @@ export class BacktestComponent implements OnInit {
 
   get boundaryVersions(): string[] {
     return [
-      'AlphaP-S1',
-      'BetaQ-L4',
-      'BetaQ-B1-L4',
-      'BetaQP-L4',
-      // 'BetaQP-B1-L5',
+      'P-L1',
+      'Q-L4',
+      'Q-B1-L4',
+      'QP-L4',
+      'QP-B1-L5',
+      'TRI-L6',
+      'TRI-B1-L5',
+      'TRI-B2-L4',
     ]
   }
 
@@ -132,6 +135,13 @@ export class BacktestComponent implements OnInit {
       y.credit = Math.floor(y.credit);
       return y;
     });
+  }
+
+  get testerAvgROI(): number {
+    const sum = this.yields
+      .map(y => (y.credit / y.debit - 1))
+      .reduce((prev, curr) => prev + curr, 0);
+    return parseFloat((sum / this.yields.length).toFixed(4));
   }
 
   get minMeetingROI(): number {
