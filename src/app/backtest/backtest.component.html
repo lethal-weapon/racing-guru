@@ -3,8 +3,8 @@
   <th *ngFor="let field of fields; let index = index"
       class="border border-gray-600 py-1"
       [class.px-4]="[1].includes(index)"
-      [class.px-8]="![0,1,2].includes(index)"
-      [class.px-12]="[0,2].includes(index)"
+      [class.px-12]="[2].includes(index)"
+      [class.px-8]="![1,2].includes(index)"
   >
     {{field}}
   </th>
@@ -84,7 +84,7 @@
     </td>
   </tr>
   </tbody>
-  <tfoot>
+  <tfoot *ngIf="testerAvgROI">
   <tr>
     <td *ngFor="let field of fields; let last = last"
         class="border border-gray-700 py-1 text-lg font-bold"
