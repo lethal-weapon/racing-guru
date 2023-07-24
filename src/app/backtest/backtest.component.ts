@@ -8,7 +8,7 @@ import {MeetingYield, TesterYield} from '../model/backtest.model';
   templateUrl: './backtest.component.html'
 })
 export class BacktestComponent implements OnInit {
-  activeVersion = 'W-L1';
+  activeVersion = 'Alpha';
 
   constructor(private repo: RestRepository) {
   }
@@ -88,14 +88,19 @@ export class BacktestComponent implements OnInit {
 
   get boundaryVersions(): string[] {
     return [
-      'P-L1',
-      'Q-L4',
-      'Q-B1-L4',
-      'QP-L4',
-      'QP-B1-L5',
-      'TRI-L6',
-      'TRI-B1-L5',
-      'TRI-B2-L4',
+      // 'Alpha',
+      // 'P-L1',
+      // 'Q-L4',
+      // 'Q-B1-L4',
+      // 'QP-L4',
+      // 'QP-B1-L5',
+      // 'TRI-L6',
+      // 'TRI-B1-L5',
+      // 'TRI-B2-L4',
+      // 'FF-L8',
+      // 'FF-B1-L6',
+      // 'FF-B2-L4',
+      // 'FF-B3-L4',
     ]
   }
 
