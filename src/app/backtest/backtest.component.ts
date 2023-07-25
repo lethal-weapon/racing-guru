@@ -2,30 +2,30 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {MeetingYield, TesterYield} from '../model/backtest.model';
-import {BOUNDARY_MEETINGS, RATING_FACTOR_MAPS} from '../util/strings';
+import {RATING_FACTOR_MAPS} from '../util/strings';
 
 @Component({
   selector: 'app-backtest',
   templateUrl: './backtest.component.html'
 })
 export class BacktestComponent implements OnInit {
-  activeFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
+  isLoading = false;
   activeVersion = 'W-L5';
+  activeFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
 
-  protected readonly BOUNDARY_MEETINGS = BOUNDARY_MEETINGS;
   protected readonly RATING_FACTOR_MAPS = RATING_FACTOR_MAPS;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    // this.repo.fetchYields();
+    this.runTests();
   }
 
   process = (action: string) => {
     switch (action) {
-      case 'Reset': {
-        this.activeFactors = [];
+      case 'Reset All': {
+        this.activeFactors = [RATING_FACTOR_MAPS[0].factor];
         break;
       }
       case 'Select All': {
@@ -33,7 +33,7 @@ export class BacktestComponent implements OnInit {
         break;
       }
       case 'Run Tests': {
-        this.repo.fetchYields(this.activeFactors);
+        this.runTests();
         break;
       }
       default:
@@ -41,10 +41,21 @@ export class BacktestComponent implements OnInit {
     }
   }
 
-  toggleFactor = (clicked: string) =>
-    this.activeFactors.includes(clicked)
-      ? this.activeFactors = this.activeFactors.filter(f => f !== clicked)
-      : this.activeFactors.push(clicked)
+  runTests = () => {
+    this.isLoading = true;
+    this.repo.fetchYields(this.activeFactors, () => this.isLoading = false);
+  }
+
+  toggleFactor = (clicked: string) => {
+    if (!this.activeFactors.includes(clicked)) {
+      this.activeFactors.push(clicked);
+      return;
+    }
+
+    if (this.activeFactors.length > 1) {
+      this.activeFactors = this.activeFactors.filter(f => f !== clicked);
+    }
+  }
 
   getReturnOnInvestment = (tyield: TesterYield | MeetingYield): number =>
     parseFloat((tyield.credit / tyield.debit - 1).toFixed(2))
@@ -191,6 +202,6 @@ export class BacktestComponent implements OnInit {
   }
 
   get actions(): string[] {
-    return ['Reset', 'Select All', 'Run Tests'];
+    return ['Select All', 'Reset All', 'Run Tests'];
   }
 }

@@ -26,8 +26,11 @@ export class RestRepository {
     this.source.saveFavorite(favorite).subscribe(data => {
     })
 
-  fetchYields = (factors: string[]) =>
-    this.source.getYields(factors).subscribe(data => this.yields = data)
+  fetchYields = (factors: string[], callback: () => any) =>
+    this.source.getYields(factors).subscribe(data => {
+      this.yields = data;
+      callback();
+    })
 
   fetchHorses = () =>
     this.source.getHorses().subscribe(data => this.horses = data)

@@ -17,6 +17,7 @@ import {Top4sComponent} from './top4s/top4s.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
+import {SpinnerComponent} from './spinner/spinner.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {BacktestComponent} from './backtest/backtest.component';
     PeopleComponent,
     CollaborationComponent,
     Top4sComponent,
-    BacktestComponent
+    BacktestComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
