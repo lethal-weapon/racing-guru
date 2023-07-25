@@ -21,8 +21,8 @@ export class RestDataSource {
   saveFavorite = (favorite: FavoritePost): Observable<FavoritePost> =>
     this.http.post<FavoritePost>(`${this.baseUrl}/favorite`, favorite)
 
-  getYields = (): Observable<TesterYield[]> =>
-    this.http.get<TesterYield[]>(`${this.baseUrl}/backtest`)
+  getYields = (factors: string[]): Observable<TesterYield[]> =>
+    this.http.post<TesterYield[]>(`${this.baseUrl}/backtest`, factors)
 
   getHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses`)

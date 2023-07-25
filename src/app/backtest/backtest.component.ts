@@ -2,23 +2,49 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {MeetingYield, TesterYield} from '../model/backtest.model';
-import {BOUNDARY_MEETINGS} from '../util/strings';
+import {BOUNDARY_MEETINGS, RATING_FACTOR_MAPS} from '../util/strings';
 
 @Component({
   selector: 'app-backtest',
   templateUrl: './backtest.component.html'
 })
 export class BacktestComponent implements OnInit {
+  activeFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
   activeVersion = 'W-L5';
 
   protected readonly BOUNDARY_MEETINGS = BOUNDARY_MEETINGS;
+  protected readonly RATING_FACTOR_MAPS = RATING_FACTOR_MAPS;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    this.repo.fetchYields();
+    // this.repo.fetchYields();
   }
+
+  process = (action: string) => {
+    switch (action) {
+      case 'Reset': {
+        this.activeFactors = [];
+        break;
+      }
+      case 'Select All': {
+        this.activeFactors = RATING_FACTOR_MAPS.map(m => m.factor);
+        break;
+      }
+      case 'Run Tests': {
+        this.repo.fetchYields(this.activeFactors);
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  toggleFactor = (clicked: string) =>
+    this.activeFactors.includes(clicked)
+      ? this.activeFactors = this.activeFactors.filter(f => f !== clicked)
+      : this.activeFactors.push(clicked)
 
   getReturnOnInvestment = (tyield: TesterYield | MeetingYield): number =>
     parseFloat((tyield.credit / tyield.debit - 1).toFixed(2))
@@ -92,6 +118,11 @@ export class BacktestComponent implements OnInit {
     return rank > -1 && rank < 5 ? 'text-yellow-400' : 'text-green-600';
   }
 
+  getFactorBadgeStyle = (renderFactor: string): string =>
+    this.activeFactors.includes(renderFactor)
+      ? `text-yellow-400 border-yellow-400`
+      : `border-gray-600 hover:border-yellow-400 `
+
   get meetingFields(): string[] {
     return this.fields
       .filter((f, index) => index > 0)
@@ -157,5 +188,9 @@ export class BacktestComponent implements OnInit {
       'Profit / Loss',
       'ROI'
     ];
+  }
+
+  get actions(): string[] {
+    return ['Reset', 'Select All', 'Run Tests'];
   }
 }

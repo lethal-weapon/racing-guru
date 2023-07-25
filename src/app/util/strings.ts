@@ -29,16 +29,18 @@ export const PLACING_MAPS: PlacingMap[] = [
 ];
 
 export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
-  {factor: 'familiarity', abbreviation: 'F9Y'},
-  {factor: 'collaboration', abbreviation: 'C11N'},
-  {factor: 'individualContinuity', abbreviation: 'ICO'},
-  {factor: 'individualLookAhead', abbreviation: 'ILA'},
-  {factor: 'individualAbsorption', abbreviation: 'IAB'},
-  {factor: 'collaboratedContinuity', abbreviation: 'CCO'},
-  {factor: 'collaboratedLookAhead', abbreviation: 'CLA'},
-  {factor: 'horseAbsorption', abbreviation: 'HAB'},
-  {factor: 'horseOwner', abbreviation: 'OWN'},
-  {factor: 'occasion', abbreviation: 'O6N'},
+  {factor: 'familiarity', abbreviation: ''},
+  {factor: 'collaboration', abbreviation: ''},
+  {factor: 'dueCollaboration', abbreviation: ''},
+  {factor: 'dueAcquisition', abbreviation: ''},
+  {factor: 'individualContinuity', abbreviation: ''},
+  {factor: 'individualLookAhead', abbreviation: ''},
+  {factor: 'individualAbsorption', abbreviation: ''},
+  {factor: 'collaboratedContinuity', abbreviation: ''},
+  {factor: 'collaboratedLookAhead', abbreviation: ''},
+  {factor: 'horseOwner', abbreviation: ''},
+  {factor: 'horseAbsorption', abbreviation: ''},
+  {factor: 'occasion', abbreviation: ''},
 ];
 
 export const JOCKEY_CODES = JOCKEYS.map(j => j.code);
