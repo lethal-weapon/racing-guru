@@ -2,13 +2,16 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {MeetingYield, TesterYield} from '../model/backtest.model';
+import {BOUNDARY_MEETINGS} from '../util/strings';
 
 @Component({
   selector: 'app-backtest',
   templateUrl: './backtest.component.html'
 })
 export class BacktestComponent implements OnInit {
-  activeVersion = 'Alpha';
+  activeVersion = 'W-L5';
+
+  protected readonly BOUNDARY_MEETINGS = BOUNDARY_MEETINGS;
 
   constructor(private repo: RestRepository) {
   }
@@ -45,13 +48,14 @@ export class BacktestComponent implements OnInit {
   }
 
   countRaces = (tyield: TesterYield): number[] => {
-    const totalRaces = tyield.meetings
+    const allRaces = tyield.meetings
       .map(m => m.races)
       .reduce((prev, curr) => prev.concat(curr), []);
 
-    const betRaces = totalRaces.filter(r => r.debit > 0);
-    const positive = betRaces.filter(r => r.credit > r.debit).length;
-    return [positive, betRaces.length, totalRaces.length];
+    const betRaces = allRaces.filter(r => r.debit > 0);
+    const hitRaces = betRaces.filter(r => r.credit > 0);
+    const winRaces = hitRaces.filter(r => r.credit > r.debit);
+    return [winRaces, hitRaces, betRaces, allRaces].map(e => e.length);
   }
 
   countBetlines = (tyield: TesterYield): number[] => {
@@ -61,8 +65,10 @@ export class BacktestComponent implements OnInit {
       .map(r => r.betlines)
       .reduce((prev, curr) => prev.concat(curr), []);
 
-    const positive = betlines.filter(b => b.credit > b.debit).length;
-    return [positive, betlines.length];
+    return [
+      betlines.filter(b => b.credit > b.debit),
+      betlines
+    ].map(e => e.length);
   }
 
   getMeetingROIColor = (myield: MeetingYield): string => {
@@ -86,41 +92,10 @@ export class BacktestComponent implements OnInit {
     return rank > -1 && rank < 5 ? 'text-yellow-400' : 'text-green-600';
   }
 
-  get boundaryVersions(): string[] {
-    return [
-      // 'Alpha',
-      // 'P-L1',
-      // 'Q-L4',
-      // 'Q-B1-L4',
-      // 'QP-L4',
-      // 'QP-B1-L5',
-      // 'TRI-L6',
-      // 'TRI-B1-L5',
-      // 'TRI-B2-L4',
-      // 'FF-L8',
-      // 'FF-B1-L6',
-      // 'FF-B2-L4',
-      // 'FF-B3-L4',
-    ]
-  }
-
   get meetingFields(): string[] {
     return this.fields
       .filter((f, index) => index > 0)
       .map(f => f === 'Meetings' ? 'Meeting' : f);
-  }
-
-  get fields(): string[] {
-    return [
-      'Tester',
-      'Meetings',
-      'Races',
-      'Betlines',
-      'Debits',
-      'Credits',
-      'Profit / Loss',
-      'ROI'
-    ];
   }
 
   get activeTesterDescription(): string {
@@ -151,5 +126,36 @@ export class BacktestComponent implements OnInit {
 
   get minMeetingROI(): number {
     return 3;
+  }
+
+  get boundaryVersions(): string[] {
+    return [
+      // 'Alpha',
+      // 'P-L1',
+      // 'Q-L4',
+      // 'Q-B1-L4',
+      // 'QP-L4',
+      // 'QP-B1-L5',
+      // 'TRI-L6',
+      // 'TRI-B1-L5',
+      // 'TRI-B2-L4',
+      // 'FF-L8',
+      // 'FF-B1-L6',
+      // 'FF-B2-L4',
+      // 'FF-B3-L4',
+    ]
+  }
+
+  get fields(): string[] {
+    return [
+      'Tester',
+      'Meetings',
+      'Races',
+      'Betlines',
+      'Debits',
+      'Credits',
+      'Profit / Loss',
+      'ROI'
+    ];
   }
 }

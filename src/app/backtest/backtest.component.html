@@ -2,9 +2,9 @@
   <thead class="text-xl">
   <th *ngFor="let field of fields; let index = index"
       class="border border-gray-600 py-1"
-      [class.px-4]="[1].includes(index)"
-      [class.px-12]="[2].includes(index)"
-      [class.px-8]="![1,2].includes(index)"
+      [class.px-4]="[1,6].includes(index)"
+      [class.px-16]="[2].includes(index)"
+      [class.px-8]="![1,2,6].includes(index)"
   >
     {{field}}
   </th>
@@ -36,16 +36,17 @@
         </div>
       </div>
     </td>
-    <td class="border border-gray-700 py-1"
+    <td class="border border-gray-700 py-1 px-2"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
     >
-      <span class="text-green-600">
-        {{countRaces(tyield)[0]}}
-      </span>
-      /
-      {{countRaces(tyield)[1]}}
-      /
-      {{countRaces(tyield)[2]}}
+      <div class="grid grid-cols-4 gap-x-2">
+        <div *ngFor="let rc of countRaces(tyield); let index = index"
+             [class.text-green-600]="index === 0"
+             [class.text-blue-600]="index === 1"
+        >
+          {{rc}}
+        </div>
+      </div>
     </td>
     <td class="border border-gray-700 py-1"
         [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
