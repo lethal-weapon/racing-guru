@@ -38,8 +38,8 @@ export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
   {factor: 'individualAbsorption', abbreviation: ''},
   {factor: 'collaboratedContinuity', abbreviation: ''},
   {factor: 'collaboratedLookAhead', abbreviation: ''},
-  {factor: 'horseOwner', abbreviation: ''},
   {factor: 'horseAbsorption', abbreviation: ''},
+  {factor: 'horseOwner', abbreviation: ''},
   {factor: 'occasion', abbreviation: ''},
 ];
 
