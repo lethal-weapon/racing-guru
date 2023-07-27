@@ -119,12 +119,12 @@
     </tfoot>
   </table>
   <div class="my-8 text-center">
-      <span class="text-3xl text-yellow-400">
-        {{activeVersion}} :
-      </span>
+    <span class="text-3xl text-yellow-400">
+      {{activeVersion}} :
+    </span>
     <span class="text-xl">
-        {{activeTesterDescription}}
-      </span>
+      {{activeTesterDescription}}
+    </span>
   </div>
   <table class="mx-auto table-fixed border-collapse border border-gray-600 text-center">
     <thead class="text-lg">
@@ -133,8 +133,8 @@
     </th>
     <th *ngFor="let field of meetingFields; let index = index"
         class="border border-gray-600 py-1"
-        [class.px-6]="index > 1"
-        [class.px-10]="index <= 1"
+        [class.px-6]="index !== 2"
+        [class.px-10]="index === 2"
     >
       {{field}}
     </th>
@@ -148,6 +148,8 @@
       </td>
       <td class="border border-gray-700 py-1 font-mono">
         {{myield.meeting}}
+      </td>
+      <td class="border border-gray-700 py-1">
       </td>
       <td class="border border-gray-700 py-1">
         <div class="grid grid-cols-5 gap-x-1 px-3">
@@ -179,12 +181,12 @@
         -{{myield.debit | currency:'USD':'symbol':'1.0-0'}}
       </td>
       <td class="border border-gray-700 py-1">
-        <span *ngIf="myield.credit > 0" class="text-green-600">
-          +{{myield.credit | currency:'USD':'symbol':'1.0-0'}}
-        </span>
+            <span *ngIf="myield.credit > 0" class="text-green-600">
+              +{{myield.credit | currency:'USD':'symbol':'1.0-0'}}
+            </span>
         <span *ngIf="myield.credit <= 0" class="text-yellow-400">
-          X
-        </span>
+              X
+            </span>
       </td>
       <td class="border border-gray-700 py-1"
           [class.text-red-600]="myield.credit < myield.debit"
