@@ -60,12 +60,8 @@ export class BacktestComponent implements OnInit {
   getReturnOnInvestment = (tyield: TesterYield | MeetingYield): number =>
     parseFloat((tyield.credit / tyield.debit - 1).toFixed(2))
 
-  countRacesOnMeeting = (myield: MeetingYield): number[] => {
-    const total = myield.races.length;
-    const betRaces = myield.races.filter(r => r.debit > 0);
-    const positive = betRaces.filter(r => r.credit > r.debit);
-    return [positive.length, betRaces.length, total];
-  }
+  getProfitRacesOnMeeting = (myield: MeetingYield): number[] =>
+    myield.races.filter(r => r.credit > r.debit).map(r => r.race)
 
   countBetlinesOnMeeting = (myield: MeetingYield): number[] => {
     const betlines = myield.races
@@ -84,10 +80,12 @@ export class BacktestComponent implements OnInit {
     return [positive, total];
   }
 
-  countRaces = (tyield: TesterYield): number[] => {
-    const allRaces = tyield.meetings
-      .map(m => m.races)
-      .reduce((prev, curr) => prev.concat(curr), []);
+  countRaces = (tmYield: TesterYield | MeetingYield): number[] => {
+    const allRaces = "races" in tmYield
+      ? tmYield?.races
+      : tmYield.meetings
+        .map(m => m.races)
+        .reduce((prev, curr) => prev.concat(curr), []);
 
     const betRaces = allRaces.filter(r => r.debit > 0);
     const hitRaces = betRaces.filter(r => r.credit > 0);
@@ -133,18 +131,6 @@ export class BacktestComponent implements OnInit {
     this.activeFactors.includes(renderFactor)
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400 `
-
-  get meetingFields(): string[] {
-    const fields = this.fields
-      .filter((f, index) => index > 0)
-      .map(f => f === 'Meetings' ? 'Meeting' : f);
-
-    return [
-      ...fields.slice(0, 1),
-      'Hit Race #',
-      ...fields.slice(1)
-    ];
-  }
 
   get activeTesterDescription(): string {
     return this.yields
@@ -195,6 +181,18 @@ export class BacktestComponent implements OnInit {
       'FF-B2-L4',
       'FF-B3-L4',
     ]
+  }
+
+  get meetingFields(): string[] {
+    const fields = this.fields
+      .filter((f, index) => index > 0)
+      .map(f => f === 'Meetings' ? 'Meeting' : f);
+
+    return [
+      ...fields.slice(0, 1),
+      'Profit Race #',
+      ...fields.slice(1)
+    ];
   }
 
   get fields(): string[] {

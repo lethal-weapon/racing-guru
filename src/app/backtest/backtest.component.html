@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div *ngIf="isLoading" class="my-8 text-center noselect">
+<div *ngIf="isLoading" class="my-36 text-center noselect">
   <app-spinner></app-spinner>
 </div>
 
@@ -133,8 +133,8 @@
     </th>
     <th *ngFor="let field of meetingFields; let index = index"
         class="border border-gray-600 py-1"
-        [class.px-6]="index !== 2"
-        [class.px-10]="index === 2"
+        [class.px-6]="![1,2].includes(index)"
+        [class.px-10]="[1,2].includes(index)"
     >
       {{field}}
     </th>
@@ -149,20 +149,20 @@
       <td class="border border-gray-700 py-1 font-mono">
         {{myield.meeting}}
       </td>
-      <td class="border border-gray-700 py-1">
+      <td class="border border-gray-700 py-1 px-2">
+        <div class="grid grid-cols-6 gap-x-2">
+          <div *ngFor="let race of getProfitRacesOnMeeting(myield)">
+            {{race}}
+          </div>
+        </div>
       </td>
-      <td class="border border-gray-700 py-1">
-        <div class="grid grid-cols-5 gap-x-1 px-3">
-          <div class="{{countRacesOnMeeting(myield)[0] === 0 ? 'text-yellow-400' : 'text-green-600'}}">
-            {{countRacesOnMeeting(myield)[0]}}
-          </div>
-          <div>/</div>
-          <div [class.text-yellow-400]="countRacesOnMeeting(myield)[1] !== countRacesOnMeeting(myield)[2]">
-            {{countRacesOnMeeting(myield)[1]}}
-          </div>
-          <div>/</div>
-          <div>
-            {{countRacesOnMeeting(myield)[2]}}
+      <td class="border border-gray-700 py-1 px-2">
+        <div class="grid grid-cols-4 gap-x-2">
+          <div *ngFor="let races of countRaces(myield); let index = index"
+               [class.text-green-600]="index === 0"
+               [class.text-blue-600]="index === 1"
+          >
+            {{races}}
           </div>
         </div>
       </td>
@@ -181,12 +181,12 @@
         -{{myield.debit | currency:'USD':'symbol':'1.0-0'}}
       </td>
       <td class="border border-gray-700 py-1">
-            <span *ngIf="myield.credit > 0" class="text-green-600">
-              +{{myield.credit | currency:'USD':'symbol':'1.0-0'}}
-            </span>
+        <span *ngIf="myield.credit > 0" class="text-green-600">
+          +{{myield.credit | currency:'USD':'symbol':'1.0-0'}}
+        </span>
         <span *ngIf="myield.credit <= 0" class="text-yellow-400">
-              X
-            </span>
+          X
+        </span>
       </td>
       <td class="border border-gray-700 py-1"
           [class.text-red-600]="myield.credit < myield.debit"
