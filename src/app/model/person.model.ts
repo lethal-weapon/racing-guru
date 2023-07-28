@@ -33,14 +33,14 @@ export const TRAINERS = [
   new Person('TKH', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy', 134),
 
   new Person('RW', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
+  new Person('NM', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
+  new Person('MWK', 'Mo', 'Wai-kit', 'C. Mo', 'HK', '', 'Cody', 0),
   new Person('CCW', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael', 321),
-  new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
   new Person('TYS', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me', 597),
-  new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', '', 277),
-  new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony', 700),
 
-  // new Person('NM', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
-  // new Person('MWK', 'Mo', 'Wai-kit', 'C. Mo', 'HK', '', 'Cody', 0),
+  // new Person('HL', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
+  // new Person('GR', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', '', 277),
+  // new Person('MA', 'Millard', 'Anthony T.', 'T. Millard', 'SAF', '', 'Tony', 700),
   // new Person('OSP', 'OSullivan', 'Paul', 'P. OSullivan', 'NZ', '', '', 0),
 ]
 
@@ -62,17 +62,17 @@ export const JOCKEYS = [
   new Person('FEL', 'Ferraris', 'Luke', 'L. Ferraris', 'SAF', 'Club', '', 20),
   new Person('BHW', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William', 30),
   new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', '', 60),
-  new Person('DEE', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', '', 0),
   new Person('AVB', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', '', 0),
   new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard', 9),
 
   new Person('WEC', 'Wong', 'Chi-wang', 'E. Wong', 'HK', 'Freelance', 'Ellis', 0),
   new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred', 53),
   new Person('MHT', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan', 104),
-  new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack', 88),
-  new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor', 63),
-  new Person('LHW', 'Lai', 'Hoi-wing', 'A. Lai', 'HK', 'Freelance', 'Alex', 283),
 
+  // new Person('DEE', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', '', 0),
+  // new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack', 88),
+  // new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor', 63),
+  // new Person('LHW', 'Lai', 'Hoi-wing', 'A. Lai', 'HK', 'Freelance', 'Alex', 283),
   // new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', '', 0),
   // new Person('MTA', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', '', 0),
   // new Person('DC', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', '', 0),
