@@ -46,11 +46,11 @@ export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
 export const JOCKEY_CODES = JOCKEYS.map(j => j.code);
 
 export const BOUNDARY_JOCKEYS = [
-  'BA', 'YML', 'CLR'
+  'CLR', 'DMK', 'AA'
 ];
 
 export const BOUNDARY_TRAINERS = [
-  'HAD', 'YTP', 'TKH'
+  'HDA', 'YTP', 'TKH'
 ];
 
 export const BOUNDARY_PERSONS =

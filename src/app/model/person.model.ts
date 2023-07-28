@@ -16,8 +16,8 @@ export const TRAINERS = [
   new Person('SJJ', 'Size', 'John', 'J. Size', 'AUS', '', '', 1414),
   new Person('LFC', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie', 329),
   new Person('NPC', 'Ng', 'Pang-chi', 'P. Ng', 'HK', '', 'Pierre', 0),
-  new Person('HDA', 'Hayes', 'David', 'D. Hayes', 'AUS', '', '', 526),
   new Person('HAD', 'Hall', 'David', 'D. Hall', 'AUS', '', '', 546),
+  new Person('HDA', 'Hayes', 'David', 'D. Hayes', 'AUS', '', '', 526),
 
   new Person('CAS', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony', 1413),
   new Person('YPF', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky', 899),
@@ -47,32 +47,34 @@ export const TRAINERS = [
 export const JOCKEYS = [
   new Person('PZ', 'Purton', 'Zac', 'Z. Purton', 'AUS', 'Club', '', 1431),
   new Person('BH', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', '', 29),
+  new Person('AVB', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', '', 0),
+  new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard', 9),
+
   new Person('TEK', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', '', 547),
+  new Person('HEL', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', '', 30),
+  new Person('FEL', 'Ferraris', 'Luke', 'L. Ferraris', 'SAF', 'Club', '', 20),
+  new Person('DMK', 'DeMelo', 'Keagan', 'K. DeMelo', 'SAF', 'Club', '', 0),
+
   new Person('BA', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', '', 165),
+  new Person('BHW', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William', 30),
+  new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', '', 60),
+  new Person('AA', 'Atzeni', 'Andrea', 'A. Atzeni', 'ITY', 'Club', '', 0),
 
   new Person('HCY', 'Ho', 'Chak-yiu', 'V. Ho', 'HK', 'Freelance', 'Vincent', 446),
   new Person('CML', 'Chadwick', 'Matthew L.', 'M. Chadwick', 'HK', 'Freelance', 'Lee', 461),
   new Person('LDE', 'Leung', 'Ka-chun', 'D. Leung', 'HK', 'Freelance', 'Derek', 399),
   new Person('CJE', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry', 95),
-  new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus', 0),
-  new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew', 192),
   new Person('YML', 'Yeung', 'Ming-lun', 'K. Yeung', 'HK', 'Freelance', 'Keith', 275),
-
-  new Person('HEL', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', '', 30),
-  new Person('FEL', 'Ferraris', 'Luke', 'L. Ferraris', 'SAF', 'Club', '', 20),
-  new Person('BHW', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William', 30),
-  new Person('HAA', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', '', 60),
-  new Person('AVB', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', '', 0),
-  new Person('CLR', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard', 9),
-
+  new Person('CCY', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus', 0),
   new Person('WEC', 'Wong', 'Chi-wang', 'E. Wong', 'HK', 'Freelance', 'Ellis', 0),
   new Person('CHA', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred', 53),
+  new Person('PMF', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew', 192),
   new Person('MHT', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan', 104),
 
-  // new Person('DEE', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', '', 0),
   // new Person('WJH', 'Wong', 'Ho-nam', 'J. Wong', 'HK', 'Freelance', 'Jack', 88),
   // new Person('WCV', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor', 63),
   // new Person('LHW', 'Lai', 'Hoi-wing', 'A. Lai', 'HK', 'Freelance', 'Alex', 283),
+  // new Person('DEE', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', '', 0),
   // new Person('MCJ', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', '', 0),
   // new Person('MTA', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', '', 0),
   // new Person('DC', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', '', 0),
@@ -96,10 +98,5 @@ export const JOCKEYS = [
 
 export const NEW_PEOPLE =
   JOCKEYS
-    .filter(j => ['BH', 'DSS', 'CCY', 'WEC', 'AVB', 'DEE'].includes(j.code))
-    .concat(TRAINERS.filter(t => ['NPC', 'RW'].includes(t.code)))
-
-export const GONE_PEOPLE =
-  JOCKEYS
-    .filter(j => ['MOJ', 'SHB'].includes(j.code))
-    .concat(TRAINERS.filter(t => ['OSP'].includes(t.code)))
+    .filter(j => ['AVB', 'DMK', 'AA', 'WEC'].includes(j.code))
+    .concat(TRAINERS.filter(t => ['NM', 'MWK'].includes(t.code)))

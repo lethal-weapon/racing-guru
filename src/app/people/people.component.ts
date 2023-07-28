@@ -1,13 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {
-  JOCKEYS,
-  TRAINERS,
-  NEW_PEOPLE,
-  GONE_PEOPLE,
-  Person
-} from '../model/person.model';
+import {JOCKEYS, TRAINERS, NEW_PEOPLE, Person} from '../model/person.model';
 
 @Component({
   selector: 'app-people',
@@ -16,7 +10,6 @@ import {
 export class PeopleComponent implements OnInit {
 
   protected readonly NEW_PEOPLE = NEW_PEOPLE;
-  protected readonly GONE_PEOPLE = GONE_PEOPLE;
 
   constructor(private repo: RestRepository) {
   }
