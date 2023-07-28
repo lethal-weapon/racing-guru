@@ -167,10 +167,11 @@ export class BacktestComponent implements OnInit {
       // 'Alpha',
       'W-L1',
       'Q-B1-L4',
-      'QP-B1-L5',
+      'QP-B1-L4',
       'FB-B1-L4',
       'TBM-B1-L4',
       'FF-B1-L6',
+      'QBM-B1-L5',
     ]
   }
 
