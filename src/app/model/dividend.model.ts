@@ -16,6 +16,11 @@ export class Dividend {
   }
 }
 
+export interface DividendPool {
+  name: string,
+  threshold: number
+}
+
 export const DEFAULT_SINGULARS: Singular[] = [{order: 0, odds: 0}]
 export const DEFAULT_COMBINATIONS: Combination[] = [
   {orders: [0, 0, 0, 0], odds: 0},

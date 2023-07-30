@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
 import {Horse} from './horse.model';
+import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
 import {FavoritePost} from './favorite.model';
 import {Collaboration} from './collaboration.model';
@@ -26,6 +27,9 @@ export class RestDataSource {
 
   getHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses`)
+
+  getOwners = (): Observable<HorseOwner[]> =>
+    this.http.get<HorseOwner[]>(`${this.baseUrl}/owners`)
 
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
