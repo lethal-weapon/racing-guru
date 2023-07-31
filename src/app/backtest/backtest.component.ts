@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {MeetingYield, TesterYield} from '../model/backtest.model';
 import {RATING_FACTOR_MAPS} from '../util/strings';
+import {powerSet} from "../util/functions";
 
 @Component({
   selector: 'app-backtest',
@@ -12,6 +13,7 @@ export class BacktestComponent implements OnInit {
   isLoading = false;
   activeVersion = this.boundaryVersions[0];
   activeFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
+  bankerFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
 
   protected readonly RATING_FACTOR_MAPS = RATING_FACTOR_MAPS;
 
@@ -26,6 +28,7 @@ export class BacktestComponent implements OnInit {
     switch (action) {
       case 'Reset All': {
         this.activeFactors = [RATING_FACTOR_MAPS[0].factor];
+        this.bankerFactors = [RATING_FACTOR_MAPS[0].factor];
         break;
       }
       case 'Select All': {
@@ -46,14 +49,26 @@ export class BacktestComponent implements OnInit {
     this.repo.fetchYields(this.activeFactors, () => this.isLoading = false);
   }
 
-  toggleFactor = (clicked: string) => {
-    if (!this.activeFactors.includes(clicked)) {
-      this.activeFactors.push(clicked);
-      return;
-    }
+  toggleFactor = (clicked: string, onBanker: boolean = false) => {
+    if (onBanker) {
+      if (this.bankerFactors.includes(clicked)) {
+        this.bankerFactors = this.bankerFactors.filter(f => f !== clicked);
 
-    if (this.activeFactors.length > 1) {
-      this.activeFactors = this.activeFactors.filter(f => f !== clicked);
+      } else {
+        this.bankerFactors.push(clicked);
+        if (!this.activeFactors.includes(clicked)) {
+          this.activeFactors.push(clicked);
+        }
+      }
+    } else {
+      if (this.activeFactors.includes(clicked)) {
+        if (this.activeFactors.length > 1) {
+          this.activeFactors = this.activeFactors.filter(f => f !== clicked);
+          this.bankerFactors = this.bankerFactors.filter(f => f !== clicked);
+        }
+      } else {
+        this.activeFactors.push(clicked);
+      }
     }
   }
 
@@ -130,7 +145,12 @@ export class BacktestComponent implements OnInit {
   getFactorBadgeStyle = (renderFactor: string): string =>
     this.activeFactors.includes(renderFactor)
       ? `text-yellow-400 border-yellow-400`
-      : `border-gray-600 hover:border-yellow-400 `
+      : `border-gray-600 hover:border-yellow-400`
+
+  get factorCombinations(): string[][] {
+    return powerSet(this.activeFactors)
+      .filter(fc => this.bankerFactors.every(bf => fc.includes(bf)));
+  }
 
   get activeTesterDescription(): string {
     return this.yields

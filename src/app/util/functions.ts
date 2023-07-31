@@ -4,6 +4,7 @@ import {WinPlaceOdds} from '../model/odds.model';
 import {SingularSignal, CombinationSignal} from '../model/signal.model';
 import {COLORS, JOCKEY_CODES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE, FCT_TRI_PAYOUT_RATE} from './numbers';
+import {list} from "postcss";
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
@@ -193,3 +194,23 @@ export const getRaceBadgeStyle = (activeRace: number, renderRace: number): strin
   activeRace === renderRace
     ? `text-yellow-400 border-yellow-400`
     : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
+
+export const powerSet = (list: string[]): string[][] => {
+  const listSize = list.length;
+  const combinationsCount = (1 << listSize);
+  let set: Set<string[]> = new Set();
+
+  for (let i = 1; i < combinationsCount; i++) {
+    let combination: string[] = [];
+
+    for (let j = 0; j < listSize; j++) {
+      if ((i & (1 << j))) {
+        combination.push(list[j]);
+      }
+    }
+
+    set.add(combination);
+  }
+
+  return Array.from(set);
+}

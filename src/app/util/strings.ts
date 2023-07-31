@@ -6,6 +6,7 @@ export interface PlacingMap {
 }
 
 export interface RatingFactorMap {
+  order: number,
   factor: string,
   abbreviation: string
 }
@@ -29,18 +30,18 @@ export const PLACING_MAPS: PlacingMap[] = [
 ];
 
 export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
-  {factor: 'familiarity', abbreviation: ''},
-  {factor: 'collaboration', abbreviation: ''},
-  {factor: 'dueCollaboration', abbreviation: ''},
-  {factor: 'dueAcquisition', abbreviation: ''},
-  {factor: 'individualContinuity', abbreviation: ''},
-  {factor: 'individualLookAhead', abbreviation: ''},
-  {factor: 'individualAbsorption', abbreviation: ''},
-  {factor: 'collaboratedContinuity', abbreviation: ''},
-  {factor: 'collaboratedLookAhead', abbreviation: ''},
-  {factor: 'horseAbsorption', abbreviation: ''},
-  {factor: 'horseOwner', abbreviation: ''},
-  {factor: 'occasion', abbreviation: ''},
+  {order: 1, factor: 'familiarity', abbreviation: ''},
+  {order: 2, factor: 'collaboration', abbreviation: ''},
+  {order: 3, factor: 'dueCollaboration', abbreviation: ''},
+  {order: 4, factor: 'dueAcquisition', abbreviation: ''},
+  {order: 5, factor: 'individualContinuity', abbreviation: ''},
+  {order: 6, factor: 'individualLookAhead', abbreviation: ''},
+  {order: 7, factor: 'individualAbsorption', abbreviation: ''},
+  {order: 8, factor: 'collaboratedContinuity', abbreviation: ''},
+  {order: 9, factor: 'collaboratedLookAhead', abbreviation: ''},
+  {order: 10, factor: 'horseAbsorption', abbreviation: ''},
+  {order: 11, factor: 'horseOwner', abbreviation: ''},
+  {order: 12, factor: 'occasion', abbreviation: ''},
 ];
 
 export const JOCKEY_CODES = JOCKEYS.map(j => j.code);

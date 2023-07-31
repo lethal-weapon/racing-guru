@@ -1,203 +1,231 @@
-<div class="my-8 flex flex-row justify-center gap-x-10 noselect">
-  <div *ngFor="let action of actions"
-       class="px-4 pt-1.5 pb-2 text-xl rounded-lg hvr-grow-shadow cursor-pointer border border-gray-600 hover:border-yellow-400"
-       (click)="process(action)"
-  >
-    {{action}}
-  </div>
-</div>
-
-<div class="m-8 grid grid-cols-4 xl:grid-cols-5 gap-4 text-center noselect">
-  <div *ngFor="let m of RATING_FACTOR_MAPS"
-       class="px-4 pt-1.5 pb-2 text-xl rounded-full hvr-float-shadow cursor-pointer border {{getFactorBadgeStyle(m.factor)}}"
-       (click)="toggleFactor(m.factor)"
-  >
-    {{m.factor.charAt(0).toUpperCase().concat(m.factor.slice(1))}}
-  </div>
-</div>
-
-<div *ngIf="isLoading" class="my-36 text-center noselect">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!isLoading" class="noselect">
-  <table class="my-8 mx-auto table-fixed border-collapse border border-gray-600 text-center">
-    <thead class="text-xl">
-    <th *ngFor="let field of fields; let index = index"
-        class="border border-gray-600 py-1"
-        [class.px-4]="[1,6].includes(index)"
-        [class.px-16]="[2].includes(index)"
-        [class.px-8]="![1,2,6].includes(index)"
-    >
-      {{field}}
-    </th>
-    </thead>
-    <tbody class="text-lg">
-    <tr *ngFor="let tyield of yields"
-        class="hover:bg-gray-800 "
-    >
-      <td class="border border-gray-700 py-1 cursor-pointer"
-          tooltip="{{tyield.description}}"
-          [hideDelay]="0"
-          [class.font-bold]="activeVersion === tyield.version"
-          [class.text-yellow-400]="activeVersion === tyield.version"
-          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
-          (click)="activeVersion = tyield.version"
+<div class="m-16 grid grid-cols-3 text-center noselect">
+  <div class="col-span-1">
+    <div class="flex flex-row justify-center gap-x-6">
+      <div *ngFor="let action of actions"
+           class="px-4 pt-1.5 pb-2 text-lg rounded-lg hvr-grow-shadow cursor-pointer border border-gray-600 hover:border-yellow-400"
+           (click)="process(action)"
       >
-        {{tyield.version}}
-      </td>
-      <td class="border border-gray-700 py-1"
-          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
+        {{action}}
+      </div>
+    </div>
+    <div class="mt-10 mx-auto w-4/5 flex flex-col gap-y-4">
+      <div *ngFor="let m of RATING_FACTOR_MAPS"
+           class="px-6 py-2 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getFactorBadgeStyle(m.factor)}}"
       >
-        <div class="grid grid-cols-3 gap-x-1 px-6">
-          <div class="text-green-600">
-            {{countMeetings(tyield)[0]}}
+        <div class="grid grid-cols-12">
+          <div class="col-span-1">
+            {{m.order}}
           </div>
-          <div>/</div>
-          <div>
-            {{countMeetings(tyield)[1]}}
-          </div>
-        </div>
-      </td>
-      <td class="border border-gray-700 py-1 px-2"
-          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
-      >
-        <div class="grid grid-cols-4 gap-x-2.5">
-          <div *ngFor="let races of countRaces(tyield); let index = index"
-               [class.text-green-600]="index === 0"
-               [class.text-blue-600]="index === 1"
+          <div class="col-span-10"
+               (click)="toggleFactor(m.factor)"
           >
-            {{races}}
+            {{m.factor.charAt(0).toUpperCase().concat(m.factor.slice(1))}}
           </div>
-        </div>
-      </td>
-      <td class="border border-gray-700 py-1"
-          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
-      >
-        <div class="w-11/12 mx-auto grid grid-cols-3 px-2">
-          <div class="text-green-600">
-            {{countBetlines(tyield)[0]}}
-          </div>
-          <div>/</div>
-          <div>
-            {{countBetlines(tyield)[1]}}
-          </div>
-        </div>
-      </td>
-      <td class="border border-gray-700 py-1 text-red-600"
-          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
-      >
-        -{{tyield.debit | currency:'USD':'symbol':'1.0-0'}}
-      </td>
-      <td class="border border-gray-700 py-1 text-green-600"
-          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
-      >
-        +{{tyield.credit | currency:'USD':'symbol':'1.0-0'}}
-      </td>
-      <td class="border border-gray-700 py-1"
-          [class.text-red-600]="tyield.credit < tyield.debit"
-          [class.text-green-600]="tyield.credit > tyield.debit"
-          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
-      >
-        {{(tyield.credit - tyield.debit) | currency:'USD':'symbol':'1.0-0'}}
-      </td>
-      <td class="border border-gray-700 py-1 {{getTesterROIColor(tyield)}}"
-          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"
-      >
-        {{getReturnOnInvestment(tyield)}}
-      </td>
-    </tr>
-    </tbody>
-    <tfoot *ngIf="testerAvgROI">
-    <tr>
-      <td *ngFor="let field of fields; let last = last"
-          class="border border-gray-700 py-1 text-lg font-bold"
-      >
-        {{!last ? '' : testerAvgROI}}
-      </td>
-    </tr>
-    </tfoot>
-  </table>
-  <div class="my-8 text-center">
-    <span class="text-3xl text-yellow-400">
-      {{activeVersion}} :
-    </span>
-    <span class="text-xl">
-      {{activeTesterDescription}}
-    </span>
-  </div>
-  <table class="mx-auto table-fixed border-collapse border border-gray-600 text-center">
-    <thead class="text-lg">
-    <th class="border border-gray-600 py-1 px-6">
-      #
-    </th>
-    <th *ngFor="let field of meetingFields; let index = index"
-        class="border border-gray-600 py-1"
-        [class.px-6]="![1,2].includes(index)"
-        [class.px-10]="[1,2].includes(index)"
-    >
-      {{field}}
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let myield of meetingYields; let index = index"
-        class="hover:bg-gray-800"
-    >
-      <td class="border border-gray-700 py-1 font-mono">
-        {{index + 1}}
-      </td>
-      <td class="border border-gray-700 py-1 font-mono">
-        {{myield.meeting}}
-      </td>
-      <td class="border border-gray-700 py-1 px-2">
-        <div class="grid grid-cols-6 gap-x-2">
-          <div *ngFor="let race of getProfitRacesOnMeeting(myield)">
-            {{race}}
-          </div>
-        </div>
-      </td>
-      <td class="border border-gray-700 py-1 px-2">
-        <div class="grid grid-cols-4 gap-x-2">
-          <div *ngFor="let races of countRaces(myield); let index = index"
-               [class.text-green-600]="index === 0"
-               [class.text-blue-600]="index === 1"
+          <div class="col-span-1"
+               (click)="toggleFactor(m.factor, true)"
           >
-            {{races}}
+            <div *ngIf="bankerFactors.includes(m.factor)">
+              <i class="fa fa-star"></i>
+            </div>
+            <div *ngIf="!bankerFactors.includes(m.factor)">
+              <i class="fa fa-star-o"></i>
+            </div>
           </div>
         </div>
-      </td>
-      <td class="border border-gray-700 py-1">
-        <div class="grid grid-cols-3 gap-x-1 px-6">
-          <div class="{{countBetlinesOnMeeting(myield)[0] === 0 ? 'text-yellow-400' : 'text-green-600'}}">
-            {{countBetlinesOnMeeting(myield)[0]}}
-          </div>
-          <div>/</div>
-          <div>
-            {{countBetlinesOnMeeting(myield)[1]}}
-          </div>
-        </div>
-      </td>
-      <td class="border border-gray-700 py-1 text-red-600">
-        -{{myield.debit | currency:'USD':'symbol':'1.0-0'}}
-      </td>
-      <td class="border border-gray-700 py-1">
-        <span *ngIf="myield.credit > 0" class="text-green-600">
-          +{{myield.credit | currency:'USD':'symbol':'1.0-0'}}
-        </span>
-        <span *ngIf="myield.credit <= 0" class="text-yellow-400">
-          X
-        </span>
-      </td>
-      <td class="border border-gray-700 py-1"
-          [class.text-red-600]="myield.credit < myield.debit"
-          [class.text-green-600]="myield.credit > myield.debit"
-      >
-        {{(myield.credit - myield.debit) | currency:'USD':'symbol':'1.0-0'}}
-      </td>
-      <td class="border border-gray-700 py-1 {{getMeetingROIColor(myield)}}">
-        {{getReturnOnInvestment(myield) ? getReturnOnInvestment(myield) : ''}}
-      </td>
-    </tr>
-    </tbody>
-  </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-span-2">
+    <div class="my-10 text-2xl">
+      Top 25 out of total {{factorCombinations.length}} factor combinations
+    </div>
+    <div *ngIf="isLoading" class="my-48">
+      <app-spinner></app-spinner>
+    </div>
+    <div *ngIf="!isLoading">
+      x
+    </div>
+  </div>
 </div>
+
+<!--<div *ngIf="!isLoading">-->
+<!--  <table class="my-8 mx-auto table-fixed border-collapse border border-gray-600 text-center">-->
+<!--    <thead class="text-xl">-->
+<!--    <th *ngFor="let field of fields; let index = index"-->
+<!--        class="border border-gray-600 py-1"-->
+<!--        [class.px-4]="[1,6].includes(index)"-->
+<!--        [class.px-16]="[2].includes(index)"-->
+<!--        [class.px-8]="![1,2,6].includes(index)"-->
+<!--    >-->
+<!--      {{field}}-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody class="text-lg">-->
+<!--    <tr *ngFor="let tyield of yields"-->
+<!--        class="hover:bg-gray-800 "-->
+<!--    >-->
+<!--      <td class="border border-gray-700 py-1 cursor-pointer"-->
+<!--          tooltip="{{tyield.description}}"-->
+<!--          [hideDelay]="0"-->
+<!--          [class.font-bold]="activeVersion === tyield.version"-->
+<!--          [class.text-yellow-400]="activeVersion === tyield.version"-->
+<!--          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"-->
+<!--          (click)="activeVersion = tyield.version"-->
+<!--      >-->
+<!--        {{tyield.version}}-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1"-->
+<!--          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"-->
+<!--      >-->
+<!--        <div class="grid grid-cols-3 gap-x-1 px-6">-->
+<!--          <div class="text-green-600">-->
+<!--            {{countMeetings(tyield)[0]}}-->
+<!--          </div>-->
+<!--          <div>/</div>-->
+<!--          <div>-->
+<!--            {{countMeetings(tyield)[1]}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 px-2"-->
+<!--          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"-->
+<!--      >-->
+<!--        <div class="grid grid-cols-4 gap-x-2.5">-->
+<!--          <div *ngFor="let races of countRaces(tyield); let index = index"-->
+<!--               [class.text-green-600]="index === 0"-->
+<!--               [class.text-blue-600]="index === 1"-->
+<!--          >-->
+<!--            {{races}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1"-->
+<!--          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"-->
+<!--      >-->
+<!--        <div class="w-11/12 mx-auto grid grid-cols-3 px-2">-->
+<!--          <div class="text-green-600">-->
+<!--            {{countBetlines(tyield)[0]}}-->
+<!--          </div>-->
+<!--          <div>/</div>-->
+<!--          <div>-->
+<!--            {{countBetlines(tyield)[1]}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 text-red-600"-->
+<!--          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"-->
+<!--      >-->
+<!--        -{{tyield.debit | currency:'USD':'symbol':'1.0-0'}}-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 text-green-600"-->
+<!--          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"-->
+<!--      >-->
+<!--        +{{tyield.credit | currency:'USD':'symbol':'1.0-0'}}-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1"-->
+<!--          [class.text-red-600]="tyield.credit < tyield.debit"-->
+<!--          [class.text-green-600]="tyield.credit > tyield.debit"-->
+<!--          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"-->
+<!--      >-->
+<!--        {{(tyield.credit - tyield.debit) | currency:'USD':'symbol':'1.0-0'}}-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 {{getTesterROIColor(tyield)}}"-->
+<!--          [class.border-b-blue-700]="boundaryVersions.includes(tyield.version)"-->
+<!--      >-->
+<!--        {{getReturnOnInvestment(tyield)}}-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--    <tfoot *ngIf="testerAvgROI">-->
+<!--    <tr>-->
+<!--      <td *ngFor="let field of fields; let last = last"-->
+<!--          class="border border-gray-700 py-1 text-lg font-bold"-->
+<!--      >-->
+<!--        {{!last ? '' : testerAvgROI}}-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tfoot>-->
+<!--  </table>-->
+<!--  <div class="my-8 text-center">-->
+<!--    <span class="text-3xl text-yellow-400">-->
+<!--      {{activeVersion}} :-->
+<!--    </span>-->
+<!--    <span class="text-xl">-->
+<!--      {{activeTesterDescription}}-->
+<!--    </span>-->
+<!--  </div>-->
+<!--  <table class="mx-auto table-fixed border-collapse border border-gray-600 text-center">-->
+<!--    <thead class="text-lg">-->
+<!--    <th class="border border-gray-600 py-1 px-6">-->
+<!--      #-->
+<!--    </th>-->
+<!--    <th *ngFor="let field of meetingFields; let index = index"-->
+<!--        class="border border-gray-600 py-1"-->
+<!--        [class.px-6]="![1,2].includes(index)"-->
+<!--        [class.px-10]="[1,2].includes(index)"-->
+<!--    >-->
+<!--      {{field}}-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let myield of meetingYields; let index = index"-->
+<!--        class="hover:bg-gray-800"-->
+<!--    >-->
+<!--      <td class="border border-gray-700 py-1 font-mono">-->
+<!--        {{index + 1}}-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 font-mono">-->
+<!--        {{myield.meeting}}-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 px-2">-->
+<!--        <div class="grid grid-cols-6 gap-x-2">-->
+<!--          <div *ngFor="let race of getProfitRacesOnMeeting(myield)">-->
+<!--            {{race}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 px-2">-->
+<!--        <div class="grid grid-cols-4 gap-x-2">-->
+<!--          <div *ngFor="let races of countRaces(myield); let index = index"-->
+<!--               [class.text-green-600]="index === 0"-->
+<!--               [class.text-blue-600]="index === 1"-->
+<!--          >-->
+<!--            {{races}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1">-->
+<!--        <div class="grid grid-cols-3 gap-x-1 px-6">-->
+<!--          <div class="{{countBetlinesOnMeeting(myield)[0] === 0 ? 'text-yellow-400' : 'text-green-600'}}">-->
+<!--            {{countBetlinesOnMeeting(myield)[0]}}-->
+<!--          </div>-->
+<!--          <div>/</div>-->
+<!--          <div>-->
+<!--            {{countBetlinesOnMeeting(myield)[1]}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 text-red-600">-->
+<!--        -{{myield.debit | currency:'USD':'symbol':'1.0-0'}}-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1">-->
+<!--        <span *ngIf="myield.credit > 0" class="text-green-600">-->
+<!--          +{{myield.credit | currency:'USD':'symbol':'1.0-0'}}-->
+<!--        </span>-->
+<!--        <span *ngIf="myield.credit <= 0" class="text-yellow-400">-->
+<!--          X-->
+<!--        </span>-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1"-->
+<!--          [class.text-red-600]="myield.credit < myield.debit"-->
+<!--          [class.text-green-600]="myield.credit > myield.debit"-->
+<!--      >-->
+<!--        {{(myield.credit - myield.debit) | currency:'USD':'symbol':'1.0-0'}}-->
+<!--      </td>-->
+<!--      <td class="border border-gray-700 py-1 {{getMeetingROIColor(myield)}}">-->
+<!--        {{getReturnOnInvestment(myield) ? getReturnOnInvestment(myield) : ''}}-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+<!--</div>-->
