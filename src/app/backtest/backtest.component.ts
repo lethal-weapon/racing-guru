@@ -1,9 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {MeetingYield, TesterYield} from '../model/backtest.model';
 import {RATING_FACTOR_MAPS} from '../util/strings';
-import {powerSet} from "../util/functions";
+import {powerSet} from '../util/functions';
+import {
+  FactorHit,
+  FactorHitPlacing,
+  MeetingYield,
+  TesterYield
+} from '../model/backtest.model';
 
 @Component({
   selector: 'app-backtest',
@@ -46,7 +51,8 @@ export class BacktestComponent implements OnInit {
 
   runTests = () => {
     this.isLoading = true;
-    this.repo.fetchYields(this.activeFactors, () => this.isLoading = false);
+    // this.repo.fetchYields(this.activeFactors, () => this.isLoading = false);
+    this.repo.fetchFactorHits(this.factorCombinations, () => this.isLoading = false);
   }
 
   toggleFactor = (clicked: string, onBanker: boolean = false) => {
@@ -71,6 +77,20 @@ export class BacktestComponent implements OnInit {
       }
     }
   }
+
+  formatFactorCombination = (combination: string[]): string =>
+    combination
+      .map(c => RATING_FACTOR_MAPS.find(rf => rf.factor == c)?.order || 0)
+      .sort((fo1, fo2) => fo1 - fo2)
+      .map(fo => fo.toString())
+      .join(', ')
+
+  isTopPlacingHit = (fhp: FactorHitPlacing): boolean =>
+    this.factorHits
+      .map(fh => fh.hits.find(h => h.topn === fhp.topn)?.hitRaces || 0)
+      .sort((h1, h2) => h2 - h1)
+      .slice(0, 3)
+      .includes(fhp.hitRaces)
 
   getReturnOnInvestment = (tyield: TesterYield | MeetingYield): number =>
     parseFloat((tyield.credit / tyield.debit - 1).toFixed(2))
@@ -171,6 +191,12 @@ export class BacktestComponent implements OnInit {
     });
   }
 
+  get factorHits(): FactorHit[] {
+    return this.repo.findFactorHits().sort(
+      (h1, h2) => h2.totalHits - h1.totalHits
+    );
+  }
+
   get testerAvgROI(): number {
     const sum = this.yields
       .map(y => (y.credit / y.debit - 1))
@@ -193,6 +219,12 @@ export class BacktestComponent implements OnInit {
       'FF-B1-L6',
       'QBM-B1-L5',
     ]
+  }
+
+  get accuracyFields(): string[] {
+    return [
+      'Factors', 'WIN', 'QIN', 'TCE', 'QTT', 'Total',
+    ];
   }
 
   get meetingFields(): string[] {

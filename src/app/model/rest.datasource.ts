@@ -8,7 +8,7 @@ import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
 import {FavoritePost} from './favorite.model';
 import {Collaboration} from './collaboration.model';
-import {TesterYield} from './backtest.model';
+import {FactorHit, TesterYield} from './backtest.model';
 
 @Injectable()
 export class RestDataSource {
@@ -24,6 +24,9 @@ export class RestDataSource {
 
   getYields = (factors: string[]): Observable<TesterYield[]> =>
     this.http.post<TesterYield[]>(`${this.baseUrl}/backtest`, factors)
+
+  getBacktestAccuracy = (factorCombinations: string[][]): Observable<FactorHit[]> =>
+    this.http.post<FactorHit[]>(`${this.baseUrl}/backtest/accuracy`, factorCombinations)
 
   getHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses`)

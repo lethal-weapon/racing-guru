@@ -1,3 +1,15 @@
+export interface FactorHit {
+  factors   : string[],
+  hits      : FactorHitPlacing[]
+  totalHits : number
+}
+
+export interface FactorHitPlacing {
+  topn     : number,
+  hitRaces : number
+  betRaces : number
+}
+
 export interface TesterYield {
   version     : string,
   description : string,

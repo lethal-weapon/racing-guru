@@ -1,4 +1,4 @@
-<div class="m-16 grid grid-cols-3 text-center noselect">
+<div class="my-16 mx-8 grid grid-cols-3 text-center noselect">
   <div class="col-span-1">
     <div class="flex flex-row justify-center gap-x-6">
       <div *ngFor="let action of actions"
@@ -37,13 +37,58 @@
   </div>
   <div class="col-span-2">
     <div class="my-10 text-2xl">
-      Top 25 out of total {{factorCombinations.length}} factor combinations
+      Total
+      <span class="mx-4 text-3xl text-yellow-400">
+        {{factorCombinations.length}}
+      </span>
+      Factor Combinations
     </div>
     <div *ngIf="isLoading" class="my-48">
       <app-spinner></app-spinner>
     </div>
     <div *ngIf="!isLoading">
-      x
+      <table class="mx-auto table-fixed border-collapse border border-gray-600 text-center">
+        <thead class="text-lg">
+        <th class="border border-gray-600 py-1.5 px-4">
+          Rank
+        </th>
+        <th *ngFor="let field of accuracyFields; let index = index"
+            class="border border-gray-600 py-1.5"
+            [class.px-12]="[0].includes(index)"
+            [class.px-6]="![0].includes(index)"
+        >
+          {{field}}
+        </th>
+        </thead>
+        <tbody>
+        <tr *ngFor="let fh of factorHits; let index = index"
+            class="hover:bg-gray-800"
+        >
+          <td class="border border-gray-700 py-1">
+            {{index + 1}}
+          </td>
+          <td class="border border-gray-700 py-1">
+            {{formatFactorCombination(fh.factors)}}
+          </td>
+          <td *ngFor="let fhp of fh.hits"
+              class="border border-gray-700 py-1"
+          >
+            <div class="grid grid-cols-3 gap-x-0.5 px-4">
+              <div [class.text-yellow-400]="isTopPlacingHit(fhp)">
+                {{fhp.hitRaces}}
+              </div>
+              <div>/</div>
+              <div>
+                {{fhp.betRaces}}
+              </div>
+            </div>
+          </td>
+          <td class="border border-gray-700 py-1">
+            {{fh.totalHits}}
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
