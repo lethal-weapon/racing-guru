@@ -19,6 +19,7 @@ export class BacktestComponent implements OnInit {
   activeVersion = this.boundaryVersions[0];
   activeFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
   bankerFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
+  minFactorGroupSize = 1;
 
   protected readonly RATING_FACTOR_MAPS = RATING_FACTOR_MAPS;
 
@@ -31,9 +32,10 @@ export class BacktestComponent implements OnInit {
 
   process = (action: string) => {
     switch (action) {
-      case 'Reset All': {
+      case 'Reset': {
         this.activeFactors = [RATING_FACTOR_MAPS[0].factor];
         this.bankerFactors = [RATING_FACTOR_MAPS[0].factor];
+        this.minFactorGroupSize = 1;
         break;
       }
       case 'Select All': {
@@ -44,15 +46,27 @@ export class BacktestComponent implements OnInit {
         this.runTests();
         break;
       }
+      case 'Increase Size': {
+        this.minFactorGroupSize += 1;
+        break;
+      }
+      case 'Decrease Size': {
+        if (this.minFactorGroupSize > Math.max(1, this.bankerFactors.length)) {
+          this.minFactorGroupSize -= 1;
+        }
+        break;
+      }
       default:
         break;
     }
   }
 
   runTests = () => {
-    this.isLoading = true;
-    // this.repo.fetchYields(this.activeFactors, () => this.isLoading = false);
-    this.repo.fetchFactorHits(this.factorCombinations, () => this.isLoading = false);
+    if (this.factorCombinations.length > 0) {
+      this.isLoading = true;
+      this.repo.fetchFactorHits(this.factorCombinations, () => this.isLoading = false);
+      // this.repo.fetchYields(this.activeFactors, () => this.isLoading = false);
+    }
   }
 
   toggleFactor = (clicked: string, onBanker: boolean = false) => {
@@ -66,6 +80,11 @@ export class BacktestComponent implements OnInit {
           this.activeFactors.push(clicked);
         }
       }
+
+      if (this.minFactorGroupSize < this.bankerFactors.length) {
+        this.minFactorGroupSize = this.bankerFactors.length;
+      }
+
     } else {
       if (this.activeFactors.includes(clicked)) {
         if (this.activeFactors.length > 1) {
@@ -169,7 +188,9 @@ export class BacktestComponent implements OnInit {
 
   get factorCombinations(): string[][] {
     return powerSet(this.activeFactors)
-      .filter(fc => this.bankerFactors.every(bf => fc.includes(bf)));
+      .filter(fc => this.bankerFactors.every(bf => fc.includes(bf)))
+      .filter(fc => fc.length >= this.minFactorGroupSize)
+      .sort((fc1, fc2) => fc1.length - fc2.length);
   }
 
   get activeTesterDescription(): string {
@@ -253,6 +274,6 @@ export class BacktestComponent implements OnInit {
   }
 
   get actions(): string[] {
-    return ['Select All', 'Reset All', 'Run Tests'];
+    return ['Reset', 'Select All', 'Run Tests'];
   }
 }

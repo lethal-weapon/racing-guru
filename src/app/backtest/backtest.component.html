@@ -1,6 +1,6 @@
-<div class="my-16 mx-8 grid grid-cols-3 text-center noselect">
+<div class="my-16 mx-4 xl:mx-8 grid grid-cols-3 text-center noselect">
   <div class="col-span-1">
-    <div class="flex flex-row justify-center gap-x-6">
+    <div class="flex flex-row justify-center gap-x-3 xl:gap-x-6">
       <div *ngFor="let action of actions"
            class="px-4 pt-1.5 pb-2 text-lg rounded-lg hvr-grow-shadow cursor-pointer border border-gray-600 hover:border-yellow-400"
            (click)="process(action)"
@@ -8,7 +8,27 @@
         {{action}}
       </div>
     </div>
-    <div class="mt-10 mx-auto w-4/5 flex flex-col gap-y-4">
+    <div class="mt-10 mx-auto w-11/12 xl:w-4/5 flex flex-col gap-y-4">
+      <div class="mb-4 flex flex-row justify-around items-center">
+        <div class="px-4 py-0.5 rounded-xl border border-gray-600 hover:border-yellow-400 cursor-pointer"
+             (click)="process('Decrease Size')"
+        >
+          <i class="fa fa-minus"></i>
+        </div>
+        <div class="">
+          <span class="text-lg">
+            Group Size &#8829;
+          </span>
+          <span class="text-xl text-yellow-400">
+            {{minFactorGroupSize}}
+          </span>
+        </div>
+        <div class="px-4 py-0.5 rounded-xl border border-gray-600 hover:border-yellow-400 cursor-pointer"
+             (click)="process('Increase Size')"
+        >
+          <i class="fa fa-plus"></i>
+        </div>
+      </div>
       <div *ngFor="let m of RATING_FACTOR_MAPS"
            class="px-6 py-2 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getFactorBadgeStyle(m.factor)}}"
       >
