@@ -4,7 +4,6 @@ import {WinPlaceOdds} from '../model/odds.model';
 import {SingularSignal, CombinationSignal} from '../model/signal.model';
 import {COLORS, JOCKEY_CODES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE, FCT_TRI_PAYOUT_RATE} from './numbers';
-import {list} from "postcss";
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
