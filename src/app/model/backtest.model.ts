@@ -10,6 +10,12 @@ export interface FactorHitPlacing {
   betRaces : number
 }
 
+export interface EngineYield {
+  name    : string
+  factors : string[]
+  yields  : TesterYield[]
+}
+
 export interface TesterYield {
   version     : string,
   description : string,

@@ -4,6 +4,7 @@ import {RestRepository} from '../model/rest.repository';
 import {RATING_FACTOR_MAPS} from '../util/strings';
 import {powerSet} from '../util/functions';
 import {
+  EngineYield,
   FactorHit,
   FactorHitPlacing,
   MeetingYield,
@@ -16,7 +17,9 @@ import {
 })
 export class BacktestComponent implements OnInit {
   isLoading = false;
+  activeEngine = '';
   activeVersion = this.boundaryVersions[0];
+  activeSection: string = this.sections[1];
   activeFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
   bankerFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
   minFactorGroupSize = 1;
@@ -27,7 +30,23 @@ export class BacktestComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.runTests();
+    this.repo.fetchEngines()
+    // this.runTests();
+  }
+
+  setActiveEngine = (engine: EngineYield) => {
+    this.activeEngine = engine.name;
+    if (engine.yields.length == 0) {
+      this.isLoading = true;
+      this.repo.fetchEngineYields(engine.name, engine.factors, () => this.isLoading = false)
+    }
+  }
+
+  runTests = () => {
+    if (this.factorCombinations.length > 0) {
+      this.isLoading = true;
+      this.repo.fetchFactorHits(this.factorCombinations, () => this.isLoading = false);
+    }
   }
 
   process = (action: string) => {
@@ -58,14 +77,6 @@ export class BacktestComponent implements OnInit {
       }
       default:
         break;
-    }
-  }
-
-  runTests = () => {
-    if (this.factorCombinations.length > 0) {
-      this.isLoading = true;
-      this.repo.fetchFactorHits(this.factorCombinations, () => this.isLoading = false);
-      // this.repo.fetchYields(this.activeFactors, () => this.isLoading = false);
     }
   }
 
@@ -181,10 +192,15 @@ export class BacktestComponent implements OnInit {
     return rank > -1 && rank < 5 ? 'text-yellow-400' : 'text-green-600';
   }
 
-  getFactorBadgeStyle = (renderFactor: string): string =>
-    this.activeFactors.includes(renderFactor)
+  getBadgeStyle = (render: string): string =>
+    this.activeFactors.includes(render) || this.activeEngine === render
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400`
+
+  getSectionStyle = (section: string): string =>
+    this.activeSection === section
+      ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
+      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
 
   get factorCombinations(): string[][] {
     return powerSet(this.activeFactors)
@@ -199,6 +215,13 @@ export class BacktestComponent implements OnInit {
       ?.description || 'Betting Magic';
   }
 
+  get testerAvgROI(): number {
+    const sum = this.yields
+      .map(y => (y.credit / y.debit - 1))
+      .reduce((prev, curr) => prev + curr, 0);
+    return parseFloat((sum / this.yields.length).toFixed(4));
+  }
+
   get meetingYields(): MeetingYield[] {
     return this.yields
       .find(ty => ty.version === this.activeVersion)
@@ -206,10 +229,17 @@ export class BacktestComponent implements OnInit {
   }
 
   get yields(): TesterYield[] {
-    return this.repo.findYields().map(y => {
+    let engine = this.engines.find(e => e.name == this.activeEngine);
+    if (!engine) return [];
+
+    return engine.yields.map(y => {
       y.credit = Math.floor(y.credit);
       return y;
     });
+  }
+
+  get engines(): EngineYield[] {
+    return this.repo.findEngines();
   }
 
   get factorHits(): FactorHit[] {
@@ -218,27 +248,14 @@ export class BacktestComponent implements OnInit {
     );
   }
 
-  get testerAvgROI(): number {
-    const sum = this.yields
-      .map(y => (y.credit / y.debit - 1))
-      .reduce((prev, curr) => prev + curr, 0);
-    return parseFloat((sum / this.yields.length).toFixed(4));
-  }
-
   get minMeetingROI(): number {
     return 3;
   }
 
   get boundaryVersions(): string[] {
     return [
-      // 'Alpha',
-      'W-L1',
-      'Q-B1-L4',
-      'QP-B1-L4',
-      'FB-B1-L4',
-      'TBM-B1-L4',
-      'FF-B1-L6',
-      'QBM-B1-L5',
+      'W-L1', 'Q-B1-L4', 'QP-B1-L4',
+      'FB-B1-L4', 'TBM-B1-L4', 'QBM-B1-L5',
     ]
   }
 
@@ -262,18 +279,16 @@ export class BacktestComponent implements OnInit {
 
   get fields(): string[] {
     return [
-      'Tester',
-      'Meetings',
-      'Races',
-      'Betlines',
-      'Debits',
-      'Credits',
-      'Profit / Loss',
-      'ROI'
+      'Tester', 'Meetings', 'Races', 'Betlines',
+      'Debits', 'Credits', 'P / L', 'ROI'
     ];
   }
 
   get actions(): string[] {
     return ['Reset', 'Select All', 'Run Tests'];
+  }
+
+  get sections(): string[] {
+    return ['Accuracy / Rating', 'Profitability / Portfolio'];
   }
 }
