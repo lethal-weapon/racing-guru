@@ -185,7 +185,7 @@ export class RacecardComponent implements OnInit {
       )
       .slice(0, 20)
 
-  getActiveStarterWQPInvestments(starter: Starter): Array<{ percent: string, amount: string }> {
+  getActiveStarterWQPInvestments = (starter: Starter): Array<{ percent: string, amount: string }> => {
     const pool = this.activeRacecard?.pool;
     if (!pool) return [];
 
@@ -203,25 +203,18 @@ export class RacecardComponent implements OnInit {
     }));
   }
 
-  getRating = (order: number, factor: string): Rating | undefined => {
-    return this.getStarter(order)?.ratings.find(r => r.factor === factor);
-  }
+  getRating = (starter: Starter, factor: string): Rating | undefined =>
+    starter.ratings.find(r => r.factor === factor)
 
-  getStarter = (order: number): Starter =>
-    // @ts-ignore
-    this.activeRacecard.starters.find(s => s.order === order)
+  get startersSortedByChance(): Starter[] {
+    return this.activeRacecard.starters
+      .filter(s => !s.scratched)
+      .sort((s1, s2) => (s2?.chance || 0) - (s1?.chance || 0))
+  }
 
   get ratingFactors(): RatingFactorMap[] {
-    const supportedFactors = getStarters(this.activeRacecard).pop()?.ratings.map(r => r.factor);
-    return RATING_FACTOR_MAPS.filter(m => (supportedFactors || []).includes(m.factor));
-  }
-
-  get maxOrder(): number {
-    return this.activeRacecard
-      ?.starters
-      .map(s => s.order)
-      .sort((o1, o2) => o1 - o2)
-      .pop() || 0;
+    const enabledFactors = getStarters(this.activeRacecard).pop()?.ratings.map(r => r.factor);
+    return RATING_FACTOR_MAPS.filter(m => (enabledFactors || []).includes(m.factor));
   }
 
   get activeRacecard(): Racecard {

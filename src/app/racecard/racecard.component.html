@@ -7,56 +7,102 @@
   </div>
 </div>
 
-<table class="mx-auto table-fixed border-collapse border border-gray-700 text-center noselect">
+<div *ngIf="!activeRacecard" class="my-64 text-center noselect">
+  <app-spinner></app-spinner>
+  <div class="mt-8 text-3xl">
+    hold your horses...
+  </div>
+</div>
+
+<table *ngIf="activeRacecard"
+       class="mx-auto table-fixed border-collapse border border-gray-700 text-center noselect"
+>
   <thead class="text-xl">
   <th class="p-4 w-20 border border-gray-700">
     <i class="fa fa-magic"></i>
   </th>
-  <th *counter="let order of maxOrder"
+  <th *ngFor="let starter of startersSortedByChance"
       class="w-20 border border-gray-700"
   >
     <div class="flex flex-row justify-center">
       <div class="w-10 h-10 pt-1 rounded-full
-                  {{getPlacingBorderBackground(getStarter(order).jockey, this.activeRacecard)}}"
+                  {{getPlacingBorderBackground(starter.jockey, this.activeRacecard)}}"
       >
-        {{order}}
+        {{starter.order}}
       </div>
     </div>
   </th>
   </thead>
   <tbody>
   <tr *ngFor="let factor of ratingFactors">
-    <td class="p-2 border border-gray-700 text-2xl font-mono cursor-help"
-        tooltip="{{factor.factor.toUpperCase()}}"
-        [hideDelay]="0"
-    >
+    <td class="p-2 border border-gray-700 text-2xl font-mono">
       {{factor.abbreviation}}
     </td>
-    <td *counter="let order of maxOrder"
+    <td *ngFor="let starter of startersSortedByChance"
         class="border border-gray-700"
-        [class.diagonal-line]="getStarter(order).scratched"
     >
       <div class="flex flex-row">
         <div class="w-3/5 text-center text-2xl"
-             [class.text-red-600]="getRating(order, factor.factor)?.grade === 'A'"
-             [class.text-green-600]="getRating(order, factor.factor)?.grade === 'B'"
-             [class.invisible]="getRating(order, factor.factor)?.grade === 'X'"
+             [class.text-red-600]="getRating(starter, factor.factor)?.grade === 'A'"
+             [class.text-green-600]="getRating(starter, factor.factor)?.grade === 'B'"
         >
-          {{getRating(order, factor.factor)?.grade}}
+          {{getRating(starter, factor.factor)?.grade}}
         </div>
         <div class="w-2/5 text-sm pt-2.5"
-             [class.invisible]="getRating(order, factor.factor)?.score === 0"
+             [class.invisible]="getRating(starter, factor.factor)?.score === 0"
         >
-          {{getRating(order, factor.factor)?.score}}
+          {{
+          (getRating(starter, factor.factor)?.score || 0)
+            .toFixed(factor.factor === 'collaboration' ? 1 : 0)
+          }}
         </div>
       </div>
+    </td>
+  </tr>
+  <tr>
+    <td class="p-2 border border-gray-700 text-xl font-mono">
+      Chance
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="border border-gray-700 text-lg"
+    >
+      {{starter.chance | percent:'1.1-1'}}
+    </td>
+  </tr>
+  <tr>
+    <td class="p-2 border border-gray-700 text-xl font-mono">
+      Win%
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="border border-gray-700 text-lg"
+    >
+      {{ getActiveStarterWQPInvestments(starter).length === 0
+      ? ''
+      : getActiveStarterWQPInvestments(starter)[0].percent
+      }}
+    </td>
+  </tr>
+  <tr>
+    <td class="p-2 border border-gray-700 text-xl font-mono">
+      Picks
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="border border-gray-700 text-xl cursor-pointer"
+        (click)="toggleFavorite(starter)"
+    >
+      <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400">
+        <i class="fa fa-star"></i>
+      </span>
+      <span *ngIf="!isFavorite(starter, this.activeRacecard)">
+        <i class="fa fa-star-o"></i>
+      </span>
     </td>
   </tr>
   </tbody>
 </table>
 
 <div *ngFor="let starter of getStarters(this.activeRacecard)"
-     class="mx-8 mt-6 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600 noselect"
+     class="m-8 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600 noselect"
 >
   <div class="px-6 flex flex-row items-center">
     <div
