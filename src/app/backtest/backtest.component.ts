@@ -19,7 +19,7 @@ export class BacktestComponent implements OnInit {
   isLoading = false;
   activeEngine = '';
   activeVersion = this.boundaryVersions[0];
-  activeSection: string = this.sections[1];
+  activeSection: string = this.sections[0];
   activeFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
   bankerFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
   minFactorGroupSize = 1;
@@ -31,7 +31,7 @@ export class BacktestComponent implements OnInit {
 
   ngOnInit(): void {
     this.repo.fetchEngines()
-    // this.runTests();
+    this.runTests();
   }
 
   setActiveEngine = (engine: EngineYield) => {
