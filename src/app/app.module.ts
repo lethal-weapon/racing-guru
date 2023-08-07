@@ -18,6 +18,7 @@ import {MeetingComponent} from './meeting/meeting.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
 import {SpinnerComponent} from './spinner/spinner.component';
+import {FormComponent} from './form/form.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {SpinnerComponent} from './spinner/spinner.component';
     CollaborationComponent,
     Top4sComponent,
     BacktestComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    FormComponent
   ],
   imports: [
     BrowserModule,

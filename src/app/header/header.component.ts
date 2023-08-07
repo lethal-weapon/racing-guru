@@ -13,10 +13,11 @@ export class HeaderComponent implements OnInit {
     {title: 'Trend', link: '/trend'},
     {title: 'Odds', link: '/odds'},
 
-    // {title: 'Top4s', link: '/top4s'},
-    {title: 'Backtest', link: '/backtest'},
-    {title: 'C11N', link: '/collaboration'},
+    {title: 'Form', link: '/form'},
     {title: 'People', link: '/people'},
+    {title: 'Backtest', link: '/backtest'},
+    // {title: 'Top4s', link: '/top4s'},
+    // {title: 'C11N', link: '/collaboration'},
   ]
 
   hour = 'HH';
