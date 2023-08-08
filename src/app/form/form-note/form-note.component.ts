@@ -1,6 +1,21 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../../model/rest.repository';
+import {JOCKEYS, TRAINERS} from '../../model/person.model';
+
+export interface Interview {
+  meeting: string,
+  race: number,
+  order: number,
+  interviewee: string
+}
+
+const DEFAULT_INTERVIEW: Interview = {
+  meeting: '',
+  race: 1,
+  order: 1,
+  interviewee: ''
+}
 
 @Component({
   selector: 'app-form-note',
@@ -9,13 +24,41 @@ import {RestRepository} from '../../model/rest.repository';
 export class FormNoteComponent implements OnInit {
   activeMeeting: string = '2023-07-16';
   meetingIndex: number = 0;
+  interviews: Interview[] = [];
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    this.repo.fetchHorses();
-    this.repo.fetchMeetings();
+    // this.repo.fetchHorses();
+    // this.repo.fetchMeetings();
+    this.addInterview();
+    this.addInterview();
+    this.addInterview();
+    this.addInterview();
+    this.addInterview();
+  }
+
+  addInterview = () => {
+    const largestRace =
+      this.interviews.map(i => i.race).sort((r1, r2) => r1 - r2).pop() || 1;
+
+    this.interviews.push({
+      ...DEFAULT_INTERVIEW,
+      meeting: this.activeMeeting,
+      race: largestRace < this.maxRace ? 1 + largestRace : largestRace,
+      interviewee: this.persons[0]
+    })
+  }
+
+  deleteInterview = (interview: Interview) =>
+    this.interviews = this.interviews.filter(i => i !== interview);
+
+  saveInterview = () => {
+  }
+
+  setActiveMeeting = (meeting: string) => {
+    this.activeMeeting = meeting;
   }
 
   shiftMeeting = (length: number) => {
@@ -60,6 +103,14 @@ export class FormNoteComponent implements OnInit {
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400`
 
+  get maxOrder(): number {
+    return 14;
+  }
+
+  get maxRace(): number {
+    return 11;
+  }
+
   get paginationControls(): Array<{ icon: string, length: number }> {
     return [
       {icon: 'fa fa-2x fa-long-arrow-left', length: -99},
@@ -77,6 +128,10 @@ export class FormNoteComponent implements OnInit {
 
   get windowSize(): number {
     return 15;
+  }
+
+  get persons(): string[] {
+    return JOCKEYS.concat(TRAINERS).map(p => p.code);
   }
 
   get seasons(): string[][] {

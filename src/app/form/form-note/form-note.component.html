@@ -1,5 +1,5 @@
-<div class="mx-12 grid grid-cols-12 text-center">
-  <div class="col-span-2">
+<div class="mx-12 flex flex-row gap-x-8 text-center">
+  <div class="w-64 pt-4 pb-5 px-6 rounded-2xl shadow-md shadow-sky-700/50">
     <div class="mb-4 flex flex-row justify-between items-center">
       <div *ngFor="let control of paginationControls"
            class="cursor-pointer transition hover:text-yellow-400"
@@ -11,7 +11,7 @@
     <div class="flex flex-col gap-y-2">
       <div *ngFor="let meeting of windowMeetings"
            class="px-4 py-2 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getBadgeStyle(meeting)}}"
-           (click)="activeMeeting = meeting"
+           (click)="setActiveMeeting(meeting)"
       >
         #{{getMeetingIndex(meeting)}}
         &nbsp;
@@ -19,7 +19,87 @@
       </div>
     </div>
   </div>
-  <div>
-
+  <div class="flex flex-col gap-y-8">
+    <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+      <div class="mb-4 text-xl font-bold text-green-600">
+        Scratched & Prompted
+      </div>
+      <div class="flex flex-col gap-y-2">
+      </div>
+    </div>
+    <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+      <div class="mb-2 text-xl font-bold text-green-600">
+        Interviews
+      </div>
+      <div class="flex flex-col text-lg">
+        <table class="mx-auto table-fixed">
+          <thead>
+          <th class="py-1 px-3">
+            Race#
+          </th>
+          <th class="py-1 px-3">
+            Horse#
+          </th>
+          <th class="py-1 px-3">
+            Interviewee
+          </th>
+          <th></th>
+          </thead>
+          <tbody>
+          <tr *ngFor="let interview of interviews">
+            <td>
+              <select [(ngModel)]="interview.race"
+                      class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent
+                             border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+              >
+                <option *counter="let race of maxRace" [ngValue]="race">
+                  {{race}}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select [(ngModel)]="interview.order"
+                      class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent
+                             border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+              >
+                <option *counter="let order of maxOrder" [ngValue]="order">
+                  {{order}}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select [(ngModel)]="interview.interviewee"
+                      class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent
+                             border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+              >
+                <option *ngFor="let person of persons" [ngValue]="person">
+                  {{person}}
+                </option>
+              </select>
+            </td>
+            <td>
+              <div class="px-4 py-0.5 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+                   (click)="deleteInterview(interview)"
+              >
+                <i class="fa fa-trash"></i>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="mt-6 flex flex-row justify-around">
+          <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+               (click)="addInterview()"
+          >
+            <i class="fa fa-plus"></i>
+          </div>
+          <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+               (click)="saveInterview()"
+          >
+            <i class="fa fa-save"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

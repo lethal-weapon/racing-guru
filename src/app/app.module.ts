@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
+import {FormsModule} from '@angular/forms';
 import {TooltipModule} from 'ng2-tooltip-directive';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -48,7 +49,8 @@ import {FormBetComponent} from './form/form-bet/form-bet.component';
     AppRoutingModule,
     ModelModule,
     TooltipModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
