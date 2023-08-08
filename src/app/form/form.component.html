@@ -1,1 +1,20 @@
-<p>form works!</p>
+<div class="mx-24 my-8 text-center text-2xl bg-gray-800 rounded-full flex flex-row justify-between noselect">
+  <div *ngFor="let section of sections"
+       class="w-full py-2.5 rounded-full {{getSectionStyle(section)}}"
+       (click)="activeSection = section"
+  >
+    {{section}}
+  </div>
+</div>
+
+<div class="noselect">
+  <div *ngIf="activeSection === sections[0]">
+    <app-form-note></app-form-note>
+  </div>
+  <div *ngIf="activeSection === sections[1]">
+    <app-form-owner></app-form-owner>
+  </div>
+  <div *ngIf="activeSection === sections[2]">
+    <app-form-bet></app-form-bet>
+  </div>
+</div>

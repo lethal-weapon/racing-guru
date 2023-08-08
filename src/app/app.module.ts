@@ -19,6 +19,9 @@ import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
 import {SpinnerComponent} from './spinner/spinner.component';
 import {FormComponent} from './form/form.component';
+import {FormNoteComponent} from './form/form-note/form-note.component';
+import {FormOwnerComponent} from './form/form-owner/form-owner.component';
+import {FormBetComponent} from './form/form-bet/form-bet.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,10 @@ import {FormComponent} from './form/form.component';
     Top4sComponent,
     BacktestComponent,
     SpinnerComponent,
-    FormComponent
+    FormComponent,
+    FormNoteComponent,
+    FormOwnerComponent,
+    FormBetComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,25 @@
+<div class="mx-12 grid grid-cols-12 text-center">
+  <div class="col-span-2">
+    <div class="mb-4 flex flex-row justify-between items-center">
+      <div *ngFor="let control of paginationControls"
+           class="cursor-pointer transition hover:text-yellow-400"
+           (click)="shiftMeeting(control.length)"
+      >
+        <i class="{{control.icon}}"></i>
+      </div>
+    </div>
+    <div class="flex flex-col gap-y-2">
+      <div *ngFor="let meeting of windowMeetings"
+           class="px-4 py-2 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getBadgeStyle(meeting)}}"
+           (click)="activeMeeting = meeting"
+      >
+        #{{getMeetingIndex(meeting)}}
+        &nbsp;
+        {{meeting}}
+      </div>
+    </div>
+  </div>
+  <div>
+
+  </div>
+</div>
