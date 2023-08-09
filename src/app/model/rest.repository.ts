@@ -4,9 +4,9 @@ import {RestDataSource} from './rest.datasource';
 import {Horse} from './horse.model';
 import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
-import {FavoritePost} from './favorite.model';
+import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
-import {EngineYield, FactorHit, TesterYield} from './backtest.model';
+import {EngineYield, FactorHit} from './backtest.model';
 
 @Injectable()
 export class RestRepository {
@@ -30,6 +30,16 @@ export class RestRepository {
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
     })
+
+  saveInterview = (
+    interviews: Interview[],
+    successCallback: () => any,
+    errorCallback: () => any
+  ) =>
+    this.source.saveInterview(interviews).subscribe(
+      data => successCallback(),
+      error => errorCallback()
+    )
 
   fetchHorses = () =>
     this.source.getHorses().subscribe(data => this.horses = data)

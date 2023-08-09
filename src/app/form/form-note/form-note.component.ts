@@ -1,21 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../../model/rest.repository';
+import {Interview} from '../../model/dto.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
-
-export interface Interview {
-  meeting: string,
-  race: number,
-  order: number,
-  interviewee: string
-}
-
-const DEFAULT_INTERVIEW: Interview = {
-  meeting: '',
-  race: 1,
-  order: 1,
-  interviewee: ''
-}
+import {TWO_SECONDS} from '../../util/numbers';
+import {JOCKEY_CODES} from '../../util/strings';
 
 @Component({
   selector: 'app-form-note',
@@ -24,7 +13,11 @@ const DEFAULT_INTERVIEW: Interview = {
 export class FormNoteComponent implements OnInit {
   activeMeeting: string = '2023-07-16';
   meetingIndex: number = 0;
+
   interviews: Interview[] = [];
+  isSavingInterview: boolean = false;
+  isInterviewFailToSave: boolean = false;
+  isInterviewSuccessToSave: boolean = false;
 
   constructor(private repo: RestRepository) {
   }
@@ -44,9 +37,9 @@ export class FormNoteComponent implements OnInit {
       this.interviews.map(i => i.race).sort((r1, r2) => r1 - r2).pop() || 1;
 
     this.interviews.push({
-      ...DEFAULT_INTERVIEW,
       meeting: this.activeMeeting,
       race: largestRace < this.maxRace ? 1 + largestRace : largestRace,
+      order: 1,
       interviewee: this.persons[0]
     })
   }
@@ -55,6 +48,22 @@ export class FormNoteComponent implements OnInit {
     this.interviews = this.interviews.filter(i => i !== interview);
 
   saveInterview = () => {
+    if (this.isProcessingInterview || !this.isValidInterview) return;
+
+    this.isSavingInterview = true;
+    this.repo.saveInterview(
+      this.interviews,
+      () => {
+        this.isSavingInterview = false;
+        this.isInterviewSuccessToSave = true;
+        setTimeout(() => this.isInterviewSuccessToSave = false, TWO_SECONDS);
+      },
+      () => {
+        this.isSavingInterview = false;
+        this.isInterviewFailToSave = true;
+        setTimeout(() => this.isInterviewFailToSave = false, TWO_SECONDS);
+      }
+    );
   }
 
   setActiveMeeting = (meeting: string) => {
@@ -102,6 +111,33 @@ export class FormNoteComponent implements OnInit {
     this.activeMeeting === render
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400`
+
+  get isValidInterview(): boolean {
+    for (let i = 0; i < this.interviews.length - 1; i++)
+      for (let j = i + 1; j < this.interviews.length; j++)
+        if (
+          this.interviews[i].race === this.interviews[j].race &&
+          this.interviews[i].order === this.interviews[j].order
+        )
+          return false;
+
+    return 0 === this.interviews
+      .map(i => i.race)
+      .filter(race =>
+        this.interviews
+          .filter(i => i.race === race && JOCKEY_CODES.includes(i.interviewee))
+          .map(i => i.interviewee)
+          .filter((int, index, arr) => index !== arr.indexOf(int))
+          .length > 0
+      )
+      .length;
+  }
+
+  get isProcessingInterview(): boolean {
+    return this.isSavingInterview
+      || this.isInterviewFailToSave
+      || this.isInterviewSuccessToSave;
+  }
 
   get maxOrder(): number {
     return 14;

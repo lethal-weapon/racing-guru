@@ -1,3 +1,4 @@
+export const TWO_SECONDS = 2_000;
 export const THREE_SECONDS = 3_000;
 export const FIVE_SECONDS = 5_000;
 export const TEN_SECONDS = 10_000;

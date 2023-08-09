@@ -6,7 +6,7 @@ import {environment as env} from '../../environments/environment';
 import {Horse} from './horse.model';
 import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
-import {FavoritePost} from './favorite.model';
+import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
 import {EngineYield, FactorHit, TesterYield} from './backtest.model';
 
@@ -21,6 +21,9 @@ export class RestDataSource {
 
   saveFavorite = (favorite: FavoritePost): Observable<FavoritePost> =>
     this.http.post<FavoritePost>(`${this.baseUrl}/favorite`, favorite)
+
+  saveInterview = (interviews: Interview[]): Observable<Interview[]> =>
+    this.http.post<Interview[]>(`${this.baseUrl}/interviews`, interviews)
 
   getHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses`)
