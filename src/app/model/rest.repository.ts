@@ -7,6 +7,7 @@ import {Meeting} from './meeting.model';
 import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
 import {EngineYield, FactorHit} from './backtest.model';
+import {Racecard} from './racecard.model';
 
 @Injectable()
 export class RestRepository {
@@ -16,6 +17,7 @@ export class RestRepository {
   private collaborations: Collaboration[] = [];
   private factorHits: FactorHit[] = [];
   private engines: EngineYield[] = [];
+  private racecards: Racecard[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -26,6 +28,7 @@ export class RestRepository {
   findCollaborations = () => this.collaborations
   findFactorHits = () => this.factorHits
   findEngines = () => this.engines
+  findRacecards = () => this.racecards
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -37,9 +40,18 @@ export class RestRepository {
     errorCallback: () => any
   ) =>
     this.source.saveInterview(interviews).subscribe(
-      data => successCallback(),
+      data => {
+        this.racecards = data;
+        successCallback();
+      },
       error => errorCallback()
     )
+
+  fetchRacecards = (meeting: string, callback: () => any) =>
+    this.source.getRacecards(meeting).subscribe(data => {
+      this.racecards = data;
+      callback();
+    })
 
   fetchHorses = () =>
     this.source.getHorses().subscribe(data => this.horses = data)

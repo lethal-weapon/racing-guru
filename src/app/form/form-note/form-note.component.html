@@ -34,23 +34,16 @@
       <div class="flex flex-col text-lg">
         <table class="mx-auto table-fixed">
           <thead>
-          <th class="py-1 px-2">
-            Race#
-          </th>
-          <th class="py-1 px-2">
-            Horse#
-          </th>
-          <th class="py-1 px-2">
-            Interviewee
-          </th>
-          <th class="py-1 px-5 opacity-0">
-            X
-          </th>
+          <th class="py-1 px-2">Race#</th>
+          <th class="py-1 px-2">Horse#</th>
+          <th class="py-1 px-2">Interviewee</th>
+          <th class="py-1 px-5 opacity-0">X</th>
           </thead>
           <tbody>
           <tr *ngFor="let interview of interviews">
             <td>
               <select [(ngModel)]="interview.race"
+                      (ngModelChange)="updateInterviewee(interview)"
                       class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent
                              border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
               >
@@ -61,10 +54,13 @@
             </td>
             <td>
               <select [(ngModel)]="interview.order"
+                      (ngModelChange)="updateInterviewee(interview)"
                       class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent
                              border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
               >
-                <option *counter="let order of maxOrder" [ngValue]="order">
+                <option *ngFor="let order of getPossibleOrders(interview.race, interview.order)"
+                        [ngValue]="order"
+                >
                   {{order}}
                 </option>
               </select>
@@ -74,13 +70,16 @@
                       class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent
                              border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
               >
-                <option *ngFor="let person of persons" [ngValue]="person">
+                <option *ngFor="let person of getPossibleInterviewees(interview.race, interview.order)"
+                        [ngValue]="person"
+                >
                   {{person}}
                 </option>
               </select>
             </td>
             <td class="pt-1">
               <div class="px-4 py-0.5 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+                   [class.cursor-not-allowed]="isOnlyOneInterviewLeft"
                    (click)="deleteInterview(interview)"
               >
                 <i class="fa fa-trash"></i>
@@ -95,7 +94,7 @@
           >
             <i class="fa fa-plus"></i>
           </div>
-          <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400 "
+          <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
                [class.cursor-wait]="isProcessingInterview"
                (click)="saveInterview()"
           >

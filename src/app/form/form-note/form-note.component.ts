@@ -4,14 +4,13 @@ import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
 import {TWO_SECONDS} from '../../util/numbers';
-import {JOCKEY_CODES} from '../../util/strings';
 
 @Component({
   selector: 'app-form-note',
   templateUrl: './form-note.component.html'
 })
 export class FormNoteComponent implements OnInit {
-  activeMeeting: string = '2023-07-16';
+  activeMeeting: string = '';
   meetingIndex: number = 0;
 
   interviews: Interview[] = [];
@@ -24,28 +23,70 @@ export class FormNoteComponent implements OnInit {
 
   ngOnInit(): void {
     // this.repo.fetchHorses();
-    // this.repo.fetchMeetings();
-    this.addInterview();
-    this.addInterview();
-    this.addInterview();
-    this.addInterview();
-    this.addInterview();
+    this.repo.fetchMeetings();
+    this.repo.fetchRacecards('latest', () => {
+      this.activeMeeting = this.repo.findRacecards()
+        .map(r => r.meeting)
+        .pop() || '2023-09-10';
+      this.initializeInterview();
+    });
+  }
+
+  setActiveMeeting = (meeting: string) => {
+    if (meeting === this.activeMeeting) return;
+
+    this.interviews = [];
+    this.activeMeeting = meeting;
+    this.repo.fetchRacecards(meeting, () => this.initializeInterview());
+  }
+
+  initializeInterview = () => {
+    this.interviews = [];
+    this.repo.findRacecards().forEach(r => {
+      r.starters.forEach(s => {
+        if (s.interviewed) {
+          this.interviews.push({
+            meeting: r.meeting,
+            race: r.race,
+            order: s.order,
+            interviewee: s?.interviewee || ''
+          });
+        }
+      });
+    });
+    this.interviews.sort((i1, i2) => i1.race - i2.race || i1.order - i2.order);
+  }
+
+  deleteInterview = (interview: Interview) => {
+    if (this.isOnlyOneInterviewLeft) return;
+    this.interviews = this.interviews.filter(i => i !== interview);
   }
 
   addInterview = () => {
     const largestRace =
       this.interviews.map(i => i.race).sort((r1, r2) => r1 - r2).pop() || 1;
 
+    const race = largestRace < this.maxRace
+      ? largestRace + 1
+      : largestRace;
+
+    const usedOrders = this.interviews
+      .filter(i => i.race === race)
+      .map(i => i.order);
+
+    const order = Array(6)
+      .fill(1)
+      .map((e, index) => 1 + index)
+      .filter(o => !usedOrders.includes(o))
+      .shift() || 1;
+
     this.interviews.push({
       meeting: this.activeMeeting,
-      race: largestRace < this.maxRace ? 1 + largestRace : largestRace,
-      order: 1,
-      interviewee: this.persons[0]
-    })
+      race: race,
+      order: order,
+      interviewee: this.getPossibleInterviewees(race, order)[0]
+    });
   }
-
-  deleteInterview = (interview: Interview) =>
-    this.interviews = this.interviews.filter(i => i !== interview);
 
   saveInterview = () => {
     if (this.isProcessingInterview || !this.isValidInterview) return;
@@ -54,6 +95,7 @@ export class FormNoteComponent implements OnInit {
     this.repo.saveInterview(
       this.interviews,
       () => {
+        this.initializeInterview();
         this.isSavingInterview = false;
         this.isInterviewSuccessToSave = true;
         setTimeout(() => this.isInterviewSuccessToSave = false, TWO_SECONDS);
@@ -64,10 +106,6 @@ export class FormNoteComponent implements OnInit {
         setTimeout(() => this.isInterviewFailToSave = false, TWO_SECONDS);
       }
     );
-  }
-
-  setActiveMeeting = (meeting: string) => {
-    this.activeMeeting = meeting;
   }
 
   shiftMeeting = (length: number) => {
@@ -112,7 +150,35 @@ export class FormNoteComponent implements OnInit {
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400`
 
+  updateInterviewee = (interview: Interview) =>
+    interview.interviewee = this.getPossibleInterviewees(interview.race, interview.order)[0];
+
+  getPossibleInterviewees = (race: number, order: number): string[] => {
+    const starter = this.repo.findRacecards()
+      .find(r => r.race === race)
+      ?.starters
+      .find(s => s.order === order);
+
+    if (!starter) return JOCKEYS.concat(TRAINERS).map(p => p.code);
+    return [starter.jockey, starter.trainer];
+  }
+
+  getPossibleOrders = (race: number, order: number): number[] =>
+    this.repo.findRacecards()
+      .find(r => r.race === race)
+      ?.starters
+      .map(s => s.order)
+      .filter(o => o === order || !this.interviews
+        .filter(i => i.race === race)
+        .map(i => i.order)
+        .includes(o)
+      )
+      .sort((o1, o2) => o1 - o2)
+    || Array(14).fill(1).map((e, index) => 1 + index);
+
   get isValidInterview(): boolean {
+    if (this.interviews.length === 0) return false;
+
     for (let i = 0; i < this.interviews.length - 1; i++)
       for (let j = i + 1; j < this.interviews.length; j++)
         if (
@@ -121,16 +187,11 @@ export class FormNoteComponent implements OnInit {
         )
           return false;
 
-    return 0 === this.interviews
-      .map(i => i.race)
-      .filter(race =>
-        this.interviews
-          .filter(i => i.race === race && JOCKEY_CODES.includes(i.interviewee))
-          .map(i => i.interviewee)
-          .filter((int, index, arr) => index !== arr.indexOf(int))
-          .length > 0
-      )
-      .length;
+    return true;
+  }
+
+  get isOnlyOneInterviewLeft(): boolean {
+    return this.interviews.length === 1;
   }
 
   get isProcessingInterview(): boolean {
@@ -139,12 +200,11 @@ export class FormNoteComponent implements OnInit {
       || this.isInterviewSuccessToSave;
   }
 
-  get maxOrder(): number {
-    return 14;
-  }
-
   get maxRace(): number {
-    return 11;
+    return this.repo.findRacecards()
+      .map(r => r.race)
+      .sort((r1, r2) => r1 - r2)
+      .pop() || 11;
   }
 
   get paginationControls(): Array<{ icon: string, length: number }> {
@@ -164,10 +224,6 @@ export class FormNoteComponent implements OnInit {
 
   get windowSize(): number {
     return 15;
-  }
-
-  get persons(): string[] {
-    return JOCKEYS.concat(TRAINERS).map(p => p.code);
   }
 
   get seasons(): string[][] {
