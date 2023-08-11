@@ -35,7 +35,6 @@ export class FormNoteComponent implements OnInit {
   setActiveMeeting = (meeting: string) => {
     if (meeting === this.activeMeeting) return;
 
-    this.interviews = [];
     this.activeMeeting = meeting;
     this.repo.fetchRacecards(meeting, () => this.initializeInterview());
   }
@@ -88,6 +87,17 @@ export class FormNoteComponent implements OnInit {
     });
   }
 
+  populateInterview = () => {
+    if (this.interviews.length > 0) return;
+    for (let race = this.maxRace - 4; race <= this.maxRace; race++)
+      this.interviews.push({
+        meeting: this.activeMeeting,
+        race: race,
+        order: 1,
+        interviewee: this.getPossibleInterviewees(race, 1)[0]
+      });
+  }
+
   saveInterview = () => {
     if (this.isProcessingInterview || !this.isValidInterview) return;
 
@@ -107,6 +117,53 @@ export class FormNoteComponent implements OnInit {
       }
     );
   }
+
+  updateInterviewee = (interview: Interview) =>
+    interview.interviewee = this.getPossibleInterviewees(interview.race, interview.order)[0];
+
+  getPossibleInterviewees = (race: number, order: number): string[] => {
+    const starter = this.repo.findRacecards()
+      .find(r => r.race === race)
+      ?.starters
+      .find(s => s.order === order);
+
+    return starter
+      ? [starter.jockey, starter.trainer]
+      : JOCKEYS.concat(TRAINERS).map(p => p.code);
+  }
+
+  getPossibleOrders = (race: number, order: number): number[] =>
+    this.repo.findRacecards()
+      .find(r => r.race === race)
+      ?.starters
+      .map(s => s.order)
+      .filter(o => o === order || !this.interviews
+        .filter(i => i.race === race)
+        .map(i => i.order)
+        .includes(o)
+      )
+      .sort((o1, o2) => o1 - o2)
+    || Array(14).fill(1).map((e, index) => 1 + index);
+
+  getMeetingIndex = (meeting: string): number => {
+    for (const season of this.seasons) {
+      const opening = season[0]
+      const finale = season[1]
+
+      if (meeting >= opening && meeting <= finale) {
+        return 1 + this.meetings
+          .filter(m => m >= opening && m <= finale)
+          .sort((m1, m2) => m1.localeCompare(m2))
+          .indexOf(meeting);
+      }
+    }
+    return 0;
+  }
+
+  getBadgeStyle = (render: string): string =>
+    this.activeMeeting === render
+      ? `text-yellow-400 border-yellow-400`
+      : `border-gray-600 hover:border-yellow-400`
 
   shiftMeeting = (length: number) => {
     const ws = this.windowSize;
@@ -129,52 +186,6 @@ export class FormNoteComponent implements OnInit {
         break;
     }
   }
-
-  getMeetingIndex = (meeting: string): number => {
-    for (const season of this.seasons) {
-      const opening = season[0]
-      const finale = season[1]
-
-      if (meeting >= opening && meeting <= finale) {
-        return 1 + this.meetings
-          .filter(m => m >= opening && m <= finale)
-          .sort((m1, m2) => m1.localeCompare(m2))
-          .indexOf(meeting);
-      }
-    }
-    return 0;
-  }
-
-  getBadgeStyle = (render: string): string =>
-    this.activeMeeting === render
-      ? `text-yellow-400 border-yellow-400`
-      : `border-gray-600 hover:border-yellow-400`
-
-  updateInterviewee = (interview: Interview) =>
-    interview.interviewee = this.getPossibleInterviewees(interview.race, interview.order)[0];
-
-  getPossibleInterviewees = (race: number, order: number): string[] => {
-    const starter = this.repo.findRacecards()
-      .find(r => r.race === race)
-      ?.starters
-      .find(s => s.order === order);
-
-    if (!starter) return JOCKEYS.concat(TRAINERS).map(p => p.code);
-    return [starter.jockey, starter.trainer];
-  }
-
-  getPossibleOrders = (race: number, order: number): number[] =>
-    this.repo.findRacecards()
-      .find(r => r.race === race)
-      ?.starters
-      .map(s => s.order)
-      .filter(o => o === order || !this.interviews
-        .filter(i => i.race === race)
-        .map(i => i.order)
-        .includes(o)
-      )
-      .sort((o1, o2) => o1 - o2)
-    || Array(14).fill(1).map((e, index) => 1 + index);
 
   get isValidInterview(): boolean {
     if (this.interviews.length === 0) return false;
