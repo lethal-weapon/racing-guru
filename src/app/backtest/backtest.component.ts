@@ -4,7 +4,6 @@ import {RestRepository} from '../model/rest.repository';
 import {RATING_FACTOR_MAPS} from '../util/strings';
 import {powerSet} from '../util/functions';
 import {
-  EngineYield,
   FactorHit,
   FactorHitPlacing,
   MeetingYield,
@@ -17,12 +16,12 @@ import {
 })
 export class BacktestComponent implements OnInit {
   isLoading = false;
-  activeEngine = '';
-  activeVersion = this.boundaryVersions[0];
-  activeSection: string = this.sections[0];
   activeFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
   bankerFactors: string[] = [RATING_FACTOR_MAPS[0].factor];
   minFactorGroupSize = 1;
+
+  activeFactorHitIndex = 0;
+  activeVersion = this.boundaryVersions[0];
 
   protected readonly RATING_FACTOR_MAPS = RATING_FACTOR_MAPS;
 
@@ -30,16 +29,7 @@ export class BacktestComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchEngines()
     this.runTests();
-  }
-
-  setActiveEngine = (engine: EngineYield) => {
-    this.activeEngine = engine.name;
-    if (engine.yields.length == 0) {
-      this.isLoading = true;
-      this.repo.fetchEngineYields(engine.name, engine.factors, () => this.isLoading = false)
-    }
   }
 
   runTests = () => {
@@ -175,7 +165,7 @@ export class BacktestComponent implements OnInit {
     const roi = this.getReturnOnInvestment(myield);
     return roi < 0
       ? 'text-red-600'
-      : roi >= this.minMeetingROI
+      : roi >= 3
         ? 'text-yellow-400'
         : 'text-green-600';
   }
@@ -184,7 +174,7 @@ export class BacktestComponent implements OnInit {
     const roi = this.getReturnOnInvestment(tyield);
     if (roi < 0) return 'text-red-600';
 
-    const rank = this.yields
+    const rank = this.activeYields
       .map(y => this.getReturnOnInvestment(y))
       .sort((r1, r2) => r2 - r1)
       .indexOf(roi);
@@ -192,54 +182,48 @@ export class BacktestComponent implements OnInit {
     return rank > -1 && rank < 5 ? 'text-yellow-400' : 'text-green-600';
   }
 
+  getFactorROIColor = (tYields: TesterYield[], isDefault: boolean): string => {
+    if (tYields.length === 0) return '';
+
+    const roi = this.getTesterAvgROI(tYields);
+    if (roi < 0) return 'text-red-600';
+
+    const rank = this.factorHits
+      .map(h => this.getTesterAvgROI(isDefault ? h.defaultYields : h.enhancedYields))
+      .sort((r1, r2) => r2 - r1)
+      .indexOf(roi);
+
+    return rank > -1 && rank < 5 ? 'text-yellow-400' : 'text-green-600';
+  }
+
+  getTesterAvgROI = (yields: TesterYield[]): number => {
+    if (yields.length === 0) return 0;
+    const sum = yields
+      .map(y => (y.credit / y.debit - 1))
+      .reduce((prev, curr) => prev + curr, 0);
+
+    return parseFloat((sum / yields.length).toFixed(4));
+  }
+
   getBadgeStyle = (render: string): string =>
-    this.activeFactors.includes(render) || this.activeEngine === render
+    this.activeFactors.includes(render)
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400`
 
-  getSectionStyle = (section: string): string =>
-    this.activeSection === section
-      ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
-      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
-
-  get factorCombinations(): string[][] {
-    return powerSet(this.activeFactors)
-      .filter(fc => this.bankerFactors.every(bf => fc.includes(bf)))
-      .filter(fc => fc.length >= this.minFactorGroupSize)
-      .sort((fc1, fc2) => fc1.length - fc2.length);
-  }
-
-  get activeTesterDescription(): string {
-    return this.yields
-      .find(ty => ty.version === this.activeVersion)
-      ?.description || 'Betting Magic';
-  }
-
-  get testerAvgROI(): number {
-    const sum = this.yields
-      .map(y => (y.credit / y.debit - 1))
-      .reduce((prev, curr) => prev + curr, 0);
-    return parseFloat((sum / this.yields.length).toFixed(4));
-  }
-
   get meetingYields(): MeetingYield[] {
-    return this.yields
+    return this.activeYields
       .find(ty => ty.version === this.activeVersion)
       ?.meetings || [];
   }
 
-  get yields(): TesterYield[] {
-    let engine = this.engines.find(e => e.name == this.activeEngine);
-    if (!engine) return [];
-
-    return engine.yields.map(y => {
-      y.credit = Math.floor(y.credit);
-      return y;
-    });
-  }
-
-  get engines(): EngineYield[] {
-    return this.repo.findEngines();
+  get activeYields(): TesterYield[] {
+    if (this.activeFactorHitIndex >= this.factorHits.length) return [];
+    return this.factorHits[this.activeFactorHitIndex]
+      .defaultYields
+      .map(y => {
+        y.credit = Math.floor(y.credit);
+        return y;
+      });
   }
 
   get factorHits(): FactorHit[] {
@@ -248,8 +232,11 @@ export class BacktestComponent implements OnInit {
     );
   }
 
-  get minMeetingROI(): number {
-    return 3;
+  get factorCombinations(): string[][] {
+    return powerSet(this.activeFactors)
+      .filter(fc => this.bankerFactors.every(bf => fc.includes(bf)))
+      .filter(fc => fc.length >= this.minFactorGroupSize)
+      .sort((fc1, fc2) => fc1.length - fc2.length);
   }
 
   get boundaryVersions(): string[] {
@@ -259,14 +246,8 @@ export class BacktestComponent implements OnInit {
     ]
   }
 
-  get accuracyFields(): string[] {
-    return [
-      'Factors', 'WIN', 'QIN', 'TCE', 'QTT', 'Total',
-    ];
-  }
-
   get meetingFields(): string[] {
-    const fields = this.fields
+    const fields = this.profitabilityFields
       .filter((f, index) => index > 0)
       .map(f => f === 'Meetings' ? 'Meeting' : f);
 
@@ -277,18 +258,21 @@ export class BacktestComponent implements OnInit {
     ];
   }
 
-  get fields(): string[] {
+  get profitabilityFields(): string[] {
     return [
       'Tester', 'Meetings', 'Races', 'Betlines',
       'Debits', 'Credits', 'P / L', 'ROI'
     ];
   }
 
-  get actions(): string[] {
-    return ['Reset', 'Select All', 'Run Tests'];
+  get accuracyFields(): string[] {
+    return [
+      'Factors', 'WIN', 'QIN', 'TCE', 'QTT', 'Total',
+      'ROI - A', 'ROI - B',
+    ];
   }
 
-  get sections(): string[] {
-    return ['Accuracy / Rating', 'Profitability / Portfolio'];
+  get actions(): string[] {
+    return ['Reset', 'Select All', 'Run Tests'];
   }
 }

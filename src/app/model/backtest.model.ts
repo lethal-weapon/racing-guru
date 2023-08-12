@@ -1,19 +1,15 @@
 export interface FactorHit {
-  factors   : string[],
-  hits      : FactorHitPlacing[]
-  totalHits : number
+  factors        : string[],
+  totalHits      : number,
+  hits           : FactorHitPlacing[],
+  defaultYields  : TesterYield[],
+  enhancedYields : TesterYield[]
 }
 
 export interface FactorHitPlacing {
   topn     : number,
-  hitRaces : number
+  hitRaces : number,
   betRaces : number
-}
-
-export interface EngineYield {
-  name    : string
-  factors : string[]
-  yields  : TesterYield[]
 }
 
 export interface TesterYield {

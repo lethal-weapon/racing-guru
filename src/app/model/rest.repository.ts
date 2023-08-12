@@ -6,7 +6,7 @@ import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
 import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
-import {EngineYield, FactorHit} from './backtest.model';
+import {FactorHit} from './backtest.model';
 import {Racecard} from './racecard.model';
 
 @Injectable()
@@ -15,9 +15,8 @@ export class RestRepository {
   private owners: HorseOwner[] = [];
   private meetings: Meeting[] = [];
   private collaborations: Collaboration[] = [];
-  private factorHits: FactorHit[] = [];
-  private engines: EngineYield[] = [];
   private racecards: Racecard[] = [];
+  private factorHits: FactorHit[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -26,9 +25,8 @@ export class RestRepository {
   findOwners = () => this.owners
   findMeetings = () => this.meetings
   findCollaborations = () => this.collaborations
-  findFactorHits = () => this.factorHits
-  findEngines = () => this.engines
   findRacecards = () => this.racecards
+  findFactorHits = () => this.factorHits
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -44,7 +42,9 @@ export class RestRepository {
         this.racecards = data;
         successCallback();
       },
-      error => errorCallback()
+      error => {
+        errorCallback();
+      }
     )
 
   fetchRacecards = (meeting: string, callback: () => any) =>
@@ -66,18 +66,9 @@ export class RestRepository {
     this.source.getCollaborations().subscribe(data => this.collaborations = data)
 
   fetchFactorHits = (factorCombinations: string[][], callback: () => any) =>
-    this.source.getBacktestAccuracy(factorCombinations).subscribe(data => {
+    this.source.getBacktestFactorHits(factorCombinations).subscribe(data => {
       this.factorHits = data;
       callback();
     })
 
-  fetchEngines = () =>
-    this.source.getBacktestEngines().subscribe(data => this.engines = data)
-
-  fetchEngineYields = (name: string, factors: string[], callback: () => any) =>
-    this.source.getBacktestYields(factors).subscribe(data => {
-      let engine = this.engines.find(e => e.name === name)
-      if (engine) engine.yields = data
-      callback();
-    })
 }

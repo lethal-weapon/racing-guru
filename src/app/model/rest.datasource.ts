@@ -8,8 +8,8 @@ import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
 import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
-import {EngineYield, FactorHit, TesterYield} from './backtest.model';
 import {Racecard} from './racecard.model';
+import {FactorHit} from './backtest.model';
 
 @Injectable()
 export class RestDataSource {
@@ -26,6 +26,9 @@ export class RestDataSource {
   saveInterview = (interviews: Interview[]): Observable<Racecard[]> =>
     this.http.post<Racecard[]>(`${this.baseUrl}/interviews`, interviews)
 
+  getBacktestFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
+    this.http.post<FactorHit[]>(`${this.baseUrl}/backtest`, factorCombinations)
+
   getRacecards = (meeting: string): Observable<Racecard[]> =>
     this.http.get<Racecard[]>(`${this.baseUrl}/racecards?meeting=${meeting}`)
 
@@ -40,14 +43,5 @@ export class RestDataSource {
 
   getCollaborations = (): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
-
-  getBacktestAccuracy = (factorCombinations: string[][]): Observable<FactorHit[]> =>
-    this.http.post<FactorHit[]>(`${this.baseUrl}/backtest/accuracy`, factorCombinations)
-
-  getBacktestEngines = (): Observable<EngineYield[]> =>
-    this.http.get<EngineYield[]>(`${this.baseUrl}/backtest/engines`)
-
-  getBacktestYields = (factors: string[]): Observable<TesterYield[]> =>
-    this.http.post<TesterYield[]>(`${this.baseUrl}/backtest/profitability`, factors)
 
 }
