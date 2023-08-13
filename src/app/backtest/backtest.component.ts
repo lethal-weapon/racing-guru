@@ -22,6 +22,7 @@ export class BacktestComponent implements OnInit {
 
   activeFactorHitIndex = 0;
   activeVersion = this.boundaryVersions[0];
+  sortedAccuracyField = this.sortableAccuracyFields[0];
 
   protected readonly RATING_FACTOR_MAPS = RATING_FACTOR_MAPS;
 
@@ -32,11 +33,22 @@ export class BacktestComponent implements OnInit {
     this.runTests();
   }
 
+  clickAccuracyFieldHeader = (field: string) => {
+    if (this.sortableAccuracyFields.includes(field)) {
+      this.sortedAccuracyField = field;
+    }
+  }
+
   runTests = () => {
     if (this.factorCombinations.length > 0) {
       this.isLoading = true;
       this.repo.fetchFactorHits(this.factorCombinations, () => this.isLoading = false);
     }
+  }
+
+  runPredefinedTests = () => {
+    this.isLoading = true;
+    this.repo.fetchFactorHits([], () => this.isLoading = false);
   }
 
   process = (action: string) => {
@@ -217,6 +229,18 @@ export class BacktestComponent implements OnInit {
   }
 
   get activeYields(): TesterYield[] {
+    if (this.sortedAccuracyField === 'ROI - B') {
+      return this.factorHits
+        .map(fh =>
+          fh.enhancedYields.map(ey => {
+            ey.credit = Math.floor(ey.credit);
+            ey.version = this.formatFactorCombination(fh.factors);
+            return ey;
+          })
+        )
+        .reduce((prev, curr) => prev.concat(curr));
+    }
+
     if (this.activeFactorHitIndex >= this.factorHits.length) return [];
     return this.factorHits[this.activeFactorHitIndex]
       .defaultYields
@@ -227,8 +251,19 @@ export class BacktestComponent implements OnInit {
   }
 
   get factorHits(): FactorHit[] {
-    return this.repo.findFactorHits().sort(
-      (h1, h2) => h2.totalHits - h1.totalHits
+    return this.repo.findFactorHits().sort((h1, h2) => {
+        if (this.sortedAccuracyField === 'ROI - A') {
+          const avgROIa1 = this.getTesterAvgROI(h1.defaultYields)
+          const avgROIa2 = this.getTesterAvgROI(h2.defaultYields)
+          return (avgROIa2 - avgROIa1) || (h2.totalHits - h1.totalHits);
+        }
+        if (this.sortedAccuracyField === 'ROI - B') {
+          const avgROIb1 = this.getTesterAvgROI(h1.enhancedYields)
+          const avgROIb2 = this.getTesterAvgROI(h2.enhancedYields)
+          return (avgROIb2 - avgROIb1) || (h2.totalHits - h1.totalHits);
+        }
+        return h2.totalHits - h1.totalHits;
+      }
     );
   }
 
@@ -241,7 +276,7 @@ export class BacktestComponent implements OnInit {
 
   get boundaryVersions(): string[] {
     return [
-      'W-L1', 'Q-B1-L4', 'QP-B1-L4',
+      'W-L1', 'Q-B1-L4', 'QP-B1-L4', 'FF-L6',
       'FB-B1-L4', 'TBM-B1-L4', 'QBM-B1-L5',
     ]
   }
@@ -263,6 +298,10 @@ export class BacktestComponent implements OnInit {
       'Tester', 'Meetings', 'Races', 'Betlines',
       'Debits', 'Credits', 'P / L', 'ROI'
     ];
+  }
+
+  get sortableAccuracyFields(): string[] {
+    return this.accuracyFields.slice(this.accuracyFields.length - 3);
   }
 
   get accuracyFields(): string[] {

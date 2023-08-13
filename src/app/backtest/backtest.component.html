@@ -9,6 +9,13 @@
         {{action}}
       </div>
     </div>
+    <div class="mx-auto w-2/3 px-4 pt-1.5 pb-2 text-lg rounded-lg hvr-grow-shadow
+                cursor-pointer border border-gray-600 hover:border-yellow-400"
+         [class.opacity-25]="isLoading"
+         (click)="runPredefinedTests()"
+    >
+      Run Predefined Tests
+    </div>
     <div>
       <span class="text-xl">
         Factor Combinations:
@@ -70,11 +77,14 @@
            class="mx-auto border-collapse border border-gray-600 text-center"
     >
       <thead class="text-lg">
-      <th class="border border-gray-600 py-1 px-4">
+      <th class="border border-gray-600 py-1 px-2">
         Rank
       </th>
       <th *ngFor="let field of accuracyFields; let index = index"
-          class="border border-gray-600 py-1 px-4"
+          class="border border-gray-600 py-1 px-2"
+          [class.text-blue-600]="sortedAccuracyField === field"
+          [class.cursor-pointer]="sortableAccuracyFields.includes(field)"
+          (click)="clickAccuracyFieldHeader(field)"
       >
         {{field}}
       </th>
