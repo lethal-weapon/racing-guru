@@ -234,7 +234,7 @@ export class FormNoteComponent implements OnInit {
   }
 
   get windowSize(): number {
-    return 15;
+    return 14;
   }
 
   get seasons(): string[][] {
