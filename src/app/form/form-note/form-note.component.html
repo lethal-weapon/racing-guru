@@ -1,4 +1,4 @@
-<div class="mx-12 flex flex-row gap-x-6 text-center">
+<div class="mx-12 flex flex-row gap-x-6 items-start text-center">
   <div class="w-64 pt-4 pb-5 px-6 rounded-2xl shadow-md shadow-sky-700/50">
     <div class="mb-2 text-xl font-bold text-green-600">
       Meetings
@@ -72,7 +72,7 @@
         </tbody>
       </table>
     </div>
-    <div class="flex flex-row gap-x-6">
+    <div class="flex flex-row gap-x-6 items-start">
       <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
         <div class="mb-2 text-xl font-bold text-green-600">
           Interviews
@@ -170,7 +170,7 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-col items-start gap-y-6">
+      <div class="flex flex-col gap-y-6 items-start">
         <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
           <div class="mb-2 text-xl font-bold text-green-600">
             Birthdays
@@ -182,10 +182,10 @@
             <th class="py-1 px-3">Age</th>
             </thead>
             <tbody>
-            <tr>
-              <td class="py-1">SJJ</td>
-              <td class="py-1">Jul 10</td>
-              <td class="py-1">69</td>
+            <tr *ngFor="let pb of personBirthdays">
+              <td class="py-1">{{pb.person}}</td>
+              <td class="py-1">{{pb.date}}</td>
+              <td class="py-1">{{pb.age}}</td>
             </tr>
             </tbody>
           </table>
@@ -201,10 +201,10 @@
             <th class="py-1 px-2">Career</th>
             </thead>
             <tbody>
-            <tr>
-              <td class="py-1">CAS</td>
-              <td class="py-1">45</td>
-              <td class="py-1">1124</td>
+            <tr *ngFor="let pw of personWinners">
+              <td class="py-1">{{pw.person}}</td>
+              <td class="py-1" [class.text-green-600]="pw.season % 10 >= 8">{{pw.season}}</td>
+              <td class="py-1" [class.text-green-600]="pw.career % 10 >= 8">{{pw.career}}</td>
             </tr>
             </tbody>
           </table>

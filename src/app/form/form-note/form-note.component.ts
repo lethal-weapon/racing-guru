@@ -187,6 +187,56 @@ export class FormNoteComponent implements OnInit {
     }
   }
 
+  get personBirthdays(): Array<{ person: string, date: string, age: number }> {
+    return [];
+  }
+
+  get personWinners(): Array<{ person: string, season: number, career: number }> {
+    return JOCKEYS.concat(TRAINERS).map(person => {
+      let seasonWins = 0;
+      for (const season of this.seasons) {
+        const opening = season[0];
+        const finale = season[1];
+
+        if (this.activeMeeting >= opening && this.activeMeeting <= finale) {
+          if (this.activeMeeting === opening) break;
+
+          seasonWins = this.repo.findMeetings()
+            .filter(m => m.meeting >= opening && m.meeting < this.activeMeeting)
+            .map(m => m.persons)
+            .reduce((prev, curr) => prev.concat(curr), [])
+            .filter(ps => ps.person === person.code)
+            .map(ps => ps.wins)
+            .reduce((prev, curr) => prev + curr, 0);
+
+          break;
+        }
+      }
+
+      const careerWins = this.repo.findMeetings()
+        .filter(m => m.meeting < this.activeMeeting)
+        .map(m => m.persons)
+        .reduce((prev, curr) => prev.concat(curr), [])
+        .filter(ps => ps.person === person.code)
+        .map(ps => ps.wins)
+        .reduce((prev, curr) => prev + curr, person.careerWins);
+
+      return {
+        person: person.code,
+        season: seasonWins,
+        career: careerWins
+      }
+    })
+      .filter(pw =>
+        (Math.abs(50 - pw.career % 50) <= 3)
+        || (pw.career % 10 >= 8)
+        || (pw.season % 10 >= 8)
+      )
+      .sort((p1, p2) =>
+        (p2.career - p1.career) || (p2.season - p1.season)
+      );
+  }
+
   get isValidInterview(): boolean {
     if (this.interviews.length === 0) return false;
 
