@@ -19,6 +19,6 @@ export class FormComponent implements OnInit {
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
 
   get sections(): string[] {
-    return ['Notes', 'Owners', 'Bets'];
+    return ['Notes', 'Owners', 'Bets', 'People', 'Fixture'];
   }
 }

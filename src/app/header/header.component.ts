@@ -14,7 +14,6 @@ export class HeaderComponent implements OnInit {
     {title: 'Odds', link: '/odds'},
 
     {title: 'Form', link: '/form'},
-    {title: 'People', link: '/people'},
     {title: 'Backtest', link: '/backtest'},
     // {title: 'Top4s', link: '/top4s'},
     // {title: 'C11N', link: '/collaboration'},

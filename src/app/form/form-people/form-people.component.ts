@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../model/rest.repository';
-import {JOCKEYS, TRAINERS, NEW_PEOPLE, Person} from '../model/person.model';
+import {RestRepository} from '../../model/rest.repository';
+import {JOCKEYS, TRAINERS, NEW_PEOPLE, Person} from '../../model/person.model';
 
 @Component({
-  selector: 'app-people',
-  templateUrl: './people.component.html'
+  selector: 'app-form-people',
+  templateUrl: './form-people.component.html'
 })
-export class PeopleComponent implements OnInit {
+export class FormPeopleComponent implements OnInit {
 
   protected readonly NEW_PEOPLE = NEW_PEOPLE;
 
@@ -18,25 +18,21 @@ export class PeopleComponent implements OnInit {
     this.repo.fetchCollaborations();
   }
 
+  isNationalityBoundaryPerson = (person: Person): boolean =>
+    ['WDJ', 'DMK'].includes(person.code);
+
+  isHighlightWinners = (wins: number): boolean => {
+    const closeToFifty = Math.abs(50 - wins % 50) <= 5;
+    const endWith489 = [4, 8, 9].includes(wins % 10);
+
+    return closeToFifty || endWith489;
+  }
+
   getWinners = (person: Person): number =>
     this.repo.findCollaborations()
       .filter(c => [c.jockey, c.trainer].includes(person.code))
       .map(c => c.wins)
       .reduce((prev, curr) => prev + curr, person.careerWins)
-
-  isHighlightWinners = (wins: number): boolean => {
-    const closeToFifty = Math.abs(50 - wins % 50) <= 5;
-    const endWith4Or8Or9 = [4, 8, 9].includes(wins % 10);
-
-    return closeToFifty || endWith4Or8Or9;
-  }
-
-  isNationalityBoundaryPerson = (person: Person): boolean =>
-    ['WDJ', 'DMK'].includes(person.code);
-
-  get attributes(): string[] {
-    return ['Code', 'Last', 'First', 'Nick', 'NAT.', 'WINS']
-  }
 
   get personsList(): Person[][] {
     const sortedTrainers = TRAINERS
@@ -57,5 +53,9 @@ export class PeopleComponent implements OnInit {
     const jockeys = nonHKJockeys.concat(hkJockeys)
 
     return [trainers, jockeys]
+  }
+
+  get attributes(): string[] {
+    return ['Code', 'Last', 'First', 'Nick', 'NAT.', 'WINS']
   }
 }

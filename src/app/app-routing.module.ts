@@ -5,11 +5,10 @@ import {MeetingComponent} from './meeting/meeting.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {OddsComponent} from './odds/odds.component';
 import {TrendComponent} from './trend/trend.component';
-import {PeopleComponent} from './people/people.component';
 import {CollaborationComponent} from './collaboration/collaboration.component';
 import {Top4sComponent} from './top4s/top4s.component';
-import {BacktestComponent} from './backtest/backtest.component';
 import {FormComponent} from './form/form.component';
+import {BacktestComponent} from './backtest/backtest.component';
 
 const routes: Routes = [
   {path: 'meeting', component: MeetingComponent},
@@ -18,7 +17,6 @@ const routes: Routes = [
   {path: 'odds', component: OddsComponent},
 
   {path: 'form', component: FormComponent},
-  {path: 'people', component: PeopleComponent},
   {path: 'backtest', component: BacktestComponent},
   {path: 'top4s', component: Top4sComponent},
   {path: 'collaboration', component: CollaborationComponent},

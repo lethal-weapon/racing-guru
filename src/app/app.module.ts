@@ -11,7 +11,6 @@ import {CounterDirective} from './directives/counter.directive';
 import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
-import {PeopleComponent} from './people/people.component';
 import {TrendComponent} from './trend/trend.component';
 import {CollaborationComponent} from './collaboration/collaboration.component';
 import {Top4sComponent} from './top4s/top4s.component';
@@ -23,6 +22,7 @@ import {FormComponent} from './form/form.component';
 import {FormNoteComponent} from './form/form-note/form-note.component';
 import {FormOwnerComponent} from './form/form-owner/form-owner.component';
 import {FormBetComponent} from './form/form-bet/form-bet.component';
+import {FormPeopleComponent} from './form/form-people/form-people.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,6 @@ import {FormBetComponent} from './form/form-bet/form-bet.component';
     RacecardComponent,
     OddsComponent,
     TrendComponent,
-    PeopleComponent,
     CollaborationComponent,
     Top4sComponent,
     BacktestComponent,
@@ -42,7 +41,8 @@ import {FormBetComponent} from './form/form-bet/form-bet.component';
     FormComponent,
     FormNoteComponent,
     FormOwnerComponent,
-    FormBetComponent
+    FormBetComponent,
+    FormPeopleComponent
   ],
   imports: [
     BrowserModule,
