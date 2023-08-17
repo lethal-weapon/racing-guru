@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
-import {TWO_SECONDS} from '../../util/numbers';
+import {ONE_DAY_MILL, TWO_SECONDS} from '../../util/numbers';
 
 @Component({
   selector: 'app-form-note',
@@ -188,7 +188,38 @@ export class FormNoteComponent implements OnInit {
   }
 
   get personBirthdays(): Array<{ person: string, date: string, age: number }> {
-    return [];
+    return JOCKEYS.concat(TRAINERS).map(person => {
+      const birthYear = person.dateOfBirth.slice(0, 4);
+      const activeYear = this.activeMeeting.slice(0, 4);
+      const age = parseInt(activeYear) - parseInt(birthYear);
+
+      const birthMonthDay = person.dateOfBirth.slice(5);
+      const thisBirthday = `${activeYear}-${birthMonthDay}`;
+      return {
+        person: person.code,
+        date: thisBirthday,
+        age: age
+      }
+    })
+      .filter(pb => {
+        if (this.activeMeeting === pb.date) return true;
+
+        const meeting = new Date(this.activeMeeting).getTime();
+        const birthday = new Date(pb.date).getTime();
+        const diffDays = (birthday - meeting) / ONE_DAY_MILL;
+
+        return diffDays >= -7 && diffDays <= 21;
+      })
+      .sort((pb1, pb2) =>
+        pb1.date.localeCompare(pb2.date) || pb2.age - pb1.age
+      )
+      .map(pb => {
+          const birthday = new Date(pb.date);
+          const month = birthday.toLocaleString('en-US', {month: 'short'});
+          pb.date = `${month} ${birthday.getDate()}`
+          return pb;
+        }
+      );
   }
 
   get personWinners(): Array<{ person: string, season: number, career: number }> {
@@ -228,9 +259,7 @@ export class FormNoteComponent implements OnInit {
       }
     })
       .filter(pw =>
-        (Math.abs(50 - pw.career % 50) <= 3)
-        || (pw.career % 10 >= 8)
-        || (pw.season % 10 >= 8)
+        (pw.career % 10 >= 8) || (pw.season % 10 >= 8)
       )
       .sort((p1, p2) =>
         (p2.career - p1.career) || (p2.season - p1.season)

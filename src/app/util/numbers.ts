@@ -5,6 +5,7 @@ export const TEN_SECONDS = 10_000;
 export const ONE_MINUTE = 60_000;
 
 export const ONE_MILLION = 1_000_000;
+export const ONE_DAY_MILL = 1000 * 3600 * 24;
 
 export const PAYOUT_RATE = 0.825;
 export const FCT_TRI_PAYOUT_RATE = 0.805;
