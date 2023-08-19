@@ -8,11 +8,13 @@ import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
 import {FactorHit} from './backtest.model';
 import {Racecard} from './racecard.model';
+import {Report} from './report.model';
 
 @Injectable()
 export class RestRepository {
   private horses: Horse[] = [];
   private owners: HorseOwner[] = [];
+  private reports: Report[] = [];
   private meetings: Meeting[] = [];
   private collaborations: Collaboration[] = [];
   private racecards: Racecard[] = [];
@@ -23,6 +25,7 @@ export class RestRepository {
 
   findHorses = () => this.horses
   findOwners = () => this.owners
+  findReports = () => this.reports
   findMeetings = () => this.meetings
   findCollaborations = () => this.collaborations
   findRacecards = () => this.racecards
@@ -58,6 +61,9 @@ export class RestRepository {
 
   fetchOwners = () =>
     this.source.getOwners().subscribe(data => this.owners = data)
+
+  fetchReports = () =>
+    this.source.getReports().subscribe(data => this.reports = data)
 
   fetchMeetings = () =>
     this.source.getMeetings().subscribe(data => this.meetings = data)

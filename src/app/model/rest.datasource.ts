@@ -10,6 +10,7 @@ import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
 import {Racecard} from './racecard.model';
 import {FactorHit} from './backtest.model';
+import {Report} from './report.model';
 
 @Injectable()
 export class RestDataSource {
@@ -37,6 +38,9 @@ export class RestDataSource {
 
   getOwners = (): Observable<HorseOwner[]> =>
     this.http.get<HorseOwner[]>(`${this.baseUrl}/owners`)
+
+  getReports = (): Observable<Report[]> =>
+    this.http.get<Report[]>(`${this.baseUrl}/reports`)
 
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)

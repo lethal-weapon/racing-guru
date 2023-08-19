@@ -4,6 +4,7 @@ export const FIVE_SECONDS = 5_000;
 export const TEN_SECONDS = 10_000;
 export const ONE_MINUTE = 60_000;
 
+export const TEN_THOUSAND = 10_000;
 export const ONE_MILLION = 1_000_000;
 export const ONE_DAY_MILL = 1000 * 3600 * 24;
 

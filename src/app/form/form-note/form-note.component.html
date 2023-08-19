@@ -24,22 +24,36 @@
   </div>
   <div class="w-64 pt-4 pb-5 px-6 rounded-2xl shadow-md shadow-sky-700/50">
     <div class="mb-2 text-xl font-bold text-green-600">
-      Suspensions
+      Fines & Suspensions
     </div>
     <div class="mb-3 flex flex-row justify-between items-center">
       <div *ngFor="let control of paginationControls"
            class="cursor-pointer transition hover:text-yellow-400"
+           (click)="shiftReport(control.length)"
       >
         <i class="{{control.icon}}"></i>
       </div>
     </div>
     <div class="flex flex-col gap-y-2">
-      <div class="">
+      <div *ngFor="let report of windowReports"
+           class="text-lg"
+      >
         <div class="text-xl text-left italic text-blue-600">
-          2023-07-01
+          {{report.meeting}}
         </div>
-        <div class="text-lg">
-          CCY, WEC
+        <div *ngFor="let sus of report.suspensions"
+             class="grid grid-cols-2 gap-x-4"
+        >
+          <div>{{sus.person}}</div>
+          <div>{{formatMeeting(sus.startAt)}} / {{sus.racedays}}D</div>
+        </div>
+        <div *ngFor="let fine of report.fines"
+             class="grid grid-cols-2 gap-x-4"
+        >
+          <div>{{fine.person}}</div>
+          <div [class.text-red-600]="fine.amount >= TEN_THOUSAND">
+            {{fine.amount | currency:'USD':'symbol':'1.0-0'}}
+          </div>
         </div>
       </div>
     </div>
@@ -183,9 +197,9 @@
             </thead>
             <tbody>
             <tr *ngFor="let pb of personBirthdays">
-              <td class="py-1">{{pb.person}}</td>
-              <td class="py-1">{{pb.date}}</td>
-              <td class="py-1">{{pb.age}}</td>
+              <td class="py-0.5">{{pb.person}}</td>
+              <td class="py-0.5">{{pb.date}}</td>
+              <td class="py-0.5">{{pb.age}}</td>
             </tr>
             </tbody>
           </table>
@@ -202,9 +216,9 @@
             </thead>
             <tbody>
             <tr *ngFor="let pw of personWinners">
-              <td class="py-1">{{pw.person}}</td>
-              <td class="py-1" [class.text-green-600]="pw.season % 10 >= 8">{{pw.season}}</td>
-              <td class="py-1" [class.text-green-600]="pw.career % 10 >= 8">{{pw.career}}</td>
+              <td class="py-0.5">{{pw.person}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.season % 10 >= 8">{{pw.season}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.career % 10 >= 8">{{pw.career}}</td>
             </tr>
             </tbody>
           </table>

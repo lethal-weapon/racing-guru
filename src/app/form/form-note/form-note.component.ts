@@ -3,7 +3,8 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
-import {ONE_DAY_MILL, TWO_SECONDS} from '../../util/numbers';
+import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
+import {Report} from '../../model/report.model';
 
 @Component({
   selector: 'app-form-note',
@@ -11,6 +12,7 @@ import {ONE_DAY_MILL, TWO_SECONDS} from '../../util/numbers';
 })
 export class FormNoteComponent implements OnInit {
   activeMeeting: string = '';
+  reportIndex: number = 0;
   meetingIndex: number = 0;
 
   interviews: Interview[] = [];
@@ -18,11 +20,13 @@ export class FormNoteComponent implements OnInit {
   isInterviewFailToSave: boolean = false;
   isInterviewSuccessToSave: boolean = false;
 
+  protected readonly TEN_THOUSAND = TEN_THOUSAND;
+
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    // this.repo.fetchHorses();
+    this.repo.fetchReports();
     this.repo.fetchMeetings();
     this.repo.fetchRacecards('latest', () => {
       this.activeMeeting = this.repo.findRacecards()
@@ -31,6 +35,9 @@ export class FormNoteComponent implements OnInit {
       this.initializeInterview();
     });
   }
+
+  formatMeeting = (meeting: string): string =>
+    meeting.replace(/^\d{4}-/g, '')
 
   setActiveMeeting = (meeting: string) => {
     if (meeting === this.activeMeeting) return;
@@ -165,8 +172,30 @@ export class FormNoteComponent implements OnInit {
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400`
 
+  shiftReport = (length: number) => {
+    const ws = this.reportWindowSize;
+    const maxIndex = this.reports.length - ws;
+
+    switch (length) {
+      case -99:
+        this.reportIndex = 0;
+        break;
+      case 99:
+        this.reportIndex = maxIndex;
+        break;
+      case -this.meetingWindowSize:
+        if (this.reportIndex >= ws) this.reportIndex -= ws;
+        else this.reportIndex = 0;
+        break;
+      case this.meetingWindowSize:
+        if (this.reportIndex < maxIndex - ws) this.reportIndex += ws;
+        else this.reportIndex = maxIndex;
+        break;
+    }
+  }
+
   shiftMeeting = (length: number) => {
-    const ws = this.windowSize;
+    const ws = this.meetingWindowSize;
     const maxIndex = this.meetings.length - ws;
 
     switch (length) {
@@ -300,19 +329,27 @@ export class FormNoteComponent implements OnInit {
   get paginationControls(): Array<{ icon: string, length: number }> {
     return [
       {icon: 'fa fa-2x fa-long-arrow-left', length: -99},
-      {icon: 'fa fa-2x fa-angle-double-left', length: -this.windowSize},
-      {icon: 'fa fa-2x fa-angle-double-right', length: this.windowSize},
+      {icon: 'fa fa-2x fa-angle-double-left', length: -this.meetingWindowSize},
+      {icon: 'fa fa-2x fa-angle-double-right', length: this.meetingWindowSize},
       {icon: 'fa fa-2x fa-long-arrow-right', length: 99},
     ]
   }
 
-  get windowMeetings(): string[] {
-    return this.meetings.slice(
-      this.meetingIndex, this.meetingIndex + this.windowSize
-    );
+  get windowReports(): Report[] {
+    return this.reports
+      .slice(this.reportIndex, this.reportIndex + this.reportWindowSize);
   }
 
-  get windowSize(): number {
+  get windowMeetings(): string[] {
+    return this.meetings
+      .slice(this.meetingIndex, this.meetingIndex + this.meetingWindowSize);
+  }
+
+  get reportWindowSize(): number {
+    return 7;
+  }
+
+  get meetingWindowSize(): number {
     return 14;
   }
 
@@ -321,6 +358,12 @@ export class FormNoteComponent implements OnInit {
       ['2023-09-10', '2024-07-14'],
       ['2022-09-11', '2023-07-16'],
     ]
+  }
+
+  get reports(): Report[] {
+    return this.repo.findReports()
+      .filter(r => r.meeting <= this.activeMeeting)
+      .filter(r => r.fines.length > 0 || r.suspensions.length > 0);
   }
 
   get meetings(): string[] {
