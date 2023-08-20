@@ -42,17 +42,33 @@
           {{report.meeting}}
         </div>
         <div *ngFor="let sus of report.suspensions"
-             class="grid grid-cols-2 gap-x-4"
+             class="grid grid-cols-4"
         >
-          <div>{{sus.person}}</div>
-          <div>{{formatMeeting(sus.startAt)}} / {{sus.racedays}}D</div>
+          <div class="col-span-1">{{sus.person}}</div>
+          <div class="col-span-2 text-right">
+            {{formatMeeting(sus.startAt)}} / {{sus.racedays}}D
+          </div>
+          <div class="col-span-1 text-right"
+               tooltip="R#{{sus.race}}: {{sus.horse}}"
+               [hideDelay]="0"
+          >
+            <i class="fa fa-question-circle-o"></i>
+          </div>
         </div>
         <div *ngFor="let fine of report.fines"
-             class="grid grid-cols-2 gap-x-4"
+             class="grid grid-cols-4"
         >
-          <div>{{fine.person}}</div>
-          <div [class.text-red-600]="fine.amount >= TEN_THOUSAND">
+          <div class="col-span-1">{{fine.person}}</div>
+          <div class="col-span-2 text-right"
+               [class.text-red-600]="fine.amount >= TEN_THOUSAND"
+          >
             {{fine.amount | currency:'USD':'symbol':'1.0-0'}}
+          </div>
+          <div class="col-span-1 text-right"
+               tooltip="{{formatFineTooltip(fine)}}"
+               [hideDelay]="0"
+          >
+            <i class="fa fa-question-circle-o"></i>
           </div>
         </div>
       </div>

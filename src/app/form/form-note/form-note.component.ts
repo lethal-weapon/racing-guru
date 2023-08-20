@@ -4,7 +4,7 @@ import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
 import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
-import {Report} from '../../model/report.model';
+import {Fine, Report} from '../../model/report.model';
 
 @Component({
   selector: 'app-form-note',
@@ -38,6 +38,12 @@ export class FormNoteComponent implements OnInit {
 
   formatMeeting = (meeting: string): string =>
     meeting.replace(/^\d{4}-/g, '')
+
+  formatFineTooltip = (fine: Fine): string => {
+    const race = fine?.race ? `R#${fine.race}` : ``;
+    const horse = fine?.horse ? `${fine.horse} // ` : ``;
+    return `${race} ${horse} ${fine.reason}`;
+  }
 
   setActiveMeeting = (meeting: string) => {
     if (meeting === this.activeMeeting) return;
