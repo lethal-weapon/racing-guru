@@ -90,14 +90,14 @@
         <th class="py-1 px-2">Trainer</th>
         </thead>
         <tbody>
-        <tr>
-          <td class="py-1">3</td>
-          <td class="py-1">8</td>
-          <td class="py-1">PZ</td>
-          <td class="py-1">YCH</td>
-          <td class="py-1"><i class="fa fa-lg fa-long-arrow-right"></i></td>
-          <td class="py-1">PZ</td>
-          <td class="py-1">HAD</td>
+        <tr *ngFor="let sc of starterChanges">
+          <td class="py-0.5">{{sc.race}}</td>
+          <td class="py-0.5">{{sc.order}}</td>
+          <td class="py-0.5">{{sc.previousJockey}}</td>
+          <td class="py-0.5">{{sc.previousTrainer}}</td>
+          <td class="py-0.5"><i class="fa fa-lg fa-long-arrow-right"></i></td>
+          <td class="py-0.5">{{sc.currentJockey}}</td>
+          <td class="py-0.5">{{sc.currentTrainer}}</td>
         </tr>
         </tbody>
       </table>
@@ -121,7 +121,7 @@
                 <select [(ngModel)]="interview.race"
                         (ngModelChange)="updateInterviewee(interview)"
                         class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent cursor-pointer
-                             border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+                               border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
                 >
                   <option *counter="let race of maxRace" [ngValue]="race">
                     {{race}}
@@ -132,7 +132,7 @@
                 <select [(ngModel)]="interview.order"
                         (ngModelChange)="updateInterviewee(interview)"
                         class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent cursor-pointer
-                             border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+                               border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
                 >
                   <option *ngFor="let order of getPossibleOrders(interview.race, interview.order)"
                           [ngValue]="order"
@@ -144,7 +144,7 @@
               <td>
                 <select [(ngModel)]="interview.interviewee"
                         class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent cursor-pointer
-                             border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+                               border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
                 >
                   <option *ngFor="let person of getPossibleInterviewees(interview.race, interview.order)"
                           [ngValue]="person"

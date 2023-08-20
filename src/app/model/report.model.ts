@@ -28,3 +28,12 @@ export interface Suspension {
   resumeAt: string,
   racedays: number
 }
+
+export interface StarterChange {
+  race: number,
+  order: number,
+  previousJockey: string,
+  previousTrainer: string,
+  currentJockey: string,
+  currentTrainer: string
+}

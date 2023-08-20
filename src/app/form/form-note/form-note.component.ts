@@ -4,7 +4,7 @@ import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
 import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
-import {Fine, Report} from '../../model/report.model';
+import {Report, Fine, StarterChange} from '../../model/report.model';
 
 @Component({
   selector: 'app-form-note',
@@ -220,6 +220,28 @@ export class FormNoteComponent implements OnInit {
         else this.meetingIndex = maxIndex;
         break;
     }
+  }
+
+  get starterChanges(): StarterChange[] {
+    return this.repo.findReports()
+        .find(r => r.meeting === this.activeMeeting)
+        ?.withdrawals
+        .map(w => {
+          return this.repo.findRacecards()
+            .find(r => r.race === w.race)
+            ?.starters
+            .filter(s => s.scratched)
+            .map(s => ({
+              race: w.race,
+              order: s.order,
+              previousJockey: s.jockey,
+              previousTrainer: s.trainer,
+              currentJockey: 'X',
+              currentTrainer: ''
+            })) || [];
+        })
+        .reduce((prev, curr) => prev.concat(curr), [])
+      || [];
   }
 
   get personBirthdays(): Array<{ person: string, date: string, age: number }> {
