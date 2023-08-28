@@ -2,9 +2,10 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
+import {Report, Fine, StarterChange} from '../../model/report.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
 import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
-import {Report, Fine, StarterChange} from '../../model/report.model';
+import {SEASONS} from '../../util/strings';
 
 @Component({
   selector: 'app-form-note',
@@ -159,13 +160,10 @@ export class FormNoteComponent implements OnInit {
     || Array(14).fill(1).map((e, index) => 1 + index);
 
   getMeetingIndex = (meeting: string): number => {
-    for (const season of this.seasons) {
-      const opening = season[0]
-      const finale = season[1]
-
-      if (meeting >= opening && meeting <= finale) {
+    for (const season of SEASONS) {
+      if (meeting >= season.opening && meeting <= season.finale) {
         return 1 + this.meetings
-          .filter(m => m >= opening && m <= finale)
+          .filter(m => m >= season.opening && m <= season.finale)
           .sort((m1, m2) => m1.localeCompare(m2))
           .indexOf(meeting);
       }
@@ -282,15 +280,12 @@ export class FormNoteComponent implements OnInit {
   get personWinners(): Array<{ person: string, season: number, career: number }> {
     return JOCKEYS.concat(TRAINERS).map(person => {
       let seasonWins = 0;
-      for (const season of this.seasons) {
-        const opening = season[0];
-        const finale = season[1];
-
-        if (this.activeMeeting >= opening && this.activeMeeting <= finale) {
-          if (this.activeMeeting === opening) break;
+      for (const season of SEASONS) {
+        if (this.activeMeeting >= season.opening && this.activeMeeting <= season.finale) {
+          if (this.activeMeeting === season.opening) break;
 
           seasonWins = this.repo.findMeetings()
-            .filter(m => m.meeting >= opening && m.meeting < this.activeMeeting)
+            .filter(m => m.meeting >= season.opening && m.meeting < this.activeMeeting)
             .map(m => m.persons)
             .reduce((prev, curr) => prev.concat(curr), [])
             .filter(ps => ps.person === person.code)
@@ -379,13 +374,6 @@ export class FormNoteComponent implements OnInit {
 
   get meetingWindowSize(): number {
     return 14;
-  }
-
-  get seasons(): string[][] {
-    return [
-      ['2023-09-10', '2024-07-14'],
-      ['2022-09-11', '2023-07-16'],
-    ]
   }
 
   get reports(): Report[] {

@@ -1,20 +1,22 @@
 import {Injectable} from '@angular/core';
 
 import {RestDataSource} from './rest.datasource';
+import {FavoritePost, Interview} from './dto.model';
 import {Horse} from './horse.model';
 import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
-import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
 import {FactorHit} from './backtest.model';
 import {Racecard} from './racecard.model';
 import {Report} from './report.model';
+import {Record} from './record.model';
 
 @Injectable()
 export class RestRepository {
   private horses: Horse[] = [];
   private owners: HorseOwner[] = [];
   private reports: Report[] = [];
+  private records: Record[] = [];
   private meetings: Meeting[] = [];
   private collaborations: Collaboration[] = [];
   private racecards: Racecard[] = [];
@@ -26,6 +28,7 @@ export class RestRepository {
   findHorses = () => this.horses
   findOwners = () => this.owners
   findReports = () => this.reports
+  findRecords = () => this.records
   findMeetings = () => this.meetings
   findCollaborations = () => this.collaborations
   findRacecards = () => this.racecards
@@ -64,6 +67,9 @@ export class RestRepository {
 
   fetchReports = () =>
     this.source.getReports().subscribe(data => this.reports = data)
+
+  fetchRecords = () =>
+    this.source.getRecords().subscribe(data => this.records = data)
 
   fetchMeetings = () =>
     this.source.getMeetings().subscribe(data => this.meetings = data)

@@ -1,1 +1,82 @@
-<p class="text-2xl text-center">My Betlines</p>
+<div class="mb-8 mx-24 text-xl flex flex-row justify-between text-center">
+  <div *ngFor="let section of subsections; let index = index"
+       class="w-full flex flex-row justify-between bg-gray-800 rounded-full"
+  >
+    <div *ngFor="let item of section"
+         class="w-full py-2 rounded-full {{getSectionStyle(item)}}"
+         (click)="setActiveItem(index, item)"
+    >
+      {{item}}
+    </div>
+  </div>
+</div>
+
+<table *ngIf="activeGroup === 'By Meeting'"
+       class="mx-auto border-collapse border border-gray-600 text-center"
+>
+  <thead class="text-lg">
+  <th class="border border-gray-600 py-1.5 px-6">
+    #
+  </th>
+  <th *ngFor="let field of meetingViewFields; let index = index"
+      class="border border-gray-600 py-1.5"
+      [class.px-6]="[1,4].includes(index)"
+      [class.px-8]="![1,4].includes(index)"
+  >
+    {{field}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let record of records; let index = index"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700 py-1 font-mono">
+      {{index + 1}}
+    </td>
+    <td class="border border-gray-700 py-1 font-mono">
+      {{record.meeting}}
+    </td>
+    <td class="border border-gray-700 py-1">
+      {{record.venue}}
+    </td>
+    <td class="border border-gray-700 py-1 px-2">
+      <div class="grid grid-cols-6 gap-x-2">
+        <div *ngFor="let race of getProfitRacesOnMeeting(record)">
+          {{race}}
+        </div>
+      </div>
+    </td>
+    <td class="border border-gray-700 py-1 px-4">
+      <div class="grid grid-cols-3 gap-x-1">
+        <div class="{{countBetlinesOnMeeting(record)[0] === 0 ? 'text-red-600' : 'text-green-600'}}">
+          {{countBetlinesOnMeeting(record)[0]}}
+        </div>
+        <div>/</div>
+        <div>
+          {{countBetlinesOnMeeting(record)[1]}}
+        </div>
+      </div>
+    </td>
+    <td class="border border-gray-700 py-1 text-red-600">
+      -{{record.debit | currency:'USD':'symbol':'1.0-0'}}
+    </td>
+    <td class="border border-gray-700 py-1">
+      <span *ngIf="record.credit > 0" class="text-green-600">
+        +{{record.credit | currency:'USD':'symbol':'1.0-0'}}
+      </span>
+      <span *ngIf="record.credit <= 0" class="text-red-600">
+        X
+      </span>
+    </td>
+    <td class="border border-gray-700 py-1"
+        [class.text-red-600]="record.credit < record.debit"
+        [class.text-green-600]="record.credit > record.debit"
+    >
+      {{(record.credit - record.debit) | currency:'USD':'symbol':'1.0-0'}}
+    </td>
+    <td class="border border-gray-700 py-1 {{getMeetingROIColor(record)}}">
+      {{getReturnOnInvestment(record) ? getReturnOnInvestment(record) : ''}}
+    </td>
+  </tr>
+  </tbody>
+</table>

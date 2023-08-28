@@ -3,14 +3,15 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
+import {FavoritePost, Interview} from './dto.model';
 import {Horse} from './horse.model';
 import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
-import {FavoritePost, Interview} from './dto.model';
 import {Collaboration} from './collaboration.model';
 import {Racecard} from './racecard.model';
 import {FactorHit} from './backtest.model';
 import {Report} from './report.model';
+import {Record} from './record.model';
 
 @Injectable()
 export class RestDataSource {
@@ -41,6 +42,9 @@ export class RestDataSource {
 
   getReports = (): Observable<Report[]> =>
     this.http.get<Report[]>(`${this.baseUrl}/reports`)
+
+  getRecords = (): Observable<Record[]> =>
+    this.http.get<Record[]>(`${this.baseUrl}/records`)
 
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)

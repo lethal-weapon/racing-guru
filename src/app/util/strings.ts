@@ -11,6 +11,12 @@ export interface RatingFactorMap {
   abbreviation: string
 }
 
+export interface Season {
+  label: string,
+  opening: string,
+  finale: string
+}
+
 export const COMMON_HORSE_ORIGINS = [
   'AUS', 'NZ', 'IRE'
 ];
@@ -21,6 +27,11 @@ export const COLORS = [
   'text-blue-600',
   'text-purple-600',
 ];
+
+export const SEASONS: Season[] = [
+  {label: '23/24', opening: '2023-09-10', finale: '2024-07-14'},
+  {label: '22/23', opening: '2022-09-11', finale: '2023-07-16'},
+]
 
 export const PLACING_MAPS: PlacingMap[] = [
   {placing: 'W', color: 'text-red-600'},
