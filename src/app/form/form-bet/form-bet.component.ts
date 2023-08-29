@@ -60,6 +60,35 @@ export class FormBetComponent implements OnInit {
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
 
+  get seasonBetlines(): number[] {
+    const totalBetlines = this.records
+      .map(r => r.betlines)
+      .reduce((prev, curr) => prev.concat(curr), []);
+
+    return [
+      totalBetlines.filter(b => b.credit > b.debit).length,
+      totalBetlines.length
+    ];
+  }
+
+  get seasonSummary(): ({ debit: number, credit: number, roi: number }) {
+    if (this.records.length === 0) return {debit: 0, credit: 0, roi: 0};
+
+    const totalDebit = this.records
+      .map(r => r.debit)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    const totalCredit = this.records
+      .map(r => r.credit)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    return {
+      debit: totalDebit,
+      credit: totalCredit,
+      roi: parseFloat((totalCredit / totalDebit - 1).toFixed(4))
+    };
+  }
+
   get meetingViewFields(): string[] {
     return [
       'Meeting', 'Venue', 'Profit Race #', 'Betlines',

@@ -79,4 +79,38 @@
     </td>
   </tr>
   </tbody>
+  <tfoot>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="border border-gray-600 py-1.5 px-2">
+      <div class="grid grid-cols-3 gap-x-1">
+        <div class="text-green-600">
+          {{seasonBetlines[0]}}
+        </div>
+        <div>/</div>
+        <div>
+          {{seasonBetlines[1]}}
+        </div>
+      </div>
+    </td>
+    <td class="border border-gray-600 py-1.5 text-red-600 text-lg">
+      -{{seasonSummary.debit | currency:'USD':'symbol':'1.0-0'}}
+    </td>
+    <td class="border border-gray-600 py-1.5 text-green-600 text-lg">
+      +{{seasonSummary.credit | currency:'USD':'symbol':'1.0-0'}}
+    </td>
+    <td class="border border-gray-600 py-1.5 text-lg"
+        [class.text-red-600]="seasonSummary.credit < seasonSummary.debit"
+        [class.text-green-600]="seasonSummary.credit > seasonSummary.debit"
+    >
+      {{(seasonSummary.credit - seasonSummary.debit) | currency:'USD':'symbol':'1.0-0'}}
+    </td>
+    <td class="border border-gray-600 py-1.5 text-lg">
+      {{seasonSummary.roi | percent:'1.1-2'}}
+    </td>
+  </tr>
+  </tfoot>
 </table>
