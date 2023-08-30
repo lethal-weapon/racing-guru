@@ -4,12 +4,22 @@ import {RestRepository} from '../../model/rest.repository';
 import {Record} from '../../model/record.model';
 import {SEASONS} from '../../util/strings';
 
+interface MonthlySummary {
+  year: string,
+  month: string,
+  meetings: number,
+  debit: number,
+  credit: number,
+  roi: number,
+  betlines: number[]
+}
+
 @Component({
   selector: 'app-form-bet',
   templateUrl: './form-bet.component.html'
 })
 export class FormBetComponent implements OnInit {
-  activeGroup: string = this.subsections[1][0];
+  activeGroup: string = this.subsections[1][1];
   activeSeason: string = SEASONS[1].label;
 
   constructor(private repo: RestRepository) {
@@ -59,6 +69,35 @@ export class FormBetComponent implements OnInit {
     [this.activeGroup, this.activeSeason].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
+
+  get monthlySummaries(): MonthlySummary[] {
+    return this.records
+      .map(r => r.meeting.slice(0, 7))
+      .filter((m, index, arr) => index === arr.indexOf(m))
+      .sort((m1, m2) => m2.localeCompare(m1))
+      .map(m => {
+          const monthRecords = this.records.filter(r => r.meeting.startsWith(m));
+          const monthDebit = monthRecords.map(r => r.debit).reduce((prev, curr) => prev + curr, 0);
+          const monthCredit = monthRecords.map(r => r.credit).reduce((prev, curr) => prev + curr, 0);
+          const monthBetlines = monthRecords
+            .map(r => r.betlines)
+            .reduce((prev, curr) => prev.concat(curr), []);
+
+          return {
+            year: m.slice(0, 4).replace('20', '\''),
+            month: new Date(monthRecords[0].meeting).toLocaleString('en-US', {month: 'short'}),
+            meetings: monthRecords.length,
+            debit: monthDebit,
+            credit: monthCredit,
+            roi: parseFloat((monthCredit / monthDebit - 1).toFixed(3)),
+            betlines: [
+              monthBetlines.filter(b => b.credit > b.debit).length,
+              monthBetlines.length
+            ]
+          }
+        }
+      );
+  }
 
   get seasonBetlines(): number[] {
     const totalBetlines = this.records
