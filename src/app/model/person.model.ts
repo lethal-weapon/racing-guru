@@ -59,7 +59,7 @@ export const JOCKEYS = [
   new Person('BA', '1989-12-05', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', '', 165),
   new Person('BHW', '1992-06-10', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William', 30),
   new Person('HAA', '1991-06-11', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', '', 60),
-  new Person('AA', '1991-03-26', 'Atzeni', 'Andrea', 'A. Atzeni', 'ITY', 'Club', '', 0),
+  new Person('AA', '1991-03-26', 'Atzeni', 'Andrea', 'A. Atzeni', 'ITY', 'Club', '', 3),
 
   new Person('HCY', '1990-05-25', 'Ho', 'Chak-yiu', 'V. Ho', 'HK', 'Freelance', 'Vincent', 446),
   new Person('CML', '1990-07-12', 'Chadwick', 'Matthew L.', 'M. Chadwick', 'HK', 'Freelance', 'Lee', 461),
