@@ -19,8 +19,8 @@ interface MonthlySummary {
   templateUrl: './form-bet.component.html'
 })
 export class FormBetComponent implements OnInit {
-  activeGroup: string = this.subsections[1][1];
-  activeSeason: string = SEASONS[1].label;
+  activeGroup: string = this.subsections[1][0];
+  activeSeason: string = SEASONS[0].label;
 
   constructor(private repo: RestRepository) {
   }
