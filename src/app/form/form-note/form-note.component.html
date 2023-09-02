@@ -166,36 +166,36 @@
               </tbody>
             </table>
             <div class="mt-4 flex flex-row justify-around text-xl">
-              <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+              <div class="px-6 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
                    (click)="addInterview()"
               >
                 <i class="fa fa-plus"></i>
               </div>
-              <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+              <div class="px-6 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
                    [class.cursor-not-allowed]="interviews.length > 0"
                    (click)="populateInterview()"
               >
                 <i class="fa fa-table"></i>
               </div>
-              <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+              <div class="px-6 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
                    [class.cursor-wait]="isProcessingInterview"
                    (click)="saveInterview()"
               >
                 <div [class.animate-spin]="isSavingInterview">
-              <span *ngIf="isInterviewFailToSave" class="text-red-600">
-                <i class="fa fa-times-circle-o"></i>
-              </span>
+                  <span *ngIf="isInterviewFailToSave" class="text-red-600">
+                    <i class="fa fa-times-circle-o"></i>
+                  </span>
                   <span *ngIf="isInterviewSuccessToSave" class="text-green-600">
-                <i class="fa fa-check-circle-o"></i>
-              </span>
+                    <i class="fa fa-check-circle-o"></i>
+                  </span>
                   <span *ngIf="!(isInterviewFailToSave || isInterviewSuccessToSave)">
-                <span *ngIf="isValidInterview">
-                  <i class="fa fa-save"></i>
-                </span>
-                <span *ngIf="!isValidInterview" class="text-yellow-400">
-                  <i class="fa fa-warning"></i>
-                </span>
-              </span>
+                    <span *ngIf="isValidInterview">
+                      <i class="fa fa-save"></i>
+                    </span>
+                    <span *ngIf="!isValidInterview" class="text-yellow-400">
+                      <i class="fa fa-warning"></i>
+                    </span>
+                  </span>
                 </div>
               </div>
             </div>
