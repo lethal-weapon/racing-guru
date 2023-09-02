@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+
 import {FIVE_SECONDS} from '../util/numbers';
 
 @Component({
@@ -10,9 +11,8 @@ export class HeaderComponent implements OnInit {
   pages: Array<{ title: string, link: string }> = [
     {title: 'Meeting', link: '/meeting'},
     {title: 'Racecard', link: '/racecard'},
-    {title: 'Trend', link: '/trend'},
     {title: 'Odds', link: '/odds'},
-
+    {title: 'Trend', link: '/trend'},
     {title: 'Form', link: '/form'},
     {title: 'Backtest', link: '/backtest'},
     // {title: 'Top4s', link: '/top4s'},

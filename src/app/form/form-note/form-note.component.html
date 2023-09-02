@@ -75,119 +75,120 @@
     </div>
   </div>
   <div class="flex flex-col gap-y-6 items-start">
-    <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
-      <div class="mb-2 text-xl font-bold text-green-600">
-        Scratched & Prompted
-      </div>
-      <table class="mx-auto table-fixed text-lg">
-        <thead>
-        <th class="py-1 px-2">Race#</th>
-        <th class="py-1 px-2">Horse#</th>
-        <th class="py-1 px-2">Jockey</th>
-        <th class="py-1 px-2">Trainer</th>
-        <th class="py-1 px-4 opacity-0">X</th>
-        <th class="py-1 px-2">Jockey</th>
-        <th class="py-1 px-2">Trainer</th>
-        </thead>
-        <tbody>
-        <tr *ngFor="let sc of starterChanges">
-          <td class="py-0.5">{{sc.race}}</td>
-          <td class="py-0.5">{{sc.order}}</td>
-          <td class="py-0.5">{{sc.previousJockey}}</td>
-          <td class="py-0.5">{{sc.previousTrainer}}</td>
-          <td class="py-0.5"><i class="fa fa-lg fa-long-arrow-right"></i></td>
-          <td class="py-0.5">{{sc.currentJockey}}</td>
-          <td class="py-0.5">{{sc.currentTrainer}}</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+    <!--    <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">-->
+    <!--      <div class="mb-2 text-xl font-bold text-green-600">-->
+    <!--        Scratched & Prompted-->
+    <!--      </div>-->
+    <!--      <table class="mx-auto table-fixed text-lg">-->
+    <!--        <thead>-->
+    <!--        <th class="py-1 px-2">Race#</th>-->
+    <!--        <th class="py-1 px-2">Horse#</th>-->
+    <!--        <th class="py-1 px-2">Jockey</th>-->
+    <!--        <th class="py-1 px-2">Trainer</th>-->
+    <!--        <th class="py-1 px-4 opacity-0">X</th>-->
+    <!--        <th class="py-1 px-2">Jockey</th>-->
+    <!--        <th class="py-1 px-2">Trainer</th>-->
+    <!--        </thead>-->
+    <!--        <tbody>-->
+    <!--        <tr *ngFor="let sc of starterChanges">-->
+    <!--          <td class="py-0.5">{{sc.race}}</td>-->
+    <!--          <td class="py-0.5">{{sc.order}}</td>-->
+    <!--          <td class="py-0.5">{{sc.previousJockey}}</td>-->
+    <!--          <td class="py-0.5">{{sc.previousTrainer}}</td>-->
+    <!--          <td class="py-0.5"><i class="fa fa-lg fa-long-arrow-right"></i></td>-->
+    <!--          <td class="py-0.5">{{sc.currentJockey}}</td>-->
+    <!--          <td class="py-0.5">{{sc.currentTrainer}}</td>-->
+    <!--        </tr>-->
+    <!--        </tbody>-->
+    <!--      </table>-->
+    <!--    </div>-->
     <div class="flex flex-row gap-x-6 items-start">
-      <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
-        <div class="mb-2 text-xl font-bold text-green-600">
-          Interviews
-        </div>
-        <div class="flex flex-col text-lg">
-          <table class="mx-auto table-fixed">
-            <thead>
-            <th class="py-1 px-2">Race#</th>
-            <th class="py-1 px-2">Horse#</th>
-            <th class="py-1 px-2">Interviewee</th>
-            <th class="py-1 px-5 opacity-0">X</th>
-            </thead>
-            <tbody>
-            <tr *ngFor="let interview of interviews">
-              <td>
-                <select [(ngModel)]="interview.race"
-                        (ngModelChange)="updateInterviewee(interview)"
-                        class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent cursor-pointer
-                               border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
-                >
-                  <option *counter="let race of maxRace" [ngValue]="race">
-                    {{race}}
-                  </option>
-                </select>
-              </td>
-              <td>
-                <select [(ngModel)]="interview.order"
-                        (ngModelChange)="updateInterviewee(interview)"
-                        class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent cursor-pointer
-                               border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
-                >
-                  <option *ngFor="let order of getPossibleOrders(interview.race, interview.order)"
-                          [ngValue]="order"
+      <div class="flex flex-col gap-y-6 items-start">
+        <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+          <div class="mb-2 text-xl font-bold text-green-600">
+            Interviews
+          </div>
+          <div class="flex flex-col text-lg">
+            <table class="mx-auto table-fixed">
+              <thead>
+              <th class="py-1 px-2">Race#</th>
+              <th class="py-1 px-2">Horse#</th>
+              <th class="py-1 px-2">Interviewee</th>
+              <th class="py-1 px-5 opacity-0">X</th>
+              </thead>
+              <tbody>
+              <tr *ngFor="let interview of interviews">
+                <td>
+                  <select [(ngModel)]="interview.race"
+                          (ngModelChange)="updateInterviewee(interview)"
+                          class="block w-2/3 mx-auto text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                                 border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
                   >
-                    {{order}}
-                  </option>
-                </select>
-              </td>
-              <td>
-                <select [(ngModel)]="interview.interviewee"
-                        class="block w-2/3 mx-auto text-center py-1 appearance-none bg-transparent cursor-pointer
-                               border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
-                >
-                  <option *ngFor="let person of getPossibleInterviewees(interview.race, interview.order)"
-                          [ngValue]="person"
+                    <option *counter="let race of maxRace" [ngValue]="race">
+                      {{race}}
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <select [(ngModel)]="interview.order"
+                          (ngModelChange)="updateInterviewee(interview)"
+                          class="block w-2/3 mx-auto text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                                 border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
                   >
-                    {{person}}
-                  </option>
-                </select>
-              </td>
-              <td class="pt-1">
-                <div class="px-4 py-0.5 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
-                     [class.cursor-not-allowed]="isOnlyOneInterviewLeft"
-                     (click)="deleteInterview(interview)"
-                >
-                  <i class="fa fa-trash"></i>
-                </div>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-          <div class="mt-6 flex flex-row justify-around text-xl">
-            <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
-                 (click)="addInterview()"
-            >
-              <i class="fa fa-plus"></i>
-            </div>
-            <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
-                 [class.cursor-not-allowed]="interviews.length > 0"
-                 (click)="populateInterview()"
-            >
-              <i class="fa fa-table"></i>
-            </div>
-            <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
-                 [class.cursor-wait]="isProcessingInterview"
-                 (click)="saveInterview()"
-            >
-              <div [class.animate-spin]="isSavingInterview">
+                    <option *ngFor="let order of getPossibleOrders(interview.race, interview.order)"
+                            [ngValue]="order"
+                    >
+                      {{order}}
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <select [(ngModel)]="interview.interviewee"
+                          class="block w-2/3 mx-auto text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                                 border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+                  >
+                    <option *ngFor="let person of getPossibleInterviewees(interview.race, interview.order)"
+                            [ngValue]="person"
+                    >
+                      {{person}}
+                    </option>
+                  </select>
+                </td>
+                <td class="pt-1">
+                  <div class="px-4 py-0.5 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+                       [class.cursor-not-allowed]="isOnlyOneInterviewLeft"
+                       (click)="deleteInterview(interview)"
+                  >
+                    <i class="fa fa-trash"></i>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <div class="mt-4 flex flex-row justify-around text-xl">
+              <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+                   (click)="addInterview()"
+              >
+                <i class="fa fa-plus"></i>
+              </div>
+              <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+                   [class.cursor-not-allowed]="interviews.length > 0"
+                   (click)="populateInterview()"
+              >
+                <i class="fa fa-table"></i>
+              </div>
+              <div class="px-8 py-1 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+                   [class.cursor-wait]="isProcessingInterview"
+                   (click)="saveInterview()"
+              >
+                <div [class.animate-spin]="isSavingInterview">
               <span *ngIf="isInterviewFailToSave" class="text-red-600">
                 <i class="fa fa-times-circle-o"></i>
               </span>
-                <span *ngIf="isInterviewSuccessToSave" class="text-green-600">
+                  <span *ngIf="isInterviewSuccessToSave" class="text-green-600">
                 <i class="fa fa-check-circle-o"></i>
               </span>
-                <span *ngIf="!(isInterviewFailToSave || isInterviewSuccessToSave)">
+                  <span *ngIf="!(isInterviewFailToSave || isInterviewSuccessToSave)">
                 <span *ngIf="isValidInterview">
                   <i class="fa fa-save"></i>
                 </span>
@@ -195,12 +196,11 @@
                   <i class="fa fa-warning"></i>
                 </span>
               </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="flex flex-col gap-y-6 items-start">
         <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
           <div class="mb-2 text-xl font-bold text-green-600">
             Birthdays
@@ -220,6 +220,8 @@
             </tbody>
           </table>
         </div>
+      </div>
+      <div class="flex flex-col gap-y-6 items-start">
         <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
           <div class="mb-2 text-xl font-bold text-green-600">
             Winners
@@ -231,10 +233,29 @@
             <th class="py-1 px-2">Career</th>
             </thead>
             <tbody>
-            <tr *ngFor="let pw of personWinners">
+            <tr *ngFor="let pw of personMilestoneCloseWinners">
               <td class="py-0.5">{{pw.person}}</td>
               <td class="py-0.5" [class.text-green-600]="pw.season % 10 >= 8">{{pw.season}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.career % 10 >= 8">{{pw.career}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.career % 10 >= 8 || pw.career == 0">{{pw.career}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+          <div class="mb-2 text-xl font-bold text-green-600">
+            Milestones
+          </div>
+          <table class="mx-auto table-fixed text-lg">
+            <thead>
+            <th class="py-1 px-2">Person</th>
+            <th class="py-1 px-2">Season</th>
+            <th class="py-1 px-2">Career</th>
+            </thead>
+            <tbody>
+            <tr *ngFor="let pw of personMilestonePassWinners">
+              <td class="py-0.5">{{pw.person}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.season % 10 == 0">{{pw.season}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.career % 10 == 0">{{pw.career}}</td>
             </tr>
             </tbody>
           </table>

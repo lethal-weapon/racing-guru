@@ -7,6 +7,12 @@ import {JOCKEYS, TRAINERS} from '../../model/person.model';
 import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
 import {SEASONS} from '../../util/strings';
 
+interface PersonWinner {
+  person: string,
+  season: number,
+  career: number
+}
+
 @Component({
   selector: 'app-form-note',
   templateUrl: './form-note.component.html'
@@ -221,25 +227,26 @@ export class FormNoteComponent implements OnInit {
   }
 
   get starterChanges(): StarterChange[] {
-    return this.repo.findReports()
-        .find(r => r.meeting === this.activeMeeting)
-        ?.withdrawals
-        .map(w => {
-          return this.repo.findRacecards()
-            .find(r => r.race === w.race)
-            ?.starters
-            .filter(s => s.scratched)
-            .map(s => ({
-              race: w.race,
-              order: s.order,
-              previousJockey: s.jockey,
-              previousTrainer: s.trainer,
-              currentJockey: 'X',
-              currentTrainer: ''
-            })) || [];
-        })
-        .reduce((prev, curr) => prev.concat(curr), [])
-      || [];
+    return [];
+    // return this.repo.findReports()
+    //     .find(r => r.meeting === this.activeMeeting)
+    //     ?.withdrawals
+    //     .map(w => {
+    //       return this.repo.findRacecards()
+    //         .find(r => r.race === w.race)
+    //         ?.starters
+    //         .filter(s => s.scratched)
+    //         .map(s => ({
+    //           race: w.race,
+    //           order: s.order,
+    //           previousJockey: s.jockey,
+    //           previousTrainer: s.trainer,
+    //           currentJockey: 'X',
+    //           currentTrainer: ''
+    //         })) || [];
+    //     })
+    //     .reduce((prev, curr) => prev.concat(curr), [])
+    //   || [];
   }
 
   get personBirthdays(): Array<{ person: string, date: string, age: number }> {
@@ -277,7 +284,19 @@ export class FormNoteComponent implements OnInit {
       );
   }
 
-  get personWinners(): Array<{ person: string, season: number, career: number }> {
+  get personMilestonePassWinners(): PersonWinner[] {
+    return this.personWinners.filter(pw =>
+      (pw.career > 0 && pw.career % 10 === 0)
+    );
+  }
+
+  get personMilestoneCloseWinners(): PersonWinner[] {
+    return this.personWinners.filter(pw =>
+      (pw.career === 0) || (pw.career % 10 >= 8) || (pw.season % 10 >= 8)
+    );
+  }
+
+  get personWinners(): PersonWinner[] {
     return JOCKEYS.concat(TRAINERS).map(person => {
       let seasonWins = 0;
       for (const season of SEASONS) {
@@ -310,9 +329,6 @@ export class FormNoteComponent implements OnInit {
         career: careerWins
       }
     })
-      .filter(pw =>
-        (pw.career % 10 >= 8) || (pw.season % 10 >= 8)
-      )
       .sort((p1, p2) =>
         (p2.career - p1.career) || (p2.season - p1.season)
       );
@@ -369,11 +385,11 @@ export class FormNoteComponent implements OnInit {
   }
 
   get reportWindowSize(): number {
-    return 7;
+    return 6;
   }
 
   get meetingWindowSize(): number {
-    return 14;
+    return 12;
   }
 
   get reports(): Report[] {
