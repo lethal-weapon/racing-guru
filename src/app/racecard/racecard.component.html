@@ -41,16 +41,16 @@
     <td *ngFor="let starter of startersSortedByChance"
         class="border border-gray-700"
     >
-      <div class="flex flex-row">
+      <div class="flex flex-row"
+           [class.invisible]="getRating(starter, factor.factor)?.score === 0"
+      >
         <div class="w-3/5 text-center text-2xl"
              [class.text-red-600]="getRating(starter, factor.factor)?.grade === 'A'"
              [class.text-green-600]="getRating(starter, factor.factor)?.grade === 'B'"
         >
           {{getRating(starter, factor.factor)?.grade}}
         </div>
-        <div class="w-2/5 text-sm pt-2.5"
-             [class.invisible]="getRating(starter, factor.factor)?.score === 0"
-        >
+        <div class="w-2/5 text-sm pt-2.5">
           {{
           (getRating(starter, factor.factor)?.score || 0)
             .toFixed(factor.factor === 'collaboration' ? 1 : 0)
