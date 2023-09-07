@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
-import {Report, Fine, StarterChange} from '../../model/report.model';
+import {Report, Fine} from '../../model/report.model';
+import {StarterChange} from '../../model/starter.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
 import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
 import {SEASONS} from '../../util/strings';
@@ -227,26 +228,14 @@ export class FormNoteComponent implements OnInit {
   }
 
   get starterChanges(): StarterChange[] {
-    return [];
-    // return this.repo.findReports()
-    //     .find(r => r.meeting === this.activeMeeting)
-    //     ?.withdrawals
-    //     .map(w => {
-    //       return this.repo.findRacecards()
-    //         .find(r => r.race === w.race)
-    //         ?.starters
-    //         .filter(s => s.scratched)
-    //         .map(s => ({
-    //           race: w.race,
-    //           order: s.order,
-    //           previousJockey: s.jockey,
-    //           previousTrainer: s.trainer,
-    //           currentJockey: 'X',
-    //           currentTrainer: ''
-    //         })) || [];
-    //     })
-    //     .reduce((prev, curr) => prev.concat(curr), [])
-    //   || [];
+    return this.repo.findRacecards()
+      .map(r => r.changes.map(c => {
+          c.race = r.race;
+          return c;
+        })
+      )
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .sort((sc1, sc2) => ((sc1?.race || 1) - (sc2?.race || 1)) || (sc1.order || sc2.order))
   }
 
   get personBirthdays(): Array<{ person: string, date: string, age: number }> {
@@ -297,38 +286,44 @@ export class FormNoteComponent implements OnInit {
   }
 
   get personWinners(): PersonWinner[] {
-    return JOCKEYS.concat(TRAINERS).map(person => {
-      let seasonWins = 0;
-      for (const season of SEASONS) {
-        if (this.activeMeeting >= season.opening && this.activeMeeting <= season.finale) {
-          if (this.activeMeeting === season.opening) break;
+    return JOCKEYS.concat(TRAINERS)
+      .filter(person =>
+        (this.repo.findMeetings().find(m => m.meeting === this.activeMeeting)?.persons || [])
+          .map(ps => ps.person)
+          .includes(person.code)
+      )
+      .map(person => {
+        let seasonWins = 0;
+        for (const season of SEASONS) {
+          if (this.activeMeeting >= season.opening && this.activeMeeting <= season.finale) {
+            if (this.activeMeeting === season.opening) break;
 
-          seasonWins = this.repo.findMeetings()
-            .filter(m => m.meeting >= season.opening && m.meeting < this.activeMeeting)
-            .map(m => m.persons)
-            .reduce((prev, curr) => prev.concat(curr), [])
-            .filter(ps => ps.person === person.code)
-            .map(ps => ps.wins)
-            .reduce((prev, curr) => prev + curr, 0);
+            seasonWins = this.repo.findMeetings()
+              .filter(m => m.meeting >= season.opening && m.meeting < this.activeMeeting)
+              .map(m => m.persons)
+              .reduce((prev, curr) => prev.concat(curr), [])
+              .filter(ps => ps.person === person.code)
+              .map(ps => ps.wins)
+              .reduce((prev, curr) => prev + curr, 0);
 
-          break;
+            break;
+          }
         }
-      }
 
-      const careerWins = this.repo.findMeetings()
-        .filter(m => m.meeting < this.activeMeeting)
-        .map(m => m.persons)
-        .reduce((prev, curr) => prev.concat(curr), [])
-        .filter(ps => ps.person === person.code)
-        .map(ps => ps.wins)
-        .reduce((prev, curr) => prev + curr, person.careerWins);
+        const careerWins = this.repo.findMeetings()
+          .filter(m => m.meeting < this.activeMeeting)
+          .map(m => m.persons)
+          .reduce((prev, curr) => prev.concat(curr), [])
+          .filter(ps => ps.person === person.code)
+          .map(ps => ps.wins)
+          .reduce((prev, curr) => prev + curr, person.careerWins);
 
-      return {
-        person: person.code,
-        season: seasonWins,
-        career: careerWins
-      }
-    })
+        return {
+          person: person.code,
+          season: seasonWins,
+          career: careerWins
+        }
+      })
       .sort((p1, p2) =>
         (p2.career - p1.career) || (p2.season - p1.season)
       );

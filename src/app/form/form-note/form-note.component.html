@@ -75,36 +75,45 @@
     </div>
   </div>
   <div class="flex flex-col gap-y-6 items-start">
-    <!--    <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">-->
-    <!--      <div class="mb-2 text-xl font-bold text-green-600">-->
-    <!--        Scratched & Prompted-->
-    <!--      </div>-->
-    <!--      <table class="mx-auto table-fixed text-lg">-->
-    <!--        <thead>-->
-    <!--        <th class="py-1 px-2">Race#</th>-->
-    <!--        <th class="py-1 px-2">Horse#</th>-->
-    <!--        <th class="py-1 px-2">Jockey</th>-->
-    <!--        <th class="py-1 px-2">Trainer</th>-->
-    <!--        <th class="py-1 px-4 opacity-0">X</th>-->
-    <!--        <th class="py-1 px-2">Jockey</th>-->
-    <!--        <th class="py-1 px-2">Trainer</th>-->
-    <!--        </thead>-->
-    <!--        <tbody>-->
-    <!--        <tr *ngFor="let sc of starterChanges">-->
-    <!--          <td class="py-0.5">{{sc.race}}</td>-->
-    <!--          <td class="py-0.5">{{sc.order}}</td>-->
-    <!--          <td class="py-0.5">{{sc.previousJockey}}</td>-->
-    <!--          <td class="py-0.5">{{sc.previousTrainer}}</td>-->
-    <!--          <td class="py-0.5"><i class="fa fa-lg fa-long-arrow-right"></i></td>-->
-    <!--          <td class="py-0.5">{{sc.currentJockey}}</td>-->
-    <!--          <td class="py-0.5">{{sc.currentTrainer}}</td>-->
-    <!--        </tr>-->
-    <!--        </tbody>-->
-    <!--      </table>-->
-    <!--    </div>-->
+    <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+      <div class="mb-2 text-xl font-bold text-green-600">
+        Scratched & Prompted
+      </div>
+      <table class="mx-auto table-fixed text-lg">
+        <thead>
+        <th class="py-1 px-2">Race#</th>
+        <th class="py-1 px-2">Horse#</th>
+        <th class="py-1 px-2">Jockey</th>
+        <th class="py-1 px-2">Trainer</th>
+        <th class="py-1 px-4 opacity-0">X</th>
+        <th class="py-1 px-2">Jockey</th>
+        <th class="py-1 px-2">Trainer</th>
+        </thead>
+        <tbody>
+        <tr *ngFor="let sc of starterChanges">
+          <td class="py-0.5">{{sc.race}}</td>
+          <td class="py-0.5">{{sc.order}}</td>
+          <td class="py-0.5">{{sc.previousJockey}}</td>
+          <td class="py-0.5">{{sc.previousTrainer}}</td>
+          <td class="py-0.5"><i class="fa fa-lg fa-long-arrow-right"></i></td>
+          <td class="py-0.5">
+            <div *ngIf="sc.scratched">
+              <i class="fa fa-times"></i>
+            </div>
+            <div *ngIf="!sc.scratched">
+              {{sc.currentJockey}}
+            </div>
+          </td>
+          <td class="py-0.5">
+            {{sc.scratched ? '' : sc.currentTrainer}}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="flex flex-row gap-x-6 items-start">
       <div class="flex flex-col gap-y-6 items-start">
-        <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+        <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
           <div class="mb-2 text-xl font-bold text-green-600">
             Interviews
           </div>
@@ -201,7 +210,7 @@
             </div>
           </div>
         </div>
-        <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+        <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
           <div class="mb-2 text-xl font-bold text-green-600">
             Birthdays
           </div>
@@ -222,7 +231,7 @@
         </div>
       </div>
       <div class="flex flex-col gap-y-6 items-start">
-        <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+        <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
           <div class="mb-2 text-xl font-bold text-green-600">
             Winners
           </div>
@@ -241,7 +250,7 @@
             </tbody>
           </table>
         </div>
-        <div class="py-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+        <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
           <div class="mb-2 text-xl font-bold text-green-600">
             Milestones
           </div>

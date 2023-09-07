@@ -24,3 +24,18 @@ export class Starter {
   ) {
   }
 }
+
+export class StarterChange {
+  constructor(
+    public order            : number,
+    public scratched        : boolean,
+    public previousHorse    : string,
+    public previousJockey   : string,
+    public previousTrainer  : string,
+    public currentHorse    ?: string,
+    public currentJockey   ?: string,
+    public currentTrainer  ?: string,
+    public race            ?: number
+  ) {
+  }
+}

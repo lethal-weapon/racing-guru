@@ -1,4 +1,4 @@
-import {Starter} from './starter.model';
+import {Starter, StarterChange} from './starter.model';
 import {Pool} from './pool.model';
 import {Odds} from './odds.model';
 import {Dividend} from './dividend.model';
@@ -19,6 +19,7 @@ export class Racecard {
     public videoUrl   : string,
     public resultUrl  : string,
     public starters   : Starter[],
+    public changes    : StarterChange[],
     public favorites  : number[],
     public course    ?: string,
     public pool      ?: Pool,
