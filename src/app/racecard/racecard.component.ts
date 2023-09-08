@@ -2,15 +2,10 @@ import {Component, OnInit} from '@angular/core';
 
 import {WebsocketService} from '../model/websocket.service';
 import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
-import {Rating, Starter} from '../model/starter.model';
+import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {RestRepository} from '../model/rest.repository';
-import {
-  COLORS,
-  COMMON_HORSE_ORIGINS,
-  RATING_FACTOR_MAPS,
-  RatingFactorMap
-} from '../util/strings';
+import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
 import {
   Collaboration,
   CollaborationStarter,
@@ -33,8 +28,10 @@ import {
   getStarterQQPWinPlaceOdds,
   getStarters,
   getStarterWinPlaceOdds,
+  getPersonSummaryByRace,
   isFavorite
 } from '../util/functions';
+import {PersonSummary} from "../model/meeting.model";
 
 interface PersonStarter {
   meeting: string,
@@ -64,6 +61,7 @@ export class RacecardComponent implements OnInit {
   activeRace: number = 1;
 
   protected readonly COLORS = COLORS;
+  protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly SENIOR_HORSE_AGE = SENIOR_HORSE_AGE;
   protected readonly COMMON_HORSE_ORIGINS = COMMON_HORSE_ORIGINS;
   protected readonly isFavorite = isFavorite;
@@ -85,6 +83,7 @@ export class RacecardComponent implements OnInit {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
 
     this.repo.fetchHorses();
+    this.repo.fetchMeetings();
     this.repo.fetchCollaborations();
 
     setInterval(() => this.repo.fetchCollaborations(), ONE_MINUTE);
@@ -107,6 +106,13 @@ export class RacecardComponent implements OnInit {
       race: this.activeRace,
       favorites: getNewFavorites(starter, this.activeRacecard)
     })
+
+  toggleSelection = (starter: Starter, placing: number) => {
+  }
+
+  isSelection = (starter: Starter, placing: number) => {
+    return false;
+  }
 
   getHorse = (starter: Starter): Horse =>
     this.repo.findHorses()
@@ -203,18 +209,31 @@ export class RacecardComponent implements OnInit {
     }));
   }
 
-  getRating = (starter: Starter, factor: string): Rating | undefined =>
-    starter.ratings.find(r => r.factor === factor)
+  getStarterStatSumColor = (starter: Starter, index: number): string => {
+    const starterSum = this.getPersonStatOnSameRace(starter, index)[2];
+    const isSumTop4 = this.startersSortedByChance
+      .map(s => this.getPersonStatOnSameRace(s, index)[2])
+      .filter((s, i, arr) => arr.indexOf(s) === i)
+      .sort((s1, s2) => s2 - s1)
+      .slice(0, 4)
+      .includes(starterSum);
+
+    return isSumTop4 ? COLORS[index] : '';
+  }
+
+  getPersonStatOnSameRace = (starter: Starter, index: number): number[] => {
+    const meetings = this.repo.findMeetings().filter((m, index) => index > 0);
+    const stats = [starter.jockey, starter.trainer]
+      .map(p => getPersonSummaryByRace(meetings, p, this.activeRace))
+      .map(s => [s.wins, s.seconds, s.thirds, s.fourths][index]);
+
+    return stats.concat([stats[0] + stats[1]]);
+  }
 
   get startersSortedByChance(): Starter[] {
     return this.activeRacecard.starters
       .filter(s => !s.scratched)
       .sort((s1, s2) => (s2?.chance || 0) - (s1?.chance || 0))
-  }
-
-  get ratingFactors(): RatingFactorMap[] {
-    const enabledFactors = getStarters(this.activeRacecard).pop()?.ratings.map(r => r.factor);
-    return RATING_FACTOR_MAPS.filter(m => (enabledFactors || []).includes(m.factor));
   }
 
   get activeRacecard(): Racecard {

@@ -34,27 +34,31 @@
   </th>
   </thead>
   <tbody>
-  <tr *ngFor="let factor of ratingFactors">
-    <td class="p-2 border border-gray-700 text-2xl font-mono">
-      {{factor.abbreviation}}
+  <tr *ngFor="let pm of PLACING_MAPS; let index = index">
+    <td class="p-2 border border-gray-700 text-2xl font-mono {{pm.color}}">
+      {{pm.placing}}
     </td>
     <td *ngFor="let starter of startersSortedByChance"
-        class="border border-gray-700"
+        class="p-2 border border-gray-700"
     >
-      <div class="flex flex-row"
-           [class.invisible]="getRating(starter, factor.factor)?.score === 0"
-      >
-        <div class="w-3/5 text-center text-2xl"
-             [class.text-red-600]="getRating(starter, factor.factor)?.grade === 'A'"
-             [class.text-green-600]="getRating(starter, factor.factor)?.grade === 'B'"
-        >
-          {{getRating(starter, factor.factor)?.grade}}
+      <div class="grid grid-cols-2">
+        <div class="text-lg {{getStarterStatSumColor(starter, index)}}">
+          {{getPersonStatOnSameRace(starter, index)[2]}}
         </div>
-        <div class="w-2/5 text-sm pt-2.5">
-          {{
-          (getRating(starter, factor.factor)?.score || 0)
-            .toFixed(factor.factor === 'collaboration' ? 1 : 0)
-          }}
+        <div [class.opacity-25]="!isSelection(starter, index + 1)"
+             [class.text-yellow-400]="isSelection(starter, index + 1)"
+        >
+          <span class="cursor-pointer"
+                (click)="toggleSelection(starter, index + 1)"
+          >
+            <i class="fa fa-lg fa-check"></i>
+          </span>
+        </div>
+        <div>
+          {{getPersonStatOnSameRace(starter, index)[0]}}
+        </div>
+        <div>
+          {{getPersonStatOnSameRace(starter, index)[1]}}
         </div>
       </div>
     </td>
