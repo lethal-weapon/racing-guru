@@ -9,7 +9,9 @@ export const ONE_MILLION = 1_000_000;
 export const ONE_DAY_MILL = 1000 * 3600 * 24;
 
 export const PAYOUT_RATE = 0.825;
-export const FCT_TRI_PAYOUT_RATE = 0.805;
+export const FCT_PAYOUT_RATE = 0.805;
+export const TRI_PAYOUT_RATE = 0.77;
+export const REST_PAYOUT_RATE = 0.75;
 export const MAX_RACE_PER_MEETING = 11;
 export const SENIOR_HORSE_AGE = 7;
 

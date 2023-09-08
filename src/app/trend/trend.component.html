@@ -62,8 +62,11 @@
           <i class="fa fa-refresh"></i>
         </span>
       </td>
-      <td class="w-14 border border-gray-700">
+      <td class="w-12 border border-gray-700">
         <i class="fa fa-medkit"></i>
+      </td>
+      <td class="w-12 border border-gray-700">
+        <i class="fa fa-ambulance"></i>
       </td>
       <td *ngFor="let overview of overviews"
           colspan="6"
@@ -85,8 +88,8 @@
           <i class="fa fa-clock-o"></i>
         </span>
       </td>
-      <td class="border border-gray-700">
-      </td>
+      <td class="border border-gray-700"></td>
+      <td class="border border-gray-700"></td>
       <ng-container *ngFor="let meeting of windowMeetings">
         <td *ngFor="let placing of placings; let last = last"
             colspan="1"
@@ -108,16 +111,28 @@
       <td class="border border-gray-700"
           [class.border-b-gray-400]="isBoundaryPerson(person)"
       >
-        <span *ngIf="getNoWinnerDays(person) === 0">
+        <span *ngIf="getNoWinnerStats(person)[0] === 0">
           <i class="fa fa-check"></i>
         </span>
-        <span *ngIf="getNoWinnerDays(person) === 99">
+        <span *ngIf="getNoWinnerStats(person)[0] === -1">
           <i class="fa fa-times"></i>
         </span>
-        <span *ngIf="getNoWinnerDays(person) > 0 && getNoWinnerDays(person) < 99"
-              class="{{getNoWinnerDays(person) >= 4 ? 'text-red-600 font-bold' : ''}}"
+        <span *ngIf="getNoWinnerStats(person)[0] > 0"
+              class="{{getNoWinnerStats(person)[0] >= 4 ? 'text-red-600 font-bold' : ''}}"
         >
-          {{getNoWinnerDays(person)}}
+          {{getNoWinnerStats(person)[0]}}
+        </span>
+      </td>
+      <td class="border border-gray-700"
+          [class.border-b-gray-400]="isBoundaryPerson(person)"
+      >
+        <span *ngIf="getNoWinnerStats(person)[1] === 0">
+          <i class="fa fa-check"></i>
+        </span>
+        <span *ngIf="getNoWinnerStats(person)[1] > 0"
+              class="{{getNoWinnerStats(person)[1] >= 20 ? 'text-red-600 font-bold' : ''}}"
+        >
+          {{getNoWinnerStats(person)[1]}}
         </span>
       </td>
       <ng-container *ngFor="let meeting of windowMeetings">

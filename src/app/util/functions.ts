@@ -3,7 +3,7 @@ import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
 import {SingularSignal, CombinationSignal} from '../model/signal.model';
 import {COLORS, JOCKEY_CODES} from './strings';
-import {ONE_MILLION, PAYOUT_RATE, FCT_TRI_PAYOUT_RATE} from './numbers';
+import {ONE_MILLION, PAYOUT_RATE, FCT_PAYOUT_RATE} from './numbers';
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
@@ -106,9 +106,9 @@ export const getStarterFCTWQOdds = (starter: Starter, racecard: Racecard): numbe
   return [fct, fct].map((pairs, index) => {
     if (!pairs) return 1;
 
-    return 2 * FCT_TRI_PAYOUT_RATE / pairs
+    return 2 * FCT_PAYOUT_RATE / pairs
       .filter(p => p.orders[index] === starter.order)
-      .map(p => FCT_TRI_PAYOUT_RATE / p.odds)
+      .map(p => FCT_PAYOUT_RATE / p.odds)
       .reduce((prev, curr) => prev + curr, 0);
   });
 }

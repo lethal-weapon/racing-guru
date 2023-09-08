@@ -421,11 +421,11 @@ export class MeetingComponent implements OnInit {
     return [
       {pool: 'W', amount: toMillion(pool?.win || 0)},
       {pool: 'Q', amount: toMillion(pool?.quinella || 0)},
-      {pool: 'FT', amount: toMillion(pool?.forecast || 0)},
-      {pool: 'TCE', amount: toMillion(pool?.tierce || 0)},
+      {pool: 'FCT', amount: toMillion(pool?.forecast || 0)},
+      {pool: 'FQ', amount: toMillion(pool?.quartet || 0)},
       {pool: 'P', amount: toMillion(pool?.place || 0)},
       {pool: 'QP', amount: toMillion(pool?.quinellaPlace || 0)},
-      {pool: 'FQ', amount: toMillion(pool?.quartet || 0)},
+      {pool: 'TCE', amount: toMillion(pool?.tierce || 0)},
       {pool: 'DBL', amount: toMillion(pool?.double || 0)},
     ]
   }

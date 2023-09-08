@@ -3,9 +3,9 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {BOUNDARY_MEETINGS, BOUNDARY_PERSONS, COLORS} from '../util/strings';
+import {BOUNDARY_PERSONS, COLORS} from '../util/strings';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
-import {DEFAULT_HORSE, Horse} from "../model/horse.model";
+import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 
 @Component({
   selector: 'app-trend',
@@ -113,29 +113,47 @@ export class TrendComponent implements OnInit {
     return value.toString();
   }
 
-  getNoWinnerDays = (person: string): number => {
-    const winningMeetings = this.meetings.filter(m => {
-      const engaged = m.persons.map(p => p.person).includes(person);
-      if (!engaged) return false;
-      return m.persons.find(p => p.person === person)?.wins || 0 > 0;
-    })
+  getNoWinnerStats = (person: string): number[] => {
+    let days: number = -1;
+    let races: number = 0;
+
+    const winningMeetings = this.meetings
+      .filter((m, index) => index > 0)
+      .filter(m => {
+        const engaged = m.persons.map(p => p.person).includes(person);
+        if (!engaged) return false;
+        return m.persons.find(p => p.person === person)?.wins || 0 > 0;
+      });
 
     if (winningMeetings.length > 0) {
       const mostRecentOne = winningMeetings.shift();
       // @ts-ignore
-      const index = this.meetings.indexOf(mostRecentOne);
-      if (!index) return 0;
-
-      const nearestMeeting = this.meetings[0].meeting;
-      const raceTime = new Date(nearestMeeting).getTime();
-      const currTime = new Date().getTime();
-      const diff = Math.floor((currTime - raceTime) / 1000);
-      if (diff > 86400) return index;
-
-      return index === 0 ? index : index - 1;
+      days = this.meetings.filter((m, index) => index > 0).indexOf(mostRecentOne);
     }
 
-    return 99;
+    for (let i = 1; i < this.meetings.length; i++) {
+      const summary = this.meetings[i].persons.find(p => p.person === person);
+      if (!summary) continue;
+
+      if (summary.wins === 0) {
+        races += summary.starters.filter(s => s?.winOdds).length;
+        continue;
+      }
+
+      for (let j = 0; j < summary.starters.length; j++) {
+        const sortedStarters = summary.starters
+          .filter(s => s?.winOdds)
+          .sort((s1, s2) => s2.race - s1.race);
+
+        if (sortedStarters[j]?.placing === 1) break;
+
+        races += 1;
+      }
+
+      break;
+    }
+
+    return [days, races];
   }
 
   getOnBoardPersons = (meeting: Meeting): PersonSummary[] => {
@@ -170,7 +188,16 @@ export class TrendComponent implements OnInit {
     BOUNDARY_PERSONS.includes(person)
 
   isBoundaryMeeting = (meeting: string): boolean =>
-    BOUNDARY_MEETINGS.includes(meeting)
+    this.meetings
+      .map(m => m.meeting.slice(0, 7))
+      .filter((prefix, i, array) => array.indexOf(prefix) === i)
+      .map(prefix => this.meetings
+        .map(m => m.meeting)
+        .filter(m => m.startsWith(prefix))
+        .sort((m1, m2) => m1.localeCompare(m2))
+        .shift()
+      )
+      .includes(meeting);
 
   get overviews(): Array<{ title: string, link: string }> {
     return this.windowMeetings.map(m => {
