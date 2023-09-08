@@ -149,13 +149,20 @@
     </tr>
   </table>
   <div class="mt-4">
-    <div class="mb-4 text-3xl text-yellow-400">
+    <div *ngIf="activePerson.length > 0"
+         class="mb-4 text-3xl text-yellow-400"
+    >
       {{activePersonName}}
     </div>
     <table class="mx-auto table-fixed border-collapse font-mono">
       <thead class="text-xl">
       <th class="w-24 border border-gray-600 py-1">
-        <i class="fa fa-calendar"></i>
+        <span *ngIf="activePerson.length === 0">
+          <i class="fa fa-camera"></i>
+        </span>
+        <span *ngIf="activePerson.length > 0">
+          <i class="fa fa-calendar"></i>
+        </span>
       </th>
       <th *counter="let race of MAX_RACE_PER_MEETING"
           class="w-32 border border-gray-600"
@@ -163,7 +170,34 @@
         {{race === 10 ? 'X' : race === 11 ? 'E' : race}}
       </th>
       </thead>
-      <tbody>
+      <tbody *ngIf="activePerson.length === 0">
+      <tr *ngFor="let p of persons"
+          class="hover:bg-gray-800"
+      >
+        <td class="h-10 border border-gray-700 text-xl py-1">
+          {{p}}
+        </td>
+        <td *counter="let race of MAX_RACE_PER_MEETING"
+            class="h-10 border border-gray-700 py-1"
+        >
+          <div class="grid grid-cols-4">
+            <div *ngFor="let stat of getPersonStatByRaceTop4(p, race); let index = index">
+              <span *ngIf="stat > 0"
+                    class="{{COLORS[index]}}"
+                    [class.opacity-25]="stat <= 3"
+              >
+                {{stat}}
+              </span>
+              <span *ngIf="stat === 0 && race < 11 && !isNewPlayer(p)">
+                <i class="fa fa-times"></i>
+              </span>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+
+      <tbody *ngIf="activePerson.length > 0">
       <tr *ngFor="let m of meetings"
           class="hover:bg-gray-800"
       >

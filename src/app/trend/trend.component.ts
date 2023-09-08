@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
-import {JOCKEYS, TRAINERS} from '../model/person.model';
+import {JOCKEYS, NEW_PEOPLE, TRAINERS} from '../model/person.model';
 import {BOUNDARY_PERSONS, COLORS} from '../util/strings';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
@@ -14,10 +14,11 @@ import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[0];
-  activePerson: string = 'WDJ';
+  activePerson: string = '';
   isRefreshButtonEnable: boolean = true;
   meetingIndex: number = 0;
 
+  protected readonly COLORS = COLORS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
 
   constructor(private repo: RestRepository) {
@@ -72,6 +73,66 @@ export class TrendComponent implements OnInit {
         else this.meetingIndex = maxIndex;
         break;
     }
+  }
+
+  isNewPlayer = (person: string): boolean =>
+    NEW_PEOPLE.map(p => p.code).includes(person)
+
+  getPersonStatByRaceTooltip = (person: string, race: number): string => {
+    const ps = this.getPersonStatByRace(person, race);
+    if (ps.earnings < 1) return '';
+
+    const top4Rate = 100 * parseFloat((ps.earnings / ps.engagements).toFixed(2));
+    return `${ps.earnings} / ${ps.engagements} = ${top4Rate}%`;
+  }
+
+  getPersonStatByRaceTop4 = (person: string, race: number): number[] => {
+    const ps = this.getPersonStatByRace(person, race);
+    return [ps.wins, ps.seconds, ps.thirds, ps.fourths];
+  }
+
+  getPersonStatByRace = (person: string, race: number): PersonSummary => {
+    let ps: PersonSummary = {
+      person: person,
+      wins: 0,
+      seconds: 0,
+      thirds: 0,
+      fourths: 0,
+      engagements: 0,
+      earnings: 0,
+      starters: []
+    };
+
+    this.meetings
+      .filter((m, index) => index > 0)
+      .map(m => m.persons)
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(p => p.person === person)
+      .map(p => p.starters)
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(s => s.race === race && s?.winOdds)
+      .forEach(s => {
+        ps.engagements += 1;
+        switch (s?.placing) {
+          case 1:
+            ps.wins += 1;
+            break;
+          case 2:
+            ps.seconds += 1;
+            break;
+          case 3:
+            ps.thirds += 1;
+            break;
+          case 4:
+            ps.fourths += 1;
+            break;
+          default:
+            break;
+        }
+      });
+
+    ps.earnings = ps.wins + ps.seconds + ps.thirds + ps.fourths;
+    return ps;
   }
 
   getStarterHorse = (starter: EarningStarter): Horse =>
