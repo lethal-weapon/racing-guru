@@ -31,7 +31,6 @@ import {
   getPersonSummaryByRace,
   isFavorite
 } from '../util/functions';
-import {PersonSummary} from "../model/meeting.model";
 
 interface PersonStarter {
   meeting: string,
@@ -108,11 +107,25 @@ export class RacecardComponent implements OnInit {
     })
 
   toggleSelection = (starter: Starter, placing: number) => {
+    let newSelections = this.activeRacecard.selections.map(s => s);
+
+    if (this.isSelection(starter, placing))
+      newSelections = newSelections
+        .filter(s => !(s.order === starter.order && s.placing === placing));
+    else
+      newSelections.push({order: starter.order, placing: placing});
+
+    this.repo.saveSelection({
+      meeting: getCurrentMeeting(this.racecards),
+      race: this.activeRace,
+      selections: newSelections
+    });
   }
 
-  isSelection = (starter: Starter, placing: number) => {
-    return false;
-  }
+  isSelection = (starter: Starter, placing: number): boolean =>
+    this.activeRacecard.selections
+      .filter(s => s.order === starter.order && s.placing === placing)
+      .length === 1
 
   getHorse = (starter: Starter): Horse =>
     this.repo.findHorses()

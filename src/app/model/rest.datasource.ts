@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
-import {FavoritePost, Interview} from './dto.model';
+import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Horse} from './horse.model';
 import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
@@ -24,6 +24,9 @@ export class RestDataSource {
 
   saveFavorite = (favorite: FavoritePost): Observable<FavoritePost> =>
     this.http.post<FavoritePost>(`${this.baseUrl}/favorite`, favorite)
+
+  saveSelection = (selection: SelectionPost): Observable<SelectionPost> =>
+    this.http.post<SelectionPost>(`${this.baseUrl}/selection`, selection)
 
   saveInterview = (interviews: Interview[]): Observable<Racecard[]> =>
     this.http.post<Racecard[]>(`${this.baseUrl}/interviews`, interviews)

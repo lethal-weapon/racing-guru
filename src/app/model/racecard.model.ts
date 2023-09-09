@@ -3,6 +3,7 @@ import {Pool} from './pool.model';
 import {Odds} from './odds.model';
 import {Dividend} from './dividend.model';
 import {Signal} from './signal.model';
+import {Selection} from './dto.model';
 
 export class Racecard {
   constructor(
@@ -21,6 +22,7 @@ export class Racecard {
     public starters   : Starter[],
     public changes    : StarterChange[],
     public favorites  : number[],
+    public selections : Selection[],
     public course    ?: string,
     public pool      ?: Pool,
     public odds      ?: Odds,

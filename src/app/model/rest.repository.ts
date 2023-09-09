@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {RestDataSource} from './rest.datasource';
-import {FavoritePost, Interview} from './dto.model';
+import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Horse} from './horse.model';
 import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
@@ -36,6 +36,10 @@ export class RestRepository {
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
+    })
+
+  saveSelection = (selection: SelectionPost) =>
+    this.source.saveSelection(selection).subscribe(data => {
     })
 
   saveInterview = (
