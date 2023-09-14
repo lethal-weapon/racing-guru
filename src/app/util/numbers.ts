@@ -17,7 +17,7 @@ export const SENIOR_HORSE_AGE = 7;
 
 export const DEFAULT_MIN_QPL_ODDS = 15;
 export const DEFAULT_MIN_QIN_ODDS = 25;
-export const DEFAULT_MIN_FCT_ODDS = 50;
+export const DEFAULT_MIN_FCT_ODDS = 45;
 export const DEFAULT_MIN_DBL_ODDS = 30;
 
 export const DEFAULT_MAX_QPL_ODDS = 75;

@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {Clipboard} from '@angular/cdk/clipboard';
 
 import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
@@ -77,8 +76,7 @@ export class RacecardComponent implements OnInit {
 
   constructor(
     private repo: RestRepository,
-    private socket: WebsocketService,
-    private clipboard: Clipboard
+    private socket: WebsocketService
   ) {
     socket.racecards.subscribe(data => this.racecards = data);
   }
@@ -110,39 +108,6 @@ export class RacecardComponent implements OnInit {
       race: this.activeRace,
       favorites: getNewFavorites(starter, this.activeRacecard)
     })
-
-  copyBets = (betType: string) => {
-    const ordersByPlacing = Array(4).fill(1)
-      .map((e, index) => 1 + index)
-      .map(p =>
-        this.activeRacecard.selections
-          .filter(s => s.placing === p)
-          .map(s => s.order)
-          .sort((o1, o2) => o1 - o2)
-          .join()
-      );
-
-    const fmb = `fmb:${ordersByPlacing.slice(0, 2).join('>')}`;
-    const tmb = `tmb:${ordersByPlacing.slice(0, 3).join('>')}`;
-    const qmb = `qmb:${ordersByPlacing.join('>')}`;
-
-    switch (betType) {
-      case 'FMB':
-        this.clipboard.copy(fmb);
-        break
-      case 'TMB':
-        this.clipboard.copy(tmb);
-        break
-      case 'QMB':
-        this.clipboard.copy(qmb);
-        break
-      case 'ALL':
-        this.clipboard.copy([fmb, tmb, qmb].join(';'));
-        break
-      default:
-        break
-    }
-  }
 
   clickRaceBadge = (clickedRace: number) => {
     if (!this.isEditMode) {
@@ -308,19 +273,6 @@ export class RacecardComponent implements OnInit {
       .map(s => [s.wins, s.seconds, s.thirds, s.fourths][index]);
 
     return stats.concat([stats[0] + stats[1]]);
-  }
-
-  getButtonStyle(isEditButton: boolean = false): string {
-    const common = `w-28 px-4 py-1.5 rounded-xl border border-gray-600`
-    if (!this.isEditMode) return `${common} hover:border-yellow-400 cursor-pointer`;
-
-    return isEditButton
-      ? `${common} border-dashed border-yellow-400 cursor-pointer`
-      : `${common} opacity-25 cursor-not-allowed`;
-  }
-
-  get copyBetTypes(): string[] {
-    return ['FMB', 'TMB', 'QMB', 'ALL'];
   }
 
   get startersSortedByChance(): Starter[] {

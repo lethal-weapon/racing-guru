@@ -14,131 +14,119 @@
   </div>
 </div>
 
-<div *ngIf="activeRacecard"
-     class="mx-4 flex flex-row items-center noselect"
+<table *ngIf="activeRacecard"
+       class="mx-auto table-fixed border-collapse border border-gray-700 text-center noselect"
 >
-  <div class="flex flex-col gap-y-4 text-center text-lg">
-    <div class="{{getButtonStyle(true)}}"
+  <thead class="text-xl">
+  <th class="p-4 w-20 border border-gray-700">
+    <div *ngIf="isEditMode"
+         class="text-yellow-400 cursor-pointer"
          (click)="clickEditButton()"
     >
-      <span *ngIf="isEditMode">
-        <i class="fa fa-check"></i>
-        <span class="ml-2">Done</span>
-      </span>
-      <span *ngIf="!isEditMode">
-        <i class="fa fa-edit"></i>
-        <span class="ml-2">Edit</span>
-      </span>
+      <i class="fa fa-lg fa-save"></i>
     </div>
-    <div *ngFor="let betType of copyBetTypes"
-         class="{{getButtonStyle()}}"
-         (click)="copyBets(betType)"
+    <div *ngIf="!isEditMode"
+         class="cursor-pointer"
+         (click)="clickEditButton()"
     >
-      <i class="fa fa-copy"></i>
-      <span class="ml-2">{{betType}}</span>
+      <i class="fa fa-lg fa-edit"></i>
     </div>
-  </div>
-  <table class="mx-auto table-fixed border-collapse border border-gray-700 text-center">
-    <thead class="text-xl">
-    <th class="p-4 w-20 border border-gray-700">
-      <i class="fa fa-magic"></i>
-    </th>
-    <th *ngFor="let starter of startersSortedByChance"
-        class="w-20 border border-gray-700"
-    >
-      <div class="flex flex-row justify-center">
-        <div class="w-10 h-10 pt-1 rounded-full
+  </th>
+  <th *ngFor="let starter of startersSortedByChance"
+      class="w-20 border border-gray-700"
+  >
+    <div class="flex flex-row justify-center">
+      <div class="w-10 h-10 pt-1 rounded-full
                   {{getPlacingBorderBackground(starter.jockey, this.activeRacecard)}}"
+      >
+        {{starter.order}}
+      </div>
+    </div>
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let pm of PLACING_MAPS; let index = index">
+    <td class="p-2 border border-gray-700 text-2xl {{pm.color}}">
+      {{pm.placing}}
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="p-2 border border-gray-700"
+    >
+      <div class="grid grid-cols-2">
+        <div class="text-lg {{getStarterStatSumColor(starter, index)}}">
+          {{getPersonStatOnSameRace(starter, index)[2]}}
+        </div>
+        <div class="{{isSelection(starter, index + 1) ? '' : (isEditMode ? 'opacity-25' : 'opacity-0')}}"
+             [class.text-yellow-400]="isSelection(starter, index + 1)"
         >
-          {{starter.order}}
+          <span [class.cursor-pointer]="isEditMode"
+                (click)="toggleSelection(starter, index + 1)"
+          >
+            <i class="fa fa-lg fa-check"></i>
+          </span>
+        </div>
+        <div>
+          {{getPersonStatOnSameRace(starter, index)[0]}}
+        </div>
+        <div>
+          {{getPersonStatOnSameRace(starter, index)[1]}}
         </div>
       </div>
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let pm of PLACING_MAPS; let index = index">
-      <td class="p-2 border border-gray-700 text-2xl {{pm.color}}">
-        {{pm.placing}}
-      </td>
-      <td *ngFor="let starter of startersSortedByChance"
-          class="p-2 border border-gray-700"
-      >
-        <div class="grid grid-cols-2">
-          <div class="text-lg {{getStarterStatSumColor(starter, index)}}">
-            {{getPersonStatOnSameRace(starter, index)[2]}}
-          </div>
-          <div class="{{isSelection(starter, index + 1) ? '' : (isEditMode ? 'opacity-25' : 'opacity-0')}}"
-               [class.text-yellow-400]="isSelection(starter, index + 1)"
-          >
-            <span [class.cursor-pointer]="isEditMode"
-                  (click)="toggleSelection(starter, index + 1)"
-            >
-              <i class="fa fa-lg fa-check"></i>
-            </span>
-          </div>
-          <div>
-            {{getPersonStatOnSameRace(starter, index)[0]}}
-          </div>
-          <div>
-            {{getPersonStatOnSameRace(starter, index)[1]}}
-          </div>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td class="p-2 border border-gray-700 text-xl font-mono">
-        Model
-      </td>
-      <td *ngFor="let starter of startersSortedByChance"
-          class="border border-gray-700 text-lg"
-      >
-        {{starter.chance | percent:'1.1-1'}}
-      </td>
-    </tr>
-    <tr>
-      <td class="p-2 border border-gray-700 text-xl font-mono">
-        Public
-      </td>
-      <td *ngFor="let starter of startersSortedByChance"
-          class="border border-gray-700 text-lg"
-      >
-        {{ getActiveStarterWQPInvestments(starter).length === 0
-        ? ''
-        : getActiveStarterWQPInvestments(starter)[0].percent
-        }}
-      </td>
-    </tr>
-    <tr>
-      <td class="p-2 border border-gray-700 text-xl font-mono">
-        Banker
-      </td>
-      <td *ngFor="let starter of startersSortedByChance"
-          class="border border-gray-700 text-lg text-yellow-400"
-      >
-        <span *ngIf="isPublicUnderEstimated(starter)">
-          <i class="fa fa-diamond"></i>
-        </span>
-      </td>
-    </tr>
-    <tr>
-      <td class="p-2 border border-gray-700 text-xl font-mono">
-        Picks
-      </td>
-      <td *ngFor="let starter of startersSortedByChance"
-          class="border border-gray-700 text-xl cursor-pointer"
-          (click)="toggleFavorite(starter)"
-      >
-        <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400">
-          <i class="fa fa-star"></i>
-        </span>
-        <span *ngIf="!isFavorite(starter, this.activeRacecard)">
-          <i class="fa fa-star-o"></i>
-        </span>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="p-2 border border-gray-700 text-xl font-mono">
+      Model
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="border border-gray-700 text-lg"
+    >
+      {{starter.chance | percent:'1.1-1'}}
+    </td>
+  </tr>
+  <tr>
+    <td class="p-2 border border-gray-700 text-xl font-mono">
+      Public
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="border border-gray-700 text-lg"
+    >
+      {{ getActiveStarterWQPInvestments(starter).length === 0
+      ? ''
+      : getActiveStarterWQPInvestments(starter)[0].percent
+      }}
+    </td>
+  </tr>
+  <tr>
+    <td class="p-2 border border-gray-700 text-xl font-mono">
+      Banker
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="border border-gray-700 text-lg text-yellow-400"
+    >
+      <span *ngIf="isPublicUnderEstimated(starter)">
+        <i class="fa fa-diamond"></i>
+      </span>
+    </td>
+  </tr>
+  <tr>
+    <td class="p-2 border border-gray-700 text-xl font-mono">
+      Picks
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="border border-gray-700 text-xl cursor-pointer"
+        (click)="toggleFavorite(starter)"
+    >
+      <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400">
+        <i class="fa fa-star"></i>
+      </span>
+      <span *ngIf="!isFavorite(starter, this.activeRacecard)">
+        <i class="fa fa-star-o"></i>
+      </span>
+    </td>
+  </tr>
+  </tbody>
+</table>
 
 <div *ngFor="let starter of getStarters(this.activeRacecard)"
      class="m-8 pt-2 pb-2.5 text-center rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600 noselect"

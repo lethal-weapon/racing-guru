@@ -139,6 +139,13 @@ export class OddsComponent implements OnInit {
       favorites: []
     })
 
+  resetSelections = () =>
+    this.repo.saveSelection({
+      meeting: getCurrentMeeting(this.racecards),
+      race: this.activeRace,
+      selections: []
+    });
+
   copyBets = (pool: string = '') => {
     let bets = '';
     for (const [key, value] of Object.entries(this.activeBet)) {
@@ -153,6 +160,93 @@ export class OddsComponent implements OnInit {
       }
     }
     this.clipboard.copy(bets);
+  }
+
+  copyMultiBankerBets = (betType: string) => {
+    const ordersByPlacing = Array(4).fill(1)
+      .map((e, index) => 1 + index)
+      .map(p =>
+        this.activeRacecard.selections
+          .filter(s => s.placing === p)
+          .map(s => s.order)
+          .sort((o1, o2) => o1 - o2)
+          .join()
+      );
+
+    let fmb = `fmb:${ordersByPlacing.slice(0, 2).join('>')}`;
+    let tmb = `tmb:${ordersByPlacing.slice(0, 3).join('>')}`;
+    let qmb = `qmb:${ordersByPlacing.join('>')}`;
+
+    const fctBets = this.getMultiBankerBetCount('FMB');
+    const tceBets = this.getMultiBankerBetCount('TMB');
+    const qttBets = this.getMultiBankerBetCount('QMB');
+
+    if (fctBets > 10) fmb = fmb.concat(`|$100`);
+    else fmb = fmb.concat(`/$10`);
+
+    if (tceBets <= 12) tmb = tmb.concat(`/$10`);
+    else if (tceBets <= 18) tmb = tmb.concat(`/$8`);
+    else if (tceBets <= 24) tmb = tmb.concat(`/$6`);
+    else if (tceBets <= 30) tmb = tmb.concat(`/$5`);
+    else if (tceBets <= 36) tmb = tmb.concat(`/$4`);
+    else if (tceBets <= 48) tmb = tmb.concat(`/$3`);
+    else tmb = tmb.concat(`/$2`);
+
+    if (qttBets <= 16) qmb = qmb.concat(`/$10`);
+    else if (qttBets <= 24) qmb = qmb.concat(`/$6`);
+    else if (qttBets <= 30) qmb = qmb.concat(`/$5`);
+    else if (qttBets <= 36) qmb = qmb.concat(`/$4`);
+    else if (qttBets <= 48) qmb = qmb.concat(`/$3`);
+    else if (qttBets <= 60) qmb = qmb.concat(`/$2`);
+    else qmb = qmb.concat(`/$1`);
+
+    switch (betType) {
+      case 'FMB':
+        this.clipboard.copy(fmb);
+        break
+      case 'TMB':
+        this.clipboard.copy(tmb);
+        break
+      case 'QMB':
+        this.clipboard.copy(qmb);
+        break
+      case 'ALL':
+        this.clipboard.copy([fmb, tmb, qmb].join(';'));
+        break
+      default:
+        break
+    }
+  }
+
+  getMultiBankerBetCount = (betType: string): number => {
+    const ordersByPlacing = Array(4).fill(1)
+      .map((e, index) => 1 + index)
+      .map(p =>
+        this.activeRacecard.selections
+          .filter(s => s.placing === p)
+          .map(s => s.order)
+      );
+
+    return ordersByPlacing[0]
+      .map(w => ordersByPlacing[1]
+        .filter(q => q !== w)
+        .map(q => {
+          if (betType === 'FMB') return 1;
+          else {
+            return ordersByPlacing[2]
+              .filter(p => ![w, q].includes(p))
+              .map(p => (
+                  betType === 'TMB'
+                    ? 1
+                    : ordersByPlacing[3].filter(f => ![w, q, p].includes(f)).length
+                )
+              )
+              .reduce((prev, curr) => prev + curr, 0);
+          }
+        })
+        .reduce((prev, curr) => prev + curr, 0)
+      )
+      .reduce((prev, curr) => prev + curr, 0);
   }
 
   trackQuinellaAndForecast = () => {
@@ -617,6 +711,10 @@ export class OddsComponent implements OnInit {
         'maxOdds': this.activeRange.maxDBL
       },
     ];
+  }
+
+  get multiBankerBetTypes(): string[] {
+    return ['ALL', 'FMB', 'TMB', 'QMB'];
   }
 
   get controlButtonStyle(): string {
