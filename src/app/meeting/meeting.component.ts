@@ -356,8 +356,10 @@ export class MeetingComponent implements OnInit {
     return orders;
   }
 
-  getHorseName = (horse: string): string =>
-    this.repo.findHorses().find(h => h.code === horse)?.nameCH || 'TBD'
+  getHorseDetail = (horse: string): { name: string, order: number } => ({
+    name: this.repo.findHorses().find(h => h.code === horse)?.nameCH || 'TBD',
+    order: this.starters.find(s => s.horse === horse)?.order || 0
+  })
 
   getPlacingColorByHorse = (horse: string, race: number): string => {
     const racecard = this.racecards.find(r => r.race === race);

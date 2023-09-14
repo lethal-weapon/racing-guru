@@ -154,6 +154,38 @@
 
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
+    <th class="w-32 border border-gray-600">
+      Owner
+    </th>
+    <th *counter="let race of maxRace"
+        class="w-32 border border-gray-600"
+    >
+      {{race}}
+    </th>
+    </thead>
+    <tbody>
+    <tr *ngFor="let owner of owners"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700">
+        {{owner.members[0]}} ({{owner.members.length}})
+      </td>
+      <td *counter="let race of maxRace"
+          class="border border-gray-700"
+      >
+        <div *ngFor="let h of getOwnerRaceStarters(owner, race)"
+             class="{{getPlacingColorByHorse(h, race)}}"
+        >
+          {{getHorseDetail(h).order}}
+          {{getHorseDetail(h).name}}
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
+    <thead>
     <th class="w-16 border border-gray-600">
       Race
     </th>
@@ -187,37 +219,6 @@
           [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
       >
         {{getDividendOdds(race, pool.name) > 0 ? getDividendOdds(race, pool.name) : ''}}
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
-    <thead>
-    <th class="w-32 border border-gray-600">
-      Owner
-    </th>
-    <th *counter="let race of maxRace"
-        class="w-32 border border-gray-600"
-    >
-      {{race}}
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let owner of owners"
-        class="hover:bg-gray-800"
-    >
-      <td class="border border-gray-700">
-        {{owner.members[0]}} ({{owner.members.length}})
-      </td>
-      <td *counter="let race of maxRace"
-          class="border border-gray-700"
-      >
-        <div *ngFor="let h of getOwnerRaceStarters(owner, race)"
-             class="{{getPlacingColorByHorse(h, race)}}"
-        >
-          {{getHorseName(h)}}
-        </div>
       </td>
     </tr>
     </tbody>
