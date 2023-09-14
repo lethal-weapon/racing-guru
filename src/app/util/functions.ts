@@ -218,7 +218,8 @@ export const powerSet = (list: string[]): string[][] => {
 export const getPersonSummaryByRace = (
   meetings: Meeting[],
   person: string,
-  race: number
+  race: number,
+  venue: string = ''
 ): PersonSummary => {
 
   let ps: PersonSummary = {
@@ -233,6 +234,7 @@ export const getPersonSummaryByRace = (
   };
 
   meetings
+    .filter(m => venue.length === 0 || m.venue === venue)
     .map(m => m.persons)
     .reduce((prev, curr) => prev.concat(curr), [])
     .filter(p => p.person === person)

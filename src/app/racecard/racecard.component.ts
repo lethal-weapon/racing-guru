@@ -279,22 +279,32 @@ export class RacecardComponent implements OnInit {
     }));
   }
 
+  isPublicUnderEstimated = (starter: Starter): boolean => {
+    const investments = this.getActiveStarterWQPInvestments(starter);
+    if (investments.length === 0) return false;
+
+    const modelChance = 100 * (starter?.chance || 0);
+    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
+
+    return modelChance - publicChance >= 3;
+  }
+
   getStarterStatSumColor = (starter: Starter, index: number): string => {
     const starterSum = this.getPersonStatOnSameRace(starter, index)[2];
-    const isSumTop4 = this.startersSortedByChance
+    const isSumTop3 = this.startersSortedByChance
       .map(s => this.getPersonStatOnSameRace(s, index)[2])
       .filter((s, i, arr) => arr.indexOf(s) === i)
       .sort((s1, s2) => s2 - s1)
-      .slice(0, 4)
+      .slice(0, 3)
       .includes(starterSum);
 
-    return isSumTop4 ? COLORS[index] : '';
+    return isSumTop3 ? COLORS[index] : '';
   }
 
   getPersonStatOnSameRace = (starter: Starter, index: number): number[] => {
     const meetings = this.repo.findMeetings().filter((m, index) => index > 0);
     const stats = [starter.jockey, starter.trainer]
-      .map(p => getPersonSummaryByRace(meetings, p, this.activeRace))
+      .map(p => getPersonSummaryByRace(meetings, p, this.activeRace, this.activeRacecard.venue))
       .map(s => [s.wins, s.seconds, s.thirds, s.fourths][index]);
 
     return stats.concat([stats[0] + stats[1]]);

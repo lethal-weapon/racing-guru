@@ -70,11 +70,11 @@
           <div class="{{isSelection(starter, index + 1) ? '' : (isEditMode ? 'opacity-25' : 'opacity-0')}}"
                [class.text-yellow-400]="isSelection(starter, index + 1)"
           >
-          <span [class.cursor-pointer]="isEditMode"
-                (click)="toggleSelection(starter, index + 1)"
-          >
-            <i class="fa fa-lg fa-check"></i>
-          </span>
+            <span [class.cursor-pointer]="isEditMode"
+                  (click)="toggleSelection(starter, index + 1)"
+            >
+              <i class="fa fa-lg fa-check"></i>
+            </span>
           </div>
           <div>
             {{getPersonStatOnSameRace(starter, index)[0]}}
@@ -87,7 +87,7 @@
     </tr>
     <tr>
       <td class="p-2 border border-gray-700 text-xl font-mono">
-        Alpha
+        Model
       </td>
       <td *ngFor="let starter of startersSortedByChance"
           class="border border-gray-700 text-lg"
@@ -97,7 +97,7 @@
     </tr>
     <tr>
       <td class="p-2 border border-gray-700 text-xl font-mono">
-        Win%
+        Public
       </td>
       <td *ngFor="let starter of startersSortedByChance"
           class="border border-gray-700 text-lg"
@@ -110,18 +110,30 @@
     </tr>
     <tr>
       <td class="p-2 border border-gray-700 text-xl font-mono">
+        Banker
+      </td>
+      <td *ngFor="let starter of startersSortedByChance"
+          class="border border-gray-700 text-lg text-yellow-400"
+      >
+        <span *ngIf="isPublicUnderEstimated(starter)">
+          <i class="fa fa-diamond"></i>
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td class="p-2 border border-gray-700 text-xl font-mono">
         Picks
       </td>
       <td *ngFor="let starter of startersSortedByChance"
           class="border border-gray-700 text-xl cursor-pointer"
           (click)="toggleFavorite(starter)"
       >
-      <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400">
-        <i class="fa fa-star"></i>
-      </span>
+        <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400">
+          <i class="fa fa-star"></i>
+        </span>
         <span *ngIf="!isFavorite(starter, this.activeRacecard)">
-        <i class="fa fa-star-o"></i>
-      </span>
+          <i class="fa fa-star-o"></i>
+        </span>
       </td>
     </tr>
     </tbody>
