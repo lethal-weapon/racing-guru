@@ -1,5 +1,6 @@
 export interface Meeting {
   meeting  : string,
+  venue    : string,
   races    : number,
   turnover : number,
   persons  : PersonSummary[]
