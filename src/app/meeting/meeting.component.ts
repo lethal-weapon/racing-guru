@@ -5,6 +5,7 @@ import {WebsocketService} from '../model/websocket.service';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {HorseOwner} from '../model/owner.model';
+import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {DividendPool, DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from '../model/dividend.model';
 import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS} from '../util/strings';
@@ -237,6 +238,17 @@ export class MeetingComponent implements OnInit {
     return specials.includes(jockey);
   }
 
+  isPreferredChallenger = (personType: string, order: number): boolean => {
+    const co = this.getChallengeOdds(personType, order);
+    return co.points >= 6 && co.odds >= 8 && co.odds <= 60;
+  }
+
+  formatChallengeOdds = (odds: number): string => {
+    if (odds < 1) return '';
+    else if (odds > 99) return '99+'
+    else return `${odds}`;
+  }
+
   formatRaceGrade = (grade: string): string => {
     const clean = grade
       .replace('(', '')
@@ -369,6 +381,14 @@ export class MeetingComponent implements OnInit {
     return getPlacingColor(jockey, racecard);
   }
 
+  getChallengeOdds = (personType: string, order: number): ChallengeOdds => {
+    const odds = this.racecards.find(r => r.race === 1)?.odds;
+    if (!odds?.jkc || !odds?.tnc) return DEFAULT_CHALLENGE_ODDS;
+    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+      ?.filter(o => !o.outsider)
+      ?.find(o => o.order === order) || DEFAULT_CHALLENGE_ODDS;
+  }
+
   getOwnerRaceStarters = (owner: HorseOwner, race: number): string[] =>
     owner.horses
       .filter(h =>
@@ -468,6 +488,16 @@ export class MeetingComponent implements OnInit {
     return this.racecards
       .map(r => r.starters)
       .reduce((prev, curr) => prev.concat(curr), []);
+  }
+
+  get maxChallengerOrder(): number {
+    const odds = this.racecards.find(r => r.race === 1)?.odds;
+    if (!odds?.jkc || !odds?.tnc) return 0;
+    return [...odds?.jkc, ...odds?.tnc]
+      .filter(o => !o.outsider)
+      .map(o => o.order)
+      .sort((o1, o2) => o1 - o2)
+      .pop() || 0;
   }
 
   get maxRace(): number {

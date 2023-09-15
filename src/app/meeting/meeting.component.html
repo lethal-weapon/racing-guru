@@ -152,6 +152,48 @@
     </tbody>
   </table>
 
+  <table *ngIf="maxChallengerOrder > 0"
+         class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center"
+  >
+    <thead>
+    <th class="w-28 border border-gray-600">
+      JKC / TNC
+    </th>
+    <th *counter="let order of maxChallengerOrder"
+        class="w-28 border border-gray-600"
+    >
+      {{order}}
+    </th>
+    </thead>
+    <tbody>
+    <tr *ngFor="let personType of ['Jockey', 'Jockey', 'Trainer', 'Trainer']; let index = index"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700">
+        <div *ngIf="index % 2 === 0">
+          {{personType}}
+        </div>
+      </td>
+      <td *counter="let order of maxChallengerOrder"
+          class="border border-gray-700"
+          [class.text-yellow-400]="isPreferredChallenger(personType, order)"
+      >
+        <div *ngIf="index % 2 === 0">
+          {{getChallengeOdds(personType, order).challenger}}
+          <span *ngIf="getChallengeOdds(personType, order).challenger.length > 0">
+            <span *ngIf="getChallengeOdds(personType, order).points > 0">
+              ({{getChallengeOdds(personType, order).points}})
+            </span>
+          </span>
+        </div>
+        <div *ngIf="index % 2 !== 0">
+          {{formatChallengeOdds(getChallengeOdds(personType, order).odds)}}
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
     <th class="w-32 border border-gray-600">

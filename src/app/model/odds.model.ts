@@ -14,6 +14,24 @@ export interface WinPlaceOdds {
   place : number
 }
 
+export interface ChallengeOdds {
+  order      : number,
+  challenger : string,
+  outsider   : boolean,
+  starters   : number,
+  points     : number,
+  odds       : number
+}
+
+export const DEFAULT_CHALLENGE_ODDS : ChallengeOdds = {
+  order      : 0,
+  challenger : '',
+  outsider   : false,
+  starters   : 0,
+  points     : 0,
+  odds       : 0
+}
+
 export interface TierceInvestment {
   order  : number,
   win    : number,
@@ -30,7 +48,9 @@ export class Odds {
     public tierce        ?: TierceInvestment[],
     public firstFour     ?: Combination[],
     public quinellaPlace ?: Combination[],
-    public double        ?: Combination[]
+    public double        ?: Combination[],
+    public jkc           ?: ChallengeOdds[],
+    public tnc           ?: ChallengeOdds[]
   ) {
   }
 }
