@@ -157,7 +157,6 @@
   >
     <thead>
     <th class="w-28 border border-gray-600">
-      JKC / TNC
     </th>
     <th *counter="let order of maxChallengerOrder"
         class="w-28 border border-gray-600"
@@ -171,7 +170,7 @@
     >
       <td class="border border-gray-700">
         <div *ngIf="index % 2 === 0">
-          {{personType}}
+          {{personType === 'Jockey' ? 'JKC' : 'TNC'}}
         </div>
       </td>
       <td *counter="let order of maxChallengerOrder"
