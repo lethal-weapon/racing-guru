@@ -10,6 +10,7 @@ import {FactorHit} from './backtest.model';
 import {Racecard} from './racecard.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
+import {SeasonPerformance} from './performance.model';
 
 @Injectable()
 export class RestRepository {
@@ -21,6 +22,7 @@ export class RestRepository {
   private collaborations: Collaboration[] = [];
   private racecards: Racecard[] = [];
   private factorHits: FactorHit[] = [];
+  private performances: SeasonPerformance[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -33,6 +35,7 @@ export class RestRepository {
   findCollaborations = () => this.collaborations
   findRacecards = () => this.racecards
   findFactorHits = () => this.factorHits
+  findPerformances = () => this.performances
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -86,5 +89,8 @@ export class RestRepository {
       this.factorHits = data;
       callback();
     })
+
+  fetchEnginePerformance = () =>
+    this.source.getEnginePerformance().subscribe(data => this.performances = data)
 
 }

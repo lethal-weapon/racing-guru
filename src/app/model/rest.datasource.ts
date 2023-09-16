@@ -12,6 +12,7 @@ import {Racecard} from './racecard.model';
 import {FactorHit} from './backtest.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
+import {SeasonPerformance} from './performance.model';
 
 @Injectable()
 export class RestDataSource {
@@ -54,5 +55,8 @@ export class RestDataSource {
 
   getCollaborations = (): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
+
+  getEnginePerformance = (): Observable<SeasonPerformance[]> =>
+    this.http.get<SeasonPerformance[]>(`${this.baseUrl}/engine-performance`)
 
 }

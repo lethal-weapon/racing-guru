@@ -1,0 +1,73 @@
+<table class="mx-auto my-8 table-fixed border-collapse border border-gray-600 text-center">
+  <thead class="text-xl">
+  <th class="w-32 py-2 border border-gray-600">
+    Season
+  </th>
+  <th class="w-32 py-2 border border-gray-600">
+    Races
+  </th>
+  <th *ngFor="let pm of PLACING_MAPS"
+      class="w-48 py-2 border border-gray-600 {{pm.color}}"
+  >
+    {{formatPlacing(pm.placing)}}
+  </th>
+  </thead>
+  <tbody class="text-lg">
+  <tr *ngFor="let per of performances"
+      class="hover:bg-gray-800"
+  >
+    <td class="py-1.5 border border-gray-700">
+      {{per.season}}
+    </td>
+    <td class="py-1.5 border border-gray-700">
+      {{per.races}}
+    </td>
+    <td *ngFor="let hit of per.hits"
+        class="py-1.5 border border-gray-700"
+    >
+      <div class="grid grid-cols-2">
+        <div>
+          {{hit.count}}
+        </div>
+        <div>
+          {{(hit.count / per.races) | percent}}
+        </div>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<table class="mx-auto table-fixed border-collapse border border-gray-600 text-center font-mono">
+  <thead class="text-xl">
+  <th class="w-24 border border-gray-600 py-1">
+    <i class="fa fa-calendar"></i>
+  </th>
+  <th *counter="let race of MAX_RACE_PER_MEETING"
+      class="w-32 border border-gray-600 py-1"
+  >
+    {{race === 10 ? 'X' : race === 11 ? 'E' : race}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let m of meetings"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700 text-xl py-1">
+      {{formatMeeting(m)}}
+    </td>
+    <td *counter="let race of MAX_RACE_PER_MEETING"
+        class="border border-gray-700 py-1"
+    >
+      <div class="grid grid-cols-2">
+        <div *ngFor="let pm of PLACING_MAPS; let index = index"
+             class="{{pm.color}}"
+             [class.invisible]="getHitRaceOdds(index + 1, m, race) < 1"
+        >
+          {{formatOdds(index + 1, getHitRaceOdds(index + 1, m, race))}}
+        </div>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>

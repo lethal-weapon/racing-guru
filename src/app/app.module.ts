@@ -22,6 +22,7 @@ import {FormComponent} from './form/form.component';
 import {FormNoteComponent} from './form/form-note/form-note.component';
 import {FormOwnerComponent} from './form/form-owner/form-owner.component';
 import {FormBetComponent} from './form/form-bet/form-bet.component';
+import {FormEngineComponent} from './form/form-engine/form-engine.component';
 import {FormPeopleComponent} from './form/form-people/form-people.component';
 
 @NgModule({
@@ -42,6 +43,7 @@ import {FormPeopleComponent} from './form/form-people/form-people.component';
     FormNoteComponent,
     FormOwnerComponent,
     FormBetComponent,
+    FormEngineComponent,
     FormPeopleComponent
   ],
   imports: [
