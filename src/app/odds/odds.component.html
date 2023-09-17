@@ -256,59 +256,61 @@
   </tr>
 </table>
 
-<div *ngIf="!(maxRace === 0 || maxRace === activeRace)"
-     class="my-5 flex flex-row justify-center noselect"
+<div *ngIf="maxRace !== 0"
+     class="my-5 flex flex-row justify-center items-center noselect"
 >
-  <div *ngFor="let c of rangeControls.slice(3, 4)"
-       class="mx-8 flex flex-row justify-evenly items-center text-center"
-  >
-    <div class="flex flex-col gap-y-1">
-      <div class="{{oddsButtonStyle}}"
-           (click)="adjustOdds(c.pool, c.step, true, false)"
-      >
-        <i class="fa fa-minus"></i>
+  <div *ngIf="maxRace !== activeRace">
+    <div *ngFor="let c of rangeControls.slice(3, 4)"
+         class="mx-8 flex flex-row justify-evenly items-center text-center"
+    >
+      <div class="flex flex-col gap-y-1">
+        <div class="{{oddsButtonStyle}}"
+             (click)="adjustOdds(c.pool, c.step, true, false)"
+        >
+          <i class="fa fa-minus"></i>
+        </div>
+        <div class="text-2xl">
+          {{c.minOdds}}
+        </div>
+        <div class="{{oddsButtonStyle}}"
+             (click)="adjustOdds(c.pool, c.step, true, true)"
+        >
+          <i class="fa fa-plus"></i>
+        </div>
       </div>
-      <div class="text-2xl">
-        {{c.minOdds}}
+      <div class="mx-3 text-2xl">
+        &#8828;
       </div>
-      <div class="{{oddsButtonStyle}}"
-           (click)="adjustOdds(c.pool, c.step, true, true)"
-      >
-        <i class="fa fa-plus"></i>
+      <div class="flex flex-col gap-y-1">
+        <div class="{{oddsButtonStyle}} text-yellow-400">
+          {{getSelectedBetCount(c.pool)}}
+        </div>
+        <div class="text-2xl">
+          {{c.pool}}
+        </div>
+        <div class="{{oddsButtonStyle}}"
+             (click)="copyBets(c.pool)"
+        >
+          <i class="fa fa-copy"></i>
+        </div>
       </div>
-    </div>
-    <div class="mx-3 text-2xl">
-      &#8828;
-    </div>
-    <div class="flex flex-col gap-y-1">
-      <div class="{{oddsButtonStyle}} text-yellow-400">
-        {{getSelectedBetCount(c.pool)}}
+      <div class="mx-3 text-2xl">
+        &#8828;
       </div>
-      <div class="text-2xl">
-        {{c.pool}}
-      </div>
-      <div class="{{oddsButtonStyle}}"
-           (click)="copyBets(c.pool)"
-      >
-        <i class="fa fa-copy"></i>
-      </div>
-    </div>
-    <div class="mx-3 text-2xl">
-      &#8828;
-    </div>
-    <div class="flex flex-col gap-y-1">
-      <div class="{{oddsButtonStyle}}"
-           (click)="adjustOdds(c.pool, c.step, false, false)"
-      >
-        <i class="fa fa-minus"></i>
-      </div>
-      <div class="text-2xl">
-        {{c.maxOdds}}
-      </div>
-      <div class="{{oddsButtonStyle}}"
-           (click)="adjustOdds(c.pool, c.step, false, true)"
-      >
-        <i class="fa fa-plus"></i>
+      <div class="flex flex-col gap-y-1">
+        <div class="{{oddsButtonStyle}}"
+             (click)="adjustOdds(c.pool, c.step, false, false)"
+        >
+          <i class="fa fa-minus"></i>
+        </div>
+        <div class="text-2xl">
+          {{c.maxOdds}}
+        </div>
+        <div class="{{oddsButtonStyle}}"
+             (click)="adjustOdds(c.pool, c.step, false, true)"
+        >
+          <i class="fa fa-plus"></i>
+        </div>
       </div>
     </div>
   </div>

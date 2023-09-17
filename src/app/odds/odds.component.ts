@@ -279,13 +279,21 @@ export class OddsComponent implements OnInit {
         const Q2 = 2 * this.getStarterQQPOdds(starterA, starterB)[0];
         const F1 = this.getStarterFCTOdds(starterA, starterB)[0];
         const F2 = this.getStarterFCTOdds(starterA, starterB)[1];
+        let switch1 = false;
+        let switch2 = false;
 
         if (F1 > F2 + 10) continue;
 
-        if (Q2 > F1 && Math.abs(1 - Q2 / F2) <= QIN_FCT_DIFF_RATE) {
-          qin.push([orderA, orderB]);
+        if (Math.abs(1 - Q2 / F1) <= QIN_FCT_DIFF_RATE) {
+          switch1 = true;
           fct.push([orderA, orderB]);
+        }
+        if (Math.abs(1 - Q2 / F2) <= QIN_FCT_DIFF_RATE) {
+          switch2 = true;
           fct.push([orderB, orderA]);
+        }
+        if (switch1 && switch2) {
+          qin.push([orderA, orderB]);
         }
       }
     }

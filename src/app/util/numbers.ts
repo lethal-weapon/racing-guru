@@ -22,7 +22,7 @@ export const DEFAULT_MIN_DBL_ODDS = 30;
 
 export const DEFAULT_MAX_QPL_ODDS = 75;
 export const DEFAULT_MAX_QIN_ODDS = 125;
-export const DEFAULT_MAX_FCT_ODDS = 250;
+export const DEFAULT_MAX_FCT_ODDS = 270;
 export const DEFAULT_MAX_DBL_ODDS = 300;
 
 export const QPL_ODDS_STEP = 3;
