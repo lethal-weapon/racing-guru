@@ -22,58 +22,67 @@
       </div>
     </div>
   </div>
-  <div class="w-64 pt-4 pb-5 px-6 rounded-2xl shadow-md shadow-sky-700/50">
-    <div class="mb-2 text-xl font-bold text-green-600">
-      Fines & Suspensions
-    </div>
-    <div class="mb-3 flex flex-row justify-between items-center">
-      <div *ngFor="let control of paginationControls"
-           class="cursor-pointer transition hover:text-yellow-400"
-           (click)="shiftReport(control.length)"
-      >
-        <i class="{{control.icon}}"></i>
+  <div class="w-64 flex flex-col gap-y-6 items-center">
+    <div class="w-full pt-4 pb-5 px-6 rounded-2xl shadow-md shadow-sky-700/50">
+      <div class="mb-2 text-xl font-bold text-green-600">
+        Fines & Suspensions
       </div>
-    </div>
-    <div class="flex flex-col gap-y-2">
-      <div *ngFor="let report of windowReports"
-           class="text-lg"
-      >
-        <div class="text-xl text-left italic text-blue-600">
-          {{report.meeting}}
-        </div>
-        <div *ngFor="let sus of report.suspensions"
-             class="grid grid-cols-4"
+      <div class="mb-3 flex flex-row justify-between items-center">
+        <div *ngFor="let control of paginationControls"
+             class="cursor-pointer transition hover:text-yellow-400"
+             (click)="shiftReport(control.length)"
         >
-          <div class="col-span-1">{{sus.person}}</div>
-          <div class="col-span-2 text-right">
-            {{formatMeeting(sus.startAt)}} / {{sus.racedays}}D
-          </div>
-          <div class="col-span-1 text-right"
-               tooltip="R#{{sus.race}}: {{sus.horse}}"
-               [hideDelay]="0"
-          >
-            <i class="fa fa-question-circle-o"></i>
-          </div>
-        </div>
-        <div *ngFor="let fine of report.fines"
-             class="grid grid-cols-4"
-        >
-          <div class="col-span-1">{{fine.person}}</div>
-          <div class="col-span-2 text-right"
-               [class.text-red-600]="fine.amount >= TEN_THOUSAND"
-          >
-            {{fine.amount | currency:'USD':'symbol':'1.0-0'}}
-          </div>
-          <div class="col-span-1 text-right"
-               tooltip="{{formatFineTooltip(fine)}}"
-               [hideDelay]="0"
-          >
-            <i class="fa fa-question-circle-o"></i>
-          </div>
+          <i class="{{control.icon}}"></i>
         </div>
       </div>
+      <div class="flex flex-col gap-y-2">
+        <div *ngFor="let report of windowReports"
+             class="text-lg"
+        >
+          <div class="text-xl text-left italic text-blue-600">
+            {{report.meeting}}
+          </div>
+          <div *ngFor="let sus of report.suspensions"
+               class="grid grid-cols-4"
+          >
+            <div class="col-span-1">{{sus.person}}</div>
+            <div class="col-span-2 text-right">
+              {{formatMeeting(sus.startAt)}} / {{sus.racedays}}D
+            </div>
+            <div class="col-span-1 text-right"
+                 tooltip="R#{{sus.race}}: {{sus.horse}}"
+                 [hideDelay]="0"
+            >
+              <i class="fa fa-question-circle-o"></i>
+            </div>
+          </div>
+          <div *ngFor="let fine of report.fines"
+               class="grid grid-cols-4"
+          >
+            <div class="col-span-1">{{fine.person}}</div>
+            <div class="col-span-2 text-right"
+                 [class.text-red-600]="fine.amount >= TEN_THOUSAND"
+            >
+              {{fine.amount | currency:'USD':'symbol':'1.0-0'}}
+            </div>
+            <div class="col-span-1 text-right"
+                 tooltip="{{formatFineTooltip(fine)}}"
+                 [hideDelay]="0"
+            >
+              <i class="fa fa-question-circle-o"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="px-6 py-2 text-xl rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+         (click)="saveNotes()"
+    >
+      <i class="fa fa-save"></i>
+      <span class="ml-2">Save Notes</span>
     </div>
   </div>
+
   <div class="flex flex-col gap-y-6 items-start">
     <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
       <div class="mb-2 text-xl font-bold text-green-600">
@@ -223,7 +232,7 @@
             <tbody>
             <tr *ngFor="let pb of personBirthdays">
               <td class="py-0.5">{{pb.person}}</td>
-              <td class="py-0.5">{{pb.date}}</td>
+              <td class="py-0.5">{{formatBirthday(pb.date)}}</td>
               <td class="py-0.5">{{pb.age}}</td>
             </tr>
             </tbody>

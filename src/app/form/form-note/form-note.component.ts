@@ -4,15 +4,10 @@ import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
 import {Report, Fine} from '../../model/report.model';
 import {StarterChange} from '../../model/starter.model';
+import {PersonWinner, PersonBirthday} from '../../model/note.model';
 import {JOCKEYS, TRAINERS} from '../../model/person.model';
 import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
 import {SEASONS} from '../../util/strings';
-
-interface PersonWinner {
-  person: string,
-  season: number,
-  career: number
-}
 
 @Component({
   selector: 'app-form-note',
@@ -46,6 +41,12 @@ export class FormNoteComponent implements OnInit {
 
   formatMeeting = (meeting: string): string =>
     meeting.replace(/^\d{4}-/g, '')
+
+  formatBirthday = (date: string): string => {
+    const birthday = new Date(date);
+    const month = birthday.toLocaleString('en-US', {month: 'short'});
+    return `${month} ${birthday.getDate()}`;
+  }
 
   formatFineTooltip = (fine: Fine): string => {
     const race = fine?.race ? `R#${fine.race}` : ``;
@@ -178,6 +179,14 @@ export class FormNoteComponent implements OnInit {
     return 0;
   }
 
+  saveNotes = () =>
+    this.repo.saveNote({
+      meeting: this.activeMeeting,
+      birthdays: this.personBirthdays,
+      blacklist: this.personMilestonePassWinners,
+      whitelist: this.personMilestoneCloseWinners
+    });
+
   getBadgeStyle = (render: string): string =>
     this.activeMeeting === render
       ? `text-yellow-400 border-yellow-400`
@@ -238,7 +247,7 @@ export class FormNoteComponent implements OnInit {
       .sort((sc1, sc2) => ((sc1?.race || 1) - (sc2?.race || 1)) || (sc1.order || sc2.order))
   }
 
-  get personBirthdays(): Array<{ person: string, date: string, age: number }> {
+  get personBirthdays(): PersonBirthday[] {
     return JOCKEYS.concat(TRAINERS).map(person => {
       const birthYear = person.dateOfBirth.slice(0, 4);
       const activeYear = this.activeMeeting.slice(0, 4);
@@ -263,13 +272,6 @@ export class FormNoteComponent implements OnInit {
       })
       .sort((pb1, pb2) =>
         pb1.date.localeCompare(pb2.date) || pb2.age - pb1.age
-      )
-      .map(pb => {
-          const birthday = new Date(pb.date);
-          const month = birthday.toLocaleString('en-US', {month: 'short'});
-          pb.date = `${month} ${birthday.getDate()}`
-          return pb;
-        }
       );
   }
 

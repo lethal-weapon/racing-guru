@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 
 import {RestDataSource} from './rest.datasource';
 import {FavoritePost, Interview, SelectionPost} from './dto.model';
+import {Note} from './note.model';
 import {Horse} from './horse.model';
 import {HorseOwner} from './owner.model';
 import {Meeting} from './meeting.model';
@@ -14,6 +15,7 @@ import {SeasonPerformance} from './performance.model';
 
 @Injectable()
 export class RestRepository {
+  private notes: Note[] = [];
   private horses: Horse[] = [];
   private owners: HorseOwner[] = [];
   private reports: Report[] = [];
@@ -27,6 +29,7 @@ export class RestRepository {
   constructor(private source: RestDataSource) {
   }
 
+  findNotes = () => this.notes
   findHorses = () => this.horses
   findOwners = () => this.owners
   findReports = () => this.reports
@@ -43,6 +46,10 @@ export class RestRepository {
 
   saveSelection = (selection: SelectionPost) =>
     this.source.saveSelection(selection).subscribe(data => {
+    })
+
+  saveNote = (note: Note) =>
+    this.source.saveNote(note).subscribe(data => {
     })
 
   saveInterview = (
@@ -65,6 +72,9 @@ export class RestRepository {
       this.racecards = data;
       callback();
     })
+
+  fetchNotes = () =>
+    this.source.getNotes().subscribe(data => this.notes = data)
 
   fetchHorses = () =>
     this.source.getHorses().subscribe(data => this.horses = data)
