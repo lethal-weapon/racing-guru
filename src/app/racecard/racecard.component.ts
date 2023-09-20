@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
+import {Note} from '../model/note.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Selection} from '../model/dto.model';
@@ -84,6 +85,7 @@ export class RacecardComponent implements OnInit {
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
 
+    this.repo.fetchNotes();
     this.repo.fetchHorses();
     this.repo.fetchMeetings();
     this.repo.fetchCollaborations();
@@ -275,10 +277,62 @@ export class RacecardComponent implements OnInit {
     return stats.concat([stats[0] + stats[1]]);
   }
 
+  getMeetingWinnerBeforeActiveRace = (person: string): number => {
+    return this.racecards
+      .filter(r => r.race < this.activeRace)
+      .map(r => r.starters)
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(s => [s.jockey, s.trainer].includes(person))
+      .filter(s => (s?.placing || 0) === 1)
+      .length;
+  }
+
+  getWinnerPoint = (starter: Starter): number => {
+    let point: number = 0;
+    const pair = [starter.jockey, starter.trainer];
+    const blacklist = this.meetingNote.blacklist.map(pw => pw.person);
+    const whitelist = this.meetingNote.whitelist.map(pw => pw.person);
+
+    const blacks = pair.filter(p => blacklist.includes(p)).length;
+    const whites = pair.filter(p => whitelist.includes(p)).length;
+
+    point -= blacks;
+    point += whites;
+
+    if (blacks > 0) {
+      point += pair
+        .filter(p => blacklist.includes(p))
+        .map(p => this.getMeetingWinnerBeforeActiveRace(p))
+        .filter(w => w > 0)
+        .length;
+    }
+    if (whites > 0) {
+      point -= pair
+        .filter(p => whitelist.includes(p))
+        .map(p => {
+          const careerWinnersBeforeCurrentMeeting =
+            this.meetingNote.whitelist.find(pw => pw.person === p)?.career || 0;
+
+          return careerWinnersBeforeCurrentMeeting +
+            this.getMeetingWinnerBeforeActiveRace(p);
+        })
+        .filter(w => w % 10 === 0)
+        .length;
+    }
+
+    return point;
+  }
+
   get startersSortedByChance(): Starter[] {
     return this.activeRacecard.starters
       .filter(s => !s.scratched)
       .sort((s1, s2) => (s2?.chance || 0) - (s1?.chance || 0))
+  }
+
+  get meetingNote(): Note {
+    // @ts-ignore
+    return this.repo.findNotes()
+      .find(n => n.meeting === getCurrentMeeting(this.racecards));
   }
 
   get activeRacecard(): Racecard {

@@ -111,6 +111,24 @@
   </tr>
   <tr>
     <td class="p-2 border border-gray-700 text-xl font-mono">
+      Winner
+    </td>
+    <td *ngFor="let starter of startersSortedByChance"
+        class="border border-gray-700 text-lg"
+    >
+      <span *ngIf="getWinnerPoint(starter) !== 0">
+        {{getWinnerPoint(starter)}}
+      </span>
+      <!--      <span *ngIf="getWinnerPoint(starter) > 0" class="text-yellow-400">-->
+      <!--        <i class="fa fa-diamond"></i>-->
+      <!--      </span>-->
+      <!--      <span *ngIf="getWinnerPoint(starter) < 0" class="text-red-600">-->
+      <!--        <i class="fa fa-times"></i>-->
+      <!--      </span>-->
+    </td>
+  </tr>
+  <tr>
+    <td class="p-2 border border-gray-700 text-xl font-mono">
       Picks
     </td>
     <td *ngFor="let starter of startersSortedByChance"
