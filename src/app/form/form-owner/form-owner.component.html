@@ -1,1 +1,63 @@
-<p class="text-2xl text-center">Organize Owner Families & Their Horses</p>
+<div class="mt-8 mx-10 grid grid-cols-5 text-center">
+  <div class="col-span-2 px-8">
+    <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+      <div class="{{controlButtonStyle}}"
+           (click)="unsetHorses()"
+      >
+        Unset Horses
+      </div>
+      <div class="{{controlButtonStyle}}"
+           (click)="addSyndicate()"
+      >
+        Add Syndicate
+      </div>
+      <div class="{{controlButtonStyle}}"
+           (click)="saveSyndicate()"
+      >
+        Save Syndicate
+      </div>
+      <div class="{{controlButtonStyle}}"
+           (click)="deleteSyndicate()"
+      >
+        Delete Syndicate
+      </div>
+    </div>
+  </div>
+  <div class="col-span-3">
+    <div class="grid grid-cols-3 gap-4">
+      <div *ngFor="let h of horses"
+           class="w-60 px-2 pt-2 pb-2.5 flex flex-row items-center rounded-2xl
+                shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
+           [class.shadow-sky-500]="isSelectedHorse(h.code)"
+           (click)="toggleHorse(h.code)"
+      >
+        <div class="w-20 flex flex-col items-center">
+          <div class="">
+            {{h.code}}
+          </div>
+          <div>
+            <img src="https://api.racing.scmp.com/StatImg/Photo/JocColor/svg/{{h.code}}.svg"
+                 alt="Silk"
+                 class="w-8"
+            />
+          </div>
+        </div>
+        <div class="w-40 flex flex-col items-center">
+          <div class="">
+            {{h.nameCH}}
+          </div>
+          <div class="text-sm">
+            {{h.nameEN}}
+          </div>
+          <div class="w-full px-2 mt-1 mb-0.5 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+          <div class="text-sm"
+               tooltip="{{h.ownerCH.length > 8 ? h.ownerCH : ''}}"
+               [hideDelay]="0"
+          >
+            {{h.ownerCH | truncate:[8]}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

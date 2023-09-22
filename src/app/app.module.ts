@@ -6,8 +6,9 @@ import {TooltipModule} from 'ng2-tooltip-directive';
 
 import {AppRoutingModule} from './app-routing.module';
 import {ModelModule} from './model/model.module';
-import {AppComponent} from './app.component';
 import {CounterDirective} from './directives/counter.directive';
+import {TruncatePipe} from './directives/truncate.pipe';
+import {AppComponent} from './app.component';
 import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
@@ -29,6 +30,7 @@ import {FormPeopleComponent} from './form/form-people/form-people.component';
   declarations: [
     AppComponent,
     CounterDirective,
+    TruncatePipe,
     HeaderComponent,
     FooterComponent,
     MeetingComponent,
