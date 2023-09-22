@@ -117,14 +117,8 @@
         class="border border-gray-700 text-lg"
     >
       <span *ngIf="getWinnerPoint(starter) !== 0">
-        {{getWinnerPoint(starter)}}
+        <span *ngIf="getWinnerPoint(starter) > 0">+</span>{{getWinnerPoint(starter)}}
       </span>
-      <!--      <span *ngIf="getWinnerPoint(starter) > 0" class="text-yellow-400">-->
-      <!--        <i class="fa fa-diamond"></i>-->
-      <!--      </span>-->
-      <!--      <span *ngIf="getWinnerPoint(starter) < 0" class="text-red-600">-->
-      <!--        <i class="fa fa-times"></i>-->
-      <!--      </span>-->
     </td>
   </tr>
   <tr>
@@ -181,7 +175,7 @@
       {{getHorse(starter).ownerCH}}
     </div>
     <div class="w-12 ml-4">
-      <img src="https://racing.hkjc.com/racing/content/Images/RaceColor/{{starter.horse}}.gif"
+      <img src="https://api.racing.scmp.com/StatImg/Photo/JocColor/svg/{{starter.horse}}.svg"
            alt="Silk"
            class="w-8"
       />

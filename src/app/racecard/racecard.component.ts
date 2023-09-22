@@ -7,7 +7,12 @@ import {Note} from '../model/note.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Selection} from '../model/dto.model';
-import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
+import {
+  COLORS,
+  COMMON_HORSE_ORIGINS,
+  PLACING_MAPS,
+  TOP_PLAYERS
+} from '../util/strings';
 import {
   Collaboration,
   CollaborationStarter,
@@ -292,6 +297,9 @@ export class RacecardComponent implements OnInit {
     const pair = [starter.jockey, starter.trainer];
     const blacklist = this.meetingNote.blacklist.map(pw => pw.person);
     const whitelist = this.meetingNote.whitelist.map(pw => pw.person);
+    const birthlist = this.meetingNote.birthdays
+      .map(bp => bp.person)
+      .filter(p => TOP_PLAYERS.includes(p));
 
     const blacks = pair.filter(p => blacklist.includes(p)).length;
     const whites = pair.filter(p => whitelist.includes(p)).length;
@@ -319,6 +327,9 @@ export class RacecardComponent implements OnInit {
         .filter(w => w % 10 === 0)
         .length;
     }
+
+    if (birthlist.includes(starter.jockey)) point += 1;
+    if (birthlist.includes(starter.trainer)) point += 1;
 
     return point;
   }

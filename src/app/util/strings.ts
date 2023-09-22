@@ -71,3 +71,11 @@ export const BOUNDARY_PERSONS =
 export const BOUNDARY_POOLS = [
   'F-F', 'QTT', 'PLA-3', 'QPL-3'
 ];
+
+export const TOP_PLAYERS = [
+  'SJJ', 'LFC', 'NPC', 'HDA', 'HAD', 'FC', 'WDJ',
+  'CAS', 'YPF', 'LKW', 'MKL', 'SCS', 'YTP', 'TKH',
+  'PZ', 'BH', 'TEK', 'HEL', 'FEL', 'BA', 'BHW',
+  'HCY', 'CML', 'LDE', 'YML', 'CJE', 'CCY',
+  'DMK', 'AA',
+];
