@@ -6,7 +6,7 @@ import {environment as env} from '../../environments/environment';
 import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
-import {HorseOwner} from './owner.model';
+import {HorseOwner, Syndicate} from './owner.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {Racecard} from './racecard.model';
@@ -35,6 +35,9 @@ export class RestDataSource {
 
   saveNote = (note: Note): Observable<Note> =>
     this.http.post<Note>(`${this.baseUrl}/note`, note)
+
+  saveSyndicate = (syndicate: Syndicate): Observable<Syndicate> =>
+    this.http.post<Syndicate>(`${this.baseUrl}/syndicates`, syndicate)
 
   getBacktestFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
     this.http.post<FactorHit[]>(`${this.baseUrl}/backtest`, factorCombinations)
@@ -65,5 +68,8 @@ export class RestDataSource {
 
   getNotes = (): Observable<Note[]> =>
     this.http.get<Note[]>(`${this.baseUrl}/notes`)
+
+  getSyndicates = (): Observable<Syndicate[]> =>
+    this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
 
 }

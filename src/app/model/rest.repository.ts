@@ -4,7 +4,7 @@ import {RestDataSource} from './rest.datasource';
 import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
-import {HorseOwner} from './owner.model';
+import {HorseOwner, Syndicate} from './owner.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {FactorHit} from './backtest.model';
@@ -21,6 +21,7 @@ export class RestRepository {
   private reports: Report[] = [];
   private records: Record[] = [];
   private meetings: Meeting[] = [];
+  private syndicates: Syndicate[] = [];
   private collaborations: Collaboration[] = [];
   private racecards: Racecard[] = [];
   private factorHits: FactorHit[] = [];
@@ -39,6 +40,7 @@ export class RestRepository {
   findRacecards = () => this.racecards
   findFactorHits = () => this.factorHits
   findPerformances = () => this.performances
+  findSyndicates = () => this.syndicates
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -52,11 +54,22 @@ export class RestRepository {
     this.source.saveNote(note).subscribe(data => {
     })
 
+  saveSyndicate = (
+    syndicate: Syndicate,
+    successCallback: (saved: Syndicate) => any
+  ) => {
+    this.source.saveSyndicate(syndicate).subscribe(data => {
+      this.syndicates = this.syndicates.filter(s => s.id !== data.id);
+      this.syndicates.push(data);
+      successCallback(data);
+    })
+  }
+
   saveInterview = (
     interviews: Interview[],
     successCallback: () => any,
     errorCallback: () => any
-  ) =>
+  ) => {
     this.source.saveInterview(interviews).subscribe(
       data => {
         this.racecards = data;
@@ -66,6 +79,7 @@ export class RestRepository {
         errorCallback();
       }
     )
+  }
 
   fetchRacecards = (meeting: string, callback: () => any) =>
     this.source.getRacecards(meeting).subscribe(data => {
@@ -102,5 +116,8 @@ export class RestRepository {
 
   fetchEnginePerformance = () =>
     this.source.getEnginePerformance().subscribe(data => this.performances = data)
+
+  fetchSyndicates = () =>
+    this.source.getSyndicates().subscribe(data => this.syndicates = data)
 
 }
