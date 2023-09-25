@@ -196,7 +196,7 @@
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
     <th class="w-32 border border-gray-600">
-      Owner
+      Syndicate
     </th>
     <th *counter="let race of maxRace"
         class="w-32 border border-gray-600"
@@ -205,16 +205,16 @@
     </th>
     </thead>
     <tbody>
-    <tr *ngFor="let owner of owners"
+    <tr *ngFor="let syn of syndicates"
         class="hover:bg-gray-800"
     >
       <td class="border border-gray-700">
-        {{owner.members[0]}} ({{owner.members.length}})
+        {{getSyndicateRepresentative(syn) | truncate:[4]}} ({{syn.members.length}})
       </td>
       <td *counter="let race of maxRace"
           class="border border-gray-700"
       >
-        <div *ngFor="let h of getOwnerRaceStarters(owner, race)"
+        <div *ngFor="let h of getSyndicateStarters(syn, race)"
              class="{{getPlacingColorByHorse(h, race)}}"
         >
           {{getHorseDetail(h).order}}

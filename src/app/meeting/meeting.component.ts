@@ -4,7 +4,7 @@ import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
-import {HorseOwner} from '../model/owner.model';
+import {Syndicate} from '../model/owner.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {DividendPool, DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from '../model/dividend.model';
@@ -56,7 +56,7 @@ export class MeetingComponent implements OnInit {
     }, THREE_SECONDS);
 
     this.repo.fetchHorses();
-    this.repo.fetchOwners();
+    this.repo.fetchSyndicates();
   }
 
   setActiveTrainer = (clicked: string) =>
@@ -389,8 +389,17 @@ export class MeetingComponent implements OnInit {
       ?.find(o => o.order === order) || DEFAULT_CHALLENGE_ODDS;
   }
 
-  getOwnerRaceStarters = (owner: HorseOwner, race: number): string[] =>
-    owner.horses
+  getSyndicateRepresentative = (syn: Syndicate): string => {
+    if (syn.members.length === 1) return syn.members[0];
+
+    const individuals = syn.members.filter(m => !m.includes('團體'));
+    if (individuals.length > 0) return individuals[0];
+
+    return syn.members[0];
+  }
+
+  getSyndicateStarters = (syn: Syndicate, race: number): string[] =>
+    syn.horses
       .filter(h =>
         this.racecards.find(r => r.race === race)
           ?.starters
@@ -398,24 +407,12 @@ export class MeetingComponent implements OnInit {
           .includes(h)
       )
 
-  get owners(): HorseOwner[] {
-    let owners = this.repo.findOwners().map(o => o);
-
-    this.starters
-      .map(s => this.repo.findHorses().find(h => h.code === s.horse))
-      .filter(h => h)
-      .forEach(h => {
-        owners.forEach(o => {
-          if (o.members.includes(h?.ownerCH || '') && !o.horses.includes(h?.code || '')) {
-            o.horses.push(h?.code || '');
-          }
-        })
-      });
-
-    return owners.filter(o => o.horses
-      .filter(h => this.starters.map(s => s.horse).includes(h))
-      .length > 1
-    )
+  get syndicates(): Syndicate[] {
+    return this.repo.findSyndicates()
+      .filter(s => s.horses
+        .filter(h => this.starters.map(s => s.horse).includes(h))
+        .length > 1
+      );
   }
 
   get dividendPools(): DividendPool[] {
