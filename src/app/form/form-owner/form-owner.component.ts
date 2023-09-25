@@ -114,11 +114,11 @@ export class FormOwnerComponent implements OnInit {
     if (raw.endsWith('等')) raw = raw.slice(0, raw.length - 1);
 
     this.titles.forEach(t => {
-      if (raw.includes(t)) raw = raw.replace(t, '');
+      while (raw.includes(t)) raw = raw.replace(t, '');
     })
 
     this.splitors.forEach(s => {
-      if (raw.includes(s)) raw = raw.replace(s, '&');
+      while (raw.includes(s)) raw = raw.replace(s, '&');
     })
 
     return raw.split('&').map(o => o.trim()).filter(o => o.length > 0);
@@ -131,7 +131,7 @@ export class FormOwnerComponent implements OnInit {
   get titles(): string[] {
     return [
       'Mr & Mrs', 'MR & MRS', '先生及夫人', '及夫人', '夫婦',
-      '女士', '醫生', '博士', '爵士',
+      '女士', '醫生', '博士', '爵士', '議員',
       '(董事)', '（董事）', '(名譽董事)', '（名譽董事）',
       '遺產執行人',
     ];
@@ -167,7 +167,10 @@ export class FormOwnerComponent implements OnInit {
     } else {
       if (criteria.length === 1) {
         this.horses
-          .filter(h => h.nameCH.toUpperCase().includes(criteria))
+          .filter(h =>
+            h.nameCH.toUpperCase().includes(criteria) ||
+            h.ownerCH.toUpperCase().includes(criteria)
+          )
           .forEach(h => matches.add(h));
       }
       if (criteria.length > 1) {
@@ -180,6 +183,10 @@ export class FormOwnerComponent implements OnInit {
           .forEach(h => matches.add(h));
       }
     }
+
+    this.horses
+      .filter(h => this.activeSyndicate.members.some(m => h.ownerCH.includes(m)))
+      .forEach(h => matches.add(h));
 
     const syndicateHorses = this.horses
       .filter(h => this.activeSyndicate.horses.includes(h.code))
