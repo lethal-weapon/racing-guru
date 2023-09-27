@@ -154,7 +154,24 @@ export class FormOwnerComponent implements OnInit {
     let matches = new Set<Horse>();
     const criteria = this.criteria.trim().toUpperCase();
 
-    if (criteria.match(/^[A-Z]\d+/g)) {
+    if (criteria.match(/^@@@$/g)) {
+      this.horses
+        .filter(h => !this.isSyndicateHorse(h))
+        .filter(h => !this.isBelongToOtherSyndicate(h))
+        .forEach(h => {
+          if (matches.size < 300) matches.add(h);
+        });
+
+    } else if (criteria.match(/^###$/g)) {
+      this.horses
+        .filter(h => !this.isSyndicateHorse(h))
+        .filter(h => !this.isBelongToOtherSyndicate(h))
+        .filter(h => this.syndicates
+          .some(s => s.members.some(m => h.ownerCH.includes(m)))
+        )
+        .forEach(h => matches.add(h));
+
+    } else if (criteria.match(/^[A-Z]\d+/g)) {
       const brands = criteria
         .split(',')
         .map(e => e.trim())

@@ -5,7 +5,7 @@ import {Component, OnInit} from '@angular/core';
   templateUrl: './form.component.html'
 })
 export class FormComponent implements OnInit {
-  activeSection: string = this.sections[0];
+  activeSection: string = this.sections[1];
 
   constructor() {
   }
