@@ -29,20 +29,12 @@ export class FormOwnerComponent implements OnInit {
   copyText = (text: string) =>
     this.clipboard.copy(text)
 
-  getHorseName = (code: string): string =>
-    this.horses.find(h => h.code === code)?.nameCH || '?'
-
   getSyndicateMembers = (isTeam: boolean = false): string[] =>
     this.activeSyndicate.members
       .filter(m => isTeam ? m.includes('團體') : !m.includes('團體'))
 
   addSyndicate = () =>
     this.activeSyndicate = {id: 0, members: [], horses: []}
-
-  rebuildSyndicate = () => {
-    this.activeSyndicate.horses = []
-    this.activeSyndicate.members = []
-  }
 
   deleteSyndicate = () => {
 
@@ -110,6 +102,12 @@ export class FormOwnerComponent implements OnInit {
       .sort((o1, o2) => o1.localeCompare(o2));
   }
 
+  horseSorter = (h1: Horse, h2: Horse): number => {
+    const horse1 = h1.retired ? 1 : 0;
+    const horse2 = h2.retired ? 1 : 0;
+    return horse1 - horse2 || h1.code.localeCompare(h2.code);
+  }
+
   cleanOwner = (raw: string): string[] => {
     if (raw.endsWith('等')) raw = raw.slice(0, raw.length - 1);
 
@@ -150,14 +148,32 @@ export class FormOwnerComponent implements OnInit {
       : `Syndicate #${this.activeSyndicate.id}`;
   }
 
+  get activeSyndicateHorses(): Horse[] {
+    return this.horses
+      .filter(h => this.activeSyndicate.horses.includes(h.code))
+      .sort(this.horseSorter);
+  }
+
   get displayHorses(): Horse[] {
     let matches = new Set<Horse>();
     const criteria = this.criteria.trim().toUpperCase();
 
-    if (criteria.match(/^@@@$/g)) {
+    if (criteria.match(/^!!!$/g)) {
       this.horses
         .filter(h => !this.isSyndicateHorse(h))
         .filter(h => !this.isBelongToOtherSyndicate(h))
+        .filter(h => this.horses.some(nh => {
+          const owners = this.cleanOwner(h.ownerCH);
+          const otherOwners = this.cleanOwner(nh.ownerCH);
+          return h.code !== nh.code && owners.some(o => otherOwners.includes(o));
+        }))
+        .forEach(h => matches.add(h));
+
+    } else if (criteria.match(/^@@@$/g)) {
+      this.horses
+        .filter(h => !this.isSyndicateHorse(h))
+        .filter(h => !this.isBelongToOtherSyndicate(h))
+        .filter(h => !h.retired)
         .forEach(h => {
           if (matches.size < 300) matches.add(h);
         });
@@ -207,14 +223,28 @@ export class FormOwnerComponent implements OnInit {
 
     const syndicateHorses = this.horses
       .filter(h => this.activeSyndicate.horses.includes(h.code))
-      .sort((h1, h2) => h1.code.localeCompare(h2.code));
+      .sort(this.horseSorter);
 
     const matchedHorses = Array
       .from(matches.keys())
       .filter(h => !syndicateHorses.includes(h))
-      .sort((h1, h2) => h1.code.localeCompare(h2.code));
+      .sort(this.horseSorter);
 
     return syndicateHorses.concat(matchedHorses);
+  }
+
+  get statistics(): Array<{ label: string, count: number }> {
+    const syndicateHorses = this.syndicates
+      .map(s => s.horses.length)
+      .reduce((h1, h2) => h1 + h2, 0);
+
+    return [
+      {label: 'Syndicates', count: this.syndicates.length},
+      {label: 'Syndicate Horses', count: syndicateHorses},
+      {label: 'Free Horses', count: this.horses.length - syndicateHorses},
+      {label: 'Retired Horses', count: this.horses.filter(h => h.retired).length},
+      {label: 'Total Horses', count: this.horses.length},
+    ];
   }
 
   get horses(): Horse[] {

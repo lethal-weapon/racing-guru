@@ -1,28 +1,35 @@
 <div class="mt-8 mx-10 grid grid-cols-5 text-center">
   <div class="col-span-2 pr-10">
-    <div class="px-2 grid grid-cols-2 gap-x-6 gap-y-4">
-      <div class="{{controlButtonStyle}}"
-           (click)="rebuildSyndicate()"
-      >
-        Rebuild Syndicate
-      </div>
-      <div class="{{controlButtonStyle}}"
-           (click)="addSyndicate()"
-      >
-        New Syndicate
-      </div>
-      <div class="{{controlButtonStyle}}"
-           (click)="saveSyndicate()"
-      >
-        Save Syndicate
-      </div>
-      <div class="{{controlButtonStyle}}"
-           (click)="deleteSyndicate()"
-      >
-        Delete Syndicate
+    <div class="grid grid-cols-2 gap-x-6">
+      <table class="text-lg">
+        <tr *ngFor="let row of statistics">
+          <td class="text-left">
+            {{row.label}}
+          </td>
+          <td class="text-right">
+            {{row.count}}
+          </td>
+        </tr>
+      </table>
+      <div class="px-4 flex flex-col gap-y-4">
+        <div class="{{controlButtonStyle}}"
+             (click)="addSyndicate()"
+        >
+          New Syndicate
+        </div>
+        <div class="{{controlButtonStyle}}"
+             (click)="saveSyndicate()"
+        >
+          Save Syndicate
+        </div>
+        <div class="{{controlButtonStyle}}"
+             (click)="deleteSyndicate()"
+        >
+          Delete Syndicate
+        </div>
       </div>
     </div>
-    <div class="px-2 my-6 text-left">
+    <div class="my-6 text-left">
       <input
         [(ngModel)]="criteria"
         type="text"
@@ -61,8 +68,10 @@
           Horses: &nbsp;{{activeSyndicate.horses.length}}
         </div>
         <div class="mt-3 text-lg grid grid-cols-5 gap-x-3 gap-y-2">
-          <div *ngFor="let code of activeSyndicate.horses">
-            {{getHorseName(code)}}
+          <div *ngFor="let h of activeSyndicateHorses"
+               [class.text-gray-600]="h.retired"
+          >
+            {{h.nameCH}}
           </div>
         </div>
       </div>
@@ -114,6 +123,9 @@
             </div>
             <div class="mx-3">
               {{h.nameCH}}
+              <span *ngIf="h.retired">
+                (R)
+              </span>
             </div>
             <div class="text-sm {{h.code === hoverHorse ? 'opacity-50 cursor-pointer' : 'opacity-0'}}"
                  (click)="copyText(h.nameCH)"
