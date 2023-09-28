@@ -209,7 +209,14 @@
         class="hover:bg-gray-800"
     >
       <td class="border border-gray-700">
-        {{getSyndicateRepresentative(syn) | truncate:[4]}} ({{syn.members.length}})
+        <div class="grid grid-cols-2">
+          <div>
+            {{getSyndicateRepresentative(syn) | truncate:[3]}}
+          </div>
+          <div>
+            ({{syn.members.length}}, {{syn.horses.length}})
+          </div>
+        </div>
       </td>
       <td *counter="let race of maxRace"
           class="border border-gray-700"

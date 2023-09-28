@@ -150,12 +150,26 @@
   </table>
   <div class="mt-4">
     <div *ngIf="activePerson.length > 0"
-         class="mb-4 text-3xl text-yellow-400"
+         class="mx-24 mb-4 grid grid-cols-2"
     >
-      {{activePersonName}}
+      <div class="text-3xl text-yellow-400">
+        {{activePersonName}}
+      </div>
+      <div>
+        <div class="w-full flex flex-row justify-between bg-gray-800 rounded-full text-xl">
+          <div *ngFor="let view of personViews"
+               class="w-full py-2 rounded-full {{getSectionStyle(view)}}"
+               (click)="setActivePersonView(view)"
+          >
+            {{view}}
+          </div>
+        </div>
+      </div>
     </div>
     <table class="mx-auto table-fixed border-collapse font-mono">
-      <thead class="text-xl">
+      <thead *ngIf="activePerson.length === 0 || (activePerson.length > 0 && activePersonView == personViews[0])"
+             class="text-xl"
+      >
       <th class="w-24 border border-gray-600 py-1">
         <span *ngIf="activePerson.length === 0">
           <i class="fa fa-camera"></i>
@@ -170,6 +184,23 @@
         {{race === 10 ? 'X' : race === 11 ? 'E' : race}}
       </th>
       </thead>
+
+      <thead *ngIf="activePerson.length > 0 && activePersonView == personViews[1]"
+             class="text-lg"
+      >
+      <th class="w-20 border border-gray-600 py-1">
+        #
+      </th>
+      <th class="w-28 border border-gray-600">
+        Horse
+      </th>
+      <th *counter="let count of maxActivePersonHorseTop4Count"
+          class="w-28 border border-gray-600"
+      >
+        {{count}}
+      </th>
+      </thead>
+
       <tbody *ngIf="activePerson.length === 0">
       <tr *ngFor="let p of persons"
           class="hover:bg-gray-800"
@@ -197,7 +228,7 @@
       </tr>
       </tbody>
 
-      <tbody *ngIf="activePerson.length > 0">
+      <tbody *ngIf="activePerson.length > 0 && activePersonView == personViews[0]">
       <tr *ngFor="let m of meetings"
           class="hover:bg-gray-800"
       >
@@ -220,6 +251,31 @@
               {{starter?.winOdds || 0 > 0 ? starter?.winOdds : ''}}
               {{getStarterHorse(starter).nameCH}}
               {{starter.partner}}
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+
+      <tbody *ngIf="activePerson.length > 0 && activePersonView == personViews[1]">
+      <tr *ngFor="let hv of activePersonViewByHorse; let index = index"
+          class="hover:bg-gray-800"
+      >
+        <td class="border border-gray-700 py-0.5">
+          {{index + 1}}
+        </td>
+        <td class="border border-gray-700">
+          {{getHorse(hv.horse).nameCH}}
+        </td>
+        <td *ngFor="let hs of hv.starters"
+            class="border border-gray-700 {{COLORS[hs.placing - 1]}}"
+        >
+          <div class="grid grid-cols-2">
+            <div>
+              {{hs?.winOdds}}
+            </div>
+            <div>
+              {{hs.partner}}
             </div>
           </div>
         </td>

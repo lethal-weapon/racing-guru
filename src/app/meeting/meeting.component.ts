@@ -412,7 +412,8 @@ export class MeetingComponent implements OnInit {
       .filter(s => s.horses
         .filter(h => this.starters.map(s => s.horse).includes(h))
         .length > 1
-      );
+      )
+      .sort((s1, s2) => s2.horses.length - s1.horses.length);
   }
 
   get dividendPools(): DividendPool[] {

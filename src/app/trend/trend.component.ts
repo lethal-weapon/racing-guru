@@ -15,7 +15,8 @@ import {getPersonSummaryByRace} from '../util/functions';
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[0];
-  activePerson: string = '';
+  activePersonView: string = this.personViews[1];
+  activePerson: string = 'WDJ';
   isRefreshButtonEnable: boolean = true;
   meetingIndex: number = 0;
 
@@ -36,6 +37,9 @@ export class TrendComponent implements OnInit {
 
   setActiveSubsection = (clicked: string) =>
     this.activeSubsection = clicked
+
+  setActivePersonView = (clicked: string) =>
+    this.activePersonView = clicked
 
   setActivePerson = (clicked: string) =>
     this.activePerson = this.activePerson == clicked ? '' : clicked
@@ -79,14 +83,6 @@ export class TrendComponent implements OnInit {
   isNewPlayer = (person: string): boolean =>
     NEW_PEOPLE.map(p => p.code).includes(person)
 
-  getPersonStatByRaceTooltip = (person: string, race: number): string => {
-    const ps = this.getPersonStatByRace(person, race);
-    if (ps.earnings < 1) return '';
-
-    const top4Rate = 100 * parseFloat((ps.earnings / ps.engagements).toFixed(2));
-    return `${ps.earnings} / ${ps.engagements} = ${top4Rate}%`;
-  }
-
   getPersonStatByRaceTop4 = (person: string, race: number): number[] => {
     const ps = this.getPersonStatByRace(person, race);
     return [ps.wins, ps.seconds, ps.thirds, ps.fourths];
@@ -99,6 +95,10 @@ export class TrendComponent implements OnInit {
       race
     )
   }
+
+  getHorse = (code: string): Horse =>
+    this.repo.findHorses()
+      .find(s => s.code === code) || DEFAULT_HORSE
 
   getStarterHorse = (starter: EarningStarter): Horse =>
     this.repo.findHorses()
@@ -118,7 +118,7 @@ export class TrendComponent implements OnInit {
   }
 
   getSectionStyle = (section: string): string =>
-    [this.activeSection, this.activeSubsection].includes(section)
+    [this.activeSection, this.activeSubsection, this.activePersonView].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
 
@@ -225,6 +225,50 @@ export class TrendComponent implements OnInit {
       )
       .includes(meeting);
 
+  get maxActivePersonHorseTop4Count(): number {
+    return this.activePersonViewByHorse
+      .map(v => v.starters.length)
+      .sort((h1, h2) => h1 - h2)
+      .pop() || 10;
+  }
+
+  get activePersonViewByHorse(): Array<{ horse: string, starters: EarningStarter[] }> {
+    let view: Array<{ horse: string, starters: EarningStarter[] }> = [];
+
+    this.meetings
+      .map(m => m.persons.filter(p => p.person === this.activePerson && p.earnings > 0))
+      .reduce((ps1, ps2) => ps1.concat(ps2), [])
+      .map(ps => ps.starters)
+      .reduce((es1, es2) => es1.concat(es2), [])
+      .filter(es => es?.placing >= 1 && es?.placing <= 4)
+      .forEach(es => {
+        const hView = view.find(v => v.horse === es.horse);
+        if (!hView) {
+          view.push({horse: es.horse, starters: [es]});
+        } else {
+          view.forEach(v => {
+            if (v.horse === es.horse) {
+              v.starters.push(es);
+            }
+          });
+        }
+      });
+
+    view.forEach(v => v.starters.sort((s1, s2) => s1.placing - s2.placing));
+
+    return view.sort((v1, v2) =>
+      (v2.starters.filter(s => s?.placing === 1).length) - (v1.starters.filter(s => s?.placing === 1).length)
+      ||
+      (v2.starters.filter(s => s?.placing === 2).length) - (v1.starters.filter(s => s?.placing === 2).length)
+      ||
+      (v2.starters.filter(s => s?.placing === 3).length) - (v1.starters.filter(s => s?.placing === 3).length)
+      ||
+      (v2.starters.filter(s => s?.placing === 4).length) - (v1.starters.filter(s => s?.placing === 4).length)
+      ||
+      v2.horse.localeCompare(v1.horse)
+    );
+  }
+
   get overviews(): Array<{ title: string, link: string }> {
     return this.windowMeetings.map(m => {
         const title = `
@@ -289,6 +333,10 @@ export class TrendComponent implements OnInit {
 
   get controlStyle(): string {
     return `w-12 cursor-pointer transition hover:text-yellow-400`;
+  }
+
+  get personViews(): string[] {
+    return ['By Meeting', 'By Horse'];
   }
 
   get subsections(): string[] {
