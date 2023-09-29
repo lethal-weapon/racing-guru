@@ -4,7 +4,7 @@ import {RestDataSource} from './rest.datasource';
 import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
-import {HorseOwner, Syndicate} from './owner.model';
+import {Syndicate} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {FactorHit} from './backtest.model';
@@ -17,7 +17,6 @@ import {SeasonPerformance} from './performance.model';
 export class RestRepository {
   private notes: Note[] = [];
   private horses: Horse[] = [];
-  private owners: HorseOwner[] = [];
   private reports: Report[] = [];
   private records: Record[] = [];
   private meetings: Meeting[] = [];
@@ -32,7 +31,6 @@ export class RestRepository {
 
   findNotes = () => this.notes
   findHorses = () => this.horses
-  findOwners = () => this.owners
   findReports = () => this.reports
   findRecords = () => this.records
   findMeetings = () => this.meetings
@@ -92,9 +90,6 @@ export class RestRepository {
 
   fetchHorses = () =>
     this.source.getHorses().subscribe(data => this.horses = data)
-
-  fetchOwners = () =>
-    this.source.getOwners().subscribe(data => this.owners = data)
 
   fetchReports = () =>
     this.source.getReports().subscribe(data => this.reports = data)

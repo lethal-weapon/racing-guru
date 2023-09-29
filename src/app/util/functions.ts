@@ -4,7 +4,7 @@ import {WinPlaceOdds} from '../model/odds.model';
 import {Meeting, PersonSummary} from '../model/meeting.model';
 import {SingularSignal, CombinationSignal} from '../model/signal.model';
 import {COLORS, JOCKEY_CODES} from './strings';
-import {ONE_MILLION, PAYOUT_RATE, FCT_PAYOUT_RATE} from './numbers';
+import {ONE_MILLION, PAYOUT_RATE} from './numbers';
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
@@ -99,64 +99,6 @@ export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard):
       .map(p => PAYOUT_RATE / p.odds)
       .reduce((prev, curr) => prev + curr, 0);
   });
-}
-
-export const getStarterFCTWQOdds = (starter: Starter, racecard: Racecard): number[] => {
-  const fct = racecard?.odds?.forecast;
-
-  return [fct, fct].map((pairs, index) => {
-    if (!pairs) return 1;
-
-    return 2 * FCT_PAYOUT_RATE / pairs
-      .filter(p => p.orders[index] === starter.order)
-      .map(p => FCT_PAYOUT_RATE / p.odds)
-      .reduce((prev, curr) => prev + curr, 0);
-  });
-}
-
-export const getStarterDBLWinOdds = (
-  starter: Starter,
-  racecard: Racecard,
-  prevRacecard: Racecard
-): number[] => {
-
-  const dbl = racecard?.odds?.double;
-  const prevDBL = prevRacecard?.odds?.double;
-
-  return [dbl, prevDBL].map((pairs, index) => {
-    if (!pairs) return 1;
-
-    return PAYOUT_RATE / pairs
-      .filter(p => p.orders[index] === starter.order)
-      .map(p => PAYOUT_RATE / p.odds)
-      .reduce((prev, curr) => prev + curr, 0);
-  });
-}
-
-export const isPreferredWQWR = (starter: Starter, racecard: Racecard): boolean => {
-  const wp = getStarterWinPlaceOdds(starter, racecard);
-  if (wp.win == 0 || wp.place == 0) return false;
-
-  const W = wp.win;
-  const QW = getStarterQQPWinPlaceOdds(starter, racecard)[0];
-  if (W > 30 || QW > W) return false;
-
-  return W < 10 && (W - QW >= 1)
-    ? true
-    : Math.abs(1 - W / QW) >= 0.1;
-}
-
-export const isPreferredPQPR = (starter: Starter, racecard: Racecard): boolean => {
-  const wp = getStarterWinPlaceOdds(starter, racecard);
-  if (wp.win == 0 || wp.place == 0) return false;
-
-  const P = 3 * wp.place;
-  const QPP = 3 * getStarterQQPWinPlaceOdds(starter, racecard)[1];
-  if (P > 30 || QPP > P) return false;
-
-  return P < 10 && (P - QPP >= 1)
-    ? true
-    : Math.abs(1 - P / QPP) >= 0.1;
 }
 
 export const getSignalColor = (signals: SingularSignal[] | CombinationSignal[]): string => {

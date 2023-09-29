@@ -6,7 +6,7 @@ import {environment as env} from '../../environments/environment';
 import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
-import {HorseOwner, Syndicate} from './owner.model';
+import {Syndicate} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {Racecard} from './racecard.model';
@@ -47,9 +47,6 @@ export class RestDataSource {
 
   getHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses`)
-
-  getOwners = (): Observable<HorseOwner[]> =>
-    this.http.get<HorseOwner[]>(`${this.baseUrl}/owners`)
 
   getReports = (): Observable<Report[]> =>
     this.http.get<Report[]>(`${this.baseUrl}/reports`)

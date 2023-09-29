@@ -3,7 +3,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 
 import {RestRepository} from '../../model/rest.repository';
 import {Horse} from '../../model/horse.model';
-import {Syndicate} from '../../model/owner.model';
+import {Syndicate} from '../../model/syndicate.model';
 
 @Component({
   selector: 'app-form-owner',

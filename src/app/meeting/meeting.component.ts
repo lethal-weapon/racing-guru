@@ -4,7 +4,7 @@ import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
-import {Syndicate} from '../model/owner.model';
+import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {DividendPool, DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from '../model/dividend.model';

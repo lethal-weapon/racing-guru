@@ -14,7 +14,6 @@ import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {TrendComponent} from './trend/trend.component';
 import {CollaborationComponent} from './collaboration/collaboration.component';
-import {Top4sComponent} from './top4s/top4s.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
@@ -38,7 +37,6 @@ import {FormPeopleComponent} from './form/form-people/form-people.component';
     OddsComponent,
     TrendComponent,
     CollaborationComponent,
-    Top4sComponent,
     BacktestComponent,
     SpinnerComponent,
     FormComponent,
