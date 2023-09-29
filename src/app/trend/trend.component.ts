@@ -15,7 +15,7 @@ import {getPersonSummaryByRace} from '../util/functions';
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[0];
-  activePersonView: string = this.personViews[1];
+  activePersonView: string = this.personViews[0];
   activePerson: string = 'WDJ';
   isRefreshButtonEnable: boolean = true;
   meetingIndex: number = 0;
@@ -141,7 +141,9 @@ export class TrendComponent implements OnInit {
 
   getNoWinnerStats = (person: string): number[] => {
     let days: number = -1;
-    let races: number = 0;
+    let starts: number = 0;
+    let gaps: number[] = [];
+    let mostRecentWinningMeeting: string = '';
 
     const winningMeetings = this.meetings
       .filter((m, index) => index > 0)
@@ -153,6 +155,8 @@ export class TrendComponent implements OnInit {
 
     if (winningMeetings.length > 0) {
       const mostRecentOne = winningMeetings.shift();
+      mostRecentWinningMeeting = mostRecentOne?.meeting || '';
+
       // @ts-ignore
       days = this.meetings.filter((m, index) => index > 0).indexOf(mostRecentOne);
     }
@@ -162,24 +166,61 @@ export class TrendComponent implements OnInit {
       if (!summary) continue;
 
       if (summary.wins === 0) {
-        races += summary.starters.filter(s => s?.winOdds).length;
+        starts += summary.starters.filter(s => s?.winOdds).length;
         continue;
       }
 
-      for (let j = 0; j < summary.starters.length; j++) {
-        const sortedStarters = summary.starters
-          .filter(s => s?.winOdds)
-          .sort((s1, s2) => s2.race - s1.race);
+      const sortedStarters = summary.starters
+        .filter(s => s?.winOdds)
+        .sort((s1, s2) => s2.race - s1.race);
 
+      for (let j = 0; j < sortedStarters.length; j++) {
         if (sortedStarters[j]?.placing === 1) break;
-
-        races += 1;
+        starts += 1;
       }
 
       break;
     }
 
-    return [days, races];
+    const sortedMeetings = this.meetings
+      .filter((m, index) => index > 0)
+      .filter(m => m.persons.map(p => p.person).includes(person))
+      .sort((m1, m2) => m1.meeting.localeCompare(m2.meeting));
+
+    let gap: number = 0;
+    for (let i = 0; i < sortedMeetings.length; i++) {
+      const summary = sortedMeetings[i].persons.find(p => p.person === person);
+      if (!summary) continue;
+
+      if (summary.wins === 0) {
+        gap += summary.starters.filter(s => s?.winOdds).length;
+        continue;
+      }
+
+      const sortedStarters = summary.starters
+        .filter(s => s?.winOdds)
+        .sort((s1, s2) => s1.race - s2.race);
+
+      for (let j = 0; j < sortedStarters.length; j++) {
+        if (sortedStarters[j]?.placing === 1) {
+          gaps.push(gap);
+          gap = 0;
+        } else {
+          gap += 1;
+        }
+      }
+
+      if (mostRecentWinningMeeting === sortedMeetings[i].meeting) {
+        break;
+      }
+    }
+
+    if (gaps.length === 0) gaps.push(gap);
+    const avgStartsPerWinner = gaps.length > 0
+      ? Math.floor(gaps.reduce((g1, g2) => g1 + g2, 0) / gaps.length)
+      : 0;
+
+    return [days, starts, avgStartsPerWinner];
   }
 
   getOnBoardPersons = (meeting: Meeting): PersonSummary[] => {
@@ -339,7 +380,7 @@ export class TrendComponent implements OnInit {
   }
 
   get windowSize(): number {
-    return 8;
+    return 7;
   }
 
   get windowMeetings(): Meeting[] {

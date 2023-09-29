@@ -54,7 +54,7 @@
   </div>
   <table class="mx-auto table-fixed border-collapse">
     <tr class="text-lg">
-      <td class="w-14 border border-gray-700">
+      <td class="w-16 border border-gray-700">
         <span class="hover:text-yellow-400"
               [class.invisible]="!isRefreshButtonEnable"
               (click)="refresh()"
@@ -62,11 +62,23 @@
           <i class="fa fa-refresh"></i>
         </span>
       </td>
-      <td class="w-12 border border-gray-700">
+      <td class="w-12 border border-gray-700 cursor-help"
+          tooltip="Meetings since a winner"
+          [hideDelay]="0"
+      >
         <i class="fa fa-medkit"></i>
       </td>
-      <td class="w-12 border border-gray-700">
+      <td class="w-12 border border-gray-700 cursor-help"
+          tooltip="Starts since a winner"
+          [hideDelay]="0"
+      >
         <i class="fa fa-ambulance"></i>
+      </td>
+      <td class="w-12 border border-gray-700 cursor-help"
+          tooltip="Avg. starts per winner"
+          [hideDelay]="0"
+      >
+        <i class="fa fa-eraser"></i>
       </td>
       <td *ngFor="let overview of overviews"
           colspan="6"
@@ -88,6 +100,7 @@
           <i class="fa fa-clock-o"></i>
         </span>
       </td>
+      <td class="border border-gray-700"></td>
       <td class="border border-gray-700"></td>
       <td class="border border-gray-700"></td>
       <ng-container *ngFor="let meeting of windowMeetings">
@@ -133,6 +146,13 @@
               class="{{getNoWinnerStats(person)[1] >= 20 ? 'text-red-600 font-bold' : ''}}"
         >
           {{getNoWinnerStats(person)[1]}}
+        </span>
+      </td>
+      <td class="border border-gray-700"
+          [class.border-b-gray-400]="isBoundaryPerson(person)"
+      >
+        <span class="{{getNoWinnerStats(person)[1] > getNoWinnerStats(person)[2]  ? 'text-red-600 font-bold' : ''}}">
+          {{getNoWinnerStats(person)[2]}}
         </span>
       </td>
       <ng-container *ngFor="let meeting of windowMeetings">
