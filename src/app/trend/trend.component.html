@@ -191,8 +191,8 @@
       <th class="w-20 border border-gray-600 py-1">
         #
       </th>
-      <th class="w-28 border border-gray-600">
-        Horse
+      <th class="w-28 border border-gray-600 text-yellow-400">
+        Active
       </th>
       <th *counter="let count of maxActivePersonHorseTop4Count"
           class="w-28 border border-gray-600"
@@ -258,7 +258,42 @@
       </tbody>
 
       <tbody *ngIf="activePerson.length > 0 && activePersonView == personViews[1]">
-      <tr *ngFor="let hv of activePersonViewByHorse; let index = index"
+      <tr *ngFor="let hv of getActivePersonViewByHorse(); let index = index"
+          class="hover:bg-gray-800"
+      >
+        <td class="border border-gray-700 py-0.5">
+          {{index + 1}}
+        </td>
+        <td class="border border-gray-700">
+          {{getHorse(hv.horse).nameCH}}
+        </td>
+        <td *ngFor="let hs of hv.starters"
+            class="border border-gray-700 {{COLORS[hs.placing - 1]}}"
+        >
+          <div class="grid grid-cols-2">
+            <div>
+              {{hs?.winOdds}}
+            </div>
+            <div>
+              {{hs.partner}}
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr class="text-lg font-bold">
+        <td class="border border-gray-600 py-1">
+          #
+        </td>
+        <td class="border border-gray-600 py-1 text-yellow-400">
+          Retired
+        </td>
+        <td *counter="let count of maxActivePersonHorseTop4Count"
+            class="border border-gray-600 py-1"
+        >
+          {{count}}
+        </td>
+      </tr>
+      <tr *ngFor="let hv of getActivePersonViewByHorse(true); let index = index"
           class="hover:bg-gray-800"
       >
         <td class="border border-gray-700 py-0.5">

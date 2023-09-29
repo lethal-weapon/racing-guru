@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, NEW_PEOPLE, TRAINERS} from '../model/person.model';
-import {BOUNDARY_PERSONS, COLORS} from '../util/strings';
+import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES} from '../util/strings';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 import {getPersonSummaryByRace} from '../util/functions';
@@ -225,14 +225,22 @@ export class TrendComponent implements OnInit {
       )
       .includes(meeting);
 
-  get maxActivePersonHorseTop4Count(): number {
-    return this.activePersonViewByHorse
-      .map(v => v.starters.length)
-      .sort((h1, h2) => h1 - h2)
-      .pop() || 10;
+  isHorseRetired = (code: string): boolean =>
+    this.repo.findHorses().find(h => h.code === code)?.retired || false
+
+  isStillSameStable = (code: string): boolean => {
+    const pastStarts =
+      (this.repo.findHorses().find(h => h.code === code)?.pastStarters || [])
+        .map(ps => ps)
+        .sort((ps1, ps2) => ps2.meeting.localeCompare(ps1.meeting));
+
+    if (pastStarts.length === 0) return true;
+    return pastStarts[0].trainer === this.activePerson;
   }
 
-  get activePersonViewByHorse(): Array<{ horse: string, starters: EarningStarter[] }> {
+  getActivePersonViewByHorse = (retired: boolean = false):
+    Array<{ horse: string, starters: EarningStarter[] }> => {
+
     let view: Array<{ horse: string, starters: EarningStarter[] }> = [];
 
     this.meetings
@@ -241,6 +249,8 @@ export class TrendComponent implements OnInit {
       .map(ps => ps.starters)
       .reduce((es1, es2) => es1.concat(es2), [])
       .filter(es => es?.placing >= 1 && es?.placing <= 4)
+      .filter(es => retired ? this.isHorseRetired(es.horse) : !this.isHorseRetired(es.horse))
+      .filter(es => JOCKEY_CODES.includes(this.activePerson) || this.isStillSameStable(es.horse))
       .forEach(es => {
         const hView = view.find(v => v.horse === es.horse);
         if (!hView) {
@@ -267,6 +277,17 @@ export class TrendComponent implements OnInit {
       ||
       v2.horse.localeCompare(v1.horse)
     );
+  }
+
+  get maxActivePersonHorseTop4Count(): number {
+    return [false, true]
+      .map(retired => this.getActivePersonViewByHorse(retired)
+        .map(v => v.starters.length)
+        .sort((h1, h2) => h1 - h2)
+        .pop() || 1
+      )
+      .sort((n1, n2) => n1 - n2)
+      .pop() || 1;
   }
 
   get overviews(): Array<{ title: string, link: string }> {
