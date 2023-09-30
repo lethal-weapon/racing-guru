@@ -21,26 +21,26 @@ export class FormEngineComponent implements OnInit {
     this.repo.fetchEnginePerformance();
   }
 
+  formatOdds = (topn: number, odds: number): string =>
+    odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString()
+
   formatMeeting = (meeting: string): string =>
     meeting.replace(/^\d{4}-/g, '')
 
   formatPlacing = (placing: string): string => {
     switch (placing) {
       case 'W':
-        return 'WIN';
+        return 'WIN (1/3)';
       case 'Q':
-        return 'QIN';
+        return 'QIN (2/4)';
       case 'P':
-        return 'TCE';
+        return 'TCE (3/5)';
       case 'F':
-        return 'QTT';
+        return 'QTT (4/6)';
       default:
         return '?';
     }
   }
-
-  formatOdds = (topn: number, odds: number): string =>
-    odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString()
 
   getHitRaceOdds = (topn: number, meeting: string, race: number): number =>
     this.performances
@@ -52,6 +52,10 @@ export class FormEngineComponent implements OnInit {
       .filter(hr => hr.meeting === meeting && hr.race === race)
       .map(hr => hr.odds)
       .reduce((prev, curr) => prev + curr, 0)
+
+  get currentSeasonProgress(): string {
+    return `${Math.ceil(100 * this.meetings.length / 88)}%`;
+  }
 
   get meetings(): string[] {
     return this.performances

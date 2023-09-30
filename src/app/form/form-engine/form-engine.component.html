@@ -1,4 +1,4 @@
-<table class="mx-auto my-8 table-fixed border-collapse border border-gray-600 text-center">
+<table class="mx-auto mt-8 table-fixed border-collapse border border-gray-600 text-center">
   <thead class="text-xl">
   <th class="w-32 py-2 border border-gray-600">
     Season
@@ -38,7 +38,20 @@
   </tbody>
 </table>
 
-<table class="mx-auto table-fixed border-collapse border border-gray-600 text-center font-mono">
+<div class="w-3/4 mx-auto mt-8">
+  <div class="flex flex-row justify-between mb-1 text-xl">
+    <div>Season 23/24</div>
+    <div>{{currentSeasonProgress}}</div>
+  </div>
+  <div class="w-full h-3 bg-gray-700 rounded-full">
+    <div class="h-3 bg-yellow-400 rounded-full"
+         [style.width]="currentSeasonProgress"
+    >
+    </div>
+  </div>
+</div>
+
+<table class="mx-auto mt-10 table-fixed border-collapse border border-gray-600 text-center font-mono">
   <thead class="text-xl">
   <th class="w-24 border border-gray-600 py-1">
     <i class="fa fa-calendar"></i>
