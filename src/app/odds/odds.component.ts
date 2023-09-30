@@ -177,9 +177,9 @@ export class OddsComponent implements OnInit {
     let tmb = `tmb:${ordersByPlacing.slice(0, 3).join('>')}`;
     let qmb = `qmb:${ordersByPlacing.join('>')}`;
 
-    const fctBets = this.getMultiBankerBetCount('FMB');
-    const tceBets = this.getMultiBankerBetCount('TMB');
-    const qttBets = this.getMultiBankerBetCount('QMB');
+    const fctBets = this.getMultiBankerBets('FMB').length;
+    const tceBets = this.getMultiBankerBets('TMB').length;
+    const qttBets = this.getMultiBankerBets('QMB').length;
 
     if (fctBets > 10) fmb = fmb.concat(`|$100`);
     else fmb = fmb.concat(`/$10`);
@@ -197,7 +197,7 @@ export class OddsComponent implements OnInit {
     else if (qttBets <= 30) qmb = qmb.concat(`/$5`);
     else if (qttBets <= 36) qmb = qmb.concat(`/$4`);
     else if (qttBets <= 48) qmb = qmb.concat(`/$3`);
-    else if (qttBets <= 60) qmb = qmb.concat(`/$2`);
+    else if (qttBets <= 72) qmb = qmb.concat(`/$2`);
     else qmb = qmb.concat(`/$1`);
 
     switch (betType) {
@@ -218,7 +218,8 @@ export class OddsComponent implements OnInit {
     }
   }
 
-  getMultiBankerBetCount = (betType: string): number => {
+  getMultiBankerBets = (betType: string): number[][] => {
+    let bets: number[][] = [];
     const ordersByPlacing = Array(4).fill(1)
       .map((e, index) => 1 + index)
       .map(p =>
@@ -227,26 +228,37 @@ export class OddsComponent implements OnInit {
           .map(s => s.order)
       );
 
-    return ordersByPlacing[0]
-      .map(w => ordersByPlacing[1]
-        .filter(q => q !== w)
-        .map(q => {
-          if (betType === 'FMB') return 1;
-          else {
-            return ordersByPlacing[2]
-              .filter(p => ![w, q].includes(p))
-              .map(p => (
-                  betType === 'TMB'
-                    ? 1
-                    : ordersByPlacing[3].filter(f => ![w, q, p].includes(f)).length
-                )
-              )
-              .reduce((prev, curr) => prev + curr, 0);
+    for (let i = 0; i < ordersByPlacing[0].length; i++) {
+      const winner = ordersByPlacing[0][i];
+
+      for (let j = 0; j < ordersByPlacing[1].length; j++) {
+        const second = ordersByPlacing[1][j];
+        if (second == winner) continue;
+
+        if (betType === 'FMB') {
+          bets.push([winner, second]);
+          continue;
+        }
+
+        for (let k = 0; k < ordersByPlacing[2].length; k++) {
+          const third = ordersByPlacing[2][k];
+          if ([winner, second].includes(third)) continue;
+
+          if (betType === 'TMB') {
+            bets.push([winner, second, third]);
+            continue;
           }
-        })
-        .reduce((prev, curr) => prev + curr, 0)
-      )
-      .reduce((prev, curr) => prev + curr, 0);
+
+          for (let l = 0; l < ordersByPlacing[3].length; l++) {
+            const fourth = ordersByPlacing[3][l];
+            if ([winner, second, third].includes(fourth)) continue;
+            bets.push([winner, second, third, fourth]);
+          }
+        }
+      }
+    }
+
+    return bets;
   }
 
   trackQuinellaAndForecast = () => {
@@ -282,8 +294,6 @@ export class OddsComponent implements OnInit {
         let switch1 = false;
         let switch2 = false;
 
-        if (F1 > F2 + 10) continue;
-
         if (Math.abs(1 - Q2 / F1) <= QIN_FCT_DIFF_RATE) {
           switch1 = true;
           fct.push([orderA, orderB]);
@@ -292,11 +302,20 @@ export class OddsComponent implements OnInit {
           switch2 = true;
           fct.push([orderB, orderA]);
         }
-        if (switch1 && switch2) {
+        if (switch1 || switch2) {
           qin.push([orderA, orderB]);
         }
       }
     }
+
+    // intersection with multi-banker selections
+    const fmb = this.getMultiBankerBets('FMB');
+    qin = qin.filter(comb =>
+      fmb.some(comb2 => comb2.includes(comb[0]) && comb2.includes(comb[1]))
+    );
+    fct = fct.filter(comb =>
+      fmb.some(comb2 => comb2[0] == comb[0] && comb2[1] == comb[1])
+    );
 
     this.bets.set(this.activeRace, {qpl, qin, fct, dbl})
   }
