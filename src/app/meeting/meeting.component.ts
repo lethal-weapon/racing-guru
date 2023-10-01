@@ -393,7 +393,9 @@ export class MeetingComponent implements OnInit {
     if (syn.members.length === 1) return syn.members[0];
 
     const individuals = syn.members.filter(m => !m.includes('團體'));
-    if (individuals.length > 0) return individuals[0];
+    if (individuals.length > 0) {
+      return individuals.sort((p1, p2) => p1.length - p2.length)[0];
+    }
 
     return syn.members[0];
   }

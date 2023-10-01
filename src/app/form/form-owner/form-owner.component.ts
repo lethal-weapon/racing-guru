@@ -37,7 +37,12 @@ export class FormOwnerComponent implements OnInit {
     this.activeSyndicate = {id: 0, members: [], horses: []}
 
   deleteSyndicate = () => {
-
+    if (this.activeSyndicate.id !== 0) {
+      this.repo.deleteSyndicate(
+        this.activeSyndicate,
+        this.addSyndicate
+      );
+    }
   }
 
   saveSyndicate = () => {

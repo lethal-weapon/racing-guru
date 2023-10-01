@@ -39,6 +39,9 @@ export class RestDataSource {
   saveSyndicate = (syndicate: Syndicate): Observable<Syndicate> =>
     this.http.post<Syndicate>(`${this.baseUrl}/syndicates`, syndicate)
 
+  deleteSyndicate = (syndicate: Syndicate): Observable<any> =>
+    this.http.delete(`${this.baseUrl}/syndicates/${syndicate.id}`)
+
   getBacktestFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
     this.http.post<FactorHit[]>(`${this.baseUrl}/backtest`, factorCombinations)
 

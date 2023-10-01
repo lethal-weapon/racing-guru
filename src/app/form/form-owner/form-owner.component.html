@@ -51,14 +51,17 @@
         </div>
         <div class="mt-3 text-lg grid grid-cols-5 gap-x-3 gap-y-2">
           <div *ngFor="let member of getSyndicateMembers()"
-               [class.col-span-2]="member.length > 4 && member.length < 8"
-               [class.col-span-3]="member.length > 8"
+               [class.col-span-2]="member.length >= 5 && member.length <= 7"
+               [class.col-span-3]="member.length >= 8 && member.length <= 10"
+               [class.col-span-5]="member.length > 10"
           >
             {{member}}
           </div>
         </div>
         <div class="mt-1 text-lg grid grid-cols-2 gap-x-3 gap-y-2">
-          <div *ngFor="let member of getSyndicateMembers(true)">
+          <div *ngFor="let member of getSyndicateMembers(true)"
+               [class.col-span-2]="member.length > 10"
+          >
             {{member}}
           </div>
         </div>

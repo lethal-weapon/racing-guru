@@ -195,7 +195,7 @@
 
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
-    <th class="w-32 border border-gray-600">
+    <th class="w-48 border border-gray-600">
       Syndicate
     </th>
     <th *counter="let race of maxRace"
@@ -209,12 +209,15 @@
         class="hover:bg-gray-800"
     >
       <td class="border border-gray-700">
-        <div class="grid grid-cols-2">
-          <div>
+        <div class="grid grid-cols-4">
+          <div class="col-span-2">
             {{getSyndicateRepresentative(syn) | truncate:[3]}}
           </div>
-          <div>
-            ({{syn.members.length}}, {{syn.horses.length}})
+          <div class="col-span-1">
+            {{syn.members.length}}M
+          </div>
+          <div class="col-span-1">
+            {{syn.horses.length}}H
           </div>
         </div>
       </td>

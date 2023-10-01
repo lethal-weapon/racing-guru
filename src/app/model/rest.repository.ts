@@ -63,6 +63,15 @@ export class RestRepository {
     })
   }
 
+  deleteSyndicate = (
+    syndicate: Syndicate,
+    successCallback: () => any
+  ) =>
+    this.source.deleteSyndicate(syndicate).subscribe(data => {
+      this.syndicates = this.syndicates.filter(s => s.id !== syndicate.id);
+      successCallback();
+    })
+
   saveInterview = (
     interviews: Interview[],
     successCallback: () => any,
