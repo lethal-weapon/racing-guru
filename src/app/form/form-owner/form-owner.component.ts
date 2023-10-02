@@ -163,7 +163,13 @@ export class FormOwnerComponent implements OnInit {
     let matches = new Set<Horse>();
     const criteria = this.criteria.trim().toUpperCase();
 
-    if (criteria.match(/^!!!$/g)) {
+    if (criteria.match(/^~~~/g) && criteria.length > 3) {
+      const names = criteria.replace('~~~', '').split(' ').map(e => e.trim());
+      this.horses
+        .filter(h => names.some(n => h.ownerCH.toUpperCase().includes(n)))
+        .forEach(h => matches.add(h));
+
+    } else if (criteria.match(/^!!!$/g)) {
       this.horses
         .filter(h => !this.isSyndicateHorse(h))
         .filter(h => !this.isBelongToOtherSyndicate(h))
