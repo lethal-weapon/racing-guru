@@ -5,6 +5,13 @@ export interface PlacingMap {
   color: string
 }
 
+export interface OddsIntensity {
+  category: string,
+  color: string
+  lower: number
+  upper: number
+}
+
 export interface RatingFactorMap {
   order: number,
   factor: string,
@@ -38,6 +45,13 @@ export const PLACING_MAPS: PlacingMap[] = [
   {placing: 'Q', color: 'text-green-600'},
   {placing: 'P', color: 'text-blue-600'},
   {placing: 'F', color: 'text-purple-600'}
+];
+
+export const ODDS_INTENSITIES: OddsIntensity[] = [
+  {category: 'favorite', color: 'text-red-600', lower: 1.0, upper: 3.9},
+  {category: 'superior', color: 'text-green-600', lower: 4.0, upper: 9.9},
+  {category: 'inferior', color: 'text-blue-600', lower: 10.0, upper: 19.9},
+  {category: 'unwanted', color: 'text-purple-600', lower: 20.0, upper: 999.0},
 ];
 
 export const RATING_FACTOR_MAPS: RatingFactorMap[] = [

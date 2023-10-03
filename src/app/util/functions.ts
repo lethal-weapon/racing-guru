@@ -3,7 +3,7 @@ import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
 import {Meeting, PersonSummary} from '../model/meeting.model';
 import {SingularSignal, CombinationSignal} from '../model/signal.model';
-import {COLORS, JOCKEY_CODES} from './strings';
+import {COLORS, JOCKEY_CODES, ODDS_INTENSITIES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
 
 export const toMillion = (amount: number): string =>
@@ -123,6 +123,10 @@ export const getPlacing = (jockey: string, racecard: Racecard): number => {
 export const getPlacingColor = (jockey: string, racecard: Racecard): string => {
   const placing = getPlacing(jockey, racecard);
   return placing > 0 ? COLORS[placing - 1] : '';
+}
+
+export const getOddsIntensityColor = (odds: number): string => {
+  return ODDS_INTENSITIES.find(oi => odds >= oi.lower && odds <= oi.upper)?.color || '';
 }
 
 export const getPlacingBorderBackground = (jockey: string, racecard: Racecard): string =>

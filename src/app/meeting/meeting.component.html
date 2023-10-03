@@ -195,11 +195,11 @@
 
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
-    <th class="w-48 border border-gray-600">
+    <th class="w-32 border border-gray-600">
       Syndicate
     </th>
     <th *counter="let race of maxRace"
-        class="w-32 border border-gray-600"
+        class="w-36 border border-gray-600"
     >
       {{race}}
     </th>
@@ -209,15 +209,12 @@
         class="hover:bg-gray-800"
     >
       <td class="border border-gray-700">
-        <div class="grid grid-cols-4">
-          <div class="col-span-2">
+        <div class="grid grid-cols-2">
+          <div class="col-span-1">
             {{getSyndicateRepresentative(syn) | truncate:[3]}}
           </div>
           <div class="col-span-1">
-            {{syn.members.length}}M
-          </div>
-          <div class="col-span-1">
-            {{syn.horses.length}}H
+            ({{syn.members.length}}, {{getSyndicateServiceHorseCount(syn.horses)}})
           </div>
         </div>
       </td>
@@ -227,8 +224,16 @@
         <div *ngFor="let h of getSyndicateStarters(syn, race)"
              class="{{getPlacingColorByHorse(h, race)}}"
         >
-          {{getHorseDetail(h).order}}
-          {{getHorseDetail(h).name}}
+          {{getHorseDetail(h, race).order}}
+          {{getHorseDetail(h, race).name}}
+          <span class="{{
+            getPlacingColorByHorse(h, race).length === 0
+            ? getOddsIntensityColor(getHorseDetail(h, race).odds)
+            : ''
+          }}"
+          >
+            @{{getHorseDetail(h, race).odds}}
+          </span>
         </div>
       </td>
     </tr>

@@ -7,9 +7,13 @@ import {Racecard} from '../model/racecard.model';
 import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {DividendPool, DEFAULT_SINGULARS, DEFAULT_COMBINATIONS} from '../model/dividend.model';
-import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS} from '../util/strings';
 import {THREE_SECONDS} from '../util/numbers';
+import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS} from '../util/strings';
+import {
+  DividendPool,
+  DEFAULT_SINGULARS,
+  DEFAULT_COMBINATIONS
+} from '../model/dividend.model';
 import {
   toMillion,
   getMaxRace,
@@ -20,7 +24,8 @@ import {
   getHorseProfileUrl,
   getPlacingColor,
   getCurrentMeeting,
-  getNewFavorites
+  getNewFavorites,
+  getOddsIntensityColor
 } from '../util/functions';
 
 @Component({
@@ -41,6 +46,7 @@ export class MeetingComponent implements OnInit {
   protected readonly getWinPlaceOdds = getWinPlaceOdds;
   protected readonly getPlacingColor = getPlacingColor;
   protected readonly getHorseProfileUrl = getHorseProfileUrl;
+  protected readonly getOddsIntensityColor = getOddsIntensityColor;
 
   constructor(
     private repo: RestRepository,
@@ -368,9 +374,16 @@ export class MeetingComponent implements OnInit {
     return orders;
   }
 
-  getHorseDetail = (horse: string): { name: string, order: number } => ({
-    name: this.repo.findHorses().find(h => h.code === horse)?.nameCH || 'TBD',
-    order: this.starters.find(s => s.horse === horse)?.order || 0
+  getHorseDetail = (horse: string, race: number):
+    { name: string, order: number, odds: number } => ({
+
+    name: this.repo.findHorses().find(h => h.code === horse)?.nameCH || '?',
+    order: this.starters.find(s => s.horse === horse)?.order || 0,
+    odds: getWinPlaceOdds(
+      this.starters.find(s => s.horse === horse)?.jockey || '',
+      // @ts-ignore
+      this.racecards.find(r => r.race === race)
+    ).win
   })
 
   getPlacingColorByHorse = (horse: string, race: number): string => {
@@ -389,15 +402,24 @@ export class MeetingComponent implements OnInit {
       ?.find(o => o.order === order) || DEFAULT_CHALLENGE_ODDS;
   }
 
+  getSyndicateServiceHorseCount = (horses: string[]): number =>
+    this.repo.findHorses()
+      .filter(h => horses.includes(h.code))
+      .filter(h => !h.retired)
+      .length;
+
   getSyndicateRepresentative = (syn: Syndicate): string => {
-    if (syn.members.length === 1) return syn.members[0];
+    if (syn.members.length === 1) return syn.members[0].replace('團體', '');
 
     const individuals = syn.members.filter(m => !m.includes('團體'));
     if (individuals.length > 0) {
+      for (let i = 0; i < individuals.length; i++) {
+        if (individuals[i].length === 3) return individuals[i];
+      }
       return individuals.sort((p1, p2) => p1.length - p2.length)[0];
     }
 
-    return syn.members[0];
+    return syn.members[0].replace('團體', '');
   }
 
   getSyndicateStarters = (syn: Syndicate, race: number): string[] =>
@@ -415,7 +437,10 @@ export class MeetingComponent implements OnInit {
         .filter(h => this.starters.map(s => s.horse).includes(h))
         .length > 1
       )
-      .sort((s1, s2) => s2.horses.length - s1.horses.length);
+      .sort((s1, s2) =>
+        this.getSyndicateServiceHorseCount(s2.horses) -
+        this.getSyndicateServiceHorseCount(s1.horses)
+      );
   }
 
   get dividendPools(): DividendPool[] {
