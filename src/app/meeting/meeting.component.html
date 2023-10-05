@@ -226,11 +226,11 @@
         >
           {{getHorseDetail(h, race).order}}
           {{getHorseDetail(h, race).name}}
-          <span class="{{
-            getPlacingColorByHorse(h, race).length === 0
-            ? getOddsIntensityColor(getHorseDetail(h, race).odds)
-            : ''
-          }}"
+          <span *ngIf="getHorseDetail(h, race).odds > 0"
+                class="{{ getPlacingColorByHorse(h, race).length === 0
+                          ? getOddsIntensityColor(getHorseDetail(h, race).odds)
+                          : ''
+                       }}"
           >
             @{{getHorseDetail(h, race).odds}}
           </span>
