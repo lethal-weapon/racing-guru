@@ -4,6 +4,7 @@ import {RestRepository} from '../../model/rest.repository';
 import {SeasonPerformance} from '../../model/performance.model';
 import {PLACING_MAPS} from '../../util/strings';
 import {MAX_RACE_PER_MEETING} from '../../util/numbers';
+import {formatOdds} from '../../util/functions';
 
 @Component({
   selector: 'app-form-engine',
@@ -11,6 +12,7 @@ import {MAX_RACE_PER_MEETING} from '../../util/numbers';
 })
 export class FormEngineComponent implements OnInit {
 
+  protected readonly formatOdds = formatOdds;
   protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
 
@@ -20,9 +22,6 @@ export class FormEngineComponent implements OnInit {
   ngOnInit(): void {
     this.repo.fetchEnginePerformance();
   }
-
-  formatOdds = (topn: number, odds: number): string =>
-    odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString()
 
   formatMeeting = (meeting: string): string =>
     meeting.replace(/^\d{4}-/g, '')

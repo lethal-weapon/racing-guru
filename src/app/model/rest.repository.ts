@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 
 import {RestDataSource} from './rest.datasource';
-import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
 import {Syndicate} from './syndicate.model';
@@ -12,6 +11,12 @@ import {Racecard} from './racecard.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
 import {SeasonPerformance} from './performance.model';
+import {
+  DividendDto,
+  FavoritePost,
+  Interview,
+  SelectionPost
+} from './dto.model';
 
 @Injectable()
 export class RestRepository {
@@ -25,6 +30,7 @@ export class RestRepository {
   private racecards: Racecard[] = [];
   private factorHits: FactorHit[] = [];
   private performances: SeasonPerformance[] = [];
+  private dividends: DividendDto[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -39,6 +45,7 @@ export class RestRepository {
   findFactorHits = () => this.factorHits
   findPerformances = () => this.performances
   findSyndicates = () => this.syndicates
+  findDividends = () => this.dividends
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -123,5 +130,8 @@ export class RestRepository {
 
   fetchSyndicates = () =>
     this.source.getSyndicates().subscribe(data => this.syndicates = data)
+
+  fetchDividends = () =>
+    this.source.getDividends().subscribe(data => this.dividends = data)
 
 }

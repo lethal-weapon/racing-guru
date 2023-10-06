@@ -191,12 +191,7 @@
              class="text-xl"
       >
       <th class="w-24 border border-gray-600 py-1">
-        <span *ngIf="activePerson.length === 0">
-          <i class="fa fa-camera"></i>
-        </span>
-        <span *ngIf="activePerson.length > 0">
-          <i class="fa fa-calendar"></i>
-        </span>
+        <i class="fa fa-calendar"></i>
       </th>
       <th *counter="let race of MAX_RACE_PER_MEETING"
           class="w-32 border border-gray-600"
@@ -222,26 +217,23 @@
       </thead>
 
       <tbody *ngIf="activePerson.length === 0">
-      <tr *ngFor="let p of persons"
+      <tr *ngFor="let m of meetings"
           class="hover:bg-gray-800"
       >
-        <td class="h-10 border border-gray-700 text-xl py-1">
-          {{p}}
+        <td class="h-10 border border-gray-700 text-xl py-1"
+            [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+        >
+          {{formatMeeting(m.meeting)}}
         </td>
         <td *counter="let race of MAX_RACE_PER_MEETING"
-            class="h-10 border border-gray-700 py-1"
+            class="h-10 border border-gray-700 py-1 {{getDividendColor(m.meeting, race)}}"
+            [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
         >
-          <div class="grid grid-cols-4">
-            <div *ngFor="let stat of getPersonStatByRaceTop4(p, race); let index = index">
-              <span *ngIf="stat > 0"
-                    class="{{COLORS[index]}}"
-                    [class.opacity-25]="stat <= 3"
-              >
-                {{stat}}
-              </span>
-              <span *ngIf="stat === 0 && race < 11 && !isNewPlayer(p)">
-                <i class="fa fa-times"></i>
-              </span>
+          <div class="grid grid-cols-2">
+            <div *ngFor="let dn of getDividendNumbers(m.meeting, race)"
+                 [class.invisible]="dn <= 0"
+            >
+              {{formatOdds(dn)}}
             </div>
           </div>
         </td>

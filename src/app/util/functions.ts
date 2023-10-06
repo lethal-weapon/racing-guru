@@ -9,6 +9,9 @@ import {ONE_MILLION, PAYOUT_RATE} from './numbers';
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
 
+export const formatOdds = (odds: number): string =>
+  odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString()
+
 export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
   const spotTime = new Date(detectedAt);
   const diff = Math.floor((raceTime.getTime() - spotTime.getTime()) / 1000);

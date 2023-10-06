@@ -2,11 +2,12 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
-import {JOCKEYS, NEW_PEOPLE, TRAINERS} from '../model/person.model';
+import {JOCKEYS, TRAINERS} from '../model/person.model';
+import {formatOdds} from '../util/functions';
 import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES} from '../util/strings';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
-import {getPersonSummaryByRace} from '../util/functions';
+import {DEFAULT_DIVIDEND, DividendDto} from '../model/dto.model';
 
 @Component({
   selector: 'app-trend',
@@ -16,10 +17,11 @@ export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[0];
   activePersonView: string = this.personViews[0];
-  activePerson: string = 'WDJ';
+  activePerson: string = '';
   isRefreshButtonEnable: boolean = true;
   meetingIndex: number = 0;
 
+  protected readonly formatOdds = formatOdds;
   protected readonly COLORS = COLORS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
 
@@ -29,6 +31,7 @@ export class TrendComponent implements OnInit {
   ngOnInit(): void {
     this.repo.fetchHorses();
     this.repo.fetchMeetings();
+    this.repo.fetchDividends();
     setInterval(() => this.repo.fetchMeetings(), ONE_MINUTE);
   }
 
@@ -78,22 +81,6 @@ export class TrendComponent implements OnInit {
         else this.meetingIndex = maxIndex;
         break;
     }
-  }
-
-  isNewPlayer = (person: string): boolean =>
-    NEW_PEOPLE.map(p => p.code).includes(person)
-
-  getPersonStatByRaceTop4 = (person: string, race: number): number[] => {
-    const ps = this.getPersonStatByRace(person, race);
-    return [ps.wins, ps.seconds, ps.thirds, ps.fourths];
-  }
-
-  getPersonStatByRace = (person: string, race: number): PersonSummary => {
-    return getPersonSummaryByRace(
-      this.meetings.filter((m, index) => index > 0),
-      person,
-      race
-    )
   }
 
   getHorse = (code: string): Horse =>
@@ -278,6 +265,35 @@ export class TrendComponent implements OnInit {
     if (pastStarts.length === 0) return true;
     return pastStarts[0].trainer === this.activePerson;
   }
+
+  getDividendColor = (meeting: string, race: number): string => {
+    let count = 0;
+    const dividend = this.getDividend(meeting, race);
+
+    if (dividend.win >= 8) count += 1;
+    if (dividend.quinella >= 25) count += 1;
+    if (dividend.tierce >= 300) count += 1;
+    if (dividend.quartet >= 3000) count += 1;
+
+    if (count < 1) return COLORS[0];
+    if (count == 1 && dividend.win >= 8 && dividend.win < 10) return COLORS[0];
+
+    if (count < 3) return COLORS[1];
+    return COLORS[2];
+  }
+
+  getDividendNumbers = (meeting: string, race: number): number[] => {
+    const dividend = this.getDividend(meeting, race);
+    return [
+      dividend.win,
+      dividend.tierce,
+      dividend.quinella,
+      dividend.quartet
+    ];
+  }
+
+  getDividend = (meeting: string, race: number): DividendDto =>
+    this.repo.findDividends().find(d => d.meeting == meeting && d.race == race) || DEFAULT_DIVIDEND
 
   getActivePersonViewByHorse = (retired: boolean = false):
     Array<{ horse: string, starters: EarningStarter[] }> => {

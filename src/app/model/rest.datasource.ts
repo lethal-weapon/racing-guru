@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
-import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
 import {Syndicate} from './syndicate.model';
@@ -14,6 +13,12 @@ import {FactorHit} from './backtest.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
 import {SeasonPerformance} from './performance.model';
+import {
+  DividendDto,
+  FavoritePost,
+  Interview,
+  SelectionPost
+} from './dto.model';
 
 @Injectable()
 export class RestDataSource {
@@ -71,5 +76,8 @@ export class RestDataSource {
 
   getSyndicates = (): Observable<Syndicate[]> =>
     this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
+
+  getDividends = (): Observable<DividendDto[]> =>
+    this.http.get<DividendDto[]>(`${this.baseUrl}/dividends`)
 
 }

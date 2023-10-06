@@ -77,7 +77,7 @@
              class="{{pm.color}}"
              [class.invisible]="getHitRaceOdds(index + 1, m, race) < 1"
         >
-          {{formatOdds(index + 1, getHitRaceOdds(index + 1, m, race))}}
+          {{formatOdds(getHitRaceOdds(index + 1, m, race))}}
         </div>
       </div>
     </td>
