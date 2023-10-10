@@ -156,10 +156,10 @@
          class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center"
   >
     <thead>
-    <th class="w-28 border border-gray-600">
+    <th class="w-28 border border-gray-600 border-b-red-900">
     </th>
     <th *counter="let order of maxChallengerOrder"
-        class="w-28 border border-gray-600"
+        class="w-28 border border-gray-600 border-b-red-900"
     >
       {{order}}
     </th>
@@ -168,13 +168,16 @@
     <tr *ngFor="let personType of ['Jockey', 'Jockey', 'Trainer', 'Trainer']; let index = index"
         class="hover:bg-gray-800"
     >
-      <td class="border border-gray-700">
+      <td class="border border-gray-700"
+          [class.border-b-red-900]="index == 1"
+      >
         <div *ngIf="index % 2 === 0">
           {{personType === 'Jockey' ? 'JKC' : 'TNC'}}
         </div>
       </td>
       <td *counter="let order of maxChallengerOrder"
           class="border border-gray-700"
+          [class.border-b-red-900]="index == 1"
           [class.text-yellow-400]="isPreferredChallenger(personType, order)"
       >
         <div *ngIf="index % 2 === 0">
