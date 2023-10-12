@@ -409,7 +409,10 @@ export class MeetingComponent implements OnInit {
       .length;
 
   getSyndicateRepresentative = (syn: Syndicate): string => {
-    if (syn.members.length === 1) return syn.members[0].replace('團體', '');
+    if (syn.members.length === 1) {
+      if (syn.members[0].includes('競駿會')) return '競駿會';
+      return syn.members[0].replace('團體', '');
+    }
 
     const individuals = syn.members.filter(m => !m.includes('團體'));
     if (individuals.length > 0) {

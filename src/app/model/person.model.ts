@@ -15,10 +15,16 @@ export class Person {
 
 export const TRAINERS = [
   new Person('SJJ', '1954-07-10', 'Size', 'John', 'J. Size', 'AUS', '', '', 1414),
-  new Person('LFC', '1966-02-14', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie', 329),
-  new Person('NPC', '1983-08-02', 'Ng', 'Pang-chi', 'P. Ng', 'HK', '', 'Pierre', 0),
   new Person('HAD', '1963-10-27', 'Hall', 'David', 'D. Hall', 'AUS', '', '', 546),
   new Person('HDA', '1962-10-22', 'Hayes', 'David', 'D. Hayes', 'AUS', '', '', 526),
+  new Person('RW', '1989-08-19', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
+  new Person('NM', '1968-01-01', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
+
+  new Person('FC', '1967-08-12', 'Fownes', 'Caspar', 'C. Fownes', 'GB', '', '', 1012),
+  new Person('WDJ', '1971-11-15', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', '', 131),
+  new Person('LFC', '1966-02-14', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie', 329),
+  new Person('NPC', '1983-08-02', 'Ng', 'Pang-chi', 'P. Ng', 'HK', '', 'Pierre', 0),
+  new Person('MWK', '1978-01-01', 'Mo', 'Wai-kit', 'C. Mo', 'HK', '', 'Cody', 0),
 
   new Person('CAS', '1956-12-24', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony', 1413),
   new Person('YPF', '1957-07-12', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky', 899),
@@ -27,17 +33,11 @@ export const TRAINERS = [
   new Person('SCS', '1959-06-27', 'Shum', 'Chap-shing', 'D. Shum', 'HK', '', 'Danny', 731),
   new Person('YTP', '1958-12-03', 'Yung', 'Tin-pang', 'B. Yung', 'HK', '', 'Benno', 278),
 
-  new Person('FC', '1967-08-12', 'Fownes', 'Caspar', 'C. Fownes', 'GB', '', '', 1012),
-  new Person('WDJ', '1971-11-15', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', '', 131),
   new Person('SWY', '1968-12-10', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris', 308),
   new Person('YCH', '1967-07-28', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis', 797),
   new Person('TKH', '1972-08-09', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy', 134),
-
-  new Person('RW', '1989-08-19', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
   new Person('CCW', '1961-12-02', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael', 321),
   new Person('TYS', '1960-09-30', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me', 597),
-  new Person('NM', '1968-01-01', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
-  new Person('MWK', '1978-01-01', 'Mo', 'Wai-kit', 'C. Mo', 'HK', '', 'Cody', 0),
 
   // new Person('HL', '1960-07-06', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
   // new Person('GR', '1969-09-12', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', '', 277),
