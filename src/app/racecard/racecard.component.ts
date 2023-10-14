@@ -11,7 +11,6 @@ import {
   COLORS,
   COMMON_HORSE_ORIGINS,
   PLACING_MAPS,
-  TOP_PLAYERS
 } from '../util/strings';
 import {
   Collaboration,
@@ -297,9 +296,7 @@ export class RacecardComponent implements OnInit {
     const pair = [starter.jockey, starter.trainer];
     const blacklist = this.meetingNote.blacklist.map(pw => pw.person);
     const whitelist = this.meetingNote.whitelist.map(pw => pw.person);
-    const birthlist = this.meetingNote.birthdays
-      .map(bp => bp.person)
-      .filter(p => TOP_PLAYERS.includes(p));
+    const birthlist = this.meetingNote.birthdays.map(bp => bp.person);
 
     const blacks = pair.filter(p => blacklist.includes(p)).length;
     const whites = pair.filter(p => whitelist.includes(p)).length;

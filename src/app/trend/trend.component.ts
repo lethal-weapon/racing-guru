@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
+import {Syndicate} from '../model/syndicate.model';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {formatOdds} from '../util/functions';
@@ -15,9 +16,10 @@ import {DEFAULT_DIVIDEND, DividendDto} from '../model/dto.model';
 })
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
-  activeSubsection: string = this.subsections[0];
+  activeSubsection: string = this.subsections[2];
   activePersonView: string = this.personViews[0];
   activePerson: string = '';
+  activeSyndicate: number = 1;
   isRefreshButtonEnable: boolean = true;
   meetingIndex: number = 0;
 
@@ -32,6 +34,7 @@ export class TrendComponent implements OnInit {
     this.repo.fetchHorses();
     this.repo.fetchMeetings();
     this.repo.fetchDividends();
+    this.repo.fetchSyndicates();
     setInterval(() => this.repo.fetchMeetings(), ONE_MINUTE);
   }
 
@@ -46,6 +49,9 @@ export class TrendComponent implements OnInit {
 
   setActivePerson = (clicked: string) =>
     this.activePerson = this.activePerson == clicked ? '' : clicked
+
+  setActiveSyndicate = (clicked: number) =>
+    this.activeSyndicate = this.activeSyndicate == clicked ? 0 : clicked
 
   refresh = () => {
     if (this.isRefreshButtonEnable) {
@@ -104,6 +110,26 @@ export class TrendComponent implements OnInit {
       .filter(s => s.race === race) || [];
   }
 
+  getSyndicateStarters = (meeting: Meeting, race: number): EarningStarter[] => {
+    const activeSyndicateHorses = this.repo.findSyndicates()
+      .find(s => s.id === this.activeSyndicate)
+      ?.horses || [];
+
+    let starters: EarningStarter[] = [];
+    meeting.persons
+      .map(p => p.starters)
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(s => s.race === race)
+      .filter(s => activeSyndicateHorses.includes(s.horse))
+      .forEach(es => {
+        if (!starters.map(s => s.horse).includes(es.horse)) {
+          starters.push(es);
+        }
+      });
+
+    return starters;
+  }
+
   getSectionStyle = (section: string): string =>
     [this.activeSection, this.activeSubsection, this.activePersonView].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
@@ -123,6 +149,63 @@ export class TrendComponent implements OnInit {
     if (value == 0) {
       return ['engagements', 'earnings'].includes(key) ? 'X' : '';
     }
+    return value.toString();
+  }
+
+  getSyndicateCellValue = (syn: Syndicate, meeting: string, key: string): string => {
+    const meetings = this.meetings.filter(m => m.meeting == meeting);
+    if (meetings.length !== 1) return '';
+
+    let starters: EarningStarter[] = [];
+    meetings[0]
+      .persons
+      .map(p => p.starters)
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(s => syn.horses.includes(s.horse))
+      .forEach(es => {
+        if (!starters.map(s => s.horse).includes(es.horse)) {
+          starters.push(es);
+        }
+      });
+
+    if (starters.length === 0) return '';
+
+    let value: number = 0;
+    switch (key) {
+      case 'wins':
+        value = starters.filter(s => s?.placing === 1).length;
+        break;
+      case 'seconds':
+        value = starters.filter(s => s?.placing === 2).length;
+        break;
+      case 'thirds':
+        value = starters.filter(s => s?.placing === 3).length;
+        break;
+      case 'fourths':
+        value = starters.filter(s => s?.placing === 4).length;
+        break;
+      case 'engagements':
+        value = starters.length;
+        break;
+      case 'earnings':
+        value = starters
+          .map(s => {
+            if (s?.placing === 1) return s?.winOdds || 0;
+            else if (s?.placing === 2) return (s?.winOdds || 0) / 3;
+            else if (s?.placing === 3) return (s?.winOdds || 0) / 4;
+            else if (s?.placing === 4) return (s?.winOdds || 0) / 10;
+            else return 0;
+          })
+          .reduce((prev, curr) => prev + curr, 0);
+        break;
+    }
+
+    if (key === 'earnings') {
+      if (value === 0) return 'X';
+      return value.toFixed(1);
+    }
+
+    if (value === 0) return '';
     return value.toString();
   }
 
@@ -266,6 +349,16 @@ export class TrendComponent implements OnInit {
     return pastStarts[0].trainer === this.activePerson;
   }
 
+  isOnMostRecentRacecard = (code: string): boolean => {
+    if (this.meetings.length < 1) return false;
+    return this.meetings[0]
+      .persons
+      .map(p => p.starters)
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .map(s => s.horse)
+      .includes(code);
+  }
+
   getDividendColor = (meeting: string, race: number): string => {
     let count = 0;
     const dividend = this.getDividend(meeting, race);
@@ -336,6 +429,12 @@ export class TrendComponent implements OnInit {
     );
   }
 
+  getSyndicateActiveHorseCount = (horses: string[]): number =>
+    this.repo.findHorses()
+      .filter(h => horses.includes(h.code))
+      .filter(h => !h.retired)
+      .length;
+
   get maxActivePersonHorseTop4Count(): number {
     return [false, true]
       .map(retired => this.getActivePersonViewByHorse(retired)
@@ -364,6 +463,31 @@ export class TrendComponent implements OnInit {
         return {title: title, link: link}
       }
     )
+  }
+
+  get syndicates(): Syndicate[] {
+    if (this.meetings.length === 0) return [];
+    const currentMeeting = this.meetings[0].meeting;
+
+    return this.repo.findSyndicates()
+      .filter(s => this.getSyndicateActiveHorseCount(s.horses) > 1)
+      .filter(s => this.getSyndicateCellValue(s, currentMeeting, 'engagements').length > 0)
+      .sort((s1, s2) =>
+        (
+          this.getSyndicateCellValue(s2, currentMeeting, 'engagements').localeCompare(
+            this.getSyndicateCellValue(s1, currentMeeting, 'engagements')
+          )
+        )
+        ||
+        (
+          this.getSyndicateActiveHorseCount(s2.horses) -
+          this.getSyndicateActiveHorseCount(s1.horses)
+        )
+        ||
+        s2.members.length - s1.members.length
+        ||
+        s1.id - s2.id
+      );
   }
 
   get activePersonName(): string {
@@ -418,7 +542,7 @@ export class TrendComponent implements OnInit {
   }
 
   get subsections(): string[] {
-    return ['Trainers', 'Jockeys'];
+    return ['Trainers', 'Jockeys', 'Syndicates'];
   }
 
   get sections(): string[] {
