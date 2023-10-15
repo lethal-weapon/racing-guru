@@ -18,8 +18,9 @@ export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[2];
   activePersonView: string = this.personViews[0];
+  activeMeeting: string = '';
   activePerson: string = '';
-  activeSyndicate: number = 1;
+  activeSyndicate: number = 0;
   isRefreshButtonEnable: boolean = true;
   meetingIndex: number = 0;
 
@@ -46,6 +47,9 @@ export class TrendComponent implements OnInit {
 
   setActivePersonView = (clicked: string) =>
     this.activePersonView = clicked
+
+  setActiveMeeting = (clicked: string) =>
+    this.activeMeeting = clicked
 
   setActivePerson = (clicked: string) =>
     this.activePerson = this.activePerson == clicked ? '' : clicked
@@ -129,6 +133,49 @@ export class TrendComponent implements OnInit {
 
     return starters;
   }
+
+  getVariableStarterSyndicateStarters =
+    (engagements: string, race: number): EarningStarter[] => {
+
+      if (this.syndicates.length === 0) return [];
+
+      const selectedMeeting = this.activeMeeting.length > 0
+        ? this.activeMeeting
+        : this.meetings[0].meeting;
+
+      const syndicateHorses = this.syndicates
+        .filter(s => {
+          const e = this.getSyndicateCellValue(s, selectedMeeting, 'engagements');
+          if (e.length === 0) return false;
+          if (engagements === 'OTHERS') return true;
+
+          return engagements === 'SINGLE' ? parseInt(e) === 1 : parseInt(e) > 1;
+        })
+        .map(s => s.horses)
+        .reduce((prev, curr) => prev.concat(curr), []);
+
+      const targetHorses = engagements !== 'OTHERS'
+        ? syndicateHorses
+        : this.repo.findHorses()
+          .map(h => h.code)
+          .filter(c => !syndicateHorses.includes(c));
+
+      let starters: EarningStarter[] = [];
+      this.meetings
+        .find(m => m.meeting === selectedMeeting)
+        ?.persons
+        .map(p => p.starters)
+        .reduce((prev, curr) => prev.concat(curr), [])
+        .filter(s => s.race === race)
+        .filter(s => targetHorses.includes(s.horse))
+        .forEach(es => {
+          if (!starters.map(s => s.horse).includes(es.horse)) {
+            starters.push(es);
+          }
+        });
+
+      return starters;
+    }
 
   getSectionStyle = (section: string): string =>
     [this.activeSection, this.activeSubsection, this.activePersonView].includes(section)
@@ -435,6 +482,10 @@ export class TrendComponent implements OnInit {
       .filter(h => !h.retired)
       .length;
 
+  get variableStarterSyndicateKinds(): string[] {
+    return ['SINGLE', 'MULTIPLE', 'OTHERS'];
+  }
+
   get maxActivePersonHorseTop4Count(): number {
     return [false, true]
       .map(retired => this.getActivePersonViewByHorse(retired)
@@ -446,7 +497,7 @@ export class TrendComponent implements OnInit {
       .pop() || 1;
   }
 
-  get overviews(): Array<{ title: string, link: string }> {
+  get overviews(): Array<{ title: string, link: string, meeting: string }> {
     return this.windowMeetings.map(m => {
         const title = `
           ${this.formatMeeting(m.meeting)}
@@ -460,22 +511,24 @@ export class TrendComponent implements OnInit {
           English/Racing/ResultsAll.aspx?RaceDate=${date}
         `.replace(/\s/g, '');
 
-        return {title: title, link: link}
+        return {title: title, link: link, meeting: m.meeting}
       }
     )
   }
 
   get syndicates(): Syndicate[] {
     if (this.meetings.length === 0) return [];
-    const currentMeeting = this.meetings[0].meeting;
+    const selectedMeeting = this.activeMeeting.length > 0
+      ? this.activeMeeting
+      : this.meetings[0].meeting;
 
     return this.repo.findSyndicates()
       .filter(s => this.getSyndicateActiveHorseCount(s.horses) > 1)
-      .filter(s => this.getSyndicateCellValue(s, currentMeeting, 'engagements').length > 0)
+      .filter(s => this.getSyndicateCellValue(s, selectedMeeting, 'engagements').length > 0)
       .sort((s1, s2) =>
         (
-          this.getSyndicateCellValue(s2, currentMeeting, 'engagements').localeCompare(
-            this.getSyndicateCellValue(s1, currentMeeting, 'engagements')
+          this.getSyndicateCellValue(s2, selectedMeeting, 'engagements').localeCompare(
+            this.getSyndicateCellValue(s1, selectedMeeting, 'engagements')
           )
         )
         ||

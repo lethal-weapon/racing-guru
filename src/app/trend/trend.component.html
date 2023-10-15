@@ -82,14 +82,11 @@
       </td>
       <td *ngFor="let overview of overviews"
           colspan="6"
-          class="border border-gray-700"
+          class="border border-gray-700 cursor-pointer"
+          [class.text-yellow-400]="activeMeeting === overview.meeting"
+          (click)="setActiveMeeting(overview.meeting)"
       >
-        <a class="hover:underline"
-           target="_blank"
-           href="{{overview.link}}"
-        >
-          {{overview.title}}
-        </a>
+        {{overview.title}}
       </td>
     </tr>
     <tr>
@@ -233,7 +230,7 @@
 
     <table class="mx-auto table-fixed border-collapse font-mono">
       <thead
-        *ngIf="activeSyndicate > 0 || activePerson.length === 0 || (activePerson.length > 0 && activePersonView == personViews[0])"
+        *ngIf="activePerson.length === 0 || (activePerson.length > 0 && activePersonView == personViews[0])"
         class="text-xl"
       >
       <th class="w-24 border border-gray-600 py-1">
@@ -380,6 +377,28 @@
       </ng-container>
 
       <ng-container *ngIf="activeSubsection == subsections[2]">
+        <tbody *ngIf="activeSyndicate === 0">
+        <tr *ngFor="let kind of variableStarterSyndicateKinds">
+          <td class="h-10 border border-gray-700">
+            {{kind}}
+          </td>
+          <td *counter="let race of MAX_RACE_PER_MEETING"
+              class="border border-gray-700 text-xs py-3"
+          >
+            <div class="flex flex-col gap-y-2">
+              <div *ngFor="let starter of getVariableStarterSyndicateStarters(kind, race)"
+                   class="{{getStarterColor(starter)}}"
+                   [class.line-through]="!starter?.winOdds"
+                   [class.text-yellow-400]="!starter?.winOdds"
+              >
+                {{starter.order}}
+                {{getStarterHorse(starter).nameCH}}
+                @{{starter?.winOdds || 0 > 0 ? starter?.winOdds : ''}}
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
         <tbody *ngIf="activeSyndicate > 0">
         <tr *ngFor="let m of meetings"
             class="hover:bg-gray-800"
