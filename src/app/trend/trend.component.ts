@@ -9,6 +9,7 @@ import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES} from '../util/strings';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 import {DEFAULT_DIVIDEND, DividendDto} from '../model/dto.model';
+import {of} from "rxjs";
 
 @Component({
   selector: 'app-trend',
@@ -137,13 +138,14 @@ export class TrendComponent implements OnInit {
   getVariableStarterSyndicateStarters =
     (engagements: string, race: number): EarningStarter[] => {
 
-      if (this.syndicates.length === 0) return [];
+      if (this.meetings.length === 0) return [];
 
       const selectedMeeting = this.activeMeeting.length > 0
         ? this.activeMeeting
         : this.meetings[0].meeting;
 
-      const syndicateHorses = this.syndicates
+      const syndicateHorses = this.repo.findSyndicates()
+        .filter(s => this.getSyndicateActiveHorseCount(s.horses) > 1)
         .filter(s => {
           const e = this.getSyndicateCellValue(s, selectedMeeting, 'engagements');
           if (e.length === 0) return false;
@@ -404,6 +406,26 @@ export class TrendComponent implements OnInit {
       .reduce((prev, curr) => prev.concat(curr), [])
       .map(s => s.horse)
       .includes(code);
+  }
+
+  isRaceFinished = (race: number): boolean => {
+    const selectedMeeting = this.activeMeeting.length > 0
+      ? this.activeMeeting
+      : this.meetings[0].meeting;
+
+    const venue = this.meetings
+      .find(m => m.meeting === selectedMeeting)
+      ?.venue;
+
+    if (!venue) return false;
+
+    const currTime = new Date().getTime();
+    const meetingStartTime = venue === 'HV'
+      ? new Date(`${selectedMeeting}T18:45:00+08:00`).getTime()
+      : new Date(`${selectedMeeting}T13:00:00+08:00`).getTime();
+
+    const offset = (race - 1) * 1800 * 1000;
+    return currTime > meetingStartTime + offset;
   }
 
   getDividendColor = (meeting: string, race: number): string => {

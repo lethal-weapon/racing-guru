@@ -388,12 +388,12 @@
             <div class="flex flex-col gap-y-2">
               <div *ngFor="let starter of getVariableStarterSyndicateStarters(kind, race)"
                    class="{{getStarterColor(starter)}}"
-                   [class.line-through]="!starter?.winOdds"
-                   [class.text-yellow-400]="!starter?.winOdds"
+                   [class.line-through]="isRaceFinished(race) && !starter?.winOdds"
+                   [class.text-yellow-400]="isRaceFinished(race) && !starter?.winOdds"
               >
                 {{starter.order}}
                 {{getStarterHorse(starter).nameCH}}
-                @{{starter?.winOdds || 0 > 0 ? starter?.winOdds : ''}}
+                {{starter?.winOdds || 0 > 0 ? '@' + starter?.winOdds : ''}}
               </div>
             </div>
           </td>
