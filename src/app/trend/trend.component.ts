@@ -9,7 +9,6 @@ import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES} from '../util/strings';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 import {DEFAULT_DIVIDEND, DividendDto} from '../model/dto.model';
-import {of} from "rxjs";
 
 @Component({
   selector: 'app-trend',
@@ -37,7 +36,11 @@ export class TrendComponent implements OnInit {
     this.repo.fetchMeetings();
     this.repo.fetchDividends();
     this.repo.fetchSyndicates();
-    setInterval(() => this.repo.fetchMeetings(), ONE_MINUTE);
+
+    setInterval(() => {
+      this.repo.fetchMeetings();
+      this.repo.fetchDividends();
+    }, ONE_MINUTE);
   }
 
   setActiveSection = (clicked: string) =>
@@ -606,6 +609,13 @@ export class TrendComponent implements OnInit {
 
   get meetings(): Meeting[] {
     return this.repo.findMeetings();
+  }
+
+  get isLoading(): boolean {
+    return this.repo.findHorses().length === 0
+      || this.repo.findMeetings().length === 0
+      || this.repo.findDividends().length === 0
+      || this.repo.findSyndicates().length === 0
   }
 
   get controlStyle(): string {
