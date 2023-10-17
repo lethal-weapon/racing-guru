@@ -408,23 +408,6 @@ export class MeetingComponent implements OnInit {
       .filter(h => !h.retired)
       .length;
 
-  getSyndicateRepresentative = (syn: Syndicate): string => {
-    if (syn.members.length === 1) {
-      if (syn.members[0].includes('競駿會')) return '競駿會';
-      return syn.members[0].replace('團體', '');
-    }
-
-    const individuals = syn.members.filter(m => !m.includes('團體'));
-    if (individuals.length > 0) {
-      for (let i = 0; i < individuals.length; i++) {
-        if (individuals[i].length === 3) return individuals[i];
-      }
-      return individuals.sort((p1, p2) => p1.length - p2.length)[0];
-    }
-
-    return syn.members[0].replace('團體', '');
-  }
-
   getSyndicateStarters = (syn: Syndicate, race: number): string[] =>
     syn.horses
       .filter(h =>

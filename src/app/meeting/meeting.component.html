@@ -212,11 +212,11 @@
         class="hover:bg-gray-800"
     >
       <td class="border border-gray-700">
-        <div class="grid grid-cols-2">
-          <div class="col-span-1">
-            {{getSyndicateRepresentative(syn) | truncate:[3]}}
+        <div class="grid grid-cols-5">
+          <div class="col-span-2">
+            #{{syn.id}}
           </div>
-          <div class="col-span-1">
+          <div class="col-span-3">
             ({{syn.members.length}}, {{getSyndicateServiceHorseCount(syn.horses)}})
           </div>
         </div>
