@@ -61,6 +61,12 @@ export class TrendComponent implements OnInit {
   setActiveSyndicate = (clicked: number) =>
     this.activeSyndicate = this.activeSyndicate == clicked ? 0 : clicked
 
+  setActiveSyndicateByHorse = (horse: string) => {
+    this.activeSyndicate = this.syndicates
+      .find(s => s.horses.includes(horse))
+      ?.id || 0;
+  }
+
   refresh = () => {
     if (this.isRefreshButtonEnable) {
       this.isRefreshButtonEnable = false;
@@ -138,12 +144,20 @@ export class TrendComponent implements OnInit {
     return starters;
   }
 
+  getVariableStarterSyndicateCount = (engagements: string): number => {
+    return Array(MAX_RACE_PER_MEETING)
+      .fill(1)
+      .map((e, index) => 1 + index)
+      .map(r => this.getVariableStarterSyndicateStarters(engagements, r).length)
+      .reduce((prev, curr) => prev + curr, 0);
+  }
+
   getVariableStarterSyndicateStarters =
     (engagements: string, race: number): EarningStarter[] => {
 
       if (this.meetings.length === 0) return [];
 
-      const selectedMeeting = this.activeMeeting.length > 0
+      let selectedMeeting = this.activeMeeting.length > 0
         ? this.activeMeeting
         : this.meetings[0].meeting;
 

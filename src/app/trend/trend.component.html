@@ -386,19 +386,26 @@
         </ng-container>
 
         <ng-container *ngIf="activeSubsection == subsections[2]">
-          <tbody *ngIf="activeSyndicate === 0">
-          <tr *ngFor="let kind of variableStarterSyndicateKinds">
-            <td class="h-10 border border-gray-700">
-              {{kind}}
+          <tbody>
+          <tr *ngFor="let kind of variableStarterSyndicateKinds; let last = last">
+            <td class="h-10 border border-gray-700"
+                [class.border-b-yellow-400]="last"
+            >
+              <div>{{kind}}</div>
+              <div class="text-lg">
+                {{getVariableStarterSyndicateCount(kind)}}
+              </div>
             </td>
             <td *counter="let race of MAX_RACE_PER_MEETING"
                 class="border border-gray-700 text-xs py-3"
+                [class.border-b-yellow-400]="last"
             >
               <div class="flex flex-col gap-y-2">
                 <div *ngFor="let starter of getVariableStarterSyndicateStarters(kind, race)"
-                     class="{{getStarterColor(starter)}}"
+                     class="cursor-pointer {{getStarterColor(starter)}}"
                      [class.line-through]="isRaceFinished(race) && !starter?.winOdds"
                      [class.text-yellow-400]="isRaceFinished(race) && !starter?.winOdds"
+                     (click)="setActiveSyndicateByHorse(starter.horse)"
                 >
                   {{starter.order}}
                   {{getStarterHorse(starter).nameCH}}
@@ -407,34 +414,34 @@
               </div>
             </td>
           </tr>
-          </tbody>
-          <tbody *ngIf="activeSyndicate > 0">
-          <tr *ngFor="let m of meetings"
-              class="hover:bg-gray-800"
-          >
-            <td class="h-10 border border-gray-700 text-xl py-1"
-                [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+          <ng-container *ngIf="activeSyndicate > 0">
+            <tr *ngFor="let m of meetings"
+                class="hover:bg-gray-800"
             >
-              {{formatMeeting(m.meeting)}}
-            </td>
-            <td *counter="let race of MAX_RACE_PER_MEETING"
-                class="h-10 border border-gray-700 text-xs py-1"
-                [class.bg-gray-700]="getSyndicateStarters(m, race).length > 1"
-                [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
-            >
-              <div class="flex flex-col gap-y-1">
-                <div *ngFor="let starter of getSyndicateStarters(m, race)"
-                     class="{{getStarterColor(starter)}}"
-                     [class.line-through]="!starter?.winOdds"
-                     [class.text-yellow-400]="!starter?.winOdds"
-                >
-                  {{starter?.winOdds || 0 > 0 ? starter?.winOdds : ''}}
-                  {{getStarterHorse(starter).nameCH}}
-                  {{starter.partner}}
+              <td class="h-10 border border-gray-700 text-xl py-1"
+                  [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+              >
+                {{formatMeeting(m.meeting)}}
+              </td>
+              <td *counter="let race of MAX_RACE_PER_MEETING"
+                  class="h-10 border border-gray-700 text-xs py-1"
+                  [class.bg-gray-700]="getSyndicateStarters(m, race).length > 1"
+                  [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+              >
+                <div class="flex flex-col gap-y-1">
+                  <div *ngFor="let starter of getSyndicateStarters(m, race)"
+                       class="{{getStarterColor(starter)}}"
+                       [class.line-through]="!starter?.winOdds"
+                       [class.text-yellow-400]="!starter?.winOdds"
+                  >
+                    {{starter?.winOdds || 0 > 0 ? starter?.winOdds : ''}}
+                    {{getStarterHorse(starter).nameCH}}
+                    {{starter.partner}}
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
+          </ng-container>
           </tbody>
         </ng-container>
       </table>
