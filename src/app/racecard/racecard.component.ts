@@ -22,7 +22,8 @@ import {
   PAYOUT_RATE,
   SENIOR_HORSE_AGE,
   THREE_SECONDS,
-  ONE_MINUTE
+  ONE_MINUTE,
+  ONE_DAY_MILL
 } from '../util/numbers';
 import {
   getCurrentMeeting,
@@ -258,6 +259,25 @@ export class RacecardComponent implements OnInit {
     const publicChance = parseFloat(investments[0].percent.replace('%', ''));
 
     return modelChance - publicChance >= 3;
+  }
+
+  getDaysSinceLastRun = (starter: Starter): number => {
+    const pastStarts = this.getHorse(starter).pastStarters;
+    if (pastStarts.length === 0) return 0;
+
+    const currentMeeting = this.racecards[0].meeting;
+    const lastStartMeeting = pastStarts
+      .map(ps => ps.meeting)
+      .sort((m1, m2) => m2.localeCompare(m1))
+      .shift() || '';
+
+    if (currentMeeting.length < 1 || lastStartMeeting.length < 1) return 0;
+
+    const diffMilliseconds =
+      new Date(currentMeeting).getTime() -
+      new Date(lastStartMeeting).getTime();
+
+    return diffMilliseconds / ONE_DAY_MILL;
   }
 
   getStarterStatSumColor = (starter: Starter, index: number): string => {
