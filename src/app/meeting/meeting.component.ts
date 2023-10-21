@@ -424,8 +424,19 @@ export class MeetingComponent implements OnInit {
         .length > 1
       )
       .sort((s1, s2) =>
-        this.getSyndicateServiceHorseCount(s2.horses) -
-        this.getSyndicateServiceHorseCount(s1.horses)
+        (
+          s2.horses.filter(h => this.starters.map(s => s.horse).includes(h)).length -
+          s1.horses.filter(h => this.starters.map(s => s.horse).includes(h)).length
+        )
+        ||
+        (
+          this.getSyndicateServiceHorseCount(s2.horses) -
+          this.getSyndicateServiceHorseCount(s1.horses)
+        )
+        ||
+        s2.members.length - s1.members.length
+        ||
+        s1.id - s2.id
       );
   }
 
