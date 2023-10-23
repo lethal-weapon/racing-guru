@@ -11,7 +11,7 @@ import {Syndicate} from '../../model/syndicate.model';
 })
 export class FormOwnerComponent implements OnInit {
 
-  criteria: string = 'beauty';
+  criteria: string = 'California';
   hoverHorse: string = '';
   activeSyndicate: Syndicate = {id: 0, members: [], horses: []};
 
