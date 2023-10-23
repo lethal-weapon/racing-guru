@@ -41,6 +41,17 @@ export class FormEngineComponent implements OnInit {
     }
   }
 
+  isBoundaryMeeting = (meeting: string): boolean =>
+    this.meetings
+      .map(m => m.slice(0, 7))
+      .filter((prefix, i, array) => array.indexOf(prefix) === i)
+      .map(prefix => this.meetings
+        .filter(m => m.startsWith(prefix))
+        .sort((m1, m2) => m1.localeCompare(m2))
+        .shift()
+      )
+      .includes(meeting);
+
   getHitRaceOdds = (topn: number, meeting: string, race: number): number =>
     this.performances
       .map(p => p.hits)

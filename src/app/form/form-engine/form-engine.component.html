@@ -63,14 +63,17 @@
   </th>
   </thead>
   <tbody>
-  <tr *ngFor="let m of meetings"
+  <tr *ngFor="let m of meetings; let last = last"
       class="hover:bg-gray-800"
   >
-    <td class="border border-gray-700 text-xl py-1">
+    <td class="border border-gray-700 text-xl py-1"
+        [class.border-b-yellow-400]="!last && isBoundaryMeeting(m)"
+    >
       {{formatMeeting(m)}}
     </td>
     <td *counter="let race of MAX_RACE_PER_MEETING"
         class="border border-gray-700 py-1"
+        [class.border-b-yellow-400]="!last && isBoundaryMeeting(m)"
     >
       <div class="grid grid-cols-2">
         <div *ngFor="let pm of PLACING_MAPS; let index = index"

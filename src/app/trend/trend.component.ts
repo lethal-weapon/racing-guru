@@ -438,7 +438,7 @@ export class TrendComponent implements OnInit {
 
     const currTime = new Date().getTime();
     const meetingStartTime = venue === 'HV'
-      ? new Date(`${selectedMeeting}T18:45:00+08:00`).getTime()
+      ? new Date(`${selectedMeeting}T19:15:00+08:00`).getTime()
       : new Date(`${selectedMeeting}T13:00:00+08:00`).getTime();
 
     const offset = (race - 1) * 2000 * 1000;
