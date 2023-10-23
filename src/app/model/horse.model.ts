@@ -20,6 +20,7 @@ export class Horse {
     public total3rd      : number,
     public totalRuns     : number,
     public retired       : boolean,
+    public retiredAt     : string,
     public targetMeeting : string,
     public pastStarters  : PastStarter[]
   ) {
@@ -38,6 +39,7 @@ export const DEFAULT_HORSE : Horse = {
   total3rd      : 0,
   totalRuns     : 0,
   retired       : false,
+  retiredAt     : '2000-01-01',
   targetMeeting : '2000-01-01',
   pastStarters: []
 }

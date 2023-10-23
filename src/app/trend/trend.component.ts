@@ -162,7 +162,7 @@ export class TrendComponent implements OnInit {
         : this.meetings[0].meeting;
 
       const syndicateHorses = this.repo.findSyndicates()
-        .filter(s => this.getSyndicateActiveHorseCount(s.horses) > 1)
+        .filter(s => this.getSyndicateActiveHorseCount(s.horses, selectedMeeting) > 1)
         .filter(s => {
           const e = this.getSyndicateCellValue(s, selectedMeeting, 'engagements');
           if (e.length === 0) return false;
@@ -515,11 +515,19 @@ export class TrendComponent implements OnInit {
     );
   }
 
-  getSyndicateActiveHorseCount = (horses: string[]): number =>
-    this.repo.findHorses()
+  getSyndicateActiveHorseCount = (horses: string[], meeting: string = ''): number => {
+    let selectedMeeting = meeting;
+    if (meeting.length === 0) {
+      selectedMeeting = this.activeMeeting.length > 0
+        ? this.activeMeeting
+        : this.meetings[0].meeting;
+    }
+
+    return this.repo.findHorses()
       .filter(h => horses.includes(h.code))
-      .filter(h => !h.retired)
+      .filter(h => !h.retired || (h.retiredAt > selectedMeeting))
       .length;
+  }
 
   get variableStarterSyndicateKinds(): string[] {
     return ['SINGLE', 'MULTIPLE', 'OTHERS'];
@@ -562,7 +570,7 @@ export class TrendComponent implements OnInit {
       : this.meetings[0].meeting;
 
     return this.repo.findSyndicates()
-      .filter(s => this.getSyndicateActiveHorseCount(s.horses) > 1)
+      .filter(s => this.getSyndicateActiveHorseCount(s.horses, selectedMeeting) > 1)
       .filter(s => this.getSyndicateCellValue(s, selectedMeeting, 'engagements').length > 0)
       .sort((s1, s2) =>
         (
@@ -572,8 +580,8 @@ export class TrendComponent implements OnInit {
         )
         ||
         (
-          this.getSyndicateActiveHorseCount(s2.horses) -
-          this.getSyndicateActiveHorseCount(s1.horses)
+          this.getSyndicateActiveHorseCount(s2.horses, selectedMeeting) -
+          this.getSyndicateActiveHorseCount(s1.horses, selectedMeeting)
         )
         ||
         s2.members.length - s1.members.length
