@@ -6,9 +6,14 @@ import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {formatOdds} from '../util/functions';
 import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES} from '../util/strings';
-import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 import {DEFAULT_DIVIDEND, DividendDto} from '../model/dto.model';
+import {
+  MAX_RACE_PER_MEETING,
+  ONE_MINUTE,
+  TEN_SECONDS,
+  TWENTY_SECONDS
+} from '../util/numbers';
 
 @Component({
   selector: 'app-trend',
@@ -37,10 +42,8 @@ export class TrendComponent implements OnInit {
     this.repo.fetchDividends();
     this.repo.fetchSyndicates();
 
-    setInterval(() => {
-      this.repo.fetchMeetings();
-      this.repo.fetchDividends();
-    }, ONE_MINUTE);
+    setInterval(() => this.repo.fetchMeetings(), TWENTY_SECONDS);
+    setInterval(() => this.repo.fetchDividends(), ONE_MINUTE);
   }
 
   setActiveSection = (clicked: string) =>
