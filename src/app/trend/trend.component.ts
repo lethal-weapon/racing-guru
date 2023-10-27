@@ -8,12 +8,7 @@ import {formatOdds} from '../util/functions';
 import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES} from '../util/strings';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 import {DEFAULT_DIVIDEND, DividendDto} from '../model/dto.model';
-import {
-  MAX_RACE_PER_MEETING,
-  ONE_MINUTE,
-  TEN_SECONDS,
-  TWENTY_SECONDS
-} from '../util/numbers';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers';
 
 @Component({
   selector: 'app-trend',
@@ -26,7 +21,6 @@ export class TrendComponent implements OnInit {
   activeMeeting: string = '';
   activePerson: string = '';
   activeSyndicate: number = 0;
-  isRefreshButtonEnable: boolean = true;
   meetingIndex: number = 0;
 
   protected readonly formatOdds = formatOdds;
@@ -68,14 +62,6 @@ export class TrendComponent implements OnInit {
     this.activeSyndicate = this.syndicates
       .find(s => s.horses.includes(horse))
       ?.id || 0;
-  }
-
-  refresh = () => {
-    if (this.isRefreshButtonEnable) {
-      this.isRefreshButtonEnable = false;
-      this.repo.fetchMeetings();
-      setTimeout(() => this.isRefreshButtonEnable = true, TEN_SECONDS);
-    }
   }
 
   shiftMeeting = (length: number) => {
@@ -196,7 +182,7 @@ export class TrendComponent implements OnInit {
           }
         });
 
-      return starters;
+      return starters.sort((s1, s2) => s1.order - s2.order);
     }
 
   getSectionStyle = (section: string): string =>
@@ -441,7 +427,7 @@ export class TrendComponent implements OnInit {
 
     const currTime = new Date().getTime();
     const meetingStartTime = venue === 'HV'
-      ? new Date(`${selectedMeeting}T19:15:00+08:00`).getTime()
+      ? new Date(`${selectedMeeting}T12:45:00+08:00`).getTime()
       : new Date(`${selectedMeeting}T13:00:00+08:00`).getTime();
 
     const offset = (race - 1) * 2000 * 1000;

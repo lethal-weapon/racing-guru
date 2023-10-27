@@ -62,14 +62,7 @@
     </div>
     <table class="mx-auto table-fixed border-collapse">
       <tr class="text-lg">
-        <td class="w-16 border border-gray-700">
-        <span class="hover:text-yellow-400"
-              [class.invisible]="!isRefreshButtonEnable"
-              (click)="refresh()"
-        >
-          <i class="fa fa-refresh"></i>
-        </span>
-        </td>
+        <td class="w-16 border border-gray-700"></td>
         <td class="w-12 border border-gray-700 cursor-help"
             tooltip="{{activeSubsection != subsections[2] ? 'Meetings since a winner' : 'Members'}}"
             [hideDelay]="0"
@@ -98,13 +91,7 @@
         </td>
       </tr>
       <tr>
-        <td class="border border-gray-700">
-        <span [class.visible]="!isRefreshButtonEnable"
-              [class.invisible]="isRefreshButtonEnable"
-        >
-          <i class="fa fa-clock-o"></i>
-        </span>
-        </td>
+        <td class="border border-gray-700"></td>
         <td class="border border-gray-700"></td>
         <td class="border border-gray-700"></td>
         <td class="border border-gray-700"></td>
@@ -415,9 +402,7 @@
             </td>
           </tr>
           <ng-container *ngIf="activeSyndicate > 0">
-            <tr *ngFor="let m of meetings"
-                class="hover:bg-gray-800"
-            >
+            <tr *ngFor="let m of meetings">
               <td class="h-10 border border-gray-700 text-xl py-1"
                   [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
               >

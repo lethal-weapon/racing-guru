@@ -6,3 +6,11 @@ export class Syndicate {
   ) {
   }
 }
+
+export interface SyndicatePerformance {
+  meeting  : string,
+  race     : number,
+  single   : string,
+  multiple : string,
+  others   : string
+}
