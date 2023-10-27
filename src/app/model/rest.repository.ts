@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {RestDataSource} from './rest.datasource';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
-import {Syndicate} from './syndicate.model';
+import {Syndicate, SyndicatePerformance} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {FactorHit} from './backtest.model';
@@ -29,8 +29,9 @@ export class RestRepository {
   private collaborations: Collaboration[] = [];
   private racecards: Racecard[] = [];
   private factorHits: FactorHit[] = [];
-  private performances: SeasonPerformance[] = [];
+  private enginePerformances: SeasonPerformance[] = [];
   private dividends: DividendDto[] = [];
+  private syndicatePerformances: SyndicatePerformance[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -43,9 +44,10 @@ export class RestRepository {
   findCollaborations = () => this.collaborations
   findRacecards = () => this.racecards
   findFactorHits = () => this.factorHits
-  findPerformances = () => this.performances
+  findEnginePerformances = () => this.enginePerformances
   findSyndicates = () => this.syndicates
   findDividends = () => this.dividends
+  findSyndicatePerformances = () => this.syndicatePerformances
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -126,12 +128,15 @@ export class RestRepository {
     })
 
   fetchEnginePerformance = () =>
-    this.source.getEnginePerformance().subscribe(data => this.performances = data)
+    this.source.getEnginePerformance().subscribe(data => this.enginePerformances = data)
 
   fetchSyndicates = () =>
     this.source.getSyndicates().subscribe(data => this.syndicates = data)
 
   fetchDividends = () =>
     this.source.getDividends().subscribe(data => this.dividends = data)
+
+  fetchSyndicatePerformance = () =>
+    this.source.getSyndicatePerformance().subscribe(data => this.syndicatePerformances = data)
 
 }

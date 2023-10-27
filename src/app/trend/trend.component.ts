@@ -35,9 +35,13 @@ export class TrendComponent implements OnInit {
     this.repo.fetchMeetings();
     this.repo.fetchDividends();
     this.repo.fetchSyndicates();
+    this.repo.fetchSyndicatePerformance();
 
     setInterval(() => this.repo.fetchMeetings(), TWENTY_SECONDS);
-    setInterval(() => this.repo.fetchDividends(), ONE_MINUTE);
+    setInterval(() => {
+      this.repo.fetchDividends();
+      this.repo.fetchSyndicatePerformance();
+    }, ONE_MINUTE);
   }
 
   setActiveSection = (clicked: string) =>
@@ -516,6 +520,29 @@ export class TrendComponent implements OnInit {
       .filter(h => horses.includes(h.code))
       .filter(h => !h.retired || (h.retiredAt > selectedMeeting))
       .length;
+  }
+
+  getSyndicatePerformanceHitColor = (hit: string): string => {
+    if (hit.startsWith('W')) return COLORS[0];
+    if (hit.startsWith('Q')) return COLORS[1];
+    if (hit.startsWith('T')) return COLORS[2];
+    if (hit.startsWith('F')) return COLORS[3];
+    return '';
+  }
+
+  getSyndicatePerformanceHits = (meeting: string, race: number): string[] => {
+    const performance = this.repo.findSyndicatePerformances()
+      .find(sp => sp.meeting === meeting && sp.race === race);
+
+    if (performance) {
+      return [
+        performance.single || '',
+        performance.multiple || '',
+        performance.others || ''
+      ];
+    }
+
+    return ['', '', ''];
   }
 
   get variableStarterSyndicateKinds(): string[] {

@@ -79,6 +79,6 @@ export class FormEngineComponent implements OnInit {
   }
 
   get performances(): SeasonPerformance[] {
-    return this.repo.findPerformances();
+    return this.repo.findEnginePerformances();
   }
 }

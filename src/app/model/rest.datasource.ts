@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {environment as env} from '../../environments/environment';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
-import {Syndicate} from './syndicate.model';
+import {Syndicate, SyndicatePerformance} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {Racecard} from './racecard.model';
@@ -79,5 +79,8 @@ export class RestDataSource {
 
   getDividends = (): Observable<DividendDto[]> =>
     this.http.get<DividendDto[]>(`${this.baseUrl}/dividends`)
+
+  getSyndicatePerformance = (): Observable<SyndicatePerformance[]> =>
+    this.http.get<SyndicatePerformance[]>(`${this.baseUrl}/syndicate-performance`)
 
 }
