@@ -403,8 +403,11 @@
           </tr>
           <ng-container *ngIf="activeSyndicate === 0">
             <tr *ngFor="let m of meetings">
-              <td class="h-10 border border-gray-700 text-xl py-1"
+              <td class="h-10 border border-gray-700 text-xl py-1 cursor-pointer"
+                  [class.font-bold]="activeMeeting === m.meeting"
+                  [class.text-yellow-400]="activeMeeting === m.meeting"
                   [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+                  (click)="setActiveMeeting(m.meeting)"
               >
                 {{formatMeeting(m.meeting)}}
               </td>
