@@ -257,8 +257,20 @@ export class RacecardComponent implements OnInit {
 
     const modelChance = 100 * (starter?.chance || 0);
     const publicChance = parseFloat(investments[0].percent.replace('%', ''));
+    const tops = this.startersSortedByChance.map(s => s.order).slice(0, 6);
 
-    return modelChance - publicChance >= 3;
+    return tops.includes(starter.order) && (modelChance - publicChance >= 3);
+  }
+
+  isModelUnderEstimated = (starter: Starter): boolean => {
+    const investments = this.getActiveStarterWQPInvestments(starter);
+    if (investments.length === 0) return false;
+
+    const modelChance = 100 * (starter?.chance || 0);
+    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
+    const bottoms = this.startersSortedByChance.map(s => s.order).slice(6);
+
+    return bottoms.includes(starter.order) && (publicChance - modelChance >= 5);
   }
 
   getDaysSinceLastRun = (starter: Starter): number => {
