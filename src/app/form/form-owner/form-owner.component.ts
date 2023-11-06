@@ -185,9 +185,7 @@ export class FormOwnerComponent implements OnInit {
         .filter(h => !this.isSyndicateHorse(h))
         .filter(h => !this.isBelongToOtherSyndicate(h))
         .filter(h => !h.retired)
-        .forEach(h => {
-          if (matches.size < 300) matches.add(h);
-        });
+        .forEach(h => matches.add(h));
 
     } else if (criteria.match(/^###$/g)) {
       this.horses
@@ -196,6 +194,24 @@ export class FormOwnerComponent implements OnInit {
         .filter(h => this.syndicates
           .some(s => s.members.some(m => h.ownerCH.includes(m)))
         )
+        .forEach(h => matches.add(h));
+
+    } else if (criteria.match(/^%%%$/g)) {
+      this.horses
+        .filter(h => !this.isSyndicateHorse(h))
+        .filter(h => !this.isBelongToOtherSyndicate(h))
+        .filter(h => this.horses.some(nh => {
+          const owners = this.cleanOwner(h.ownerCH);
+          const otherOwners = this.cleanOwner(nh.ownerCH);
+
+          return h.code !== nh.code &&
+            owners.some(o1 => otherOwners.some(o2 =>
+              o1.length === 3
+              && o2.length === 3
+              && o1[0] === o2[0]
+              && (o1[1] === o2[1] || o1[2] === o2[2])
+            ));
+        }))
         .forEach(h => matches.add(h));
 
     } else if (criteria.match(/^[A-Z]\d+/g)) {
