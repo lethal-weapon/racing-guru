@@ -111,6 +111,10 @@ export class OddsComponent implements OnInit {
     private socket: WebsocketService,
     private clipboard: Clipboard
   ) {
+    socket.addCloseCallback(() => socket.racecards.unsubscribe());
+    socket.addReconnectCallback(() =>
+      socket.racecards.subscribe(data => this.racecards = data));
+
     socket.racecards.subscribe(data => this.racecards = data);
   }
 
@@ -752,5 +756,9 @@ export class OddsComponent implements OnInit {
   get oddsButtonStyle(): string {
     return `px-4 py-0.5 rounded-xl border border-gray-600 ` +
       `hover:border-yellow-400 cursor-pointer`;
+  }
+
+  get isLoading(): boolean {
+    return this.racecards.length === 0;
   }
 }

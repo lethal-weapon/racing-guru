@@ -5,42 +5,62 @@ import {map} from 'rxjs/operators';
 
 import {environment as env} from '../../environments/environment';
 import {Racecard} from './racecard.model';
+import {THIRTY_SECONDS} from '../util/numbers';
 
 @Injectable()
 export class WebsocketService {
-  baseUrl: string;
+
+  racecardUrl: string =
+    `${env.WS_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}/${env.WS_PREFIX}/racecards`;
 
   subject: AnonymousSubject<MessageEvent> | undefined;
   racecards: Subject<Racecard[]>;
 
-  constructor() {
-    this.baseUrl =
-      `${env.WS_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}/${env.WS_PREFIX}`;
-    const racecardUrl = `${this.baseUrl}/racecards`;
+  onCloseCallbacks: (() => any)[] = [];
+  onReconnectCallbacks: (() => any)[] = [];
 
-    this.racecards = <Subject<Racecard[]>>this.connect(racecardUrl).pipe(
-      map(
-        (response: MessageEvent): Racecard[] => JSON.parse(response.data)
-      )
+  constructor() {
+    this.racecards = <Subject<Racecard[]>>this.connect(this.racecardUrl).pipe(
+      map((response: MessageEvent): Racecard[] => JSON.parse(response.data))
     );
   }
 
-  connect(url: string): AnonymousSubject<MessageEvent> {
-    if (!this.subject) {
-      this.subject = this.create(url);
-      console.log(`Successfully connected: ${url}`);
-    }
+  addCloseCallback = (callback: () => any) =>
+    this.onCloseCallbacks.push(callback)
+
+  addReconnectCallback = (callback: () => any) =>
+    this.onReconnectCallbacks.push(callback)
+
+  reconnect = () => {
+    this.racecards = <Subject<Racecard[]>>this.connect(this.racecardUrl).pipe(
+      map((response: MessageEvent): Racecard[] => JSON.parse(response.data))
+    );
+    this.onReconnectCallbacks.forEach(callback => callback());
+  }
+
+  connect = (url: string): AnonymousSubject<MessageEvent> => {
+    this.subject = this.create(url);
+    console.log(`Websocket connected: ${url}`);
     return this.subject;
   }
 
-  create(url: string): AnonymousSubject<MessageEvent> {
+  create = (url: string): AnonymousSubject<MessageEvent> => {
     let ws = new WebSocket(url);
+
     let observable = new Observable((obs: Observer<MessageEvent>) => {
       ws.onmessage = obs.next.bind(obs);
       ws.onerror = obs.error.bind(obs);
-      ws.onclose = obs.complete.bind(obs);
+      // ws.onclose = obs.complete.bind(obs);
+
+      ws.onclose = () => {
+        console.log('Websocket closed, will retry in 30 seconds');
+        this.onCloseCallbacks.forEach(callback => callback());
+        setTimeout(() => this.reconnect(), THIRTY_SECONDS);
+      }
+
       return ws.close.bind(ws);
     });
+
     let observer = {
       error: null,
       complete: null,
@@ -50,8 +70,8 @@ export class WebsocketService {
         }
       }
     };
+
     // @ts-ignore
     return new AnonymousSubject<MessageEvent>(observer, observable);
   }
-
 }

@@ -52,6 +52,10 @@ export class MeetingComponent implements OnInit {
     private repo: RestRepository,
     private socket: WebsocketService
   ) {
+    socket.addCloseCallback(() => socket.racecards.unsubscribe());
+    socket.addReconnectCallback(() =>
+      socket.racecards.subscribe(data => this.racecards = data));
+
     socket.racecards.subscribe(data => this.racecards = data);
   }
 

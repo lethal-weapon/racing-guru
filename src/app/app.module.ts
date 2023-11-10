@@ -24,6 +24,7 @@ import {FormOwnerComponent} from './form/form-owner/form-owner.component';
 import {FormBetComponent} from './form/form-bet/form-bet.component';
 import {FormEngineComponent} from './form/form-engine/form-engine.component';
 import {FormPeopleComponent} from './form/form-people/form-people.component';
+import {ToastWebsocketComponent} from './toast/toast-websocket/toast-websocket.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import {FormPeopleComponent} from './form/form-people/form-people.component';
     FormOwnerComponent,
     FormBetComponent,
     FormEngineComponent,
-    FormPeopleComponent
+    FormPeopleComponent,
+    ToastWebsocketComponent
   ],
   imports: [
     BrowserModule,

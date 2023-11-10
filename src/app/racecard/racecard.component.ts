@@ -84,6 +84,10 @@ export class RacecardComponent implements OnInit {
     private repo: RestRepository,
     private socket: WebsocketService
   ) {
+    socket.addCloseCallback(() => socket.racecards.unsubscribe());
+    socket.addReconnectCallback(() =>
+      socket.racecards.subscribe(data => this.racecards = data));
+
     socket.racecards.subscribe(data => this.racecards = data);
   }
 
@@ -270,7 +274,7 @@ export class RacecardComponent implements OnInit {
     const publicChance = parseFloat(investments[0].percent.replace('%', ''));
     const bottoms = this.startersSortedByChance.map(s => s.order).slice(6);
 
-    return bottoms.includes(starter.order) && (publicChance - modelChance >= 5);
+    return bottoms.includes(starter.order) && (publicChance - modelChance >= 3);
   }
 
   getDaysSinceLastRun = (starter: Starter): number => {
