@@ -14,6 +14,7 @@ export class ToastWebsocketComponent implements OnInit {
 
   constructor(private socket: WebsocketService) {
     socket.addCloseCallback(() => {
+      this.timeToReconnect = 30;
       this.animationStyle = `animate__animated animate__fadeInUp animate__slow`;
       this.countDownIntervalId = setInterval(() => {
         if (this.timeToReconnect > 0) {
