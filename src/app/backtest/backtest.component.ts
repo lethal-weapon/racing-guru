@@ -252,12 +252,12 @@ export class BacktestComponent implements OnInit {
 
   get factorHits(): FactorHit[] {
     return this.repo.findFactorHits().sort((h1, h2) => {
-        if (this.sortedAccuracyField === 'ROI - A') {
+        if (this.sortedAccuracyField === 'ROIA') {
           const avgROIa1 = this.getTesterAvgROI(h1.defaultYields)
           const avgROIa2 = this.getTesterAvgROI(h2.defaultYields)
           return (avgROIa2 - avgROIa1) || (h2.totalHits - h1.totalHits);
         }
-        if (this.sortedAccuracyField === 'ROI - B') {
+        if (this.sortedAccuracyField === 'ROIB') {
           const avgROIb1 = this.getTesterAvgROI(h1.enhancedYields)
           const avgROIb2 = this.getTesterAvgROI(h2.enhancedYields)
           return (avgROIb2 - avgROIb1) || (h2.totalHits - h1.totalHits);
@@ -305,10 +305,7 @@ export class BacktestComponent implements OnInit {
   }
 
   get accuracyFields(): string[] {
-    return [
-      'Factors', 'WIN', 'QIN', 'TCE', 'QTT', 'Total',
-      'ROI - A', 'ROI - B',
-    ];
+    return ['Factors', 'WIN', 'QIN', 'TCE', 'QTT', 'Total', 'ROIA', 'ROIB'];
   }
 
   get actions(): string[] {

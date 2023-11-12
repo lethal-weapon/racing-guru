@@ -536,9 +536,9 @@ export class TrendComponent implements OnInit {
 
     if (performance) {
       return [
-        performance.single || '',
-        performance.multiple || '',
-        performance.others || ''
+        performance?.single || '',
+        performance?.multiple || '',
+        performance?.others || ''
       ];
     }
 

@@ -69,19 +69,22 @@
       </div>
     </div>
   </div>
-  <div class="">
-    <div *ngIf="isLoading" class="mx-96 my-64">
+  <div class="mx-auto">
+    <div *ngIf="isLoading">
       <app-spinner></app-spinner>
     </div>
     <table *ngIf="!isLoading"
-           class="mx-auto border-collapse border border-gray-600 text-center"
+           class="mx-auto table-fixed border-collapse border border-gray-600 text-center"
     >
       <thead class="text-lg">
-      <th class="border border-gray-600 py-1 px-2">
+      <th class="w-20 border border-gray-600">
         Rank
       </th>
       <th *ngFor="let field of accuracyFields; let index = index"
-          class="border border-gray-600 py-1 px-2"
+          class="border border-gray-600"
+          [class.w-20]="index >= 5"
+          [class.w-24]="index >= 1 && index <= 4"
+          [class.w-48]="index == 0"
           [class.text-blue-600]="sortedAccuracyField === field"
           [class.cursor-pointer]="sortableAccuracyFields.includes(field)"
           (click)="clickAccuracyFieldHeader(field)"
@@ -105,11 +108,10 @@
         <td *ngFor="let fhp of fh.hits"
             class="border border-gray-700 py-1"
         >
-          <div class="grid grid-cols-3 px-2">
+          <div class="flex flex-row justify-around">
             <div [class.text-yellow-400]="isTopPlacingHit(fhp)">
               {{fhp.hitRaces}}
             </div>
-            <div>/</div>
             <div>
               {{(fhp.hitRaces / fhp.betRaces) | percent}}
             </div>
