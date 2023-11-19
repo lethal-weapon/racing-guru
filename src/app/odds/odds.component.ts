@@ -125,6 +125,7 @@ export class OddsComponent implements OnInit {
     }, THREE_SECONDS);
 
     this.repo.fetchHorses();
+    this.repo.fetchConnections();
 
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.bets.set(race, {...DEFAULT_BET});
@@ -437,6 +438,21 @@ export class OddsComponent implements OnInit {
         && isFavorite(starterA, this.activeRacecard)
         && isFavorite(starterB, this.activeRacecard);
     }
+  }
+
+  isPeopleConnected = (starterA: Starter, starterB: Starter): boolean => {
+    const conn = this.repo.findConnections().find(c =>
+      c.meeting === this.activeRacecard.meeting &&
+      c.race == this.activeRacecard.race
+    );
+
+    if (!conn) return false;
+
+    return conn.connections.some(c =>
+      (c.orders[0] == starterA.order && c.orders[1] == starterB.order)
+      ||
+      (c.orders[0] == starterB.order && c.orders[1] == starterA.order)
+    );
   }
 
   isFinalQQPCombination = (starterA: Starter, starterB: Starter): boolean[] => {

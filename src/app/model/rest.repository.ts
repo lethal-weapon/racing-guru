@@ -6,6 +6,7 @@ import {Horse} from './horse.model';
 import {Syndicate, SyndicatePerformance} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
+import {RaceConnection} from './connection.model';
 import {FactorHit} from './backtest.model';
 import {Racecard} from './racecard.model';
 import {Report} from './report.model';
@@ -32,6 +33,7 @@ export class RestRepository {
   private enginePerformances: SeasonPerformance[] = [];
   private dividends: DividendDto[] = [];
   private syndicatePerformances: SyndicatePerformance[] = [];
+  private connections: RaceConnection[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -48,6 +50,7 @@ export class RestRepository {
   findSyndicates = () => this.syndicates
   findDividends = () => this.dividends
   findSyndicatePerformances = () => this.syndicatePerformances
+  findConnections = () => this.connections
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -138,5 +141,8 @@ export class RestRepository {
 
   fetchSyndicatePerformance = () =>
     this.source.getSyndicatePerformance().subscribe(data => this.syndicatePerformances = data)
+
+  fetchConnections = () =>
+    this.source.getConnections().subscribe(data => this.connections = data)
 
 }

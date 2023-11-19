@@ -6,6 +6,7 @@ import {environment as env} from '../../environments/environment';
 import {Note} from './note.model';
 import {Horse} from './horse.model';
 import {Syndicate, SyndicatePerformance} from './syndicate.model';
+import {RaceConnection} from './connection.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {Racecard} from './racecard.model';
@@ -82,5 +83,8 @@ export class RestDataSource {
 
   getSyndicatePerformance = (): Observable<SyndicatePerformance[]> =>
     this.http.get<SyndicatePerformance[]>(`${this.baseUrl}/syndicate-performance`)
+
+  getConnections = (): Observable<RaceConnection[]> =>
+    this.http.get<RaceConnection[]>(`${this.baseUrl}/graph/connections`)
 
 }
