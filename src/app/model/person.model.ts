@@ -48,6 +48,7 @@ export const TRAINERS = [
 export const JOCKEYS = [
   new Person('PZ', '1983-01-03', 'Purton', 'Zac', 'Z. Purton', 'AUS', 'Club', '', 1431),
   new Person('BH', '1980-07-14', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', '', 29),
+  new Person('MCJ', '1992-01-06', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', '', 8),
   new Person('AVB', '1991-01-18', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', '', 0),
   new Person('CLR', '1981-07-24', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard', 9),
 
@@ -77,7 +78,6 @@ export const JOCKEYS = [
   // new Person('WCV', '1993-09-07', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor', 63),
   // new Person('LHW', '1983-10-29', 'Lai', 'Hoi-wing', 'A. Lai', 'HK', 'Freelance', 'Alex', 283),
   // new Person('DEE', '1996-01-01', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', '', 0),
-  // new Person('MCJ', '1992-01-06', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', '', 0),
   // new Person('MTA', '1998-03-30', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', '', 0),
   // new Person('DC', '1992-07-07', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', '', 0),
   // new Person('MR', '1983-09-18', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', '', 0),
