@@ -126,13 +126,13 @@
       Picks
     </td>
     <td *ngFor="let starter of startersSortedByChance"
-        class="border border-gray-700 text-xl cursor-pointer"
+        class="border border-gray-700 text-xl"
         (click)="toggleFavorite(starter)"
     >
-      <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400">
+      <span *ngIf="isFavorite(starter, this.activeRacecard)" class="text-yellow-400 cursor-pointer">
         <i class="fa fa-star"></i>
       </span>
-      <span *ngIf="!isFavorite(starter, this.activeRacecard)">
+      <span *ngIf="!isFavorite(starter, this.activeRacecard)" class="cursor-pointer">
         <i class="fa fa-star-o"></i>
       </span>
     </td>

@@ -186,8 +186,8 @@ export class OddsComponent implements OnInit {
     const tceBets = this.getMultiBankerBets('TMB').length;
     const qttBets = this.getMultiBankerBets('QMB').length;
 
-    if (fctBets > 10) fmb = fmb.concat(`|$100`);
-    else fmb = fmb.concat(`/$10`);
+    if (fctBets <= 12) fmb = fmb.concat(`/$10`);
+    else fmb = fmb.concat(`|$120`);
 
     if (tceBets <= 12) tmb = tmb.concat(`/$10`);
     else if (tceBets <= 18) tmb = tmb.concat(`/$8`);
@@ -283,6 +283,14 @@ export class OddsComponent implements OnInit {
         const orderB = starterB.order;
         if (this.isTrash(starterB)) continue;
 
+        // skip non-connected combinations
+        if (!this.isPeopleConnected(starterA, starterB)) continue;
+
+        // skip combinations that have signals already
+        const signalAB = this.getCombinationSignals(starterA, starterB);
+        const signalBA = this.getCombinationSignals(starterB, starterA);
+        if (signalAB[0].length > 0) continue;
+
         const qqpWithinRange = this.isQQPOddsWithinRange(starterA, starterB);
         const fctWithinRange = this.isFCTOddsWithinRange(starterA, starterB);
         const conditions = [
@@ -299,11 +307,11 @@ export class OddsComponent implements OnInit {
         let switch1 = false;
         let switch2 = false;
 
-        if (Math.abs(1 - Q2 / F1) <= QIN_FCT_DIFF_RATE) {
+        if (Math.abs(1 - Q2 / F1) <= QIN_FCT_DIFF_RATE && signalAB[2].length == 0) {
           switch1 = true;
           fct.push([orderA, orderB]);
         }
-        if (Math.abs(1 - Q2 / F2) <= QIN_FCT_DIFF_RATE) {
+        if (Math.abs(1 - Q2 / F2) <= QIN_FCT_DIFF_RATE && signalBA[2].length == 0) {
           switch2 = true;
           fct.push([orderB, orderA]);
         }
@@ -312,15 +320,6 @@ export class OddsComponent implements OnInit {
         }
       }
     }
-
-    // intersection with multi-banker selections
-    const fmb = this.getMultiBankerBets('FMB');
-    qin = qin.filter(comb =>
-      fmb.some(comb2 => comb2.includes(comb[0]) && comb2.includes(comb[1]))
-    );
-    fct = fct.filter(comb =>
-      fmb.some(comb2 => comb2[0] == comb[0] && comb2[1] == comb[1])
-    );
 
     this.bets.set(this.activeRace, {qpl, qin, fct, dbl})
   }

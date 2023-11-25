@@ -32,4 +32,4 @@ export const QIN_ODDS_STEP = 5;
 export const FCT_ODDS_STEP = 10;
 export const DBL_ODDS_STEP = 10;
 
-export const QIN_FCT_DIFF_RATE = 0.25;
+export const QIN_FCT_DIFF_RATE = 0.15;
