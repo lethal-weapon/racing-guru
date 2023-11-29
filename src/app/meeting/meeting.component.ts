@@ -220,6 +220,7 @@ export class MeetingComponent implements OnInit {
       && race.distance > 1000
       && (!race.name.includes('CUP'))
       && (!race.name.includes('TROPHY'))
+      && (!race.name.includes('CHALLENGE'))
       && (!race.name.includes('CHAMPIONSHIP'))
       && (
         race.grade.endsWith('3')
