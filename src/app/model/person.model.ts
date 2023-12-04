@@ -46,6 +46,14 @@ export const TRAINERS = [
 ]
 
 export const JOCKEYS = [
+  new Person('MR', '1983-09-18', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', '', 0),
+  new Person('MTA', '1998-03-30', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', '', 0),
+  new Person('DHA', '1996-10-11', 'Doyle', 'Hollie', 'H. Doyle', 'GB', 'Club', '', 0),
+  new Person('KRM', '1990-09-16', 'King', 'Richel', 'R. King', 'GB', 'Club', '', 0),
+  new Person('BAM', '1991-08-03', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', '', 0),
+  new Person('KAY', '1985-10-15', 'Kawada', 'Yuga', 'Y. Kawada', 'JPN', 'Club', '', 0),
+  new Person('MBA', '1992-09-17', 'Murzabayev', 'Bauyrzhan', 'B. Murzabayev', 'KAZ', 'Club', '', 0),
+
   new Person('PZ', '1983-01-03', 'Purton', 'Zac', 'Z. Purton', 'AUS', 'Club', '', 1431),
   new Person('BH', '1980-07-14', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', '', 29),
   new Person('MCJ', '1992-01-06', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', '', 8),
@@ -78,16 +86,12 @@ export const JOCKEYS = [
   // new Person('WCV', '1993-09-07', 'Wong', 'Chun', 'V. Wong', 'HK', 'Freelance', 'Victor', 63),
   // new Person('LHW', '1983-10-29', 'Lai', 'Hoi-wing', 'A. Lai', 'HK', 'Freelance', 'Alex', 283),
   // new Person('DEE', '1996-01-01', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', '', 0),
-  // new Person('MTA', '1998-03-30', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', '', 0),
   // new Person('DC', '1992-07-07', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', '', 0),
-  // new Person('MR', '1983-09-18', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', '', 0),
   // new Person('SHB', '1987-09-26', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', '', 0),
   // new Person('LDM', '1994-02-06', 'Lane', 'Damian', 'D. Lane', 'AUS', 'Club', '', 0),
   // new Person('KJL', '1995-12-07', 'Kah', 'Jamie', 'J. Kah', 'AUS', 'Club', '', 0),
-  // new Person('DHA', '1996-10-11', 'Doyle', 'Hollie', 'H. Doyle', 'GB', 'Club', '', 0),
   // new Person('BUW', '1988-07-22', 'Buick', 'William', 'W. Buick', 'DEN', 'Club', '', 0),
   // new Person('LC', '1979-05-20', 'Lemaire', 'Christophe', 'C. Lemaire', 'FR', 'Club', '', 0),
-  // new Person('BAM', '1991-08-03', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', '', 0),
   // new Person('MNJ', '1994-12-09', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', '', 0),
   // new Person('MOJ', '1983-09-26', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', '', 0),
   // new Person('DSS', '1980-12-31', 'DeSousa', 'Silvestre', 'S. DeSousa', 'BRZ', 'Club', '', 0),
