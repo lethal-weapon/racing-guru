@@ -128,12 +128,12 @@ export class FormOwnerComponent implements OnInit {
   }
 
   get splitors(): string[] {
-    return ['與', '及', '、', '、'];
+    return ['與', '及', '、', '、', ','];
   }
 
   get titles(): string[] {
     return [
-      'Mr & Mrs', 'MR & MRS', '先生及夫人', '及夫人', '夫婦',
+      'Mr & Mrs', 'MR & MRS', 'Mrs', '先生及夫人', '及夫人', '夫婦',
       '女士', '醫生', '博士', '爵士', '議員',
       '(董事)', '（董事）', '(名譽董事)', '（名譽董事）',
       '遺產執行人',
