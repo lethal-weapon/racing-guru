@@ -46,18 +46,6 @@ export const TRAINERS = [
 ]
 
 export const JOCKEYS = [
-  new Person('MOJ', '1983-09-26', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', '', 1234),
-  new Person('LDM', '1994-02-06', 'Lane', 'Damian', 'D. Lane', 'AUS', 'Club', '', 8),
-  new Person('KAY', '1985-10-15', 'Kawada', 'Yuga', 'Y. Kawada', 'JPN', 'Club', '', 0),
-  new Person('KIY', '1986-10-03', 'Kitamura', 'Yuichi', 'Y. Kitamura', 'JPN', 'Club', '', 0),
-  new Person('MR', '1983-09-18', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', '', 0),
-  new Person('BUW', '1988-07-22', 'Buick', 'William', 'W. Buick', 'DEN', 'Club', '', 2),
-  new Person('HJC', '1994-01-01', 'Hart', 'Jason', 'J. Hart', 'GB', 'Club', '', 0),
-  new Person('SC', '1981-06-04', 'Soumillon', 'Christophe', 'C. Soumillon', 'BEL', 'Club', '', 121),
-  new Person('DC', '1992-07-07', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', '', 0),
-  new Person('BAM', '1991-08-03', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', '', 0),
-  new Person('GM', '1989-05-07', 'Guyon', 'Maxime', 'M. Guyon', 'FR', 'Club', '', 29),
-
   new Person('PZ', '1983-01-03', 'Purton', 'Zac', 'Z. Purton', 'AUS', 'Club', '', 1431),
   new Person('BH', '1980-07-14', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', '', 29),
   new Person('MCJ', '1992-01-06', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', '', 8),
@@ -86,6 +74,17 @@ export const JOCKEYS = [
   new Person('CHA', '1994-06-05', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred', 53),
   new Person('MHT', '1993-10-22', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan', 104),
 
+  // new Person('MOJ', '1983-09-26', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', '', 1234),
+  // new Person('LDM', '1994-02-06', 'Lane', 'Damian', 'D. Lane', 'AUS', 'Club', '', 8),
+  // new Person('KAY', '1985-10-15', 'Kawada', 'Yuga', 'Y. Kawada', 'JPN', 'Club', '', 0),
+  // new Person('KIY', '1986-10-03', 'Kitamura', 'Yuichi', 'Y. Kitamura', 'JPN', 'Club', '', 0),
+  // new Person('MR', '1983-09-18', 'Moore', 'Ryan', 'R. Moore', 'GB', 'Club', '', 0),
+  // new Person('BUW', '1988-07-22', 'Buick', 'William', 'W. Buick', 'DEN', 'Club', '', 2),
+  // new Person('HJC', '1994-01-01', 'Hart', 'Jason', 'J. Hart', 'GB', 'Club', '', 0),
+  // new Person('SC', '1981-06-04', 'Soumillon', 'Christophe', 'C. Soumillon', 'BEL', 'Club', '', 121),
+  // new Person('DC', '1992-07-07', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', '', 0),
+  // new Person('BAM', '1991-08-03', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', '', 0),
+  // new Person('GM', '1989-05-07', 'Guyon', 'Maxime', 'M. Guyon', 'FR', 'Club', '', 29),
   // new Person('MTA', '1998-03-30', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', '', 0),
   // new Person('DHA', '1996-10-11', 'Doyle', 'Hollie', 'H. Doyle', 'GB', 'Club', '', 0),
   // new Person('KRM', '1990-09-16', 'King', 'Richel', 'R. King', 'GB', 'Club', '', 0),
