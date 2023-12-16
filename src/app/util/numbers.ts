@@ -17,14 +17,14 @@ export const REST_PAYOUT_RATE = 0.75;
 export const MAX_RACE_PER_MEETING = 11;
 export const SENIOR_HORSE_AGE = 7;
 
-export const DEFAULT_MIN_QPL_ODDS = 15;
-export const DEFAULT_MIN_QIN_ODDS = 25;
-export const DEFAULT_MIN_FCT_ODDS = 45;
+export const DEFAULT_MIN_QPL_ODDS = 10;
+export const DEFAULT_MIN_QIN_ODDS = 20;
+export const DEFAULT_MIN_FCT_ODDS = 35;
 export const DEFAULT_MIN_DBL_ODDS = 30;
 
-export const DEFAULT_MAX_QPL_ODDS = 75;
-export const DEFAULT_MAX_QIN_ODDS = 125;
-export const DEFAULT_MAX_FCT_ODDS = 270;
+export const DEFAULT_MAX_QPL_ODDS = 60;
+export const DEFAULT_MAX_QIN_ODDS = 120;
+export const DEFAULT_MAX_FCT_ODDS = 240;
 export const DEFAULT_MAX_DBL_ODDS = 300;
 
 export const QPL_ODDS_STEP = 3;
@@ -32,4 +32,4 @@ export const QIN_ODDS_STEP = 5;
 export const FCT_ODDS_STEP = 10;
 export const DBL_ODDS_STEP = 10;
 
-export const QIN_FCT_DIFF_RATE = 0.15;
+export const QIN_FCT_DIFF_RATE = 0.2;
