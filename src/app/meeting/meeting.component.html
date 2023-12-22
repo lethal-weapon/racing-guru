@@ -196,49 +196,6 @@
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
     <th class="w-28 border border-gray-600">
-      Look-ahead
-    </th>
-    <th *counter="let race of (maxRace === 0 ? 0 : maxRace - 1)"
-        class="w-36 border border-gray-600"
-    >
-      {{race}}
-    </th>
-    </thead>
-    <tbody>
-    <tr *counter="let order of maxLookAheadStarterPairCountByRace"
-        class="hover:bg-gray-800"
-    >
-      <td class="border border-gray-700">
-        #{{order}}
-      </td>
-      <td *counter="let race of (maxRace === 0 ? 0 : maxRace - 1)"
-          class="border border-gray-700"
-      >
-        <div *ngFor="let s of getLookAheadStarters(order, race); let first = first"
-             class="{{getPlacingColorByHorse(s.horse, race)}}"
-        >
-          {{s.order}}
-          &nbsp;
-          <span *ngIf="first">{{s.jockey}}</span>
-          <span *ngIf="!first">{{s.trainer}}</span>
-          <span *ngIf="getHorseDetail(s.horse, race).odds > 0"
-                class="{{ getPlacingColorByHorse(s.horse, race).length === 0
-                          ? getOddsIntensityColor(getHorseDetail(s.horse, race).odds)
-                          : ''
-                       }}"
-          >
-            &nbsp;
-            {{getHorseDetail(s.horse, race).odds}}
-          </span>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
-    <thead>
-    <th class="w-28 border border-gray-600">
       Syndicate
     </th>
     <th *counter="let race of maxRace"

@@ -422,60 +422,6 @@ export class MeetingComponent implements OnInit {
           .includes(h)
       )
 
-  getLookAheadStarters = (order: number, race: number): Starter[] =>
-    this.lookAheadStarters.get(race)
-      ?.find((v, index) => index === order - 1)
-    || [];
-
-  get maxLookAheadStarterPairCountByRace(): number {
-    let maxCount = 0;
-    this.lookAheadStarters.forEach(e => {
-      if (e.length > maxCount) maxCount = e.length;
-    });
-    return maxCount;
-  }
-
-  get lookAheadStarters(): Map<number, Starter[][]> {
-    let pairsByRace: Map<number, Starter[][]> = new Map();
-
-    for (let i = 0; i < this.racecards.length - 1; i++) {
-      const currentRace = this.racecards[i].race;
-      const currentStarters = this.racecards[i].starters.filter(s => !s.scratched);
-      const nextStarters = this.racecards[i + 1].starters.filter(s => !s.scratched);
-      pairsByRace.set(currentRace, []);
-
-      currentStarters
-        .filter(cs => nextStarters.map(ns => ns.jockey).includes(cs.jockey))
-        .forEach(cs => {
-          const nextTrainer = nextStarters.find(ns => ns.jockey === cs.jockey)?.trainer;
-          if (nextTrainer && nextTrainer !== cs.trainer) {
-
-            currentStarters
-              .filter(cs2 => cs2.trainer === nextTrainer)
-              .filter(cs2 => cs2.order !== cs.order)
-              .forEach(cs2 => {
-                const exists = pairsByRace.get(currentRace)
-                  ?.filter(pair => pair.includes(cs) && pair.includes(cs2));
-
-                if (!exists || exists.length == 0) {
-                  if (cs.order < cs2.order) {
-                    pairsByRace.get(currentRace)?.push([cs, cs2]);
-                  } else {
-                    pairsByRace.get(currentRace)?.push([cs2, cs]);
-                  }
-                }
-              });
-          }
-        });
-
-      pairsByRace.get(currentRace)?.sort((sl1, sl2) =>
-        (sl1[0].order - sl2[0].order) || (sl1[1].order - sl2[1].order)
-      );
-    }
-
-    return pairsByRace;
-  }
-
   get syndicates(): Syndicate[] {
     return this.repo.findSyndicates()
       .filter(s => s.horses
