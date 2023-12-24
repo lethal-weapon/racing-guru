@@ -10,6 +10,12 @@ import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS} from '../util/strings';
 import {
+  DEFAULT_DRAW_BIAS_SCORE,
+  DEFAULT_TRACK_BIAS_SCORE,
+  DrawBiasScore,
+  TrackBiasScore
+} from '../model/bias.model';
+import {
   DividendPool,
   DEFAULT_SINGULARS,
   DEFAULT_COMBINATIONS
@@ -67,6 +73,7 @@ export class MeetingComponent implements OnInit {
 
     this.repo.fetchHorses();
     this.repo.fetchSyndicates();
+    this.repo.fetchTrackBiasScores();
   }
 
   setActiveTrainer = (clicked: string) =>
@@ -215,7 +222,7 @@ export class MeetingComponent implements OnInit {
 
   isSpecialRace = (race: Racecard): boolean =>
     !(
-      race.track === 'Turf'
+      race.track === 'TURF'
       && race.grade.startsWith('C')
       && race.distance > 1000
       && (!race.name.includes('CUP'))
@@ -399,6 +406,14 @@ export class MeetingComponent implements OnInit {
     return getPlacingColor(jockey, racecard);
   }
 
+  getPlacingColorByDraw = (race: number, draw: number): string => {
+    const racecard = this.racecards.find(r => r.race === race);
+    if (!racecard) return '';
+
+    const jockey = racecard.starters.find(s => s.draw === draw)?.jockey || '';
+    return getPlacingColor(jockey, racecard);
+  }
+
   getChallengeOdds = (personType: string, order: number): ChallengeOdds => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return DEFAULT_CHALLENGE_ODDS;
@@ -421,6 +436,14 @@ export class MeetingComponent implements OnInit {
           .map(s => s.horse)
           .includes(h)
       )
+
+  getDrawBias = (race: number, draw: number): DrawBiasScore =>
+    this.getTrackBias(race).draws.find(d => d.draw === draw) || DEFAULT_DRAW_BIAS_SCORE
+
+  getTrackBias = (race: number): TrackBiasScore =>
+    this.repo.findTrackBiasScores()
+      .find(s => s.meeting === this.racecards[0].meeting && s.race === race)
+    || DEFAULT_TRACK_BIAS_SCORE
 
   get syndicates(): Syndicate[] {
     return this.repo.findSyndicates()
@@ -525,6 +548,10 @@ export class MeetingComponent implements OnInit {
       .map(o => o.order)
       .sort((o1, o2) => o1 - o2)
       .pop() || 0;
+  }
+
+  get maxDraw(): number {
+    return this.starters.map(r => r.draw).sort((d1, d2) => d1 - d2).pop() || 0;
   }
 
   get maxRace(): number {

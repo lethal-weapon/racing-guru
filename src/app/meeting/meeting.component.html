@@ -196,6 +196,40 @@
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
     <th class="w-28 border border-gray-600">
+      Track Bias
+    </th>
+    <th *counter="let race of maxRace"
+        class="w-36 border border-gray-600"
+    >
+      {{race}} ({{getTrackBias(race).races}})
+    </th>
+    </thead>
+    <tbody>
+    <tr *counter="let draw of maxDraw"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700">
+        {{draw}}
+      </td>
+      <td *counter="let race of maxRace"
+          class="border border-gray-700 {{getPlacingColorByDraw(race, draw)}}"
+      >
+        <div class="grid grid-cols-2">
+          <div>
+            {{getDrawBias(race, draw).score}}
+          </div>
+          <div>
+            {{getDrawBias(race, draw).ratedScore}}
+          </div>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
+    <thead>
+    <th class="w-28 border border-gray-600">
       Syndicate
     </th>
     <th *counter="let race of maxRace"
