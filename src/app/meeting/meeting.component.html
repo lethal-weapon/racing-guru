@@ -201,7 +201,7 @@
     <th *counter="let race of maxRace"
         class="w-36 border border-gray-600"
     >
-      {{race}} ({{getTrackBias(race).races}})
+      {{race}} ({{getTrackBias(race).races}}R)
     </th>
     </thead>
     <tbody>
@@ -213,13 +213,21 @@
       </td>
       <td *counter="let race of maxRace"
           class="border border-gray-700 {{getPlacingColorByDraw(race, draw)}}"
+          [class.bg-gradient-to-r]="isTopDrawBias(race, draw)"
+          [class.from-gray-900]="isTopDrawBias(race, draw)"
+          [class.via-gray-700]="isTopDrawBias(race, draw)"
+          [class.to-gray-900]="isTopDrawBias(race, draw)"
       >
-        <div class="grid grid-cols-2">
-          <div>
-            {{getDrawBias(race, draw).score}}
-          </div>
+        <div *ngIf="getDrawBias(race, draw).score > 0 && getWinPlaceOddsByDraw(race, draw).order > 0"
+             class="grid grid-cols-2"
+        >
           <div>
             {{getDrawBias(race, draw).ratedScore}}
+          </div>
+          <div>
+            <span *ngIf="getWinPlaceOddsByDraw(race, draw).win > 0">
+              @{{getWinPlaceOddsByDraw(race, draw).win}}
+            </span>
           </div>
         </div>
       </td>

@@ -5,9 +5,9 @@ import {WebsocketService} from '../model/websocket.service';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Syndicate} from '../model/syndicate.model';
-import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
+import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS, WinPlaceOdds} from '../model/odds.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {THREE_SECONDS} from '../util/numbers';
+import {THIRTY_SECONDS, THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS} from '../util/strings';
 import {
   DEFAULT_DRAW_BIAS_SCORE,
@@ -74,6 +74,8 @@ export class MeetingComponent implements OnInit {
     this.repo.fetchHorses();
     this.repo.fetchSyndicates();
     this.repo.fetchTrackBiasScores();
+
+    setInterval(() => this.repo.fetchTrackBiasScores(), THIRTY_SECONDS);
   }
 
   setActiveTrainer = (clicked: string) =>
@@ -261,6 +263,13 @@ export class MeetingComponent implements OnInit {
     return co.points >= 6 && co.odds >= 8 && co.odds <= 60;
   }
 
+  isTopDrawBias = (race: number, draw: number): boolean =>
+    this.getTrackBias(race).draws
+      .map(d => d.ratedScore)
+      .sort((s1, s2) => s2 - s1)
+      .slice(0, 3)
+      .includes(this.getDrawBias(race, draw).ratedScore)
+
   formatChallengeOdds = (odds: number): string => {
     if (odds < 1) return '';
     else if (odds > 99) return '99+'
@@ -412,6 +421,16 @@ export class MeetingComponent implements OnInit {
 
     const jockey = racecard.starters.find(s => s.draw === draw)?.jockey || '';
     return getPlacingColor(jockey, racecard);
+  }
+
+  getWinPlaceOddsByDraw = (race: number, draw: number): WinPlaceOdds => {
+    const racecard = this.racecards.find(r => r.race === race);
+    if (!racecard) return {order: 0, win: 0, place: 0};
+
+    const jockey = racecard.starters.find(s => s.draw === draw)?.jockey;
+    if (!jockey) return {order: 0, win: 0, place: 0};
+
+    return getWinPlaceOdds(jockey, racecard);
   }
 
   getChallengeOdds = (personType: string, order: number): ChallengeOdds => {
