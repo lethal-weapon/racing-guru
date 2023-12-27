@@ -13,6 +13,7 @@ import {Report} from './report.model';
 import {Record} from './record.model';
 import {SeasonPerformance} from './performance.model';
 import {TrackBiasScore} from './bias.model';
+import {SpeedFigure} from './speed.model';
 import {
   DividendDto,
   FavoritePost,
@@ -36,6 +37,7 @@ export class RestRepository {
   private syndicatePerformances: SyndicatePerformance[] = [];
   private connections: RaceConnection[] = [];
   private trackBiasScores: TrackBiasScore[] = [];
+  private speedFigures: SpeedFigure[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -54,6 +56,7 @@ export class RestRepository {
   findSyndicatePerformances = () => this.syndicatePerformances
   findConnections = () => this.connections
   findTrackBiasScores = () => this.trackBiasScores
+  findSpeedFigures = () => this.speedFigures
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -150,5 +153,8 @@ export class RestRepository {
 
   fetchTrackBiasScores = () =>
     this.source.getTrackBiasScores().subscribe(data => this.trackBiasScores = data)
+
+  fetchSpeedFigures = () =>
+    this.source.getSpeedFigures().subscribe(data => this.speedFigures = data)
 
 }

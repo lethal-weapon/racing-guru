@@ -7,6 +7,7 @@ import {Note} from '../model/note.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Selection} from '../model/dto.model';
+import {DEFAULT_SPEED_FIGURE} from '../model/speed.model';
 import {
   COLORS,
   COMMON_HORSE_ORIGINS,
@@ -98,12 +99,22 @@ export class RacecardComponent implements OnInit {
     this.repo.fetchHorses();
     this.repo.fetchMeetings();
     this.repo.fetchCollaborations();
+    this.repo.fetchSpeedFigures();
 
     setInterval(() => this.repo.fetchCollaborations(), THIRTY_SECONDS);
   }
 
-  formatMeeting = (meeting: string): string =>
-    meeting.replace(/^\d{4}-/g, '')
+  formatMeeting = (meeting: string): string => {
+    const pastMeeting = new Date(meeting).getTime();
+    const currentMeeting = new Date(this.racecards[0].meeting).getTime();
+    const diffDays = (currentMeeting - pastMeeting) / ONE_DAY_MILL;
+    const diffMonths = (diffDays / 30).toFixed(1);
+    const diffYears = (diffDays / 365).toFixed(1);
+
+    if (diffDays < 100) return `${diffDays}D`;
+    if (diffDays < 365) return `${diffMonths}M`;
+    return `${diffYears}Y`;
+  }
 
   formatVenue = (venue: string): string =>
     ['HV', 'ST'].includes(venue) ? venue : 'OS'
@@ -159,6 +170,19 @@ export class RacecardComponent implements OnInit {
     )
       .filter(s => s.order === starter.order && s.placing === placing)
       .length === 1
+
+  getHorseRecent3StartAvgSpeedFigure = (starter: Starter): number => {
+    const figureSum = this.getHorse(starter).pastStarters
+      .slice(0, 3)
+      .map(ps => this.getHorseSpeedFigure(starter.horse, ps.meeting))
+      .reduce((prev, curr) => prev + curr, 0);
+
+    return Math.floor(figureSum / 3);
+  }
+
+  getHorseSpeedFigure = (horse: string, meeting: string): number =>
+    (this.repo.findSpeedFigures().find(f => f.horse === horse) || DEFAULT_SPEED_FIGURE)
+      ?.figures.find(f => f.meeting === meeting)?.figure || 0
 
   getHorse = (starter: Starter): Horse =>
     this.repo.findHorses()
@@ -275,25 +299,6 @@ export class RacecardComponent implements OnInit {
     const bottoms = this.startersSortedByChance.map(s => s.order).slice(6);
 
     return bottoms.includes(starter.order) && (publicChance - modelChance >= 3);
-  }
-
-  getDaysSinceLastRun = (starter: Starter): number => {
-    const pastStarts = this.getHorse(starter).pastStarters;
-    if (pastStarts.length === 0) return 0;
-
-    const currentMeeting = this.racecards[0].meeting;
-    const lastStartMeeting = pastStarts
-      .map(ps => ps.meeting)
-      .sort((m1, m2) => m2.localeCompare(m1))
-      .shift() || '';
-
-    if (currentMeeting.length < 1 || lastStartMeeting.length < 1) return 0;
-
-    const diffMilliseconds =
-      new Date(currentMeeting).getTime() -
-      new Date(lastStartMeeting).getTime();
-
-    return diffMilliseconds / ONE_DAY_MILL;
   }
 
   getStarterStatSumColor = (starter: Starter, index: number): string => {

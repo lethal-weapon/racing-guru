@@ -15,6 +15,7 @@ import {Report} from './report.model';
 import {Record} from './record.model';
 import {SeasonPerformance} from './performance.model';
 import {TrackBiasScore} from './bias.model';
+import {SpeedFigure} from './speed.model';
 import {
   DividendDto,
   FavoritePost,
@@ -90,5 +91,8 @@ export class RestDataSource {
 
   getTrackBiasScores = (): Observable<TrackBiasScore[]> =>
     this.http.get<TrackBiasScore[]>(`${this.baseUrl}/track-bias-scores`)
+
+  getSpeedFigures = (): Observable<SpeedFigure[]> =>
+    this.http.get<SpeedFigure[]>(`${this.baseUrl}/speed-figures`)
 
 }

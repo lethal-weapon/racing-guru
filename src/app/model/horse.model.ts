@@ -1,10 +1,14 @@
 export interface PastStarter {
-  meeting : string,
-  venue   : string,
-  jockey  : string,
-  trainer : string,
-  placing : number,
-  winOdds : number
+  meeting  : string,
+  venue    : string,
+  track    : string,
+  grade    : string,
+  distance : number,
+  duration : string,
+  jockey   : string,
+  trainer  : string,
+  placing  : number,
+  winOdds  : number
 }
 
 export class Horse {
