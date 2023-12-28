@@ -199,7 +199,7 @@
       Track Bias
     </th>
     <th *counter="let race of maxRace"
-        class="w-36 border border-gray-600"
+        class="w-36 border border-gray-600 {{getTrackBiasRaceColor(race)}}"
     >
       {{race}} ({{getTrackBias(race).races}}R)
     </th>

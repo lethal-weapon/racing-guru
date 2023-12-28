@@ -8,7 +8,7 @@ import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS, WinPlaceOdds} from '../model/odds.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {THIRTY_SECONDS, THREE_SECONDS} from '../util/numbers';
-import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS} from '../util/strings';
+import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, COLORS} from '../util/strings';
 import {
   DEFAULT_DRAW_BIAS_SCORE,
   DEFAULT_TRACK_BIAS_SCORE,
@@ -463,6 +463,19 @@ export class MeetingComponent implements OnInit {
     this.repo.findTrackBiasScores()
       .find(s => s.meeting === this.racecards[0].meeting && s.race === race)
     || DEFAULT_TRACK_BIAS_SCORE
+
+  getTrackBiasRaceColor = (race: number): string => {
+    const card = this.racecards.find(r => r.race === race);
+    if (!card) return '';
+
+    const uniqueTracks = this.racecards
+      .map(r => `${r.venue}#${r.track}#${r?.course || 'X'}#${r.distance}`)
+      .filter((t, i, a) => a.indexOf(t) === i);
+
+    const raceTrack = `${card.venue}#${card.track}#${card?.course || 'X'}#${card.distance}`;
+    const index = uniqueTracks.indexOf(raceTrack);
+    return index === -1 ? '' : COLORS[index];
+  }
 
   get syndicates(): Syndicate[] {
     return this.repo.findSyndicates()
