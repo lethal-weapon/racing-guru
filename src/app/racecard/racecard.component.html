@@ -324,17 +324,25 @@
       <div class="text-center text-xl">
         Speed Figure
       </div>
-      <div class="px-1 mt-2 text-xl grid grid-cols-4">
+      <div *ngIf="getHorse(starter).pastStarters.length > 0"
+           class="px-1 mt-2 text-xl grid grid-cols-4"
+      >
         <div *ngFor="let ps of getHorse(starter).pastStarters.slice(0, 3)">
           {{formatMeeting(ps.meeting)}}
         </div>
-        <div>
+        <div
+          [class.col-span-2]="getHorse(starter).pastStarters.slice(0, 3).length === 2"
+          [class.col-span-3]="getHorse(starter).pastStarters.slice(0, 3).length === 1"
+        >
           Avg
         </div>
         <div *ngFor="let ps of getHorse(starter).pastStarters.slice(0, 3)">
           {{getHorseSpeedFigure(starter.horse, ps.meeting)}}
         </div>
-        <div class="text-yellow-400">
+        <div class="text-yellow-400"
+             [class.col-span-2]="getHorse(starter).pastStarters.slice(0, 3).length === 2"
+             [class.col-span-3]="getHorse(starter).pastStarters.slice(0, 3).length === 1"
+        >
           {{getHorseRecent3StartAvgSpeedFigure(starter)}}
         </div>
       </div>

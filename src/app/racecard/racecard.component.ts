@@ -172,12 +172,15 @@ export class RacecardComponent implements OnInit {
       .length === 1
 
   getHorseRecent3StartAvgSpeedFigure = (starter: Starter): number => {
-    const figureSum = this.getHorse(starter).pastStarters
+    const figures = this.getHorse(starter).pastStarters
       .slice(0, 3)
       .map(ps => this.getHorseSpeedFigure(starter.horse, ps.meeting))
-      .reduce((prev, curr) => prev + curr, 0);
+      .filter(f => f > 0);
 
-    return Math.floor(figureSum / 3);
+    if (figures.length < 1) return 0;
+
+    const figureSum = figures.reduce((prev, curr) => prev + curr, 0);
+    return Math.floor(figureSum / figures.length);
   }
 
   getHorseSpeedFigure = (horse: string, meeting: string): number =>
