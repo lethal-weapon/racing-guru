@@ -7,7 +7,7 @@ import {Racecard} from '../model/racecard.model';
 import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS, WinPlaceOdds} from '../model/odds.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {THIRTY_SECONDS, THREE_SECONDS} from '../util/numbers';
+import {ONE_MINUTE, THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, COLORS} from '../util/strings';
 import {
   DEFAULT_DRAW_BIAS_SCORE,
@@ -75,7 +75,7 @@ export class MeetingComponent implements OnInit {
     this.repo.fetchSyndicates();
     this.repo.fetchTrackBiasScores();
 
-    setInterval(() => this.repo.fetchTrackBiasScores(), THIRTY_SECONDS);
+    setInterval(() => this.repo.fetchTrackBiasScores(), ONE_MINUTE);
   }
 
   setActiveTrainer = (clicked: string) =>

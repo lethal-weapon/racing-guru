@@ -50,7 +50,6 @@ export const JOCKEYS = [
   new Person('BH', '1980-07-14', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', '', 29),
   new Person('MCJ', '1992-01-06', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', '', 8),
   new Person('AVB', '1991-01-18', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', '', 0),
-  new Person('CLR', '1981-07-24', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard', 9),
 
   new Person('TEK', '1990-06-03', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', '', 547),
   new Person('HEL', '1997-10-30', 'Hewitson', 'Lyle', 'L. Hewitson', 'SAF', 'Club', '', 30),
@@ -74,6 +73,7 @@ export const JOCKEYS = [
   new Person('CHA', '1994-06-05', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred', 53),
   new Person('MHT', '1993-10-22', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan', 104),
 
+  // new Person('CLR', '1981-07-24', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard', 9),
   // new Person('MOJ', '1983-09-26', 'Moreira', 'Joao', 'J. Moreira', 'BRZ', 'Club', '', 1234),
   // new Person('LDM', '1994-02-06', 'Lane', 'Damian', 'D. Lane', 'AUS', 'Club', '', 8),
   // new Person('KAY', '1985-10-15', 'Kawada', 'Yuga', 'Y. Kawada', 'JPN', 'Club', '', 0),
