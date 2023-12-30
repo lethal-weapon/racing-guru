@@ -18,6 +18,7 @@ import {TrackBiasScore} from './bias.model';
 import {SpeedFigure} from './speed.model';
 import {
   DividendDto,
+  DrawPerformance,
   FavoritePost,
   Interview,
   SelectionPost
@@ -94,5 +95,8 @@ export class RestDataSource {
 
   getSpeedFigures = (): Observable<SpeedFigure[]> =>
     this.http.get<SpeedFigure[]>(`${this.baseUrl}/speed-figures`)
+
+  getDrawPerformance = (): Observable<DrawPerformance[]> =>
+    this.http.get<DrawPerformance[]>(`${this.baseUrl}/draw-performance`)
 
 }

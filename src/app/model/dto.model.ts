@@ -41,3 +41,17 @@ export const DEFAULT_DIVIDEND: DividendDto = {
   tierce: 0,
   quartet: 0
 }
+
+export interface DrawPlacingPerformance {
+  draw: number,
+  placing: number,
+  inherit: boolean
+}
+
+export interface DrawPerformance {
+  meeting: string,
+  race: number,
+  venue: string,
+  inheritance: number,
+  draws: DrawPlacingPerformance[]
+}

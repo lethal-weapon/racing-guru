@@ -5,9 +5,9 @@ import {Syndicate} from '../model/syndicate.model';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {formatOdds} from '../util/functions';
-import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES} from '../util/strings';
+import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES, SEASONS} from '../util/strings';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
-import {DEFAULT_DIVIDEND, DividendDto} from '../model/dto.model';
+import {DEFAULT_DIVIDEND, DividendDto, DrawPerformance, DrawPlacingPerformance} from '../model/dto.model';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers';
 
 @Component({
@@ -16,7 +16,7 @@ import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers'
 })
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
-  activeSubsection: string = this.subsections[2];
+  activeSubsection: string = this.subsections[0];
   activePersonView: string = this.personViews[0];
   activeMeeting: string = '';
   activePerson: string = '';
@@ -36,11 +36,13 @@ export class TrendComponent implements OnInit {
     this.repo.fetchDividends();
     this.repo.fetchSyndicates();
     this.repo.fetchSyndicatePerformance();
+    this.repo.fetchDrawPerformance();
 
     setInterval(() => this.repo.fetchMeetings(), TWENTY_SECONDS);
     setInterval(() => {
       this.repo.fetchDividends();
       this.repo.fetchSyndicatePerformance();
+      this.repo.fetchDrawPerformance();
     }, ONE_MINUTE);
   }
 
@@ -467,6 +469,48 @@ export class TrendComponent implements OnInit {
   getDividend = (meeting: string, race: number): DividendDto =>
     this.repo.findDividends().find(d => d.meeting == meeting && d.race == race) || DEFAULT_DIVIDEND
 
+  getDrawPlacingPerformance = (meeting: string, race: number): DrawPlacingPerformance[] => {
+    return this.getDrawPerformance(meeting, race)?.draws || [];
+  }
+
+  getDrawPerformance = (meeting: string, race: number): DrawPerformance | undefined => {
+    return this.repo.findDrawPerformances()
+      .find(d => d.meeting === meeting && d.race === race);
+  }
+
+  getDrawPerformanceByPeriod = (period: string): Array<{ races: number, hits: number }> => {
+    let meetings = this.meetings.map(m => m.meeting);
+    if (period === 'Recent 10 Meetings') {
+      meetings = this.meetings
+        .filter((v, i) => i > 0)
+        .map(m => m.meeting)
+        .slice(0, 10);
+
+    } else if (SEASONS.map(s => s.label).some(l => period.includes(l))) {
+      const season = SEASONS.find(s => period.includes(s.label))
+      meetings = this.meetings
+        .filter((v, i) => i > 0)
+        .map(m => m.meeting)
+        .filter(m => m >= (season?.opening || '') && m <= (season?.finale || ''));
+    }
+
+    return this.drawPerformanceVenues.map(v => {
+      let performances = this.repo.findDrawPerformances()
+      if (v !== 'Total') {
+        performances = this.repo.findDrawPerformances().filter(p => p.venue === v);
+      }
+
+      performances = performances
+        .filter(p => meetings.includes(p.meeting))
+        .filter(p => p.draws.length > 0);
+
+      return {
+        races: performances.length,
+        hits: performances.filter(p => p.inheritance > 1).length
+      }
+    });
+  }
+
   getActivePersonViewByHorse = (retired: boolean = false):
     Array<{ horse: string, starters: EarningStarter[] }> => {
 
@@ -658,6 +702,14 @@ export class TrendComponent implements OnInit {
 
   get controlStyle(): string {
     return `w-12 cursor-pointer transition hover:text-yellow-400`;
+  }
+
+  get drawPerformancePeriods(): string[] {
+    return ['Recent 10 Meetings', 'Season 23/24', 'Season 22/23', 'Total'];
+  }
+
+  get drawPerformanceVenues(): string[] {
+    return ['HV', 'ST', 'Total'];
   }
 
   get personViews(): string[] {

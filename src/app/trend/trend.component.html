@@ -197,6 +197,43 @@
         </tr>
       </ng-container>
     </table>
+    <div *ngIf="activeSubsection != subsections[2] && activePerson.length === 0"
+         class="mt-4"
+    >
+      <table class="mx-auto table-fixed border-collapse border border-gray-600 text-center">
+        <thead class="text-xl">
+        <th class="w-64 py-2 border border-gray-600 text-green-600">
+          Draw Inheritance
+        </th>
+        <th *ngFor="let venue of drawPerformanceVenues"
+            class="w-52 py-2 border border-gray-600"
+        >
+          {{venue}}
+        </th>
+        </thead>
+        <tbody class="text-lg">
+        <tr *ngFor="let period of drawPerformancePeriods"
+            class="hover:bg-gray-800"
+        >
+          <td class="py-1.5 border border-gray-700">
+            {{period}}
+          </td>
+          <td *ngFor="let per of getDrawPerformanceByPeriod(period)"
+              class="py-1.5 border border-gray-700"
+          >
+            <div class="grid grid-cols-5">
+              <div class="col-span-3">
+                {{per.hits}} / {{per.races}}
+              </div>
+              <div class="col-span-2">
+                {{(per.hits / per.races) | percent}}
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="mt-4">
       <div *ngIf="activeSubsection != subsections[2] && activePerson.length > 0"
            class="mx-24 mb-4 grid grid-cols-2"
@@ -262,14 +299,26 @@
               {{formatMeeting(m.meeting)}}
             </td>
             <td *counter="let race of MAX_RACE_PER_MEETING"
-                class="h-10 border border-gray-700 py-1 {{getDividendColor(m.meeting, race)}}"
+                class="h-10 border border-gray-700 py-1"
                 [class.border-b-yellow-400]="!last && isBoundaryMeeting(m.meeting)"
             >
-              <div class="grid grid-cols-2">
-                <div *ngFor="let dn of getDividendNumbers(m.meeting, race)"
-                     [class.invisible]="dn <= 0"
+              <div class="grid grid-cols-3 items-center">
+                <div class="col-span-2 grid grid-cols-2">
+                  <div *ngFor="let dpp of getDrawPlacingPerformance(m.meeting, race)"
+                       class="{{dpp.inherit ? COLORS[dpp.placing - 1] : 'opacity-50'}}"
+                  >
+                    {{dpp.draw}}
+                  </div>
+                </div>
+                <div class="col-span-1 text-yellow-400 px-1"
+                     [class.invisible]="(getDrawPerformance(m.meeting, race)?.inheritance || 0) == 1"
+                     [class.opacity-50]="(getDrawPerformance(m.meeting, race)?.inheritance || 0) == 2"
                 >
-                  {{formatOdds(dn)}}
+                  <div *ngIf="(getDrawPerformance(m.meeting, race)?.inheritance || 0) > 0"
+                       class="border border-gray-300"
+                  >
+                    {{getDrawPerformance(m.meeting, race)?.inheritance || ''}}
+                  </div>
                 </div>
               </div>
             </td>

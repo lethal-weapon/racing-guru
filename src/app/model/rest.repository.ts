@@ -16,6 +16,7 @@ import {TrackBiasScore} from './bias.model';
 import {SpeedFigure} from './speed.model';
 import {
   DividendDto,
+  DrawPerformance,
   FavoritePost,
   Interview,
   SelectionPost
@@ -38,6 +39,7 @@ export class RestRepository {
   private connections: RaceConnection[] = [];
   private trackBiasScores: TrackBiasScore[] = [];
   private speedFigures: SpeedFigure[] = [];
+  private drawPerformances: DrawPerformance[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -57,6 +59,7 @@ export class RestRepository {
   findConnections = () => this.connections
   findTrackBiasScores = () => this.trackBiasScores
   findSpeedFigures = () => this.speedFigures
+  findDrawPerformances = () => this.drawPerformances
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -156,5 +159,8 @@ export class RestRepository {
 
   fetchSpeedFigures = () =>
     this.source.getSpeedFigures().subscribe(data => this.speedFigures = data)
+
+  fetchDrawPerformance = () =>
+    this.source.getDrawPerformance().subscribe(data => this.drawPerformances = data)
 
 }
