@@ -218,7 +218,7 @@
           [class.via-gray-700]="isTopDrawBias(race, draw)"
           [class.to-gray-900]="isTopDrawBias(race, draw)"
       >
-        <div *ngIf="getDrawBias(race, draw).score > 0 && getWinPlaceOddsByDraw(race, draw).order > 0"
+        <div *ngIf="getWinPlaceOddsByDraw(race, draw).order > 0"
              class="grid grid-cols-3"
         >
           <div>
