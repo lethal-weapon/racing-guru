@@ -13,3 +13,22 @@ export interface RaceConnection {
   race: number,
   connections: Connection[]
 }
+
+export interface ConnectionDividendOdds {
+  odds: number,
+  connected: boolean
+}
+
+export interface ConnectionDividend {
+  meeting: string,
+  race: number,
+  quinella: ConnectionDividendOdds,
+  quinellaPlace: ConnectionDividendOdds[]
+}
+
+export const DEFAULT_CONNECTION_DIVIDEND: ConnectionDividend = {
+  meeting: '',
+  race: 0,
+  quinella: {odds: 0, connected: false},
+  quinellaPlace: []
+}

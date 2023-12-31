@@ -24,6 +24,7 @@ import {FormOwnerComponent} from './form/form-owner/form-owner.component';
 import {FormBetComponent} from './form/form-bet/form-bet.component';
 import {FormEngineComponent} from './form/form-engine/form-engine.component';
 import {FormPeopleComponent} from './form/form-people/form-people.component';
+import {FormConnectionComponent} from './form/form-connection/form-connection.component';
 import {ToastWebsocketComponent} from './toast/toast-websocket/toast-websocket.component';
 
 @NgModule({
@@ -45,8 +46,9 @@ import {ToastWebsocketComponent} from './toast/toast-websocket/toast-websocket.c
     FormOwnerComponent,
     FormBetComponent,
     FormEngineComponent,
+    FormConnectionComponent,
     FormPeopleComponent,
-    ToastWebsocketComponent
+    ToastWebsocketComponent,
   ],
   imports: [
     BrowserModule,

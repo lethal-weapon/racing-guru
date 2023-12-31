@@ -1,0 +1,42 @@
+<table class="mx-auto mt-10 table-fixed border-collapse border border-gray-600 text-center font-mono">
+  <thead class="text-xl">
+  <th class="w-24 border border-gray-600 py-1">
+    <i class="fa fa-calendar"></i>
+  </th>
+  <th *counter="let race of MAX_RACE_PER_MEETING"
+      class="w-32 border border-gray-600 py-1"
+  >
+    {{race === 10 ? 'X' : race === 11 ? 'E' : race}}
+  </th>
+  </thead>
+  <tbody>
+  <tr *ngFor="let m of meetings"
+      class="hover:bg-gray-800"
+  >
+    <td class="border border-gray-700 text-xl py-1">
+      {{formatMeeting(m)}}
+    </td>
+    <td *counter="let race of MAX_RACE_PER_MEETING"
+        class="border border-gray-700 py-1"
+    >
+      <div class="grid grid-cols-2">
+        <div class="{{getConnectionDividend(m, race).quinella.connected ? 'opacity-50' : 'text-purple-600'}}">
+          <span *ngIf="getConnectionDividend(m, race).quinella.odds > 0">
+            {{ formatOdds(getConnectionDividend(m, race).quinella.odds) }}
+          </span>
+        </div>
+        <div *ngFor="let qpl of getConnectionDividend(m, race).quinellaPlace"
+             class="{{qpl.connected ? 'opacity-50' : 'text-purple-600'}}"
+        >
+          <span *ngIf="qpl.odds < 10 && !qpl.connected">
+            *
+          </span>
+          <span *ngIf="!(qpl.odds < 10 && !qpl.connected)">
+            {{ formatOdds(qpl.odds) }}
+          </span>
+        </div>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>

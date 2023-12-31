@@ -5,7 +5,7 @@ import {Component, OnInit} from '@angular/core';
   templateUrl: './form.component.html'
 })
 export class FormComponent implements OnInit {
-  activeSection: string = this.sections[1];
+  activeSection: string = this.sections[3];
 
   constructor() {
   }
@@ -19,6 +19,6 @@ export class FormComponent implements OnInit {
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
 
   get sections(): string[] {
-    return ['Notes', 'Owners', 'Bets', 'Engine', 'People', 'Fixture'];
+    return ['Notes', 'Owners', 'Bets', 'Connects', 'Engine', 'People', 'Fixture'];
   }
 }
