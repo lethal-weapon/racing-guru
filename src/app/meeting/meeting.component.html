@@ -219,10 +219,13 @@
           [class.to-gray-900]="isTopDrawBias(race, draw)"
       >
         <div *ngIf="getDrawBias(race, draw).score > 0 && getWinPlaceOddsByDraw(race, draw).order > 0"
-             class="grid grid-cols-2"
+             class="grid grid-cols-3"
         >
           <div>
-            {{getDrawBias(race, draw).ratedScore}}
+            {{getDrawBias(race, draw).ratedScore.toFixed(1)}}
+          </div>
+          <div>
+            ({{getStarterByDraw(race, draw)?.order || 0}})
           </div>
           <div>
             <span *ngIf="getWinPlaceOddsByDraw(race, draw).win > 0">

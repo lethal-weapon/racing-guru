@@ -433,6 +433,9 @@ export class MeetingComponent implements OnInit {
     return getWinPlaceOdds(jockey, racecard);
   }
 
+  getStarterByDraw = (race: number, draw: number): Starter | undefined =>
+    this.racecards.find(r => r.race === race)?.starters.find(s => s.draw === draw)
+
   getChallengeOdds = (personType: string, order: number): ChallengeOdds => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return DEFAULT_CHALLENGE_ODDS;
