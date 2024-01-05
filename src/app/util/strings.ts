@@ -33,6 +33,7 @@ export const COLORS = [
   'text-green-600',
   'text-blue-600',
   'text-purple-600',
+  'text-yellow-400',
 ];
 
 export const SEASONS: Season[] = [
