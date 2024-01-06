@@ -6,9 +6,10 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS, WinPlaceOdds} from '../model/odds.model';
+import {TrackworkGrade} from '../model/trackwork.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {ONE_MINUTE, THREE_SECONDS} from '../util/numbers';
-import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, COLORS} from '../util/strings';
+import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, COLORS, RATING_GRADES} from '../util/strings';
 import {
   DEFAULT_DRAW_BIAS_SCORE,
   DEFAULT_TRACK_BIAS_SCORE,
@@ -45,6 +46,7 @@ export class MeetingComponent implements OnInit {
   activeTrainer: string = '';
   activeDraw: number = 0;
 
+  protected readonly RATING_GRADES = RATING_GRADES;
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarter = getStarter;
@@ -74,6 +76,7 @@ export class MeetingComponent implements OnInit {
     this.repo.fetchHorses();
     this.repo.fetchSyndicates();
     this.repo.fetchTrackBiasScores();
+    this.repo.fetchTrackworkGrades();
 
     setInterval(() => this.repo.fetchTrackBiasScores(), ONE_MINUTE);
   }
@@ -479,6 +482,9 @@ export class MeetingComponent implements OnInit {
     const index = uniqueTracks.indexOf(raceTrack);
     return index === -1 ? '' : COLORS[index];
   }
+
+  getTrackworkGrades = (race: number, grade: string): TrackworkGrade[] =>
+    this.repo.findTrackworkGrades().filter(g => g.race === race && g.grade === grade)
 
   get syndicates(): Syndicate[] {
     return this.repo.findSyndicates()

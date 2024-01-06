@@ -16,6 +16,7 @@ import {Record} from './record.model';
 import {SeasonPerformance} from './performance.model';
 import {TrackBiasScore} from './bias.model';
 import {SpeedFigure} from './speed.model';
+import {TrackworkGrade} from './trackwork.model';
 import {
   DividendDto,
   DrawPerformance,
@@ -101,5 +102,8 @@ export class RestDataSource {
 
   getDrawPerformance = (): Observable<DrawPerformance[]> =>
     this.http.get<DrawPerformance[]>(`${this.baseUrl}/draw-performance`)
+
+  getTrackworkGrades = (): Observable<TrackworkGrade[]> =>
+    this.http.get<TrackworkGrade[]>(`${this.baseUrl}/trackwork-grades`)
 
 }

@@ -14,6 +14,7 @@ import {Record} from './record.model';
 import {SeasonPerformance} from './performance.model';
 import {TrackBiasScore} from './bias.model';
 import {SpeedFigure} from './speed.model';
+import {TrackworkGrade} from './trackwork.model';
 import {
   DividendDto,
   DrawPerformance,
@@ -41,6 +42,7 @@ export class RestRepository {
   private trackBiasScores: TrackBiasScore[] = [];
   private speedFigures: SpeedFigure[] = [];
   private drawPerformances: DrawPerformance[] = [];
+  private trackworkGrades: TrackworkGrade[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -62,6 +64,7 @@ export class RestRepository {
   findTrackBiasScores = () => this.trackBiasScores
   findSpeedFigures = () => this.speedFigures
   findDrawPerformances = () => this.drawPerformances
+  findTrackworkGrades = () => this.trackworkGrades
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -167,5 +170,8 @@ export class RestRepository {
 
   fetchDrawPerformance = () =>
     this.source.getDrawPerformance().subscribe(data => this.drawPerformances = data)
+
+  fetchTrackworkGrades = () =>
+    this.source.getTrackworkGrades().subscribe(data => this.trackworkGrades = data)
 
 }

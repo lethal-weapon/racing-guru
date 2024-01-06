@@ -24,6 +24,10 @@ export interface Season {
   finale: string
 }
 
+export const RATING_GRADES = [
+  'A', 'B', 'C', 'D',
+]
+
 export const COMMON_HORSE_ORIGINS = [
   'AUS', 'NZ', 'IRE'
 ];
@@ -33,7 +37,6 @@ export const COLORS = [
   'text-green-600',
   'text-blue-600',
   'text-purple-600',
-  'text-yellow-400',
 ];
 
 export const SEASONS: Season[] = [
