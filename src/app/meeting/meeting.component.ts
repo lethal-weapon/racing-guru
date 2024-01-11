@@ -399,7 +399,7 @@ export class MeetingComponent implements OnInit {
   }
 
   getHorseDetail = (horse: string, race: number):
-    { name: string, order: number, odds: number } => ({
+    { name: string, order: number, odds: number, jockey: string, trainer: string } => ({
 
     name: this.repo.findHorses().find(h => h.code === horse)?.nameCH || '?',
     order: this.starters.find(s => s.horse === horse)?.order || 0,
@@ -407,7 +407,9 @@ export class MeetingComponent implements OnInit {
       this.starters.find(s => s.horse === horse)?.jockey || '',
       // @ts-ignore
       this.racecards.find(r => r.race === race)
-    ).win
+    ).win,
+    jockey: this.starters.find(s => s.horse === horse)?.jockey || '?',
+    trainer: this.starters.find(s => s.horse === horse)?.trainer || '?'
   })
 
   getPlacingColorByHorse = (horse: string, race: number): string => {

@@ -47,7 +47,7 @@ export class FormBetComponent implements OnInit {
     const roi = this.getReturnOnInvestment(record);
     return roi < 0
       ? 'text-red-600'
-      : roi >= 3
+      : roi >= 1
         ? 'text-yellow-400'
         : 'text-green-600';
   }

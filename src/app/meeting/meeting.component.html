@@ -260,10 +260,11 @@
           class="border border-gray-700"
       >
         <div *ngFor="let tg of getTrackworkGrades(race, grade)"
-             class="{{getPlacingColorByHorse(tg.horse, race)}}"
+             class="{{getPlacingColorByHorse(tg.horse, race)}} text-sm"
         >
           {{ tg.order }}
           {{ getHorseDetail(tg.horse, race).name }}
+          {{ getHorseDetail(tg.horse, race).trainer }}
           <span *ngIf="getHorseDetail(tg.horse, race).odds > 0"
                 class="{{ getPlacingColorByHorse(tg.horse, race).length === 0
                           ? getOddsIntensityColor(getHorseDetail(tg.horse, race).odds)
@@ -308,18 +309,28 @@
           [class.bg-gray-700]="getSyndicateStarters(syn, race).length > 1"
       >
         <div *ngFor="let h of getSyndicateStarters(syn, race)"
-             class="{{getPlacingColorByHorse(h, race)}}"
+             class="{{getPlacingColorByHorse(h, race)}} leading-5"
         >
-          {{ getHorseDetail(h, race).order }}
-          {{ getHorseDetail(h, race).name }}
-          <span *ngIf="getHorseDetail(h, race).odds > 0"
-                class="{{ getPlacingColorByHorse(h, race).length === 0
+          <div>
+            {{ getHorseDetail(h, race).order }}
+            {{ getHorseDetail(h, race).name }}
+            <span *ngIf="getHorseDetail(h, race).odds > 0"
+                  class="{{ getPlacingColorByHorse(h, race).length === 0
                           ? getOddsIntensityColor(getHorseDetail(h, race).odds)
                           : ''
                        }}"
-          >
-            {{ getHorseDetail(h, race).odds }}
-          </span>
+            >
+              {{ getHorseDetail(h, race).odds }}
+            </span>
+          </div>
+          <div class="flex flex-row justify-around">
+            <div>
+              {{ getHorseDetail(h, race).jockey }}
+            </div>
+            <div>
+              {{ getHorseDetail(h, race).trainer }}
+            </div>
+          </div>
         </div>
       </td>
     </tr>
