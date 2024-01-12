@@ -263,8 +263,10 @@
              class="{{getPlacingColorByHorse(tg.horse, race)}} text-sm"
         >
           {{ tg.order }}
-          {{ getHorseDetail(tg.horse, race).name }}
-          {{ getHorseDetail(tg.horse, race).trainer }}
+          <span class="text-xs">
+            {{ getHorseDetail(tg.horse, race).name }}
+            {{ getHorseDetail(tg.horse, race).trainer }}
+          </span>
           <span *ngIf="getHorseDetail(tg.horse, race).odds > 0"
                 class="{{ getPlacingColorByHorse(tg.horse, race).length === 0
                           ? getOddsIntensityColor(getHorseDetail(tg.horse, race).odds)
