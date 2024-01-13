@@ -80,7 +80,7 @@ export const BOUNDARY_JOCKEYS = [
 ];
 
 export const BOUNDARY_TRAINERS = [
-  'NM', 'MWK', 'YTP',
+  'HDA', 'SCS', 'NM',
 ];
 
 export const BOUNDARY_PERSONS =
