@@ -114,7 +114,13 @@ export class TrendComponent implements OnInit {
 
         } else if (currIndex < meetingsInRange.length - 1) {
           this.handleTrackingControls('Next');
-          setTimeout(() => this.handleTrackingControls('Replay'), 250);
+
+          if (meetingsInRange.indexOf(this.trackingMeeting) === meetingsInRange.length - 1) {
+            this.handleTrackingControls('Reset');
+
+          } else {
+            setTimeout(() => this.handleTrackingControls('Replay'), 350);
+          }
         }
         break;
       }

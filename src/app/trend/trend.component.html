@@ -579,7 +579,7 @@
   <div *ngIf="activeSection === sections[2]"
        class="mx-8 mt-4"
   >
-    <div class="grid grid-cols-5 mb-4 items-center">
+    <div class="grid grid-cols-5 mb-3 items-center">
       <div class="col-span-2 flex flex-row justify-center">
         <div *ngFor="let control of ['Reset', 'Replay', 'Opening', 'Prev', 'Next']"
              class="{{trackingControlStyle}}"
@@ -606,10 +606,13 @@
            class="w-full"
       >
         <div *ngFor="let pe of pel; let index = index"
-             class="mt-2 flex items-center"
+             class="mt-2 flex items-center border-dashed"
              [class.flex-row]="!last"
              [class.flex-row-reverse]="last"
              [class.text-right]="last"
+             [class.pb-2]="(index+1) % 5 == 0 && index <= 15"
+             [class.border-b]="(index+1) % 5 == 0 && index <= 15"
+             [class.border-b-gray-400]="(index+1) % 5 == 0 && index <= 15"
         >
           <div class="{{last ? 'w-6' : 'w-10'}}"
                [class.text-yellow-400]="index < 5"
@@ -653,7 +656,7 @@
                   <div>
                     {{ seasonEarning }}
                   </div>
-                  <div *ngIf="first && pe.earnings[0] < pe.earnings[1]"
+                  <div *ngIf="first && pe.earnings[1] > 10"
                        class="mx-2 text-green-600"
                   >
                     ({{ (pe.earnings[0] / pe.earnings[1]) | percent }})

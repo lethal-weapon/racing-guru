@@ -76,7 +76,7 @@ export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
 export const JOCKEY_CODES = JOCKEYS.map(j => j.code);
 
 export const BOUNDARY_JOCKEYS = [
-  'AVB', 'DMK', 'AA', 'YML',
+  'AVB', 'DMK', 'HAA', 'YML',
 ];
 
 export const BOUNDARY_TRAINERS = [
