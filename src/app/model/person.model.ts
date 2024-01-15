@@ -33,10 +33,10 @@ export const TRAINERS = [
   new Person('NM', '1968-01-01', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
 
   new Person('SWY', '1968-12-10', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris', 308),
+  new Person('CCW', '1961-12-02', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael', 321),
   new Person('YCH', '1967-07-28', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis', 797),
   new Person('TKH', '1972-08-09', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy', 134),
   new Person('TYS', '1960-09-30', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me', 597),
-  new Person('CCW', '1961-12-02', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael', 321),
   new Person('MWK', '1978-01-01', 'Mo', 'Wai-kit', 'C. Mo', 'HK', '', 'Cody', 0),
 
   // new Person('HL', '1960-07-06', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
