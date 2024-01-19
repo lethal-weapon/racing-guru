@@ -14,7 +14,7 @@ import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers'
   templateUrl: './trend.component.html'
 })
 export class TrendComponent implements OnInit {
-  activeSection: string = this.sections[2];
+  activeSection: string = this.sections[3];
   activeSubsection: string = this.subsections[0];
   activePersonView: string = this.personViews[0];
   activeMeeting: string = '';
@@ -25,6 +25,8 @@ export class TrendComponent implements OnInit {
   trackingPlayers: string[] = ['WDJ', 'HEL'];
 
   protected readonly COLORS = COLORS;
+  protected readonly JOCKEYS = JOCKEYS;
+  protected readonly TRAINERS = TRAINERS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
 
   constructor(private repo: RestRepository) {
@@ -622,6 +624,22 @@ export class TrendComponent implements OnInit {
     return ['', '', ''];
   }
 
+  getPlayerStatsByVenue = (player: string, venue: string): number[] => {
+    const summaries = this.meetings
+      .filter(m => m.meeting >= SEASONS[0].opening)
+      .filter(m => m.venue === venue)
+      .flatMap(m => m.persons)
+      .filter(ps => ps.person === player);
+
+    return [
+      summaries.map(s => s.wins).reduce((prev, curr) => prev + curr, 0),
+      summaries.map(s => s.seconds).reduce((prev, curr) => prev + curr, 0),
+      summaries.map(s => s.thirds).reduce((prev, curr) => prev + curr, 0),
+      summaries.map(s => s.fourths).reduce((prev, curr) => prev + curr, 0),
+      summaries.flatMap(ps => ps.starters).filter(s => s.winOdds && s.placing > 0).length
+    ];
+  }
+
   get currentSeasonProgress(): string {
     const startMeeting = SEASONS[0].opening;
     const endMeeting = this.trackingMeeting.length > 0
@@ -803,6 +821,6 @@ export class TrendComponent implements OnInit {
   }
 
   get sections(): string[] {
-    return ['Everyone Everything', 'Top Players', 'Player Earnings'];
+    return ['Everything', 'Top Players', 'Player Earnings', 'Player Stats'];
   }
 }

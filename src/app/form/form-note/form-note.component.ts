@@ -283,7 +283,7 @@ export class FormNoteComponent implements OnInit {
 
   get personMilestoneCloseWinners(): PersonWinner[] {
     return this.personWinners.filter(pw =>
-      (pw.career === 0) || (pw.career % 10 >= 8) || (pw.season % 10 >= 8)
+      (pw.career === 0) || (pw.career % 10 >= 8) || (pw.season % 10 >= 9)
     );
   }
 
@@ -302,8 +302,7 @@ export class FormNoteComponent implements OnInit {
 
             seasonWins = this.repo.findMeetings()
               .filter(m => m.meeting >= season.opening && m.meeting < this.activeMeeting)
-              .map(m => m.persons)
-              .reduce((prev, curr) => prev.concat(curr), [])
+              .flatMap(m => m.persons)
               .filter(ps => ps.person === person.code)
               .map(ps => ps.wins)
               .reduce((prev, curr) => prev + curr, 0);
@@ -314,8 +313,7 @@ export class FormNoteComponent implements OnInit {
 
         const careerWins = this.repo.findMeetings()
           .filter(m => m.meeting < this.activeMeeting)
-          .map(m => m.persons)
-          .reduce((prev, curr) => prev.concat(curr), [])
+          .flatMap(m => m.persons)
           .filter(ps => ps.person === person.code)
           .map(ps => ps.wins)
           .reduce((prev, curr) => prev + curr, person.careerWins);

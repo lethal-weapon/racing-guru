@@ -184,11 +184,9 @@ export const getPersonSummaryByRace = (
 
   meetings
     .filter(m => venue.length === 0 || m.venue === venue)
-    .map(m => m.persons)
-    .reduce((prev, curr) => prev.concat(curr), [])
+    .flatMap(m => m.persons)
     .filter(p => p.person === person)
-    .map(p => p.starters)
-    .reduce((prev, curr) => prev.concat(curr), [])
+    .flatMap(p => p.starters)
     .filter(s => s.race === race && s?.winOdds)
     .forEach(s => {
       ps.engagements += 1;

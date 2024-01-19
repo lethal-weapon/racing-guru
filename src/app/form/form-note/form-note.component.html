@@ -253,7 +253,7 @@
             <tbody>
             <tr *ngFor="let pw of personMilestoneCloseWinners">
               <td class="py-0.5">{{pw.person}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.season % 10 >= 8">{{pw.season}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.season % 10 >= 9">{{pw.season}}</td>
               <td class="py-0.5" [class.text-green-600]="pw.career % 10 >= 8 || pw.career == 0">{{pw.career}}</td>
             </tr>
             </tbody>
