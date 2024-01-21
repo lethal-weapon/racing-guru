@@ -14,19 +14,15 @@ import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers'
   templateUrl: './trend.component.html'
 })
 export class TrendComponent implements OnInit {
-  activeSection: string = this.sections[3];
+  activeSection: string = this.sections[2];
   activeSubsection: string = this.subsections[0];
   activePersonView: string = this.personViews[0];
   activeMeeting: string = '';
   activePerson: string = 'WDJ';
   activeSyndicate: number = 0;
   meetingIndex: number = 0;
-  trackingMeeting: string = '';
-  trackingPlayers: string[] = ['WDJ', 'HEL'];
 
   protected readonly COLORS = COLORS;
-  protected readonly JOCKEYS = JOCKEYS;
-  protected readonly TRAINERS = TRAINERS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
 
   constructor(private repo: RestRepository) {
@@ -68,67 +64,6 @@ export class TrendComponent implements OnInit {
     this.activeSyndicate = this.syndicates
       .find(s => s.horses.includes(horse))
       ?.id || 0;
-  }
-
-  toggleTrackingPlayer = (player: string) => {
-    if (this.trackingPlayers.includes(player)) {
-      this.trackingPlayers = this.trackingPlayers.filter(p => p !== player);
-    } else {
-      this.trackingPlayers.push(player);
-    }
-  }
-
-  handleTrackingControls = (control: string) => {
-    const meetingsInRange = this.meetings
-      .map(m => m.meeting)
-      .filter(m => m >= SEASONS[0].opening)
-      .sort((m1, m2) => m1.localeCompare(m2));
-
-    const currIndex = meetingsInRange.indexOf(this.trackingMeeting);
-
-    switch (control) {
-      case 'Reset': {
-        this.trackingMeeting = '';
-        break;
-      }
-      case 'Opening': {
-        this.trackingMeeting = meetingsInRange[0];
-        break;
-      }
-      case 'Prev': {
-        if (currIndex === -1) {
-          this.trackingMeeting = meetingsInRange[meetingsInRange.length - 2];
-        } else if (currIndex > 0) {
-          this.trackingMeeting = meetingsInRange[currIndex - 1];
-        }
-        break;
-      }
-      case 'Next': {
-        if (currIndex !== -1 && currIndex < meetingsInRange.length - 1) {
-          this.trackingMeeting = meetingsInRange[currIndex + 1];
-        }
-        break;
-      }
-      case 'Replay': {
-        if (currIndex === -1) {
-          this.handleTrackingControls('Opening');
-          setTimeout(() => this.handleTrackingControls('Replay'), 1000);
-
-        } else if (currIndex < meetingsInRange.length - 1) {
-          this.handleTrackingControls('Next');
-
-          if (meetingsInRange.indexOf(this.trackingMeeting) === meetingsInRange.length - 1) {
-            this.handleTrackingControls('Reset');
-
-          } else {
-            setTimeout(() => this.handleTrackingControls('Replay'), 350);
-          }
-        }
-        break;
-      }
-      default:
-        break;
-    }
   }
 
   shiftMeeting = (length: number) => {
@@ -251,11 +186,6 @@ export class TrendComponent implements OnInit {
 
       return starters.sort((s1, s2) => s1.order - s2.order);
     }
-
-  getTrackingPlayerStyle = (player: string) =>
-    this.trackingPlayers.includes(player)
-      ? `border border-gray-900 bg-gradient-to-r from-sky-800 to-indigo-800`
-      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
 
   getSectionStyle = (section: string): string =>
     [this.activeSection, this.activeSubsection, this.activePersonView].includes(section)
@@ -624,67 +554,6 @@ export class TrendComponent implements OnInit {
     return ['', '', ''];
   }
 
-  getPlayerStatsByVenue = (player: string, venue: string): number[] => {
-    const summaries = this.meetings
-      .filter(m => m.meeting >= SEASONS[0].opening)
-      .filter(m => m.venue === venue)
-      .flatMap(m => m.persons)
-      .filter(ps => ps.person === player);
-
-    return [
-      summaries.map(s => s.wins).reduce((prev, curr) => prev + curr, 0),
-      summaries.map(s => s.seconds).reduce((prev, curr) => prev + curr, 0),
-      summaries.map(s => s.thirds).reduce((prev, curr) => prev + curr, 0),
-      summaries.map(s => s.fourths).reduce((prev, curr) => prev + curr, 0),
-      summaries.flatMap(ps => ps.starters).filter(s => s.winOdds && s.placing > 0).length
-    ];
-  }
-
-  get currentSeasonProgress(): string {
-    const startMeeting = SEASONS[0].opening;
-    const endMeeting = this.trackingMeeting.length > 0
-      ? this.trackingMeeting
-      : SEASONS[0].finale;
-
-    const currentSeasonMeetings = this.meetings
-      .filter(m => m.meeting >= startMeeting && m.meeting <= endMeeting)
-      .length;
-
-    return `${Math.ceil(100 * currentSeasonMeetings / 88)}%`;
-  }
-
-  get personEarnings(): Array<Array<{ person: string, earnings: number[] }>> {
-    return [TRAINERS, JOCKEYS].map(pl =>
-      pl.map(p => {
-        const seasonEarnings = SEASONS
-          .map((s, index) =>
-            this.meetings
-              .filter(m => m.meeting >= s.opening && m.meeting <=
-                (
-                  (index == 0 && this.trackingMeeting.length > 0)
-                    ? this.trackingMeeting : s.finale
-                )
-              )
-              .flatMap(m => m.persons)
-              .filter(ps => ps.person === p.code)
-              .map(ps => ps.earnings)
-              .reduce((prev, curr) => prev + curr, 0)
-          )
-          .map(e => Math.floor(e));
-
-        return {
-          person: p.code,
-          earnings: seasonEarnings
-        };
-      })
-        .sort((p1, p2) =>
-          (p2.earnings[0] - p1.earnings[0]) ||
-          (p2.earnings[1] - p1.earnings[1]) ||
-          (p1.person.localeCompare(p2.person))
-        )
-    );
-  }
-
   get variableStarterSyndicateKinds(): string[] {
     return ['SINGLE', 'MULTIPLE', 'OTHERS'];
   }
@@ -795,11 +664,6 @@ export class TrendComponent implements OnInit {
       || this.repo.findSyndicates().length === 0
   }
 
-  get trackingControlStyle(): string {
-    return `mx-auto px-4 pt-1.5 pb-2 text-lg rounded-full cursor-pointer 
-            border border-gray-600 hover:border-yellow-400`;
-  }
-
   get controlStyle(): string {
     return `w-12 cursor-pointer transition hover:text-yellow-400`;
   }
@@ -821,6 +685,6 @@ export class TrendComponent implements OnInit {
   }
 
   get sections(): string[] {
-    return ['Everything', 'Top Players', 'Player Earnings', 'Player Stats'];
+    return ['Everyone Everything', 'Top Players', 'Player Earnings'];
   }
 }

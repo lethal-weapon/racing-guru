@@ -1,8 +1,10 @@
 import {NgModule} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule} from '@angular/forms';
 import {TooltipModule} from 'ng2-tooltip-directive';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 
 import {AppRoutingModule} from './app-routing.module';
 import {ModelModule} from './model/model.module';
@@ -26,6 +28,7 @@ import {FormEngineComponent} from './form/form-engine/form-engine.component';
 import {FormPeopleComponent} from './form/form-people/form-people.component';
 import {FormConnectionComponent} from './form/form-connection/form-connection.component';
 import {ToastWebsocketComponent} from './toast/toast-websocket/toast-websocket.component';
+import {EarningComponent} from './earning/earning.component';
 
 @NgModule({
   declarations: [
@@ -49,14 +52,17 @@ import {ToastWebsocketComponent} from './toast/toast-websocket/toast-websocket.c
     FormConnectionComponent,
     FormPeopleComponent,
     ToastWebsocketComponent,
+    EarningComponent,
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     ModelModule,
     TooltipModule,
     NgOptimizedImage,
-    FormsModule
+    FormsModule,
+    NgxChartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
