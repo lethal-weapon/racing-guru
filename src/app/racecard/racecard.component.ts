@@ -304,6 +304,10 @@ export class RacecardComponent implements OnInit {
     return bottoms.includes(starter.order) && (publicChance - modelChance >= 3);
   }
 
+  isInStarvationList = (starter: Starter): boolean =>
+    this.meetingNote.starvation.includes(starter.jockey) ||
+    this.meetingNote.starvation.includes(starter.trainer)
+
   getStarterStatSumColor = (starter: Starter, index: number): string => {
     const starterSum = this.getPersonStatOnSameRace(starter, index)[2];
     const isSumTop3 = this.startersSortedByChance
@@ -371,6 +375,9 @@ export class RacecardComponent implements OnInit {
 
     if (birthlist.includes(starter.jockey)) point += 1;
     if (birthlist.includes(starter.trainer)) point += 1;
+
+    if (this.meetingNote.starvation.includes(starter.jockey)) point += 1;
+    if (this.meetingNote.starvation.includes(starter.trainer)) point += 1;
 
     return point;
   }
