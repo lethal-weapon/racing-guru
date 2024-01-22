@@ -14,7 +14,7 @@ import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers'
   templateUrl: './trend.component.html'
 })
 export class TrendComponent implements OnInit {
-  activeSection: string = this.sections[2];
+  activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[0];
   activePersonView: string = this.personViews[0];
   activeMeeting: string = '';
@@ -29,6 +29,7 @@ export class TrendComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchNotes();
     this.repo.fetchHorses();
     this.repo.fetchMeetings();
     this.repo.fetchSyndicates();
@@ -64,6 +65,41 @@ export class TrendComponent implements OnInit {
     this.activeSyndicate = this.syndicates
       .find(s => s.horses.includes(horse))
       ?.id || 0;
+  }
+
+  saveStarvation = () => {
+    const sortedMeetings = this.meetings
+      .map(m => m.meeting)
+      .sort((m1, m2) => m2.localeCompare(m1));
+
+    const mostRecentMeeting = sortedMeetings[0];
+    const mostRecentNote = this.repo.findNotes()
+      .find(n => n.meeting === mostRecentMeeting);
+
+    const starvation = [
+      ...JOCKEYS.map(j => j.code),
+      ...TRAINERS.map(t => t.code)
+    ].filter(p => {
+      const stats = this.getNoWinnerStats(p);
+      return [stats[0] >= 4, stats[1] >= 20, stats[1] > stats[2]]
+        .filter(b => b)
+        .length >= 2;
+    })
+
+    if (mostRecentNote) {
+      this.repo.saveNote({
+        ...mostRecentNote,
+        starvation: starvation
+      });
+    } else {
+      this.repo.saveNote({
+        meeting: mostRecentMeeting,
+        birthdays: [],
+        blacklist: [],
+        whitelist: [],
+        starvation: starvation
+      });
+    }
   }
 
   shiftMeeting = (length: number) => {

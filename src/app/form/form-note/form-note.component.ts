@@ -29,6 +29,7 @@ export class FormNoteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchNotes();
     this.repo.fetchReports();
     this.repo.fetchMeetings();
     this.repo.fetchRacecards('latest', () => {
@@ -179,13 +180,25 @@ export class FormNoteComponent implements OnInit {
     return 0;
   }
 
-  saveNotes = () =>
-    this.repo.saveNote({
-      meeting: this.activeMeeting,
-      birthdays: this.personBirthdays,
-      blacklist: this.personMilestonePassWinners,
-      whitelist: this.personMilestoneCloseWinners
-    });
+  saveNotes = () => {
+    const note = this.repo.findNotes().find(n => n.meeting === this.activeMeeting);
+    if (note) {
+      this.repo.saveNote({
+        ...note,
+        birthdays: this.personBirthdays,
+        blacklist: this.personMilestonePassWinners,
+        whitelist: this.personMilestoneCloseWinners,
+      });
+    } else {
+      this.repo.saveNote({
+        meeting: this.activeMeeting,
+        birthdays: this.personBirthdays,
+        blacklist: this.personMilestonePassWinners,
+        whitelist: this.personMilestoneCloseWinners,
+        starvation: []
+      });
+    }
+  }
 
   getBadgeStyle = (render: string): string =>
     this.activeMeeting === render

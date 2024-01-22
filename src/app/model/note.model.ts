@@ -15,4 +15,5 @@ export interface Note {
   birthdays: PersonBirthday[],
   blacklist: PersonWinner[],
   whitelist: PersonWinner[]
+  starvation: string[]
 }
