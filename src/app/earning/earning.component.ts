@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Meeting} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {SEASONS} from '../util/strings';
+import {BOUNDARY_JOCKEYS, BOUNDARY_TRAINERS, SEASONS} from '../util/strings';
 
 interface ChartLinePoint {
   name: string,
@@ -15,20 +15,38 @@ interface ChartLine {
   series: ChartLinePoint[]
 }
 
+interface PlayerGroup {
+  name: string,
+  startIndex: number,
+  endIndex: number
+}
+
 @Component({
   selector: 'app-earning',
   templateUrl: './earning.component.html',
 })
 export class EarningComponent implements OnInit {
   trackingMeeting: string = '';
-  trackingPlayers: string[] = ['FC', 'WDJ', 'HAD'];
+  trackingPlayers: string[] = [];
+  activePlayerGroup: PlayerGroup = this.playerGroups[0];
   chartData: ChartLine[] = [];
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    this.toggleTrackingPlayer('NM');
+    this.setActivePlayerGroup(this.playerGroups[0]);
+  }
+
+  setActivePlayerGroup = (clicked: PlayerGroup) => {
+    this.activePlayerGroup = clicked;
+
+    const players = TRAINERS.find(t => clicked.name.includes(t.code)) ? TRAINERS : JOCKEYS;
+    this.trackingPlayers = players
+      .filter((p, i) => i >= clicked.startIndex && i <= clicked.endIndex)
+      .map(p => p.code);
+
+    this.updateChart();
   }
 
   toggleTrackingPlayer = (player: string) => {
@@ -37,7 +55,10 @@ export class EarningComponent implements OnInit {
     } else {
       this.trackingPlayers.push(player);
     }
+    this.updateChart();
+  }
 
+  updateChart = () => {
     this.chartData = this.trackingPlayers.map(player => {
       let series = this.meetings
         .map(m => m.meeting)
@@ -49,7 +70,7 @@ export class EarningComponent implements OnInit {
         }));
 
       return {name: player, series: series};
-    })
+    });
   }
 
   handleTrackingControls = (control: string) => {
@@ -111,7 +132,10 @@ export class EarningComponent implements OnInit {
       .filter(m => m.meeting >= SEASONS[0].opening && m.meeting <= meeting)
       .flatMap(m => m.persons)
       .filter(ps => ps.person === player)
-      .map(ps => ps.earnings)
+      .map(ps =>
+        ps.earnings -
+        ps.starters.filter(s => s?.winOdds && s?.placing > 4).length
+      )
       .reduce((e1, e2) => e1 + e2, 0);
   }
 
@@ -119,6 +143,44 @@ export class EarningComponent implements OnInit {
     this.trackingPlayers.includes(player)
       ? `border border-gray-900 bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
+
+  get playerGroups(): PlayerGroup[] {
+    return [
+      [TRAINERS.map(t => t.code), BOUNDARY_TRAINERS],
+      [JOCKEYS.map(j => j.code), BOUNDARY_JOCKEYS]
+    ]
+      .map(pair => {
+        const players = pair[0];
+        const boundaryPlayers = pair[1];
+
+        let groups = boundaryPlayers.map((bt, bti) => {
+          let startIndex = 0;
+          let endIndex = players.findIndex(p => p === bt);
+
+          if (bti > 0) {
+            startIndex = 1 + players.findIndex(p => p === boundaryPlayers[bti - 1]);
+          }
+
+          return {
+            name: `Group ${players[startIndex]}`,
+            startIndex: startIndex,
+            endIndex: endIndex
+          }
+        });
+
+        let lastStartIndex =
+          1 + players.findIndex(p => p === boundaryPlayers[boundaryPlayers.length - 1]);
+
+        groups.push({
+          name: `Group ${players[lastStartIndex]}`,
+          startIndex: lastStartIndex,
+          endIndex: players.length - 1
+        });
+
+        return groups;
+      })
+      .flatMap(p => p);
+  }
 
   get currentSeasonProgress(): string {
     const startMeeting = SEASONS[0].opening;

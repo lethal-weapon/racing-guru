@@ -29,10 +29,10 @@ export const TRAINERS = [
   new Person('FC', '1967-08-12', 'Fownes', 'Caspar', 'C. Fownes', 'GB', '', '', 1012),
   new Person('WDJ', '1971-11-15', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', '', 131),
   new Person('HAD', '1963-10-27', 'Hall', 'David', 'D. Hall', 'AUS', '', '', 546),
-  new Person('RW', '1989-08-19', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
+  new Person('SWY', '1968-12-10', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris', 308),
   new Person('NM', '1968-01-01', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
 
-  new Person('SWY', '1968-12-10', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris', 308),
+  new Person('RW', '1989-08-19', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
   new Person('CCW', '1961-12-02', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael', 321),
   new Person('YCH', '1967-07-28', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis', 797),
   new Person('TKH', '1972-08-09', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy', 134),
