@@ -15,3 +15,25 @@ export interface SeasonPerformanceHitRace {
   race: number,
   odds: number
 }
+
+export interface NegativePerformance {
+  meeting: string,
+  race: number,
+  starters: NegativePerformanceStarter[]
+}
+
+export interface NegativePerformanceStarter {
+  reversedRank: number,
+  jockey: string,
+  trainer: string,
+  placing: number,
+  winOdds: number
+}
+
+export const DEFAULT_NEGATIVE_PERFORMANCE_STARTER: NegativePerformanceStarter = {
+  reversedRank: 0,
+  jockey: '',
+  trainer: '',
+  placing: 1,
+  winOdds: 0
+}

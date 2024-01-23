@@ -13,7 +13,7 @@ import {Racecard} from './racecard.model';
 import {FactorHit} from './backtest.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
-import {SeasonPerformance} from './performance.model';
+import {NegativePerformance, SeasonPerformance} from './performance.model';
 import {TrackBiasScore} from './bias.model';
 import {SpeedFigure} from './speed.model';
 import {TrackworkGrade} from './trackwork.model';
@@ -75,6 +75,9 @@ export class RestDataSource {
 
   getEnginePerformance = (): Observable<SeasonPerformance[]> =>
     this.http.get<SeasonPerformance[]>(`${this.baseUrl}/engine-performance`)
+
+  getNegativeEnginePerformance = (): Observable<NegativePerformance[]> =>
+    this.http.get<NegativePerformance[]>(`${this.baseUrl}/engine-performance-negative`)
 
   getNotes = (): Observable<Note[]> =>
     this.http.get<Note[]>(`${this.baseUrl}/notes`)

@@ -69,8 +69,8 @@ export const JOCKEYS = [
   new Person('CCY', '1996-09-06', 'Chung', 'Yik-lai', 'A. Chung', 'HK', 'Freelance', 'Angus', 0),
   new Person('CJE', '2000-04-16', 'Chau', 'Chun-lok', 'J. Chau', 'HK', 'Freelance', 'Jerry', 95),
   new Person('PMF', '1993-11-09', 'Poon', 'Ming-fai', 'M. Poon', 'HK', 'Freelance', 'Matthew', 192),
-  new Person('WEC', '2000-10-18', 'Wong', 'Chi-wang', 'E. Wong', 'HK', 'Freelance', 'Ellis', 0),
   new Person('CHA', '1994-06-05', 'Chan', 'Ka-hei', 'A. Chan', 'HK', 'Freelance', 'Alfred', 53),
+  new Person('WEC', '2000-10-18', 'Wong', 'Chi-wang', 'E. Wong', 'HK', 'Freelance', 'Ellis', 0),
   new Person('MHT', '1993-10-22', 'Mo', 'Hin-tung', 'D. Mo', 'HK', 'Freelance', 'Dylan', 104),
 
   // new Person('CLR', '1981-07-24', 'Currie', 'Luke R.', 'L. Currie', 'AUS', 'Club', 'Richard', 9),

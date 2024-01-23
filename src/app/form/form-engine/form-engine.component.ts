@@ -1,7 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../../model/rest.repository';
-import {SeasonPerformance} from '../../model/performance.model';
+import {
+  DEFAULT_NEGATIVE_PERFORMANCE_STARTER,
+  NegativePerformanceStarter,
+  SeasonPerformance
+} from '../../model/performance.model';
 import {PLACING_MAPS} from '../../util/strings';
 import {MAX_RACE_PER_MEETING} from '../../util/numbers';
 import {formatOdds} from '../../util/functions';
@@ -11,6 +15,7 @@ import {formatOdds} from '../../util/functions';
   templateUrl: './form-engine.component.html'
 })
 export class FormEngineComponent implements OnInit {
+  isPositivePerformance: boolean = true;
 
   protected readonly formatOdds = formatOdds;
   protected readonly PLACING_MAPS = PLACING_MAPS;
@@ -21,6 +26,7 @@ export class FormEngineComponent implements OnInit {
 
   ngOnInit(): void {
     this.repo.fetchEnginePerformance();
+    this.repo.fetchNegativeEnginePerformance();
   }
 
   formatMeeting = (meeting: string): string =>
@@ -52,13 +58,22 @@ export class FormEngineComponent implements OnInit {
       )
       .includes(meeting);
 
+  getNegativePerformanceOdds = (reversedRank: number, meeting: string, race: number): number =>
+    this.getNegativePerformanceStarter(reversedRank, meeting, race).winOdds
+
+  getNegativePerformanceStarter =
+    (reversedRank: number, meeting: string, race: number): NegativePerformanceStarter =>
+      this.repo.findNegativeEnginePerformances()
+        .find(p => p.meeting === meeting && p.race === race)
+        ?.starters
+        .find(s => s.reversedRank === reversedRank)
+      || DEFAULT_NEGATIVE_PERFORMANCE_STARTER
+
   getHitRaceOdds = (topn: number, meeting: string, race: number): number =>
     this.performances
-      .map(p => p.hits)
-      .reduce((prev, curr) => prev.concat(curr), [])
+      .flatMap(p => p.hits)
       .filter(h => h.topn === topn)
-      .map(h => h.races)
-      .reduce((prev, curr) => prev.concat(curr), [])
+      .flatMap(h => h.races)
       .filter(hr => hr.meeting === meeting && hr.race === race)
       .map(hr => hr.odds)
       .reduce((prev, curr) => prev + curr, 0)
@@ -69,10 +84,8 @@ export class FormEngineComponent implements OnInit {
 
   get meetings(): string[] {
     return this.performances
-      .map(p => p.hits)
-      .reduce((prev, curr) => prev.concat(curr), [])
-      .map(h => h.races)
-      .reduce((prev, curr) => prev.concat(curr), [])
+      .flatMap(p => p.hits)
+      .flatMap(h => h.races)
       .map(hr => hr.meeting)
       .filter((m, i, arr) => i === arr.indexOf(m))
       .sort((m1, m2) => m2.localeCompare(m1));

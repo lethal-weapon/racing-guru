@@ -11,7 +11,7 @@ import {FactorHit} from './backtest.model';
 import {Racecard} from './racecard.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
-import {SeasonPerformance} from './performance.model';
+import {NegativePerformance, SeasonPerformance} from './performance.model';
 import {TrackBiasScore} from './bias.model';
 import {SpeedFigure} from './speed.model';
 import {TrackworkGrade} from './trackwork.model';
@@ -35,6 +35,7 @@ export class RestRepository {
   private racecards: Racecard[] = [];
   private factorHits: FactorHit[] = [];
   private enginePerformances: SeasonPerformance[] = [];
+  private negativeEnginePerformances: NegativePerformance[] = [];
   private dividends: DividendDto[] = [];
   private syndicatePerformances: SyndicatePerformance[] = [];
   private connections: RaceConnection[] = [];
@@ -56,6 +57,7 @@ export class RestRepository {
   findRacecards = () => this.racecards
   findFactorHits = () => this.factorHits
   findEnginePerformances = () => this.enginePerformances
+  findNegativeEnginePerformances = () => this.negativeEnginePerformances
   findSyndicates = () => this.syndicates
   findDividends = () => this.dividends
   findSyndicatePerformances = () => this.syndicatePerformances
@@ -146,6 +148,9 @@ export class RestRepository {
 
   fetchEnginePerformance = () =>
     this.source.getEnginePerformance().subscribe(data => this.enginePerformances = data)
+
+  fetchNegativeEnginePerformance = () =>
+    this.source.getNegativeEnginePerformance().subscribe(data => this.negativeEnginePerformances = data)
 
   fetchSyndicates = () =>
     this.source.getSyndicates().subscribe(data => this.syndicates = data)
