@@ -19,6 +19,7 @@ export const TRAINERS = [
   new Person('YTP', '1958-12-03', 'Yung', 'Tin-pang', 'B. Yung', 'HK', '', 'Benno', 278),
   new Person('LFC', '1966-02-14', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie', 329),
   new Person('HDA', '1962-10-22', 'Hayes', 'David', 'D. Hayes', 'AUS', '', '', 526),
+  new Person('RW', '1989-08-19', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
 
   new Person('CAS', '1956-12-24', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony', 1413),
   new Person('YPF', '1957-07-12', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky', 899),
@@ -30,14 +31,13 @@ export const TRAINERS = [
   new Person('WDJ', '1971-11-15', 'Whyte', 'Douglas', 'D. Whyte', 'SAF', '', '', 131),
   new Person('HAD', '1963-10-27', 'Hall', 'David', 'D. Hall', 'AUS', '', '', 546),
   new Person('SWY', '1968-12-10', 'So', 'Wai-yin', 'C. So', 'HK', '', 'Chris', 308),
-  new Person('NM', '1968-01-01', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
-
-  new Person('RW', '1989-08-19', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
   new Person('CCW', '1961-12-02', 'Chang', 'Chun-wai', 'M. Chang', 'HK', '', 'Michael', 321),
+
   new Person('YCH', '1967-07-28', 'Yip', 'Chor-hong', 'D. Yip', 'HK', '', 'Dennis', 797),
   new Person('TKH', '1972-08-09', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy', 134),
   new Person('TYS', '1960-09-30', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me', 597),
   new Person('MWK', '1978-01-01', 'Mo', 'Wai-kit', 'C. Mo', 'HK', '', 'Cody', 0),
+  new Person('NM', '1968-01-01', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
 
   // new Person('HL', '1960-07-06', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
   // new Person('GR', '1969-09-12', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', '', 277),
@@ -49,6 +49,7 @@ export const JOCKEYS = [
   new Person('PZ', '1983-01-03', 'Purton', 'Zac', 'Z. Purton', 'AUS', 'Club', '', 1431),
   new Person('BH', '1980-07-14', 'Bowman', 'Hugh', 'H. Bowman', 'AUS', 'Club', '', 29),
   new Person('MCJ', '1992-01-06', 'McDonald', 'James', 'J. McDonald', 'NZ', 'Club', '', 8),
+  new Person('KJL', '1995-12-07', 'Kah', 'Jamie', 'J. Kah', 'AUS', 'Club', '', 0),
   new Person('AVB', '1991-01-18', 'Avdulla', 'Brenton', 'B. Avdulla', 'AUS', 'Club', '', 0),
 
   new Person('TEK', '1990-06-03', 'Teetan', 'Karis', 'K. Teetan', 'MAU', 'Club', '', 547),
@@ -94,7 +95,6 @@ export const JOCKEYS = [
   // new Person('LHW', '1983-10-29', 'Lai', 'Hoi-wing', 'A. Lai', 'HK', 'Freelance', 'Alex', 283),
   // new Person('DEE', '1996-01-01', 'Dee', 'Michael', 'M. Dee', 'NZ', 'Club', '', 0),
   // new Person('SHB', '1987-09-26', 'Shinn', 'Blake', 'B. Shinn', 'AUS', 'Club', '', 0),
-  // new Person('KJL', '1995-12-07', 'Kah', 'Jamie', 'J. Kah', 'AUS', 'Club', '', 0),
   // new Person('LC', '1979-05-20', 'Lemaire', 'Christophe', 'C. Lemaire', 'FR', 'Club', '', 0),
   // new Person('MNJ', '1994-12-09', 'McNeil', 'Jye', 'J. McNeil', 'AUS', 'Club', '', 0),
   // new Person('DSS', '1980-12-31', 'DeSousa', 'Silvestre', 'S. DeSousa', 'BRZ', 'Club', '', 0),
