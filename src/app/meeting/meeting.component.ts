@@ -78,7 +78,10 @@ export class MeetingComponent implements OnInit {
     this.repo.fetchTrackBiasScores();
     this.repo.fetchTrackworkGrades();
 
-    setInterval(() => this.repo.fetchTrackBiasScores(), ONE_MINUTE);
+    setInterval(() => {
+      this.repo.fetchTrackBiasScores();
+      this.repo.fetchTrackworkGrades();
+    }, ONE_MINUTE);
   }
 
   setActiveTrainer = (clicked: string) =>

@@ -261,11 +261,12 @@
       >
         <div *ngFor="let tg of getTrackworkGrades(race, grade)"
              class="{{getPlacingColorByHorse(tg.horse, race)}} text-sm"
+             [class.underline]="tg.trainerFocus"
         >
           {{ tg.order }}
           <span class="text-xs">
             {{ getHorseDetail(tg.horse, race).name }}
-            {{ getHorseDetail(tg.horse, race).trainer }}
+            {{ tg.trainer }}
           </span>
           <span *ngIf="getHorseDetail(tg.horse, race).odds > 0"
                 class="{{ getPlacingColorByHorse(tg.horse, race).length === 0
