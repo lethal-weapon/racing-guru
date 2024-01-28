@@ -5,17 +5,16 @@ import {WebsocketService} from '../model/websocket.service';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Syndicate} from '../model/syndicate.model';
-import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS, WinPlaceOdds} from '../model/odds.model';
+import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {TrackworkGrade} from '../model/trackwork.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {ONE_MINUTE, THREE_SECONDS} from '../util/numbers';
-import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, COLORS, RATING_GRADES} from '../util/strings';
 import {
-  DEFAULT_DRAW_BIAS_SCORE,
-  DEFAULT_TRACK_BIAS_SCORE,
-  DrawBiasScore,
-  TrackBiasScore
-} from '../model/bias.model';
+  BOUNDARY_JOCKEYS,
+  BOUNDARY_TRAINERS,
+  BOUNDARY_POOLS,
+  RATING_GRADES
+} from '../util/strings';
 import {
   DividendPool,
   DEFAULT_SINGULARS,
@@ -75,13 +74,9 @@ export class MeetingComponent implements OnInit {
 
     this.repo.fetchHorses();
     this.repo.fetchSyndicates();
-    this.repo.fetchTrackBiasScores();
     this.repo.fetchTrackworkGrades();
 
-    setInterval(() => {
-      this.repo.fetchTrackBiasScores();
-      this.repo.fetchTrackworkGrades();
-    }, ONE_MINUTE);
+    setInterval(() => this.repo.fetchTrackworkGrades(), ONE_MINUTE);
   }
 
   setActiveTrainer = (clicked: string) =>
@@ -269,13 +264,6 @@ export class MeetingComponent implements OnInit {
     return co.points >= 6 && co.odds >= 8 && co.odds <= 60;
   }
 
-  isTopDrawBias = (race: number, draw: number): boolean =>
-    this.getTrackBias(race).draws
-      .map(d => d.ratedScore)
-      .sort((s1, s2) => s2 - s1)
-      .slice(0, 3)
-      .includes(this.getDrawBias(race, draw).ratedScore)
-
   formatChallengeOdds = (odds: number): string => {
     if (odds < 1) return '';
     else if (odds > 99) return '99+'
@@ -423,27 +411,6 @@ export class MeetingComponent implements OnInit {
     return getPlacingColor(jockey, racecard);
   }
 
-  getPlacingColorByDraw = (race: number, draw: number): string => {
-    const racecard = this.racecards.find(r => r.race === race);
-    if (!racecard) return '';
-
-    const jockey = racecard.starters.find(s => s.draw === draw)?.jockey || '';
-    return getPlacingColor(jockey, racecard);
-  }
-
-  getWinPlaceOddsByDraw = (race: number, draw: number): WinPlaceOdds => {
-    const racecard = this.racecards.find(r => r.race === race);
-    if (!racecard) return {order: 0, win: 0, place: 0};
-
-    const jockey = racecard.starters.find(s => s.draw === draw)?.jockey;
-    if (!jockey) return {order: 0, win: 0, place: 0};
-
-    return getWinPlaceOdds(jockey, racecard);
-  }
-
-  getStarterByDraw = (race: number, draw: number): Starter | undefined =>
-    this.racecards.find(r => r.race === race)?.starters.find(s => s.draw === draw)
-
   getChallengeOdds = (personType: string, order: number): ChallengeOdds => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return DEFAULT_CHALLENGE_ODDS;
@@ -467,29 +434,40 @@ export class MeetingComponent implements OnInit {
           .includes(h)
       )
 
-  getDrawBias = (race: number, draw: number): DrawBiasScore =>
-    this.getTrackBias(race).draws.find(d => d.draw === draw) || DEFAULT_DRAW_BIAS_SCORE
-
-  getTrackBias = (race: number): TrackBiasScore =>
-    this.repo.findTrackBiasScores()
-      .find(s => s.meeting === this.racecards[0].meeting && s.race === race)
-    || DEFAULT_TRACK_BIAS_SCORE
-
-  getTrackBiasRaceColor = (race: number): string => {
-    const card = this.racecards.find(r => r.race === race);
-    if (!card) return '';
-
-    const uniqueTracks = this.racecards
-      .map(r => `${r.venue}#${r.track}#${r?.course || 'X'}#${r.distance}`)
-      .filter((t, i, a) => a.indexOf(t) === i);
-
-    const raceTrack = `${card.venue}#${card.track}#${card?.course || 'X'}#${card.distance}`;
-    const index = uniqueTracks.indexOf(raceTrack);
-    return index === -1 ? '' : COLORS[index];
-  }
-
   getTrackworkGrades = (race: number, grade: string): TrackworkGrade[] =>
-    this.repo.findTrackworkGrades().filter(g => g.race === race && g.grade === grade)
+    this.repo.findTrackworkGrades()
+      .filter(g => g.race === race && g.grade === grade)
+      .sort((g1, g2) => g1.order - g2.order)
+
+  getStartersByTrainerGroup = (race: number, groupIndex: number): Starter[] => {
+    let startIndex = 0;
+    if (groupIndex > 0) {
+      startIndex = 1 + TRAINERS.findIndex(p => p.code === BOUNDARY_TRAINERS[groupIndex - 1]);
+    }
+
+    let endIndex = groupIndex < BOUNDARY_TRAINERS.length
+      ? TRAINERS.findIndex(p => p.code === BOUNDARY_TRAINERS[groupIndex])
+      : TRAINERS.length - 1;
+
+    // @ts-ignore
+    return TRAINERS
+      .filter((t, i) => i >= startIndex && i <= endIndex)
+      .map(t => t.code)
+      .filter(t => this.racecards
+        .find(r => r.race === race)
+        ?.starters
+        .map(s => s.trainer)
+        .includes(t)
+      )
+      .map(t =>
+        this.racecards
+          .find(r => r.race === race)
+          ?.starters
+          .filter(s => s.trainer === t)
+          .sort((s1, s2) => s1.order - s2.order)
+      )
+      .flatMap(s => s);
+  }
 
   get syndicates(): Syndicate[] {
     return this.repo.findSyndicates()
@@ -594,10 +572,6 @@ export class MeetingComponent implements OnInit {
       .map(o => o.order)
       .sort((o1, o2) => o1 - o2)
       .pop() || 0;
-  }
-
-  get maxDraw(): number {
-    return this.starters.map(r => r.draw).sort((d1, d2) => d1 - d2).pop() || 0;
   }
 
   get maxRace(): number {
