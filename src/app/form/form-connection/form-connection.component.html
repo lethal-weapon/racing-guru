@@ -1,41 +1,103 @@
-<table class="mx-auto mt-10 table-fixed border-collapse border border-gray-600 text-center font-mono">
+<div class="mt-8 text-center grid grid-cols-2 items-center">
+  <div class="grid grid-cols-5">
+    <div class="col-span-2 text-2xl pt-1">
+      Page: {{ currentPage }} / {{ maxPage }}
+    </div>
+    <div class="col-span-3 flex flex-row">
+      <div *ngFor="let control of pagingControls"
+           class="{{pagingControlStyle}}"
+           (click)="handlePagingControls(control)"
+      >
+        {{ control }}
+      </div>
+    </div>
+  </div>
+  <table class="mx-auto table-fixed border-collapse border border-gray-600 text-center">
+    <thead class="text-xl">
+    <th class="w-24 py-1 border border-gray-600">
+      DP
+    </th>
+    <th *ngFor="let pm of PLACING_MAPS"
+        class="w-24 py-1 border border-gray-600 {{pm.color}}"
+    >
+      DP-{{ pm.placing }}
+    </th>
+    </thead>
+    <tbody class="text-lg">
+    <tr>
+      <td *ngFor="let ratio of distantPairRatios"
+          class="py-1 border border-gray-700"
+      >
+        {{ ratio | percent }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<table class="mx-auto mt-8 table-fixed border-collapse border border-gray-600 text-center">
   <thead class="text-xl">
-  <th class="w-24 border border-gray-600 py-1">
-    <i class="fa fa-calendar"></i>
+  <th class="w-28 py-2 border border-gray-600">
+    Meeting
   </th>
-  <th *counter="let race of MAX_RACE_PER_MEETING"
-      class="w-32 border border-gray-600 py-1"
+  <th class="w-24 py-2 border border-gray-600">
+    Race #
+  </th>
+  <th *ngFor="let pm of PLACING_MAPS"
+      class="w-48 py-2 border border-gray-600 text-2xl {{pm.color}}"
   >
-    {{race === 10 ? 'X' : race === 11 ? 'E' : race}}
+    {{ pm.placing }}
+  </th>
+  <th class="w-24 py-2 border border-gray-600">
+    D-Pairs
+  </th>
+  <th *counter="let dpi of 3"
+      class="w-20 py-2 border border-gray-600"
+  >
+    DP-{{ dpi }}
   </th>
   </thead>
-  <tbody>
-  <tr *ngFor="let m of meetings"
+  <tbody class="text-lg opacity-80">
+  <tr *ngFor="let dividend of pagedDividends; let last = last"
       class="hover:bg-gray-800"
   >
-    <td class="border border-gray-700 text-xl py-1">
-      {{formatMeeting(m)}}
-    </td>
-    <td *counter="let race of MAX_RACE_PER_MEETING"
-        class="border border-gray-700 py-1"
+    <td class="py-1 border border-gray-700"
+        [class.border-b-red-600]="dividend.race === 1 && !last"
     >
-      <div class="grid grid-cols-2">
-        <div class="{{getConnectionDividend(m, race).quinella.connected ? 'opacity-50' : 'text-purple-600'}}">
-          <span *ngIf="getConnectionDividend(m, race).quinella.odds > 0">
-            {{ formatOdds(getConnectionDividend(m, race).quinella.odds) }}
-          </span>
+      {{ formatMeeting(dividend.meeting) }}
+    </td>
+    <td class="py-1 border border-gray-700"
+        [class.border-b-red-600]="dividend.race === 1 && !last"
+    >
+      {{ dividend.race }}
+    </td>
+    <td *ngFor="let pm of PLACING_MAPS; let index = index"
+        class="py-1 px-2 border border-gray-700"
+        [class.border-b-red-600]="dividend.race === 1 && !last"
+    >
+      <div class="grid grid-cols-3">
+        <div>
+          {{ getDividendStarter(dividend, index + 1).jockey }}
         </div>
-        <div *ngFor="let qpl of getConnectionDividend(m, race).quinellaPlace"
-             class="{{qpl.connected ? 'opacity-50' : 'text-purple-600'}}"
-        >
-          <span *ngIf="qpl.odds < 10 && !qpl.connected">
-            *
-          </span>
-          <span *ngIf="!(qpl.odds < 10 && !qpl.connected)">
-            {{ formatOdds(qpl.odds) }}
-          </span>
+        <div [class.text-yellow-400]="getDividendStarter(dividend, index + 1).odds >= 10">
+          {{ getDividendStarter(dividend, index + 1).odds }}
+        </div>
+        <div>
+          {{ getDividendStarter(dividend, index + 1).trainer }}
         </div>
       </div>
+    </td>
+    <td class="py-1 border border-gray-700"
+        [class.border-b-red-600]="dividend.race === 1 && !last"
+        [class.opacity-0]="dividend.distantPairs.length === 0"
+    >
+      {{ dividend.distantPairs.length }}
+    </td>
+    <td *counter="let dpi of 3"
+        class="py-1 border border-gray-700"
+        [class.border-b-red-600]="dividend.race === 1 && !last"
+    >
+      {{ getDistantPair(dividend, dpi) }}
     </td>
   </tr>
   </tbody>

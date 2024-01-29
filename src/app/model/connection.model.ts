@@ -14,21 +14,25 @@ export interface RaceConnection {
   connections: Connection[]
 }
 
-export interface ConnectionDividendOdds {
+export interface DividendStarter {
+  order: number,
+  placing: number,
   odds: number,
-  connected: boolean
+  jockey: string,
+  trainer: string
 }
 
 export interface ConnectionDividend {
   meeting: string,
   race: number,
-  quinella: ConnectionDividendOdds,
-  quinellaPlace: ConnectionDividendOdds[]
+  starters: DividendStarter[],
+  distantPairs: number[][]
 }
 
-export const DEFAULT_CONNECTION_DIVIDEND: ConnectionDividend = {
-  meeting: '',
-  race: 0,
-  quinella: {odds: 0, connected: false},
-  quinellaPlace: []
+export const DEFAULT_DIVIDEND_STARTER: DividendStarter = {
+  order: 0,
+  placing: 1,
+  odds: 0,
+  jockey: '',
+  trainer: ''
 }
