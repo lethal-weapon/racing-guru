@@ -167,6 +167,39 @@ export class OddsComponent implements OnInit {
     this.clipboard.copy(bets);
   }
 
+  copyAsBankerBets = (betType: string) => {
+    const pairs = [...this.activeBet.qin, ...this.activeBet.qpl]
+      .map(p => p.sort((o1, o2) => o1 - o2))
+      .sort((p1, p2) => p1[0] - p2[0] || p1[1] - p2[1])
+      .map(p => `${p[0]},${p[1]}`)
+      .filter((p, i, a) => a.indexOf(p) === i);
+
+    let ff = pairs.map(p => `ff:${p}>`).join(`;`);
+    let tri = pairs.map(p => `tri:${p}>`).join(`;`);
+    let tbm = pairs.map(p => `tbm:${p}>`).join(`;`);
+    let qbm = pairs.map(p => `qbm:${p}>`).join(`;`);
+
+    switch (betType) {
+      case 'FF':
+        this.clipboard.copy(ff);
+        break
+      case 'TRI':
+        this.clipboard.copy(tri);
+        break
+      case 'TBM':
+        this.clipboard.copy(tbm);
+        break
+      case 'QBM':
+        this.clipboard.copy(qbm);
+        break
+      case 'ALL':
+        this.clipboard.copy([tri, tbm, ff, qbm].join(`;`));
+        break
+      default:
+        break
+    }
+  }
+
   copyMultiBankerBets = (betType: string) => {
     const ordersByPlacing = Array(4).fill(1)
       .map((e, index) => 1 + index)
@@ -757,6 +790,10 @@ export class OddsComponent implements OnInit {
         'maxOdds': this.activeRange.maxDBL
       },
     ];
+  }
+
+  get copyAsBankersBetTypes(): string[] {
+    return ['ALL', 'TRI', 'FF', 'TBM', 'QBM'];
   }
 
   get multiBankerBetTypes(): string[] {

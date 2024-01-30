@@ -12,7 +12,7 @@
          class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
          (click)="activeRace = race"
     >
-      Race {{race}}
+      Race {{ race }}
     </div>
   </div>
 
@@ -27,7 +27,7 @@
           <i class="fa fa-minus"></i>
         </div>
         <div class="text-2xl">
-          {{c.minOdds}}
+          {{ c.minOdds }}
         </div>
         <div class="{{oddsButtonStyle}}"
              (click)="adjustOdds(c.pool, c.step, true, true)"
@@ -40,10 +40,10 @@
       </div>
       <div class="flex flex-col gap-y-1">
         <div class="{{oddsButtonStyle}} text-yellow-400">
-          {{getSelectedBetCount(c.pool)}}
+          {{ getSelectedBetCount(c.pool) }}
         </div>
         <div class="text-2xl">
-          {{c.pool}}
+          {{ c.pool }}
         </div>
         <div class="{{oddsButtonStyle}}"
              (click)="copyBets(c.pool)"
@@ -61,7 +61,7 @@
           <i class="fa fa-minus"></i>
         </div>
         <div class="text-2xl">
-          {{c.maxOdds}}
+          {{ c.maxOdds }}
         </div>
         <div class="{{oddsButtonStyle}}"
              (click)="adjustOdds(c.pool, c.step, false, true)"
@@ -80,7 +80,7 @@
         My Bets
       </div>
       <div class="text-2xl text-center text-yellow-400">
-        {{totalSelectedBetCount}}
+        {{ totalSelectedBetCount }}
       </div>
       <div class="{{controlButtonStyle}}"
            (click)="resetFavorites()"
@@ -97,7 +97,7 @@
            [class.text-yellow-400]="trackModeOn"
            (click)="trackModeOn = !trackModeOn"
       >
-        {{trackModeOn ? 'Stop' : 'Track'}}
+        {{ trackModeOn ? 'Stop' : 'Track' }}
       </div>
     </div>
   </div>
@@ -119,14 +119,14 @@
           (mouseenter)="hoveredJockey = starter.jockey"
       >
         <div>
-          {{starter.jockey}}
+          {{ starter.jockey }}
         </div>
         <div class="{{getTrainerColor(starter)}}">
-          {{starter.trainer}}
+          {{ starter.trainer }}
         </div>
         <div class="flex flex-row justify-evenly">
           <div>
-            {{starter.order}}
+            {{ starter.order }}
           </div>
           <div *ngIf="isTrash(starter)"
                class="text-gray-500"
@@ -150,30 +150,30 @@
       >
         <div class="grid grid-cols-4">
           <div class="text-red-600">
-            {{getStarterWinPlaceOdds(starterA, this.activeRacecard).win}}
+            {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).win }}
           </div>
           <div class="col-span-2">
-            {{getHorseNameCH(starterA.horse)}}
+            {{ getHorseNameCH(starterA.horse) }}
           </div>
           <div>
-            {{starterA.order}}
+            {{ starterA.order }}
           </div>
           <div class="text-blue-600">
-            {{getStarterWinPlaceOdds(starterA, this.activeRacecard).place}}
+            {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).place }}
           </div>
           <div class="col-span-2 text-green-600">
-            {{getStarterQQPWinPlaceOdds(starterA, this.activeRacecard)[0].toFixed(1)}}
+            {{ getStarterQQPWinPlaceOdds(starterA, this.activeRacecard)[0].toFixed(1) }}
           </div>
           <div class="flex flex-row justify-evenly">
             <div *ngIf="getSingularSignals(starterA)[0].length > 0"
                  class="text-red-600"
             >
-              {{getSingularSignals(starterA)[0].length}}
+              {{ getSingularSignals(starterA)[0].length }}
             </div>
             <div *ngIf="getSingularSignals(starterA)[1].length > 0"
                  class="text-blue-600"
             >
-              {{getSingularSignals(starterA)[1].length}}
+              {{ getSingularSignals(starterA)[1].length }}
             </div>
           </div>
         </div>
@@ -200,9 +200,10 @@
               {{ isShowOdds('qin', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[0] : '-' }}
             </div>
             <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[0])}}">
-              {{ getCombinationSignals(starterA, starterB)[0].length > 0
-              ? getCombinationSignals(starterA, starterB)[0].length
-              : ''
+              {{
+                getCombinationSignals(starterA, starterB)[0].length > 0
+                  ? getCombinationSignals(starterA, starterB)[0].length
+                  : ''
               }}
             </div>
           </div>
@@ -217,9 +218,10 @@
               {{ isShowOdds('qpl', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[1] : '-' }}
             </div>
             <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[1])}}">
-              {{ getCombinationSignals(starterA, starterB)[1].length > 0
-              ? getCombinationSignals(starterA, starterB)[1].length
-              : ''
+              {{
+                getCombinationSignals(starterA, starterB)[1].length > 0
+                  ? getCombinationSignals(starterA, starterB)[1].length
+                  : ''
               }}
             </div>
           </div>
@@ -234,9 +236,10 @@
               {{ isShowOdds('fct', starterA, starterB) ? getStarterFCTOdds(starterA, starterB)[0] : '-' }}
             </div>
             <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[2])}}">
-              {{ getCombinationSignals(starterA, starterB)[2].length > 0
-              ? getCombinationSignals(starterA, starterB)[2].length
-              : ''
+              {{
+                getCombinationSignals(starterA, starterB)[2].length > 0
+                  ? getCombinationSignals(starterA, starterB)[2].length
+                  : ''
               }}
             </div>
           </div>
@@ -251,9 +254,10 @@
               {{ isShowOdds('fct', starterB, starterA, true) ? getStarterFCTOdds(starterA, starterB)[1] : '-' }}
             </div>
             <div class="text-sm {{getSignalColor(getCombinationSignals(starterB, starterA)[2])}}">
-              {{ getCombinationSignals(starterB, starterA)[2].length > 0
-              ? getCombinationSignals(starterB, starterA)[2].length
-              : ''
+              {{
+                getCombinationSignals(starterB, starterA)[2].length > 0
+                  ? getCombinationSignals(starterB, starterA)[2].length
+                  : ''
               }}
             </div>
           </div>
@@ -276,7 +280,7 @@
             <i class="fa fa-minus"></i>
           </div>
           <div class="text-2xl">
-            {{c.minOdds}}
+            {{ c.minOdds }}
           </div>
           <div class="{{oddsButtonStyle}}"
                (click)="adjustOdds(c.pool, c.step, true, true)"
@@ -289,10 +293,10 @@
         </div>
         <div class="flex flex-col gap-y-1">
           <div class="{{oddsButtonStyle}} text-yellow-400">
-            {{getSelectedBetCount(c.pool)}}
+            {{ getSelectedBetCount(c.pool) }}
           </div>
           <div class="text-2xl">
-            {{c.pool}}
+            {{ c.pool }}
           </div>
           <div class="{{oddsButtonStyle}}"
                (click)="copyBets(c.pool)"
@@ -310,7 +314,7 @@
             <i class="fa fa-minus"></i>
           </div>
           <div class="text-2xl">
-            {{c.maxOdds}}
+            {{ c.maxOdds }}
           </div>
           <div class="{{oddsButtonStyle}}"
                (click)="adjustOdds(c.pool, c.step, false, true)"
@@ -326,7 +330,7 @@
            (click)="copyMultiBankerBets(betType)"
       >
         <i class="fa fa-copy"></i>
-        <span class="ml-2">{{betType}}</span>
+        <span class="ml-2">{{ betType }}</span>
       </div>
       <div class="w-24 {{controlButtonStyle}}"
            (click)="resetSelections()"
@@ -336,7 +340,19 @@
       <div *ngFor="let betType of multiBankerBetTypes.slice(1)"
            class="text-2xl text-yellow-400"
       >
-        {{getMultiBankerBets(betType).length}}
+        {{ getMultiBankerBets(betType).length }}
+      </div>
+    </div>
+    <div class="mx-8 grid grid-cols-3 py-4 gap-4 text-center">
+      <div class="text-xl">
+        As Bankers
+      </div>
+      <div *ngFor="let betType of copyAsBankersBetTypes"
+           class="w-24 {{controlButtonStyle}}"
+           (click)="copyAsBankerBets(betType)"
+      >
+        <i class="fa fa-copy"></i>
+        <span class="ml-2">{{ betType }}</span>
       </div>
     </div>
   </div>
@@ -360,14 +376,14 @@
           (mouseenter)="hoveredJockey = starterA.jockey"
       >
         <div>
-          {{starterA.jockey}}
+          {{ starterA.jockey }}
         </div>
         <div class="{{getTrainerColor(starterA)}}">
-          {{starterA.trainer}}
+          {{ starterA.trainer }}
         </div>
         <div class="flex flex-row justify-evenly">
           <div>
-            {{starterA.order}}
+            {{ starterA.order }}
           </div>
           <div *ngIf="isTrash(starterA)"
                class="text-gray-500"
@@ -381,10 +397,10 @@
           </div>
         </div>
         <div class="{{getPlacingColor(starterA.jockey, activeRacecard) || 'text-red-600'}}">
-          {{getStarterWinPlaceOdds(starterA, this.activeRacecard).win}}
+          {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).win }}
         </div>
         <div class="{{getDBLBankerSignalCount(starterA, true) > 0 ? 'text-yellow-400' : 'invisible'}}">
-          {{getDBLBankerSignalCount(starterA, true)}}
+          {{ getDBLBankerSignalCount(starterA, true) }}
         </div>
       </td>
     </tr>
@@ -398,23 +414,23 @@
              (click)="toggleTrash(starterB, true)"
         >
           <div>
-            {{starterB.jockey}}
+            {{ starterB.jockey }}
           </div>
           <div>
-            {{starterB.trainer}}
+            {{ starterB.trainer }}
           </div>
           <div class="flex flex-row justify-evenly">
             <div>
-              {{starterB.order}}
+              {{ starterB.order }}
             </div>
             <div *ngIf="getDBLBankerSignalCount(starterB, false) > 0"
                  class="text-yellow-400"
             >
-              {{getDBLBankerSignalCount(starterB, false)}}
+              {{ getDBLBankerSignalCount(starterB, false) }}
             </div>
           </div>
           <div class="col-span-2">
-            {{getHorseNameCH(starterB.horse)}}
+            {{ getHorseNameCH(starterB.horse) }}
             <span *ngIf="isTrash(starterB, true)"
                   class="text-gray-500"
             >
@@ -427,7 +443,7 @@
           </span>
           </div>
           <div class="{{ getPlacingColor(starterB.jockey, activeNextRacecard) || 'text-red-600' }}">
-            {{getStarterWinPlaceOdds(starterB, this.activeNextRacecard).win}}
+            {{ getStarterWinPlaceOdds(starterB, this.activeNextRacecard).win }}
           </div>
         </div>
       </td>
@@ -449,9 +465,10 @@
             {{ isShowOdds('dbl', starterA, starterB) ? getStarterDBLOdds(starterA, starterB) : '-' }}
           </div>
           <div class="{{getSignalColor(getCombinationSignals(starterA, starterB)[3])}}">
-            {{ getCombinationSignals(starterA, starterB)[3].length > 0
-            ? getCombinationSignals(starterA, starterB)[3].length
-            : ''
+            {{
+              getCombinationSignals(starterA, starterB)[3].length > 0
+                ? getCombinationSignals(starterA, starterB)[3].length
+                : ''
             }}
           </div>
         </div>
