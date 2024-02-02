@@ -59,6 +59,7 @@ export const JOCKEYS = [
 
   new Person('AA', '1991-03-26', 'Atzeni', 'Andrea', 'A. Atzeni', 'ITY', 'Club', '', 3),
   new Person('BA', '1989-12-05', 'Badel', 'Alexis', 'A. Badel', 'FR', 'Club', '', 165),
+  new Person('BAM', '1991-08-03', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', '', 0),
   new Person('BHW', '1992-06-10', 'Bentley', 'Harry W.M.', 'H. Bentley', 'GB', 'Club', 'William', 30),
   new Person('HAA', '1991-06-11', 'Hamelin', 'Antoine', 'A. Hamelin', 'FR', 'Club', '', 60),
 
@@ -84,7 +85,6 @@ export const JOCKEYS = [
   // new Person('HJC', '1994-01-01', 'Hart', 'Jason', 'J. Hart', 'GB', 'Club', '', 0),
   // new Person('SC', '1981-06-04', 'Soumillon', 'Christophe', 'C. Soumillon', 'BEL', 'Club', '', 121),
   // new Person('DC', '1992-07-07', 'Demuro', 'Cristian', 'C. Demuro', 'ITY', 'Club', '', 0),
-  // new Person('BAM', '1991-08-03', 'Barzalona', 'Mickael', 'M. Barzalona', 'FR', 'Club', '', 0),
   // new Person('GM', '1989-05-07', 'Guyon', 'Maxime', 'M. Guyon', 'FR', 'Club', '', 29),
   // new Person('MTA', '1998-03-30', 'Marquand', 'Tom', 'T. Marquand', 'GB', 'Club', '', 0),
   // new Person('DHA', '1996-10-11', 'Doyle', 'Hollie', 'H. Doyle', 'GB', 'Club', '', 0),

@@ -72,7 +72,7 @@ export class MeetingComponent implements OnInit {
       this.tick();
     }, THREE_SECONDS);
 
-    this.repo.fetchHorses();
+    this.repo.fetchMeetingHorses();
     this.repo.fetchSyndicates();
     this.repo.fetchTrackworkGrades();
 
