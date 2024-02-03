@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Meeting} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {BOUNDARY_JOCKEYS, BOUNDARY_TRAINERS, SEASONS} from '../util/strings';
+import {BOUNDARY_JOCKEYS, BOUNDARY_PERSONS, BOUNDARY_TRAINERS, SEASONS} from '../util/strings';
 
 interface ChartLinePoint {
   name: string,
@@ -31,12 +31,17 @@ export class EarningComponent implements OnInit {
   activePlayerGroup: PlayerGroup = this.playerGroups[0];
   chartData: ChartLine[] = [];
 
+  hoveredTrainer: string = '';
+
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
     this.setActivePlayerGroup(this.playerGroups[0]);
   }
+
+  setHoveredTrainer = (hovered: string) =>
+    this.hoveredTrainer = hovered
 
   setActivePlayerGroup = (clicked: PlayerGroup) => {
     this.activePlayerGroup = clicked;
@@ -139,10 +144,30 @@ export class EarningComponent implements OnInit {
       .reduce((e1, e2) => e1 + e2, 0);
   }
 
+  getCollaborationEarningStyle = (jockey: string, trainer: string): string => {
+    const earnings = this.getCollaborationEarning(jockey, trainer);
+    return earnings < 20
+      ? 'opacity-50'
+      : earnings < 50 ? '' : 'text-yellow-400';
+  }
+
+  getCollaborationEarning = (jockey: string, trainer: string): number =>
+    this.meetings
+      .filter(m => m.meeting >= SEASONS[0].opening)
+      .flatMap(m => m.persons)
+      .filter(ps => ps.person === jockey)
+      .flatMap(ps => ps.starters)
+      .filter(es => es.partner === trainer)
+      .map(es => es.earning)
+      .reduce((e1, e2) => e1 + e2, 0)
+
   getTrackingPlayerStyle = (player: string) =>
     this.trackingPlayers.includes(player)
       ? `border border-gray-900 bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
+
+  isBoundaryPerson = (person: string): boolean =>
+    BOUNDARY_PERSONS.includes(person)
 
   get playerGroups(): PlayerGroup[] {
     return [
@@ -234,6 +259,14 @@ export class EarningComponent implements OnInit {
   get trackingControlStyle(): string {
     return `mx-auto px-4 pt-1.5 pb-2 text-lg rounded-full cursor-pointer 
             border border-gray-600 hover:border-yellow-400`;
+  }
+
+  get jockeys(): string[] {
+    return JOCKEYS.map(j => j.code);
+  }
+
+  get trainers(): string[] {
+    return TRAINERS.map(t => t.code);
   }
 
   get meetings(): Meeting[] {

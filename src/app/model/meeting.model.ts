@@ -24,4 +24,5 @@ export interface EarningStarter {
   order   : number,
   placing : number,
   winOdds : number
+  earning : number
 }
