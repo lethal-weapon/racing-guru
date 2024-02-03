@@ -13,7 +13,7 @@ import {
   BOUNDARY_JOCKEYS,
   BOUNDARY_TRAINERS,
   BOUNDARY_POOLS,
-  RATING_GRADES
+  RATING_GRADES, UNCOMMON_HORSE_COLORS
 } from '../util/strings';
 import {
   DividendPool,
@@ -262,6 +262,11 @@ export class MeetingComponent implements OnInit {
   isPreferredChallenger = (personType: string, order: number): boolean => {
     const co = this.getChallengeOdds(personType, order);
     return co.points >= 6 && co.odds >= 8 && co.odds <= 60;
+  }
+
+  hasUncommonColor = (horse: string): boolean => {
+    const colors = this.repo.findHorses().find(h => h.code === horse)?.colors || [];
+    return colors.length > 1 || colors.some(c => UNCOMMON_HORSE_COLORS.includes(c));
   }
 
   formatChallengeOdds = (odds: number): string => {

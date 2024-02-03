@@ -32,6 +32,10 @@ export const COMMON_HORSE_ORIGINS = [
   'AUS', 'NZ', 'IRE'
 ];
 
+export const UNCOMMON_HORSE_COLORS = [
+  'Grey',
+];
+
 export const COLORS = [
   'text-red-600',
   'text-green-600',
