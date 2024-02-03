@@ -163,22 +163,22 @@
     </th>
     </thead>
     <tbody>
-    <tr *ngFor="let personType of ['Jockey', 'Jockey', 'Trainer', 'Trainer']; let index = index"
+    <tr *ngFor="let personType of ['Jockey', 'Jockey', 'Jockey', 'Trainer', 'Trainer', 'Trainer']; let index = index"
         class="hover:bg-gray-800"
     >
       <td class="border border-gray-700"
-          [class.border-b-red-900]="index == 1"
+          [class.border-b-red-900]="index == 2"
       >
-        <div *ngIf="index % 2 === 0">
+        <div *ngIf="index % 3 === 0">
           {{ personType === 'Jockey' ? 'JKC' : 'TNC' }}
         </div>
       </td>
       <td *counter="let order of maxChallengerOrder"
           class="border border-gray-700"
-          [class.border-b-red-900]="index == 1"
+          [class.border-b-red-900]="index == 2"
           [class.text-yellow-400]="isPreferredChallenger(personType, order)"
       >
-        <div *ngIf="index % 2 === 0">
+        <div *ngIf="index % 3 === 0">
           {{ getChallengeOdds(personType, order).challenger }}
           <span *ngIf="getChallengeOdds(personType, order).challenger.length > 0">
             <span *ngIf="getChallengeOdds(personType, order).points > 0">
@@ -186,8 +186,13 @@
             </span>
           </span>
         </div>
-        <div *ngIf="index % 2 !== 0">
+        <div *ngIf="index % 3 === 1">
           {{ formatChallengeOdds(getChallengeOdds(personType, order).odds) }}
+        </div>
+        <div *ngIf="index % 3 === 2">
+          <span *ngIf="getChallengerInvestment(getChallengeOdds(personType, order).challenger) > 0">
+          {{ getChallengerInvestment(getChallengeOdds(personType, order).challenger) | percent }}
+          </span>
         </div>
       </td>
     </tr>

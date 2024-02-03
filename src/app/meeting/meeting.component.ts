@@ -8,7 +8,7 @@ import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {TrackworkGrade} from '../model/trackwork.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {ONE_MINUTE, THREE_SECONDS} from '../util/numbers';
+import {ONE_MINUTE, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   BOUNDARY_JOCKEYS,
   BOUNDARY_TRAINERS,
@@ -31,7 +31,7 @@ import {
   getPlacingColor,
   getCurrentMeeting,
   getNewFavorites,
-  getOddsIntensityColor
+  getOddsIntensityColor, getStarterWinPlaceOdds
 } from '../util/functions';
 
 @Component({
@@ -423,6 +423,16 @@ export class MeetingComponent implements OnInit {
       ?.filter(o => !o.outsider)
       ?.find(o => o.order === order) || DEFAULT_CHALLENGE_ODDS;
   }
+
+  getChallengerInvestment = (challenger: string): number =>
+    this.racecards
+      .map(r => r.starters
+        .filter(s => s.jockey === challenger || s.trainer === challenger)
+        .map(s => getStarterWinPlaceOdds(s, r).win)
+        .map(wo => PAYOUT_RATE / wo)
+        .reduce((prev, curr) => prev + curr, 0)
+      )
+      .reduce((prev, curr) => prev + curr, 0)
 
   getSyndicateServiceHorseCount = (horses: string[]): number =>
     this.repo.findHorses()
