@@ -44,9 +44,20 @@
     Race #
   </th>
   <th *ngFor="let pm of PLACING_MAPS"
-      class="w-48 py-2 border border-gray-600 text-2xl {{pm.color}}"
+      class="w-48 py-2 border border-gray-600 text-2xl"
   >
-    {{ pm.placing }}
+    <div class="grid grid-cols-3">
+      <div></div>
+      <div class="{{pm.color}}">
+        {{ pm.placing }}
+      </div>
+      <div class="cursor-pointer
+                  {{pinnedPlacing === pm.placing ? 'opacity-100 ' + pm.color  : 'opacity-20 hover:opacity-100'}}"
+           (click)="pinnedPlacing = pm.placing"
+      >
+        <i class="fa fa-paperclip"></i>
+      </div>
+    </div>
   </th>
   <th class="w-24 py-2 border border-gray-600">
     D-Pairs
@@ -58,7 +69,7 @@
   </th>
   </thead>
   <tbody class="text-lg opacity-80">
-  <tr *ngFor="let dividend of pagedDividends; let last = last"
+  <tr *ngFor="let dividend of displayDividends; let last = last"
       class="hover:bg-gray-800"
   >
     <td class="py-1 border border-gray-700"
@@ -76,13 +87,21 @@
         [class.border-b-red-600]="dividend.race === 1 && !last"
     >
       <div class="grid grid-cols-3">
-        <div>
+        <div class="cursor-pointer "
+             [class.font-bold]="activePlayer === getDividendStarter(dividend, index + 1).jockey"
+             [class.text-yellow-400]="activePlayer === getDividendStarter(dividend, index + 1).jockey"
+             (click)="togglePlayer(getDividendStarter(dividend, index + 1).jockey)"
+        >
           {{ getDividendStarter(dividend, index + 1).jockey }}
         </div>
-        <div [class.text-yellow-400]="getDividendStarter(dividend, index + 1).odds >= 10">
+        <div [class.text-yellow-400]="activePlayer.length === 0 && getDividendStarter(dividend, index + 1).odds >= 10">
           {{ getDividendStarter(dividend, index + 1).odds }}
         </div>
-        <div>
+        <div class="cursor-pointer"
+             [class.font-bold]="activePlayer === getDividendStarter(dividend, index + 1).trainer"
+             [class.text-yellow-400]="activePlayer === getDividendStarter(dividend, index + 1).trainer"
+             (click)="togglePlayer(getDividendStarter(dividend, index + 1).trainer)"
+        >
           {{ getDividendStarter(dividend, index + 1).trainer }}
         </div>
       </div>

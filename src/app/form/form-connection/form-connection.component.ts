@@ -14,6 +14,8 @@ import {
 })
 export class FormConnectionComponent implements OnInit {
   currentPage: number = 1;
+  activePlayer: string = '';
+  pinnedPlacing: string = '';
 
   protected readonly PLACING_MAPS = PLACING_MAPS;
 
@@ -27,8 +29,21 @@ export class FormConnectionComponent implements OnInit {
   formatMeeting = (meeting: string): string =>
     meeting.replace(/^\d{4}-/g, '')
 
-  getDividendStarter = (dividend: ConnectionDividend, placing: number): DividendStarter =>
-    dividend.starters.find(s => s.placing === placing) || DEFAULT_DIVIDEND_STARTER
+  togglePlayer = (clicked: string) =>
+    this.activePlayer = this.activePlayer === clicked ? '' : clicked
+
+  getDividendStarter = (dividend: ConnectionDividend, placing: number): DividendStarter => {
+    let matches = dividend.starters.filter(s => s.placing === placing);
+    if (matches.length > 0) return matches[0];
+
+    const otherPlacings = [placing - 2, placing - 1, placing + 1, placing + 2];
+    for (let i = 0; i < otherPlacings.length; i++) {
+      matches = dividend.starters.filter(s => s.placing === otherPlacings[i]);
+      if (matches.length === 2) return matches[1];
+    }
+
+    return DEFAULT_DIVIDEND_STARTER;
+  }
 
   getDistantPair = (dividend: ConnectionDividend, dpi: number): string => {
     if (dividend.distantPairs.length < dpi) return '';
@@ -67,6 +82,10 @@ export class FormConnectionComponent implements OnInit {
     }
   }
 
+  get isMatchMode(): boolean {
+    return this.activePlayer.length > 0 && this.pinnedPlacing.length > 0;
+  }
+
   get distantPairRatios(): number[] {
     const dpDividends = this.dividends.filter(d => d.distantPairs.length > 0);
     const dpPlacingRepr = dpDividends.map(d =>
@@ -95,7 +114,7 @@ export class FormConnectionComponent implements OnInit {
   }
 
   get maxPage(): number {
-    return Math.ceil(this.meetings.length / 2);
+    return this.isMatchMode ? 1 : Math.ceil(this.meetings.length / 2);
   }
 
   get meetings(): string[] {
@@ -105,10 +124,20 @@ export class FormConnectionComponent implements OnInit {
       .sort((m1, m2) => m2.localeCompare(m1));
   }
 
-  get pagedDividends(): ConnectionDividend[] {
-    const startIndex = 2 * (this.currentPage - 1);
-    const pageMeetings = this.meetings.slice(startIndex, startIndex + 2);
-    return this.dividends.filter(d => pageMeetings.includes(d.meeting));
+  get displayDividends(): ConnectionDividend[] {
+    if (!this.isMatchMode) {
+      const startIndex = 2 * (this.currentPage - 1);
+      const pageMeetings = this.meetings.slice(startIndex, startIndex + 2);
+      return this.dividends.filter(d => pageMeetings.includes(d.meeting));
+    }
+
+    const activePlacing =
+      1 + PLACING_MAPS.findIndex(pm => pm.placing === this.pinnedPlacing);
+
+    return this.dividends
+      .filter(d => d.starters.some(s =>
+        s.placing === activePlacing && [s.jockey, s.trainer].includes(this.activePlayer)
+      ));
   }
 
   get dividends(): ConnectionDividend[] {
