@@ -429,6 +429,7 @@ export class MeetingComponent implements OnInit {
       .map(r => r.starters
         .filter(s => s.jockey === challenger || s.trainer === challenger)
         .map(s => getStarterWinPlaceOdds(s, r).win)
+        .filter(wo => wo && wo > 0)
         .map(wo => PAYOUT_RATE / wo)
         .reduce((prev, curr) => prev + curr, 0)
       )

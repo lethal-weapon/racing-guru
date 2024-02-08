@@ -1,9 +1,10 @@
-<div class="mt-8 text-center grid grid-cols-2 items-center">
-  <div class="grid grid-cols-5">
-    <div class="col-span-2 text-2xl pt-1">
-      Page: {{ currentPage }} / {{ maxPage }}
-    </div>
-    <div class="col-span-3 flex flex-row">
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+  <div class="mt-6 mx-8 text-center flex flex-row justify-evenly items-center">
+    <div class="grid grid-cols-3 gap-2">
       <div *ngFor="let control of pagingControls"
            class="{{pagingControlStyle}}"
            (click)="handlePagingControls(control)"
@@ -11,113 +12,208 @@
         {{ control }}
       </div>
     </div>
+
+    <table class="table-fixed border-collapse border border-gray-600 text-center">
+      <thead class="text-xl">
+      <th *ngFor="let header of ['Page', 'Meetings', 'Races']"
+          class="w-28 py-1 border border-gray-600"
+      >
+        {{ header }}
+      </th>
+      </thead>
+      <tbody class="text-lg">
+      <tr>
+        <td class="py-1 border border-gray-700">
+          {{ currentPage }} / {{ maxPage }}
+        </td>
+        <td class="py-1 border border-gray-700">
+          {{ displayMeetings.length }} / {{ meetings.length }}
+        </td>
+        <td class="py-1 border border-gray-700">
+          {{ displayDividends.length }} / {{ dividends.length }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <table class="table-fixed border-collapse border border-gray-600 text-center">
+      <thead class="text-xl">
+      <th class="w-24 py-1 border border-gray-600">
+        DP
+      </th>
+      <th *ngFor="let pm of PLACING_MAPS"
+          class="w-24 py-1 border border-gray-600 {{pm.color}}"
+      >
+        DP-{{ pm.placing }}
+      </th>
+      </thead>
+      <tbody class="text-lg">
+      <tr>
+        <td *ngFor="let ratio of distantPairRatios"
+            class="py-1 border border-gray-700"
+        >
+          {{ ratio | percent }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
   </div>
-  <table class="mx-auto table-fixed border-collapse border border-gray-600 text-center">
+
+  <table class="mx-auto mt-6 table-fixed border-collapse border border-gray-600 text-center">
     <thead class="text-xl">
-    <th class="w-24 py-1 border border-gray-600">
-      DP
+    <th class="w-28 py-2 border border-gray-600">
+      Meeting
+    </th>
+    <th class="w-20 py-2 border border-gray-600">
+      Race
     </th>
     <th *ngFor="let pm of PLACING_MAPS"
-        class="w-24 py-1 border border-gray-600 {{pm.color}}"
+        class="w-48 py-2 border border-gray-600 text-2xl"
     >
-      DP-{{ pm.placing }}
+      <div class="grid grid-cols-3">
+        <div></div>
+        <div class="{{pm.color}}">
+          {{ pm.placing }}
+        </div>
+        <div class="cursor-pointer
+                  {{ pinnedPlacings.includes(pm.placing)
+                      ? 'opacity-100 ' + pm.color
+                      : 'opacity-20 hover:opacity-100'
+                  }}"
+             (click)="togglePinnedPlacing(pm.placing)"
+        >
+          <i class="fa fa-paperclip"></i>
+        </div>
+      </div>
+    </th>
+    <th *counter="let dpi of 3"
+        class="w-20 py-2 border border-gray-600"
+    >
+      DP-{{ dpi }}
+    </th>
+    </thead>
+    <tbody class="text-lg opacity-80">
+    <tr *ngFor="let dividend of displayDividends; let last = last"
+        class="hover:bg-gray-800"
+    >
+      <td class="py-1 border border-gray-700"
+          [class.border-b-red-600]="dividend.race === 1 && !last"
+      >
+        {{ formatMeeting(dividend.meeting) }}
+      </td>
+      <td class="py-1 border border-gray-700"
+          [class.border-b-red-600]="dividend.race === 1 && !last"
+      >
+        {{ dividend.race }}
+      </td>
+      <td *ngFor="let _ of PLACING_MAPS; let index = index"
+          class="py-1 px-2 border border-gray-700"
+          [class.border-b-red-600]="dividend.race === 1 && !last"
+      >
+        <div class="grid grid-cols-3">
+          <div class="cursor-pointer
+                    {{ activePlayers.includes(getDividendStarter(dividend, index + 1).jockey)
+                       ? 'font-bold text-yellow-400' : ''
+                    }}
+                   "
+               (click)="togglePlayer(getDividendStarter(dividend, index + 1).jockey)"
+          >
+            {{ getDividendStarter(dividend, index + 1).jockey }}
+          </div>
+          <div
+            [class.text-yellow-400]="activePlayers.length === 0 && getDividendStarter(dividend, index + 1).odds >= 10">
+            {{ getDividendStarter(dividend, index + 1).odds }}
+          </div>
+          <div class="cursor-pointer
+                    {{ activePlayers.includes(getDividendStarter(dividend, index + 1).trainer)
+                       ? 'font-bold text-yellow-400' : ''
+                    }}
+                   "
+               (click)="togglePlayer(getDividendStarter(dividend, index + 1).trainer)"
+          >
+            {{ getDividendStarter(dividend, index + 1).trainer }}
+          </div>
+        </div>
+      </td>
+      <td *counter="let dpi of 3"
+          class="py-1 border border-gray-700"
+          [class.border-b-red-600]="dividend.race === 1 && !last"
+      >
+        {{ getDistantPair(dividend, dpi) }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+
+  <div class="my-4 flex flex-row justify-evenly noselect">
+    <div *counter="let race of getMaxRace(this.racecards)"
+         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
+         (click)="activeRace = race"
+    >
+      Race {{ race }}
+    </div>
+  </div>
+
+  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+
+  <table class="mx-auto table-fixed border-collapse border border-gray-600 text-center">
+    <thead class="text-xl">
+    <th class="w-20 py-2 border border-gray-600">
+      #
+    </th>
+    <th class="w-28 py-2 border border-gray-600">
+      Player A
+    </th>
+    <th class="w-28 py-2 border border-gray-600">
+      Player B
+    </th>
+    <th *ngFor="let dp of dualPlacings"
+        class="w-28 py-2 border border-gray-600"
+    >
+      {{ dp }}
+    </th>
+    <th class="w-28 py-2 border border-gray-600">
+      Total
     </th>
     </thead>
     <tbody class="text-lg">
-    <tr>
-      <td *ngFor="let ratio of distantPairRatios"
-          class="py-1 border border-gray-700"
+    <tr *ngFor="let dpm of dualPlacingMaps; let index = index"
+        class="hover:bg-gray-800"
+        [class.bg-gray-800]="[dpm.player1, dpm.player2].includes(racecardPlayer)"
+    >
+      <td class="py-1 border border-gray-700">
+        {{ index + 1 }}
+      </td>
+      <td class="py-1 border border-gray-700 cursor-pointer"
+          [class.text-yellow-400]="dpm.player1 === racecardPlayer"
+          (click)="toggleRacecardPlayer(dpm.player1)"
       >
-        {{ ratio | percent }}
+        {{ dpm.player1 }}
+      </td>
+      <td class="py-1 border border-gray-700 cursor-pointer"
+          [class.text-yellow-400]="dpm.player2 === racecardPlayer"
+          (click)="toggleRacecardPlayer(dpm.player2)"
+      >
+        {{ dpm.player2 }}
+      </td>
+      <td *ngFor="let count of dpm.counts"
+          class="py-1 border border-gray-700"
+          [class.font-bold]="isMatchResult(dpm.player1, dpm.player2, count.placings)"
+          [class.text-yellow-400]="isMatchResult(dpm.player1, dpm.player2, count.placings)"
+      >
+        <span *ngIf="count.count !== 0">
+          {{ count.count }}
+        </span>
+        <span *ngIf="count.count === 0">
+          {{ isMatchResult(dpm.player1, dpm.player2, count.placings) ? 'X' : '' }}
+        </span>
+      </td>
+      <td class="py-1 border border-gray-700">
+        {{ dpm.countSum }}
       </td>
     </tr>
     </tbody>
   </table>
 </div>
-
-<table class="mx-auto mt-8 table-fixed border-collapse border border-gray-600 text-center">
-  <thead class="text-xl">
-  <th class="w-28 py-2 border border-gray-600">
-    Meeting
-  </th>
-  <th class="w-24 py-2 border border-gray-600">
-    Race #
-  </th>
-  <th *ngFor="let pm of PLACING_MAPS"
-      class="w-48 py-2 border border-gray-600 text-2xl"
-  >
-    <div class="grid grid-cols-3">
-      <div></div>
-      <div class="{{pm.color}}">
-        {{ pm.placing }}
-      </div>
-      <div class="cursor-pointer
-                  {{pinnedPlacing === pm.placing ? 'opacity-100 ' + pm.color  : 'opacity-20 hover:opacity-100'}}"
-           (click)="pinnedPlacing = pm.placing"
-      >
-        <i class="fa fa-paperclip"></i>
-      </div>
-    </div>
-  </th>
-  <th class="w-24 py-2 border border-gray-600">
-    D-Pairs
-  </th>
-  <th *counter="let dpi of 3"
-      class="w-20 py-2 border border-gray-600"
-  >
-    DP-{{ dpi }}
-  </th>
-  </thead>
-  <tbody class="text-lg opacity-80">
-  <tr *ngFor="let dividend of displayDividends; let last = last"
-      class="hover:bg-gray-800"
-  >
-    <td class="py-1 border border-gray-700"
-        [class.border-b-red-600]="dividend.race === 1 && !last"
-    >
-      {{ formatMeeting(dividend.meeting) }}
-    </td>
-    <td class="py-1 border border-gray-700"
-        [class.border-b-red-600]="dividend.race === 1 && !last"
-    >
-      {{ dividend.race }}
-    </td>
-    <td *ngFor="let pm of PLACING_MAPS; let index = index"
-        class="py-1 px-2 border border-gray-700"
-        [class.border-b-red-600]="dividend.race === 1 && !last"
-    >
-      <div class="grid grid-cols-3">
-        <div class="cursor-pointer "
-             [class.font-bold]="activePlayer === getDividendStarter(dividend, index + 1).jockey"
-             [class.text-yellow-400]="activePlayer === getDividendStarter(dividend, index + 1).jockey"
-             (click)="togglePlayer(getDividendStarter(dividend, index + 1).jockey)"
-        >
-          {{ getDividendStarter(dividend, index + 1).jockey }}
-        </div>
-        <div [class.text-yellow-400]="activePlayer.length === 0 && getDividendStarter(dividend, index + 1).odds >= 10">
-          {{ getDividendStarter(dividend, index + 1).odds }}
-        </div>
-        <div class="cursor-pointer"
-             [class.font-bold]="activePlayer === getDividendStarter(dividend, index + 1).trainer"
-             [class.text-yellow-400]="activePlayer === getDividendStarter(dividend, index + 1).trainer"
-             (click)="togglePlayer(getDividendStarter(dividend, index + 1).trainer)"
-        >
-          {{ getDividendStarter(dividend, index + 1).trainer }}
-        </div>
-      </div>
-    </td>
-    <td class="py-1 border border-gray-700"
-        [class.border-b-red-600]="dividend.race === 1 && !last"
-        [class.opacity-0]="dividend.distantPairs.length === 0"
-    >
-      {{ dividend.distantPairs.length }}
-    </td>
-    <td *counter="let dpi of 3"
-        class="py-1 border border-gray-700"
-        [class.border-b-red-600]="dividend.race === 1 && !last"
-    >
-      {{ getDistantPair(dividend, dpi) }}
-    </td>
-  </tr>
-  </tbody>
-</table>
