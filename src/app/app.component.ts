@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {WebsocketService} from './model/websocket.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +7,6 @@ import {WebsocketService} from './model/websocket.service';
 export class AppComponent {
   title = 'racing-guru';
 
-  constructor(private socket: WebsocketService) {
+  constructor() {
   }
 }

@@ -174,7 +174,7 @@ export class TrendComponent implements OnInit {
   getVariableStarterSyndicateCount = (engagements: string): number => {
     return Array(MAX_RACE_PER_MEETING)
       .fill(1)
-      .map((e, index) => 1 + index)
+      .map((_, index) => 1 + index)
       .map(r => this.getVariableStarterSyndicateStarters(engagements, r).length)
       .reduce((prev, curr) => prev + curr, 0);
   }
@@ -309,7 +309,7 @@ export class TrendComponent implements OnInit {
     let mostRecentWinningMeeting: string = '';
 
     const winningMeetings = this.meetings
-      .filter((m, index) => index > 0)
+      .filter((_, index) => index > 0)
       .filter(m => {
         const engaged = m.persons.map(p => p.person).includes(person);
         if (!engaged) return false;
@@ -321,7 +321,7 @@ export class TrendComponent implements OnInit {
       mostRecentWinningMeeting = mostRecentOne?.meeting || '';
 
       // @ts-ignore
-      days = this.meetings.filter((m, index) => index > 0).indexOf(mostRecentOne);
+      days = this.meetings.filter((_, index) => index > 0).indexOf(mostRecentOne);
     }
 
     for (let i = 1; i < this.meetings.length; i++) {
@@ -346,7 +346,7 @@ export class TrendComponent implements OnInit {
     }
 
     const sortedMeetings = this.meetings
-      .filter((m, index) => index > 0)
+      .filter((_, index) => index > 0)
       .filter(m => m.persons.map(p => p.person).includes(person))
       .sort((m1, m2) => m1.meeting.localeCompare(m2.meeting));
 
@@ -483,14 +483,14 @@ export class TrendComponent implements OnInit {
     let meetings = this.meetings.map(m => m.meeting);
     if (period === 'Recent 10 Meetings') {
       meetings = this.meetings
-        .filter((v, i) => i > 0)
+        .filter((_, i) => i > 0)
         .map(m => m.meeting)
         .slice(0, 10);
 
     } else if (SEASONS.map(s => s.label).some(l => period.includes(l))) {
       const season = SEASONS.find(s => period.includes(s.label))
       meetings = this.meetings
-        .filter((v, i) => i > 0)
+        .filter((_, i) => i > 0)
         .map(m => m.meeting)
         .filter(m => m >= (season?.opening || '') && m <= (season?.finale || ''));
     }

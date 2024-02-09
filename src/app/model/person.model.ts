@@ -20,6 +20,7 @@ export const TRAINERS = [
   new Person('LFC', '1966-02-14', 'Lor', 'Fu-chuen', 'F. Lor', 'HK', '', 'Frankie', 329),
   new Person('HDA', '1962-10-22', 'Hayes', 'David', 'D. Hayes', 'AUS', '', '', 526),
   new Person('RW', '1989-08-19', 'Richards', 'Jamie', 'J. Richards', 'NZ', '', '', 0),
+  new Person('NM', '1968-01-01', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
 
   new Person('CAS', '1956-12-24', 'Cruz', 'Anthony S.', 'T. Cruz', 'HK', '', 'Tony', 1413),
   new Person('YPF', '1957-07-12', 'Yiu', 'Poon-fai', 'R. Yiu', 'HK', '', 'Ricky', 899),
@@ -37,7 +38,6 @@ export const TRAINERS = [
   new Person('TKH', '1972-08-09', 'Ting', 'Koon-ho', 'J. Ting', 'HK', '', 'Jimmy', 134),
   new Person('TYS', '1960-09-30', 'Tsui', 'Yu-sak', 'M. Tsui', 'HK', '', 'Me', 597),
   new Person('MWK', '1978-01-01', 'Mo', 'Wai-kit', 'C. Mo', 'HK', '', 'Cody', 0),
-  new Person('NM', '1968-01-01', 'Newnham', 'Mark', 'M. Newnham', 'AUS', '', '', 0),
 
   // new Person('HL', '1960-07-06', 'Ho', 'Leung', 'P. Ho', 'HK', '', 'Peter', 618),
   // new Person('GR', '1969-09-12', 'Gibson', 'Richard', 'R. Gibson', 'GB', '', '', 277),

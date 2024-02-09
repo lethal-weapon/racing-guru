@@ -467,7 +467,7 @@ export class MeetingComponent implements OnInit {
 
     // @ts-ignore
     return TRAINERS
-      .filter((t, i) => i >= startIndex && i <= endIndex)
+      .filter((_, i) => i >= startIndex && i <= endIndex)
       .map(t => t.code)
       .filter(t => this.racecards
         .find(r => r.race === race)

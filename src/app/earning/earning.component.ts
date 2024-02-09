@@ -48,7 +48,7 @@ export class EarningComponent implements OnInit {
 
     const players = TRAINERS.find(t => clicked.name.includes(t.code)) ? TRAINERS : JOCKEYS;
     this.trackingPlayers = players
-      .filter((p, i) => i >= clicked.startIndex && i <= clicked.endIndex)
+      .filter((_, i) => i >= clicked.startIndex && i <= clicked.endIndex)
       .map(p => p.code);
 
     this.updateChart();

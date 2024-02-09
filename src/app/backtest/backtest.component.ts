@@ -283,7 +283,7 @@ export class BacktestComponent implements OnInit {
 
   get meetingFields(): string[] {
     const fields = this.profitabilityFields
-      .filter((f, index) => index > 0)
+      .filter((_, index) => index > 0)
       .map(f => f === 'Meetings' ? 'Meeting' : f);
 
     return [

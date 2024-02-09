@@ -7,7 +7,7 @@ import {
   SeasonPerformance
 } from '../../model/performance.model';
 import {PLACING_MAPS} from '../../util/strings';
-import {MAX_RACE_PER_MEETING} from '../../util/numbers';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../../util/numbers';
 import {formatOdds} from '../../util/functions';
 
 @Component({
@@ -27,6 +27,11 @@ export class FormEngineComponent implements OnInit {
   ngOnInit(): void {
     this.repo.fetchEnginePerformance();
     this.repo.fetchNegativeEnginePerformance();
+
+    setInterval(() => {
+      this.repo.fetchEnginePerformance();
+      this.repo.fetchNegativeEnginePerformance();
+    }, ONE_MINUTE);
   }
 
   formatMeeting = (meeting: string): string =>

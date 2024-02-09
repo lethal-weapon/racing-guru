@@ -321,7 +321,7 @@ export class RacecardComponent implements OnInit {
   }
 
   getPersonStatOnSameRace = (starter: Starter, index: number): number[] => {
-    const meetings = this.repo.findMeetings().filter((m, index) => index > 0);
+    const meetings = this.repo.findMeetings().filter((_, index) => index > 0);
     const stats = [starter.jockey, starter.trainer]
       .map(p => getPersonSummaryByRace(meetings, p, this.activeRace, this.activeRacecard.venue))
       .map(s => [s.wins, s.seconds, s.thirds, s.fourths][index]);

@@ -202,7 +202,7 @@ export class OddsComponent implements OnInit {
 
   copyMultiBankerBets = (betType: string) => {
     const ordersByPlacing = Array(4).fill(1)
-      .map((e, index) => 1 + index)
+      .map((_, index) => 1 + index)
       .map(p =>
         this.activeRacecard.selections
           .filter(s => s.placing === p)
@@ -259,7 +259,7 @@ export class OddsComponent implements OnInit {
   getMultiBankerBets = (betType: string): number[][] => {
     let bets: number[][] = [];
     const ordersByPlacing = Array(4).fill(1)
-      .map((e, index) => 1 + index)
+      .map((_, index) => 1 + index)
       .map(p =>
         this.activeRacecard.selections
           .filter(s => s.placing === p)

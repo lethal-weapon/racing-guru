@@ -98,7 +98,7 @@ export class FormNoteComponent implements OnInit {
 
     const order = Array(6)
       .fill(1)
-      .map((e, index) => 1 + index)
+      .map((_, index) => 1 + index)
       .filter(o => !usedOrders.includes(o))
       .shift() || 1;
 
@@ -166,7 +166,7 @@ export class FormNoteComponent implements OnInit {
         .includes(o)
       )
       .sort((o1, o2) => o1 - o2)
-    || Array(14).fill(1).map((e, index) => 1 + index);
+    || Array(14).fill(1).map((_, index) => 1 + index);
 
   getMeetingIndex = (meeting: string): number => {
     for (const season of SEASONS) {
