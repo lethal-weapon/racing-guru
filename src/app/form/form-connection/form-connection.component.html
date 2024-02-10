@@ -17,27 +17,45 @@
   <div class="mt-4 flex flex-row text-lg text-center justify-center items-start gap-x-6">
     <div class="flex flex-col gap-y-2.5">
       <div *ngFor="let starter of getStarters(this.activeRacecard)"
-           class="flex flex-row items-center cursor-pointer px-3 py-2
-                  rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
+           class="flex flex-col gap-y-1 items-center cursor-pointer px-4 py-2 rounded-2xl
+                  shadow transition shadow-sky-700/50 hover:shadow-sky-600"
            [class.opacity-50]="isTrashStarter(starter)"
            (click)="toggleTrashStarter(starter.order)"
       >
-        <div class="w-10">
-          <div class="w-8 h-8 rounded-full {{getPlacingBorderBackground(starter.jockey, this.activeRacecard)}}">
-            {{ starter.order }}
+        <div class="flex flex-row">
+          <div class="w-10">
+            <div class="w-8 h-8 rounded-full {{getPlacingBorderBackground(starter.jockey, this.activeRacecard)}}">
+              {{ starter.order }}
+            </div>
+          </div>
+          <div class="w-14 {{ isTrashStarter(starter) ? 'line-through' : '' }}">
+            {{ starter.jockey }}
+          </div>
+          <div class="w-14 {{ isTrashStarter(starter) ? 'line-through' : '' }}">
+            {{ starter.trainer }}
+          </div>
+          <div class="w-14 text-red-600">
+            <span>
+              {{ getStarterWinPlaceOdds(starter, this.activeRacecard).win }}
+            </span>
+            <sup class="text-xs">W</sup>
           </div>
         </div>
-        <div class="w-14 {{ isTrashStarter(starter) ? 'line-through' : '' }}">
-          {{ starter.jockey }}
-        </div>
-        <div class="w-14 {{ isTrashStarter(starter) ? 'line-through' : '' }}">
-          {{ starter.trainer }}
-        </div>
-        <div class="w-14 text-red-600">
-          <span>
-            {{ getStarterWinPlaceOdds(starter, this.activeRacecard).win }}
-          </span>
-          <sup class="text-xs">W</sup>
+        <div class="flex flex-row">
+          <div class="w-10">
+            <div class="w-8 h-8 border border-gray-700">
+              {{ starter.draw }}
+            </div>
+          </div>
+          <div class="w-28 {{ isTrashStarter(starter) ? 'line-through' : '' }}">
+            {{ getHorse(starter).nameCH }}
+          </div>
+          <div class="w-14 text-blue-600">
+            <span>
+              {{ getStarterWinPlaceOdds(starter, this.activeRacecard).place }}
+            </span>
+            <sup class="text-xs">P</sup>
+          </div>
         </div>
       </div>
     </div>
@@ -101,20 +119,20 @@
         <td class="py-1 border border-gray-700
                   {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
         >
-        <span *ngIf="isDrawInheritancePair(dpm.starter1, dpm.starter2)"
-              [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, [])"
-        >
-          <i class="fa fa-check"></i>
-        </span>
+          <span *ngIf="isDrawInheritancePair(dpm.starter1, dpm.starter2)"
+                [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, [])"
+          >
+            <i class="fa fa-check"></i>
+          </span>
         </td>
         <td class="py-1 border border-gray-700 border-r-2 border-r-red-900
                   {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
         >
-        <span *ngIf="!isConnectedPair(dpm.starter1, dpm.starter2)"
-              [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, [])"
-        >
-          <i class="fa fa-check"></i>
-        </span>
+          <span *ngIf="!isConnectedPair(dpm.starter1, dpm.starter2)"
+                [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, [])"
+          >
+            <i class="fa fa-check"></i>
+          </span>
         </td>
         <td *ngFor="let count of dpm.counts; let last = last"
             class="py-1 border border-gray-700 opacity-80 {{ last ? 'border-r-2 border-r-red-900' : '' }}
@@ -122,12 +140,12 @@
             [class.font-bold]="isMatchResult(dpm.starter1, dpm.starter2, count.placings)"
             [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, count.placings)"
         >
-        <span *ngIf="count.count !== 0">
-          {{ count.count }}
-        </span>
+          <span *ngIf="count.count !== 0">
+            {{ count.count }}
+          </span>
           <span *ngIf="count.count === 0">
-          {{ isMatchResult(dpm.starter1, dpm.starter2, count.placings) ? 'X' : '' }}
-        </span>
+            {{ isMatchResult(dpm.starter1, dpm.starter2, count.placings) ? 'X' : '' }}
+          </span>
         </td>
         <td class="py-1 border border-gray-700
                   {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"

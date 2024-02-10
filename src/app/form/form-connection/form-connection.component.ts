@@ -4,6 +4,7 @@ import {RestRepository} from '../../model/rest.repository';
 import {Starter} from '../../model/starter.model';
 import {Racecard} from '../../model/racecard.model';
 import {ConnectionDividend} from '../../model/connection.model';
+import {Horse, DEFAULT_HORSE} from '../../model/horse.model';
 import {PLACING_MAPS, SEASONS} from '../../util/strings';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../../util/numbers';
 import {
@@ -47,15 +48,13 @@ export class FormConnectionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchMeetingHorses();
     this.repo.fetchRacecards();
     this.repo.fetchConnections();
     this.repo.fetchConnectionDividends();
 
     setInterval(() => this.repo.fetchRacecards(), TEN_SECONDS);
-    setInterval(() => {
-      this.repo.fetchConnections();
-      this.repo.fetchConnectionDividends();
-    }, ONE_MINUTE);
+    setInterval(() => this.repo.fetchConnectionDividends(), ONE_MINUTE);
 
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.activeOrderByRace.set(race, 0);
@@ -80,6 +79,10 @@ export class FormConnectionComponent implements OnInit {
 
     this.trashes.set(this.activeRace, newTrashes);
   }
+
+  getHorse = (starter: Starter): Horse =>
+    this.repo.findHorses()
+      .find(s => s.code === starter.horse) || DEFAULT_HORSE
 
   isTrashStarter = (starter: Starter): boolean =>
     (this.trashes.get(this.activeRace) || []).includes(starter.order)
@@ -251,7 +254,8 @@ export class FormConnectionComponent implements OnInit {
   }
 
   get isLoading(): boolean {
-    return this.repo.findRacecards().length === 0
+    return this.repo.findHorses().length === 0
+      || this.repo.findRacecards().length === 0
       || this.repo.findConnections().length === 0
       || this.repo.findConnectionDividends().length === 0;
   }
