@@ -16,6 +16,7 @@ export interface RaceConnection {
 
 export interface DividendStarter {
   order: number,
+  draw: number,
   placing: number,
   odds: number,
   jockey: string,
@@ -31,6 +32,7 @@ export interface ConnectionDividend {
 
 export const DEFAULT_DIVIDEND_STARTER: DividendStarter = {
   order: 0,
+  draw: 0,
   placing: 1,
   odds: 0,
   jockey: '',

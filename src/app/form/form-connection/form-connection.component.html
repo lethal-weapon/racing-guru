@@ -3,148 +3,6 @@
 </div>
 
 <div *ngIf="!isLoading">
-  <!--  <div class="mt-6 mx-8 text-center flex flex-row justify-evenly items-center">-->
-  <!--    <div class="grid grid-cols-3 gap-2">-->
-  <!--      <div *ngFor="let control of pagingControls"-->
-  <!--           class="{{pagingControlStyle}}"-->
-  <!--           (click)="handlePagingControls(control)"-->
-  <!--      >-->
-  <!--        {{ control }}-->
-  <!--      </div>-->
-  <!--    </div>-->
-
-  <!--    <table class="table-fixed border-collapse border border-gray-600 text-center">-->
-  <!--      <thead class="text-xl">-->
-  <!--      <th *ngFor="let header of ['Page', 'Meetings', 'Races']"-->
-  <!--          class="w-28 py-1 border border-gray-600"-->
-  <!--      >-->
-  <!--        {{ header }}-->
-  <!--      </th>-->
-  <!--      </thead>-->
-  <!--      <tbody class="text-lg">-->
-  <!--      <tr>-->
-  <!--        <td class="py-1 border border-gray-700">-->
-  <!--          {{ currentPage }} / {{ maxPage }}-->
-  <!--        </td>-->
-  <!--        <td class="py-1 border border-gray-700">-->
-  <!--          {{ displayMeetings.length }} / {{ meetings.length }}-->
-  <!--        </td>-->
-  <!--        <td class="py-1 border border-gray-700">-->
-  <!--          {{ displayDividends.length }} / {{ dividends.length }}-->
-  <!--        </td>-->
-  <!--      </tr>-->
-  <!--      </tbody>-->
-  <!--    </table>-->
-
-  <!--    <table class="table-fixed border-collapse border border-gray-600 text-center">-->
-  <!--      <thead class="text-xl">-->
-  <!--      <th class="w-24 py-1 border border-gray-600">-->
-  <!--        DP-->
-  <!--      </th>-->
-  <!--      <th *ngFor="let pm of PLACING_MAPS"-->
-  <!--          class="w-24 py-1 border border-gray-600 {{pm.color}}"-->
-  <!--      >-->
-  <!--        DP-{{ pm.placing }}-->
-  <!--      </th>-->
-  <!--      </thead>-->
-  <!--      <tbody class="text-lg">-->
-  <!--      <tr>-->
-  <!--        <td *ngFor="let ratio of distantPairRatios"-->
-  <!--            class="py-1 border border-gray-700"-->
-  <!--        >-->
-  <!--          {{ ratio | percent }}-->
-  <!--        </td>-->
-  <!--      </tr>-->
-  <!--      </tbody>-->
-  <!--    </table>-->
-  <!--  </div>-->
-
-  <!--  <table class="mx-auto mt-6 table-fixed border-collapse border border-gray-600 text-center">-->
-  <!--    <thead class="text-xl">-->
-  <!--    <th class="w-28 py-2 border border-gray-600">-->
-  <!--      Meeting-->
-  <!--    </th>-->
-  <!--    <th class="w-20 py-2 border border-gray-600">-->
-  <!--      Race-->
-  <!--    </th>-->
-  <!--    <th *ngFor="let pm of PLACING_MAPS"-->
-  <!--        class="w-48 py-2 border border-gray-600 text-2xl"-->
-  <!--    >-->
-  <!--      <div class="grid grid-cols-3">-->
-  <!--        <div></div>-->
-  <!--        <div class="{{pm.color}}">-->
-  <!--          {{ pm.placing }}-->
-  <!--        </div>-->
-  <!--        <div class="cursor-pointer-->
-  <!--                  {{ pinnedPlacings.includes(pm.placing)-->
-  <!--                      ? 'opacity-100 ' + pm.color-->
-  <!--                      : 'opacity-20 hover:opacity-100'-->
-  <!--                  }}"-->
-  <!--             (click)="togglePinnedPlacing(pm.placing)"-->
-  <!--        >-->
-  <!--          <i class="fa fa-paperclip"></i>-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--    </th>-->
-  <!--    <th *counter="let dpi of 3"-->
-  <!--        class="w-20 py-2 border border-gray-600"-->
-  <!--    >-->
-  <!--      DP-{{ dpi }}-->
-  <!--    </th>-->
-  <!--    </thead>-->
-  <!--    <tbody class="text-lg opacity-80">-->
-  <!--    <tr *ngFor="let dividend of displayDividends; let last = last"-->
-  <!--        class="hover:bg-gray-800"-->
-  <!--    >-->
-  <!--      <td class="py-1 border border-gray-700"-->
-  <!--          [class.border-b-red-600]="dividend.race === 1 && !last"-->
-  <!--      >-->
-  <!--        {{ formatMeeting(dividend.meeting) }}-->
-  <!--      </td>-->
-  <!--      <td class="py-1 border border-gray-700"-->
-  <!--          [class.border-b-red-600]="dividend.race === 1 && !last"-->
-  <!--      >-->
-  <!--        {{ dividend.race }}-->
-  <!--      </td>-->
-  <!--      <td *ngFor="let _ of PLACING_MAPS; let index = index"-->
-  <!--          class="py-1 px-2 border border-gray-700"-->
-  <!--          [class.border-b-red-600]="dividend.race === 1 && !last"-->
-  <!--      >-->
-  <!--        <div class="grid grid-cols-3">-->
-  <!--          <div class="cursor-pointer-->
-  <!--                    {{ activePlayers.includes(getDividendStarter(dividend, index + 1).jockey)-->
-  <!--                       ? 'font-bold text-yellow-400' : ''-->
-  <!--                    }}-->
-  <!--                   "-->
-  <!--               (click)="togglePlayer(getDividendStarter(dividend, index + 1).jockey)"-->
-  <!--          >-->
-  <!--            {{ getDividendStarter(dividend, index + 1).jockey }}-->
-  <!--          </div>-->
-  <!--          <div-->
-  <!--            [class.text-yellow-400]="activePlayers.length === 0 && getDividendStarter(dividend, index + 1).odds >= 10">-->
-  <!--            {{ getDividendStarter(dividend, index + 1).odds }}-->
-  <!--          </div>-->
-  <!--          <div class="cursor-pointer-->
-  <!--                    {{ activePlayers.includes(getDividendStarter(dividend, index + 1).trainer)-->
-  <!--                       ? 'font-bold text-yellow-400' : ''-->
-  <!--                    }}-->
-  <!--                   "-->
-  <!--               (click)="togglePlayer(getDividendStarter(dividend, index + 1).trainer)"-->
-  <!--          >-->
-  <!--            {{ getDividendStarter(dividend, index + 1).trainer }}-->
-  <!--          </div>-->
-  <!--        </div>-->
-  <!--      </td>-->
-  <!--      <td *counter="let dpi of 3"-->
-  <!--          class="py-1 border border-gray-700"-->
-  <!--          [class.border-b-red-600]="dividend.race === 1 && !last"-->
-  <!--      >-->
-  <!--        {{ getDistantPair(dividend, dpi) }}-->
-  <!--      </td>-->
-  <!--    </tr>-->
-  <!--    </tbody>-->
-  <!--  </table>-->
-
   <div class="my-1 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
   <div class="my-3 flex flex-row justify-evenly">
     <div *counter="let race of getMaxRace(this.racecards)"
@@ -156,85 +14,128 @@
   </div>
   <div class="my-1 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
 
-  <div class="my-2 mx-4 grid grid-cols-7 gap-x-3 gap-y-2">
-    <div *ngFor="let starter of getStarters(this.activeRacecard)"
-         class="grid grid-cols-4 items-center cursor-pointer gap-x-2 p-2 text-center text-lg
-                rounded-2xl shadow transition shadow-sky-700/50 hover:shadow-sky-600"
-         [class.opacity-50]="isTrashStarter(starter)"
-         (click)="toggleTrashStarter(starter.order)"
-    >
-      <div
-        class="w-8 h-8 pt-0.5 rounded-full {{getPlacingBorderBackground(starter.jockey, this.activeRacecard)}}">
-        {{ starter.order }}
-      </div>
-      <div class="{{ isTrashStarter(starter) ? 'line-through' : '' }}">
-        {{ starter.jockey }}
-      </div>
-      <div class="{{ isTrashStarter(starter) ? 'line-through' : '' }}">
-        {{ starter.trainer }}
-      </div>
-      <div class="text-red-600">
-        {{ getStarterWinPlaceOdds(starter, this.activeRacecard).win }}
+  <div class="mt-4 flex flex-row text-lg text-center justify-center items-start gap-x-6">
+    <div class="flex flex-col gap-y-2.5">
+      <div *ngFor="let starter of getStarters(this.activeRacecard)"
+           class="flex flex-row items-center cursor-pointer px-3 py-2
+                  rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
+           [class.opacity-50]="isTrashStarter(starter)"
+           (click)="toggleTrashStarter(starter.order)"
+      >
+        <div class="w-10">
+          <div class="w-8 h-8 rounded-full {{getPlacingBorderBackground(starter.jockey, this.activeRacecard)}}">
+            {{ starter.order }}
+          </div>
+        </div>
+        <div class="w-14 {{ isTrashStarter(starter) ? 'line-through' : '' }}">
+          {{ starter.jockey }}
+        </div>
+        <div class="w-14 {{ isTrashStarter(starter) ? 'line-through' : '' }}">
+          {{ starter.trainer }}
+        </div>
+        <div class="w-14 text-red-600">
+          <span>
+            {{ getStarterWinPlaceOdds(starter, this.activeRacecard).win }}
+          </span>
+          <sup class="text-xs">W</sup>
+        </div>
       </div>
     </div>
-  </div>
 
-  <table class="mt-4 mx-auto text-lg table-fixed border-collapse border border-gray-600 text-center">
-    <thead>
-    <th class="w-20 py-2 border border-gray-600 border-r-2 border-r-red-900">
-      #
-    </th>
-    <th class="w-24 py-2 border border-gray-600">
-      Starter A
-    </th>
-    <th class="w-24 py-2 border border-gray-600 border-r-2 border-r-red-900">
-      Starter B
-    </th>
-    <th *ngFor="let dp of dualPlacings"
-        class="w-20 py-2 border border-gray-600"
-    >
-      {{ dp }}
-    </th>
-    <th class="w-20 py-2 border border-gray-600">
-      Total
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let dpm of dualPlacingMaps; let index = index"
-        class="hover:bg-gray-800"
-        [class.bg-gray-800]="[dpm.starter1.order, dpm.starter2.order].includes(activeOrder)"
-    >
-      <td class="py-1 border border-gray-700 border-r-2 border-r-red-900">
-        {{ index + 1 }}
-      </td>
-      <td class="py-1 border border-gray-700 cursor-pointer"
-          [class.text-red-600]="activeOrder === dpm.starter1.order"
-          (click)="toggleActiveOrder(dpm.starter1.order)"
+    <table class="table-fixed border-collapse border border-gray-600">
+      <thead>
+      <th class="w-20 py-2 border border-gray-600 border-r-2 border-r-red-900">
+        #
+      </th>
+      <th class="w-24 py-2 border border-gray-600">
+        Starter A
+      </th>
+      <th class="w-24 py-2 border border-gray-600 border-r-2 border-r-red-900">
+        Starter B
+      </th>
+      <th class="w-20 py-2 border border-gray-600 cursor-help"
+          tooltip="Draw Inheritance"
+          [hideDelay]="0"
       >
-        {{ dpm.starter1.order }}
-      </td>
-      <td class="py-1 border border-gray-700 cursor-pointer border-r-2 border-r-red-900"
-          [class.text-red-600]="activeOrder === dpm.starter2.order"
-          (click)="toggleActiveOrder(dpm.starter2.order)"
+        DI
+      </th>
+      <th class="w-20 py-2 border border-gray-600 cursor-help border-r-2 border-r-red-900"
+          tooltip="Distant Pair"
+          [hideDelay]="0"
       >
-        {{ dpm.starter2.order }}
-      </td>
-      <td *ngFor="let count of dpm.counts"
-          class="py-1 border border-gray-700"
-          [class.font-bold]="isMatchResult(dpm.starter1, dpm.starter2, count.placings)"
-          [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, count.placings)"
+        DP
+      </th>
+      <th *ngFor="let dp of dualPlacings; let last = last"
+          class="w-20 py-2 border border-gray-600 {{ last ? 'border-r-2 border-r-red-900' : '' }}"
       >
+        {{ dp }}
+      </th>
+      <th class="w-20 py-2 border border-gray-600">
+        Total
+      </th>
+      </thead>
+      <tbody>
+      <tr *ngFor="let dpm of dualPlacingMaps; let index = index"
+          class="hover:bg-gray-800"
+          [class.bg-gray-800]="[dpm.starter1.order, dpm.starter2.order].includes(activeOrder)"
+      >
+        <td class="py-1 border border-gray-700 opacity-80 border-r-2 border-r-red-900
+                  {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
+        >
+          {{ index + 1 }}
+        </td>
+        <td class="py-1 border border-gray-700 cursor-pointer
+                  {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
+            [class.text-red-600]="activeOrder === dpm.starter1.order"
+            (click)="toggleActiveOrder(dpm.starter1.order)"
+        >
+          {{ dpm.starter1.order }}
+        </td>
+        <td class="py-1 border border-gray-700 cursor-pointer border-r-2 border-r-red-900
+                  {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
+            [class.text-red-600]="activeOrder === dpm.starter2.order"
+            (click)="toggleActiveOrder(dpm.starter2.order)"
+        >
+          {{ dpm.starter2.order }}
+        </td>
+        <td class="py-1 border border-gray-700
+                  {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
+        >
+        <span *ngIf="isDrawInheritancePair(dpm.starter1, dpm.starter2)"
+              [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, [])"
+        >
+          <i class="fa fa-check"></i>
+        </span>
+        </td>
+        <td class="py-1 border border-gray-700 border-r-2 border-r-red-900
+                  {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
+        >
+        <span *ngIf="!isConnectedPair(dpm.starter1, dpm.starter2)"
+              [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, [])"
+        >
+          <i class="fa fa-check"></i>
+        </span>
+        </td>
+        <td *ngFor="let count of dpm.counts; let last = last"
+            class="py-1 border border-gray-700 opacity-80 {{ last ? 'border-r-2 border-r-red-900' : '' }}
+                  {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
+            [class.font-bold]="isMatchResult(dpm.starter1, dpm.starter2, count.placings)"
+            [class.text-yellow-400]="isMatchResult(dpm.starter1, dpm.starter2, count.placings)"
+        >
         <span *ngIf="count.count !== 0">
           {{ count.count }}
         </span>
-        <span *ngIf="count.count === 0">
+          <span *ngIf="count.count === 0">
           {{ isMatchResult(dpm.starter1, dpm.starter2, count.placings) ? 'X' : '' }}
         </span>
-      </td>
-      <td class="py-1 border border-gray-700">
-        {{ dpm.countSum }}
-      </td>
-    </tr>
-    </tbody>
-  </table>
+        </td>
+        <td class="py-1 border border-gray-700
+                  {{(index + 1) % 20 === 0 ? 'border-b-2 border-b-green-600' : ''}}"
+        >
+          {{ dpm.countSum }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

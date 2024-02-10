@@ -116,11 +116,15 @@ export class RestRepository {
     )
   }
 
-  fetchRacecards = (meeting: string, callback: () => any) =>
+  fetchRacecards = (
+    meeting: string = 'latest',
+    callback: () => any = () => console.log(``)
+  ) => {
     this.source.getRacecards(meeting).subscribe(data => {
       this.racecards = data;
       callback();
     })
+  }
 
   fetchNotes = () =>
     this.source.getNotes().subscribe(data => this.notes = data)
@@ -164,8 +168,8 @@ export class RestRepository {
   fetchSyndicatePerformance = () =>
     this.source.getSyndicatePerformance().subscribe(data => this.syndicatePerformances = data)
 
-  fetchConnections = () =>
-    this.source.getConnections().subscribe(data => this.connections = data)
+  fetchConnections = (meeting: string = 'latest') =>
+    this.source.getConnections(meeting).subscribe(data => this.connections = data)
 
   fetchConnectionDividends = () =>
     this.source.getConnectionDividends().subscribe(data => this.connectionDividends = data)

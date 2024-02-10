@@ -1,22 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../../model/rest.repository';
-import {Racecard} from '../../model/racecard.model';
 import {Starter} from '../../model/starter.model';
+import {Racecard} from '../../model/racecard.model';
+import {ConnectionDividend} from '../../model/connection.model';
 import {PLACING_MAPS, SEASONS} from '../../util/strings';
-import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../../util/numbers';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../../util/numbers';
 import {
   getMaxRace,
-  getPlacingBorderBackground,
-  getRaceBadgeStyle,
+  getPlacing,
   getStarters,
-  getStarterWinPlaceOdds
+  getRaceBadgeStyle,
+  getStarterWinPlaceOdds,
+  getPlacingBorderBackground
 } from '../../util/functions';
-import {
-  DividendStarter,
-  ConnectionDividend,
-  DEFAULT_DIVIDEND_STARTER
-} from '../../model/connection.model';
 
 interface DualCount {
   dual: string,
@@ -36,17 +33,12 @@ interface DualPlacingMap {
   templateUrl: './form-connection.component.html'
 })
 export class FormConnectionComponent implements OnInit {
-  currentPage: number = 1;
-  activePlayers: string[] = [];
-  pinnedPlacings: string[] = [];
-
   activeRace: number = 1;
   activeOrderByRace: Map<number, number> = new Map();
   trashes: Map<number, number[]> = new Map();
 
-  protected readonly PLACING_MAPS = PLACING_MAPS;
-  protected readonly getStarters = getStarters;
   protected readonly getMaxRace = getMaxRace;
+  protected readonly getStarters = getStarters;
   protected readonly getRaceBadgeStyle = getRaceBadgeStyle;
   protected readonly getStarterWinPlaceOdds = getStarterWinPlaceOdds;
   protected readonly getPlacingBorderBackground = getPlacingBorderBackground;
@@ -55,14 +47,14 @@ export class FormConnectionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchRacecards();
+    this.repo.fetchConnections();
     this.repo.fetchConnectionDividends();
-    this.repo.fetchRacecards('latest', () => {
-    });
 
+    setInterval(() => this.repo.fetchRacecards(), TEN_SECONDS);
     setInterval(() => {
+      this.repo.fetchConnections();
       this.repo.fetchConnectionDividends();
-      this.repo.fetchRacecards('latest', () => {
-      });
     }, ONE_MINUTE);
 
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
@@ -70,9 +62,6 @@ export class FormConnectionComponent implements OnInit {
       this.trashes.set(race, []);
     }
   }
-
-  formatMeeting = (meeting: string): string =>
-    meeting.replace(/^\d{4}-/g, '')
 
   toggleActiveOrder = (clicked: number) =>
     clicked === this.activeOrderByRace.get(this.activeRace)
@@ -92,127 +81,62 @@ export class FormConnectionComponent implements OnInit {
     this.trashes.set(this.activeRace, newTrashes);
   }
 
-  togglePlayer = (clicked: string) => {
-    if (this.activePlayers.includes(clicked)) {
-      this.activePlayers = this.activePlayers.filter(p => p !== clicked);
-    } else {
-      this.activePlayers.push(clicked);
-    }
-  }
-
-  togglePinnedPlacing = (clicked: string) => {
-    if (this.pinnedPlacings.includes(clicked)) {
-      this.pinnedPlacings = this.pinnedPlacings.filter(p => p !== clicked);
-    } else {
-      this.pinnedPlacings.push(clicked);
-    }
-  }
-
-  getDividendStarter = (dividend: ConnectionDividend, placing: number): DividendStarter => {
-    let matches = dividend.starters.filter(s => s.placing === placing);
-    if (matches.length > 0) return matches[0];
-
-    const otherPlacings = [placing - 2, placing - 1, placing + 1, placing + 2];
-    for (let i = 0; i < otherPlacings.length; i++) {
-      matches = dividend.starters.filter(s => s.placing === otherPlacings[i]);
-      if (matches.length === 2) return matches[1];
-    }
-
-    return DEFAULT_DIVIDEND_STARTER;
-  }
-
-  getDistantPair = (dividend: ConnectionDividend, dpi: number): string => {
-    if (dividend.distantPairs.length < dpi) return '';
-
-    return dividend.distantPairs[dpi - 1]
-      .map(o => dividend.starters.find(s => s.order === o) || DEFAULT_DIVIDEND_STARTER)
-      .sort((s1, s2) => s1.placing - s2.placing)
-      .map(s => PLACING_MAPS[s.placing - 1].placing)
-      .join(' / ');
-  }
-
-  handlePagingControls = (control: string) => {
-    switch (control) {
-      case 'Reset': {
-        this.currentPage = 1;
-        this.activePlayers = [];
-        this.pinnedPlacings = [];
-        break;
-      }
-      case 'First': {
-        this.currentPage = 1;
-        break;
-      }
-      case 'Prev': {
-        if (this.currentPage > 1) {
-          this.currentPage -= 1;
-        }
-        break;
-      }
-      case 'Next': {
-        if (this.currentPage < this.maxPage) {
-          this.currentPage += 1;
-        }
-        break;
-      }
-      case 'Last': {
-        this.currentPage = this.maxPage;
-        break;
-      }
-      default:
-        break;
-    }
-  }
-
   isTrashStarter = (starter: Starter): boolean =>
     (this.trashes.get(this.activeRace) || []).includes(starter.order)
 
   isMatchResult = (starterA: Starter, starterB: Starter, placings: number[]): boolean => {
     const results = this.activeRacecard.starters
       .filter(s => s.order == starterA.order || s.order == starterB.order)
-      .filter(s => s?.placing && s.placing > 0)
-      .map(s => s.placing);
+      .map(s => getPlacing(s.jockey, this.activeRacecard));
+
+    if (placings.length == 0) {
+      return results.length > 0 && results.every(p => p >= 1 && p <= 4);
+    }
 
     return placings.every(p => results.includes(p));
   }
 
-  get isMatchMode(): boolean {
-    return this.activePlayers.length > 0;
+  isConnectedPair = (starterA: Starter, starterB: Starter): boolean => {
+    return this.repo.findConnections()
+      .find(c => c.meeting === this.activeRacecard.meeting && c.race == this.activeRace)
+      ?.connections
+      .some(c =>
+        (c.orders[0] == starterA.order && c.orders[1] == starterB.order)
+        ||
+        (c.orders[0] == starterB.order && c.orders[1] == starterA.order)
+      ) || false;
   }
 
-  get distantPairRatios(): number[] {
-    const sourceDividends = this.isMatchMode ? this.displayDividends : this.dividends;
-    const dpDividends = sourceDividends.filter(d => d.distantPairs.length > 0);
-    const dpPlacingRepr = dpDividends.map(d =>
-      d.distantPairs
-        .flatMap(ol => ol)
-        .map(o => d.starters.find(s => s.order === o) || DEFAULT_DIVIDEND_STARTER)
-        .map(s => PLACING_MAPS[s.placing - 1].placing)
-        .join()
-    );
+  isDrawInheritancePair = (starterA: Starter, starterB: Starter): boolean => {
+    let lastTop4Draws: number[];
 
-    return [
-      dpDividends.length / sourceDividends.length,
-      ...PLACING_MAPS.map(pm =>
-        dpPlacingRepr.filter(r => r.includes(pm.placing)).length / dpDividends.length
-      )
-    ];
-  }
+    if (this.activeRace === 1) {
+      const priorMeetings = this.meetings.filter(m => m < this.activeRacecard.meeting);
+      if (priorMeetings.length < 1) return false;
 
-  get dualPlacings(): string[] {
-    return PLACING_MAPS
-      .map((pm1, index1) =>
-        PLACING_MAPS
-          .filter((_, index2) => index2 > index1)
-          .map(pm2 => [pm1.placing, pm2.placing].join(' / '))
-      )
-      .flatMap(pm => pm);
+      lastTop4Draws = this.dividends
+        .find(d => d.meeting === priorMeetings[0] && d.race === 1)
+        ?.starters
+        .filter(s => s.placing >= 1 && s.placing <= 4)
+        .map(s => s.draw) || [];
+
+    } else {
+      const lastRacecard = this.racecards.find(r => r.race === this.activeRace - 1);
+      if (!lastRacecard) return false;
+
+      lastTop4Draws = lastRacecard.starters
+        .filter(s =>
+          getPlacing(s.jockey, lastRacecard) >= 1 &&
+          getPlacing(s.jockey, lastRacecard) <= 4
+        )
+        .map(s => s.draw);
+    }
+
+    return [starterA.draw, starterB.draw].every(d => lastTop4Draws.includes(d));
   }
 
   get dualPlacingMaps(): DualPlacingMap[] {
     let dualMaps: DualPlacingMap[] = [];
-    const sourceDividends = this.dividends
-      .filter(d => (d.meeting < this.activeRacecard.meeting) || d.race < this.activeRace);
 
     for (let i = 0; i < this.activeStarters.length - 1; i++) {
       const starter1 = this.activeStarters[i];
@@ -228,7 +152,7 @@ export class FormConnectionComponent implements OnInit {
                 if (index2 <= index1) return {dual: '', count: 0, placings: []}
 
                 const placing2 = index2 + 1;
-                const count = sourceDividends
+                const count = this.dividends
                   .filter(d => {
                     const dualStarters = d.starters
                       .filter(s => s.placing === placing1 || s.placing === placing2);
@@ -247,9 +171,7 @@ export class FormConnectionComponent implements OnInit {
                     if (starter1.jockey == dualStarters[1].jockey && starter2.trainer == dualStarters[0].trainer) return true;
 
                     if (starter2.jockey == dualStarters[0].jockey && starter1.trainer == dualStarters[1].trainer) return true;
-                    if (starter2.jockey == dualStarters[1].jockey && starter1.trainer == dualStarters[0].trainer) return true;
-
-                    return false;
+                    return starter2.jockey == dualStarters[1].jockey && starter1.trainer == dualStarters[0].trainer;
                   })
                   .length;
 
@@ -276,67 +198,23 @@ export class FormConnectionComponent implements OnInit {
 
     return dualMaps.sort((dm1, dm2) =>
       (dm2.countSum - dm1.countSum)
-      ||
-      (dm2.counts[0].count - dm1.counts[0].count)
-      ||
-      (dm2.counts[1].count - dm1.counts[1].count)
-      ||
-      (dm2.counts[2].count - dm1.counts[2].count)
-      ||
-      (dm2.counts[3].count - dm1.counts[3].count)
-      ||
-      (dm2.counts[4].count - dm1.counts[4].count)
-      ||
-      (dm2.counts[5].count - dm1.counts[5].count)
+      || (dm2.counts[0].count - dm1.counts[0].count)
+      || (dm2.counts[1].count - dm1.counts[1].count)
+      || (dm2.counts[2].count - dm1.counts[2].count)
+      || (dm2.counts[3].count - dm1.counts[3].count)
+      || (dm2.counts[4].count - dm1.counts[4].count)
+      || (dm2.counts[5].count - dm1.counts[5].count)
     );
   }
 
-  get pagingControls(): string[] {
-    return ['Reset', 'First', 'Last', 'Prev', 'Next'];
-  }
-
-  get pagingControlStyle(): string {
-    return `mx-auto px-4 pt-1.5 pb-2 text-xl rounded-full cursor-pointer 
-            border border-gray-600 hover:border-yellow-400`;
-  }
-
-  get maxPage(): number {
-    return this.isMatchMode ? 1 : Math.ceil(this.meetings.length / 2);
-  }
-
-  get displayMeetings(): string[] {
-    return this.displayDividends
-      .map(d => d.meeting)
-      .filter((m, i, arr) => i === arr.indexOf(m))
-      .sort((m1, m2) => m2.localeCompare(m1));
-  }
-
-  get displayDividends(): ConnectionDividend[] {
-    if (!this.isMatchMode) {
-      const startIndex = 2 * (this.currentPage - 1);
-      const pageMeetings = this.meetings.slice(startIndex, startIndex + 2);
-      return this.dividends.filter(d => pageMeetings.includes(d.meeting));
-    }
-
-    if (this.activePlayers.length > 1) {
-      return this.dividends
-        .filter(d => {
-          const top4Players = d.starters
-            .map(s => [s.jockey, s.trainer])
-            .flatMap(p => p);
-
-          return this.activePlayers.every(p => top4Players.includes(p));
-        });
-    }
-
-    const activePlacings = this.pinnedPlacings.length === 0
-      ? [1, 2, 3, 4]
-      : this.pinnedPlacings.map(p => 1 + PLACING_MAPS.findIndex(pm => pm.placing === p));
-
-    return this.dividends.filter(d => d.starters.some(s =>
-      activePlacings.includes(s.placing) &&
-      [s.jockey, s.trainer].includes(this.activePlayers[0])
-    ));
+  get dualPlacings(): string[] {
+    return PLACING_MAPS
+      .map((pm1, index1) =>
+        PLACING_MAPS
+          .filter((_, index2) => index2 > index1)
+          .map(pm2 => [pm1.placing, pm2.placing].join(' / '))
+      )
+      .flatMap(pm => pm);
   }
 
   get meetings(): string[] {
@@ -349,21 +227,18 @@ export class FormConnectionComponent implements OnInit {
   get dividends(): ConnectionDividend[] {
     return this.repo
       .findConnectionDividends()
-      .filter(d => d.meeting >= SEASONS[0].opening);
-  }
-
-  get isLoading(): boolean {
-    return this.dividends.length === 0 || this.activeRacecard === undefined;
-  }
-
-  get activeOrder(): number {
-    return this.activeOrderByRace.get(this.activeRace) || 0;
+      .filter(d => d.meeting >= SEASONS[0].opening)
+      .filter(d => (d.meeting < this.activeRacecard.meeting) || d.race < this.activeRace);
   }
 
   get activeStarters(): Starter[] {
     return this.activeRacecard.starters
       .filter(s => !s.scratched && s.jockey && s.trainer)
       .filter(s => !this.isTrashStarter(s));
+  }
+
+  get activeOrder(): number {
+    return this.activeOrderByRace.get(this.activeRace) || 0;
   }
 
   get activeRacecard(): Racecard {
@@ -373,5 +248,11 @@ export class FormConnectionComponent implements OnInit {
 
   get racecards(): Racecard[] {
     return this.repo.findRacecards();
+  }
+
+  get isLoading(): boolean {
+    return this.repo.findRacecards().length === 0
+      || this.repo.findConnections().length === 0
+      || this.repo.findConnectionDividends().length === 0;
   }
 }

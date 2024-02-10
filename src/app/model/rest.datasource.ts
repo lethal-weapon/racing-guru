@@ -94,8 +94,8 @@ export class RestDataSource {
   getSyndicatePerformance = (): Observable<SyndicatePerformance[]> =>
     this.http.get<SyndicatePerformance[]>(`${this.baseUrl}/syndicate-performance`)
 
-  getConnections = (): Observable<RaceConnection[]> =>
-    this.http.get<RaceConnection[]>(`${this.baseUrl}/graph/connections`)
+  getConnections = (meeting: string): Observable<RaceConnection[]> =>
+    this.http.get<RaceConnection[]>(`${this.baseUrl}/graph/connections?meeting=${meeting}`)
 
   getConnectionDividends = (): Observable<ConnectionDividend[]> =>
     this.http.get<ConnectionDividend[]>(`${this.baseUrl}/graph/connections/dividends`)
