@@ -4,7 +4,7 @@ import {RestRepository} from '../model/rest.repository';
 import {Syndicate} from '../model/syndicate.model';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES, SEASONS} from '../util/strings';
+import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES, PLACING_MAPS, SEASONS} from '../util/strings';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 import {DrawPerformance, DrawPlacingPerformance} from '../model/dto.model';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers';
@@ -18,11 +18,12 @@ export class TrendComponent implements OnInit {
   activeSubsection: string = this.subsections[0];
   activePersonView: string = this.personViews[0];
   activeMeeting: string = '';
-  activePerson: string = 'WDJ';
+  activePerson: string = '';
   activeSyndicate: number = 0;
   meetingIndex: number = 0;
 
   protected readonly COLORS = COLORS;
+  protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
 
   constructor(private repo: RestRepository) {
@@ -479,6 +480,34 @@ export class TrendComponent implements OnInit {
     this.repo.findDrawPerformances()
       .find(d => d.meeting === meeting && d.race === race);
 
+  getDrawPerformanceByPlacing = (period: string): Array<{ races: number, hits: number }> => {
+    let meetings = this.meetings.map(m => m.meeting);
+    if (period === 'Recent 10 Meetings') {
+      meetings = this.meetings
+        .filter((_, i) => i > 0)
+        .map(m => m.meeting)
+        .slice(0, 10);
+
+    } else if (SEASONS.map(s => s.label).some(l => period.includes(l))) {
+      const season = SEASONS.find(s => period.includes(s.label))
+      meetings = this.meetings
+        .filter((_, i) => i > 0)
+        .map(m => m.meeting)
+        .filter(m => m >= (season?.opening || '') && m <= (season?.finale || ''));
+    }
+
+    let performances = this.repo
+      .findDrawPerformances()
+      .filter(p => meetings.includes(p.meeting))
+      .filter(p => p.draws.length > 0);
+
+    return PLACING_MAPS.map((_, index) => ({
+      races: performances.length,
+      hits: performances.filter(p =>
+        p.draws.some(d => d.inherit && d.placing == index + 1)).length
+    }));
+  }
+
   getDrawPerformanceByPeriod = (period: string): Array<{ races: number, hits: number }> => {
     let meetings = this.meetings.map(m => m.meeting);
     if (period === 'Recent 10 Meetings') {
@@ -496,7 +525,7 @@ export class TrendComponent implements OnInit {
     }
 
     return this.drawPerformanceVenues.map(v => {
-      let performances = this.repo.findDrawPerformances()
+      let performances = this.repo.findDrawPerformances();
       if (v !== 'Total') {
         performances = this.repo.findDrawPerformances().filter(p => p.venue === v);
       }

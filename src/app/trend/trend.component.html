@@ -205,13 +205,18 @@
     <div *ngIf="activeSubsection != subsections[2] && activePerson.length === 0">
       <table class="mx-auto mb-4 table-fixed border-collapse border border-gray-600 text-center">
         <thead class="text-xl">
-        <th class="w-64 py-2 border border-gray-600 text-green-600">
+        <th class="w-56 py-2 border border-gray-600 text-green-600">
           Draw Inheritance
         </th>
         <th *ngFor="let venue of drawPerformanceVenues"
-            class="w-52 py-2 border border-gray-600"
+            class="w-44 py-2 border border-gray-600"
         >
           {{ venue }}
+        </th>
+        <th *ngFor="let pm of PLACING_MAPS"
+            class="w-32 py-2 border border-gray-600 {{pm.color}}"
+        >
+          {{ pm.placing }}
         </th>
         </thead>
         <tbody class="text-lg">
@@ -229,6 +234,18 @@
                 {{ per.hits }} / {{ per.races }}
               </div>
               <div class="col-span-2">
+                {{ (per.hits / per.races) | percent }}
+              </div>
+            </div>
+          </td>
+          <td *ngFor="let per of getDrawPerformanceByPlacing(period)"
+              class="py-1.5 border border-gray-700"
+          >
+            <div class="grid grid-cols-2">
+              <div>
+                {{ per.hits }}
+              </div>
+              <div>
                 {{ (per.hits / per.races) | percent }}
               </div>
             </div>
