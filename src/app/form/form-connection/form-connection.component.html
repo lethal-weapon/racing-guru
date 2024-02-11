@@ -43,7 +43,11 @@
         </div>
         <div class="flex flex-row">
           <div class="w-10">
-            <div class="w-8 h-8 border border-gray-700">
+            <div class="w-8 h-8 border"
+                 [class.border-dashed]="lastTop4Draws.includes(starter.draw)"
+                 [class.border-green-600]="lastTop4Draws.includes(starter.draw)"
+                 [class.border-gray-700]="!lastTop4Draws.includes(starter.draw)"
+            >
               {{ starter.draw }}
             </div>
           </div>

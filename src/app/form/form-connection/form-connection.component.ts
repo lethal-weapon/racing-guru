@@ -110,32 +110,30 @@ export class FormConnectionComponent implements OnInit {
       ) || false;
   }
 
-  isDrawInheritancePair = (starterA: Starter, starterB: Starter): boolean => {
-    let lastTop4Draws: number[];
+  isDrawInheritancePair = (starterA: Starter, starterB: Starter): boolean =>
+    [starterA.draw, starterB.draw].every(d => this.lastTop4Draws.includes(d));
 
+  get lastTop4Draws(): number[] {
     if (this.activeRace === 1) {
       const priorMeetings = this.meetings.filter(m => m < this.activeRacecard.meeting);
-      if (priorMeetings.length < 1) return false;
+      if (priorMeetings.length < 1) return [];
 
-      lastTop4Draws = this.dividends
+      return this.dividends
         .find(d => d.meeting === priorMeetings[0] && d.race === 1)
         ?.starters
         .filter(s => s.placing >= 1 && s.placing <= 4)
         .map(s => s.draw) || [];
-
-    } else {
-      const lastRacecard = this.racecards.find(r => r.race === this.activeRace - 1);
-      if (!lastRacecard) return false;
-
-      lastTop4Draws = lastRacecard.starters
-        .filter(s =>
-          getPlacing(s.jockey, lastRacecard) >= 1 &&
-          getPlacing(s.jockey, lastRacecard) <= 4
-        )
-        .map(s => s.draw);
     }
 
-    return [starterA.draw, starterB.draw].every(d => lastTop4Draws.includes(d));
+    const lastRacecard = this.racecards.find(r => r.race === this.activeRace - 1);
+    if (!lastRacecard) return [];
+
+    return lastRacecard.starters
+      .filter(s =>
+        getPlacing(s.jockey, lastRacecard) >= 1 &&
+        getPlacing(s.jockey, lastRacecard) <= 4
+      )
+      .map(s => s.draw);
   }
 
   get dualPlacingMaps(): DualPlacingMap[] {
