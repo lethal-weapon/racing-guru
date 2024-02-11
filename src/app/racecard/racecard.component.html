@@ -62,10 +62,10 @@
             <i class="fa fa-lg fa-check"></i>
           </span>
         </div>
-        <div>
+        <div class="{{getPersonStatOnSameRace(starter, index)[0] < 1 ? 'opacity-0' : ''}}">
           {{getPersonStatOnSameRace(starter, index)[0]}}
         </div>
-        <div>
+        <div class="{{getPersonStatOnSameRace(starter, index)[1] < 1 ? 'opacity-0' : ''}}">
           {{getPersonStatOnSameRace(starter, index)[1]}}
         </div>
       </div>

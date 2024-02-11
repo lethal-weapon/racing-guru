@@ -11,7 +11,7 @@ import {DEFAULT_SPEED_FIGURE} from '../model/speed.model';
 import {
   COLORS,
   COMMON_HORSE_ORIGINS,
-  PLACING_MAPS,
+  PLACING_MAPS, SEASONS,
 } from '../util/strings';
 import {
   Collaboration,
@@ -317,11 +317,12 @@ export class RacecardComponent implements OnInit {
       .slice(0, 3)
       .includes(starterSum);
 
-    return isSumTop3 ? COLORS[index] : '';
+    return isSumTop3 ? COLORS[index] : (starterSum < 1 ? 'opacity-0' : '');
   }
 
   getPersonStatOnSameRace = (starter: Starter, index: number): number[] => {
-    const meetings = this.repo.findMeetings().filter((_, index) => index > 0);
+    const meetings = this.repo.findMeetings()
+      .filter(m => m.meeting >= SEASONS[0].opening && m.meeting < this.activeRacecard.meeting);
     const stats = [starter.jockey, starter.trainer]
       .map(p => getPersonSummaryByRace(meetings, p, this.activeRace, this.activeRacecard.venue))
       .map(s => [s.wins, s.seconds, s.thirds, s.fourths][index]);
