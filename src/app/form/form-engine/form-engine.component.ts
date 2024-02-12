@@ -1,14 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../../model/rest.repository';
+import {PLACING_MAPS, SEASONS} from '../../util/strings';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../../util/numbers';
+import {formatOdds} from '../../util/functions';
 import {
   DEFAULT_NEGATIVE_PERFORMANCE_STARTER,
+  NegativePerformance,
   NegativePerformanceStarter,
   SeasonPerformance
 } from '../../model/performance.model';
-import {PLACING_MAPS} from '../../util/strings';
-import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../../util/numbers';
-import {formatOdds} from '../../util/functions';
 
 @Component({
   selector: 'app-form-engine',
@@ -74,6 +75,39 @@ export class FormEngineComponent implements OnInit {
         .find(s => s.reversedRank === reversedRank)
       || DEFAULT_NEGATIVE_PERFORMANCE_STARTER
 
+  getNegativePerformanceByPlacing = (period: string): Array<{ races: number, hits: number }> => {
+    const performances = this.getNegativePerformances(period);
+
+    const npByPlacings = PLACING_MAPS.map((_, index) => ({
+      races: performances.length,
+      hits: performances.filter(p =>
+        p.starters.some(s => s.placing == index + 1)).length
+    }));
+
+    return [
+      ...npByPlacings,
+      {
+        races: performances.length,
+        hits: performances.filter(p =>
+          p.starters.some(s => s.placing >= 1 && s.placing <= 4)).length
+      }
+    ];
+  }
+
+  getNegativePerformances = (period: string): NegativePerformance[] => {
+    let meetings: string[];
+    if (period === 'Recent 10 Meetings') {
+      meetings = this.meetings.slice(0, 10);
+
+    } else if (SEASONS.map(s => s.label).some(l => period.includes(l))) {
+      const season = SEASONS.find(s => period.includes(s.label))
+      meetings = this.meetings
+        .filter(m => m >= (season?.opening || '') && m <= (season?.finale || ''));
+    }
+
+    return this.negativePerformances.filter(p => meetings.includes(p.meeting));
+  }
+
   getHitRaceOdds = (topn: number, meeting: string, race: number): number =>
     this.performances
       .flatMap(p => p.hits)
@@ -83,20 +117,35 @@ export class FormEngineComponent implements OnInit {
       .map(hr => hr.odds)
       .reduce((prev, curr) => prev + curr, 0)
 
-  get currentSeasonProgress(): string {
-    return `${Math.ceil(100 * this.meetings.length / 88)}%`;
-  }
-
   get meetings(): string[] {
-    return this.performances
+    let meetings = this.performances
       .flatMap(p => p.hits)
       .flatMap(h => h.races)
       .map(hr => hr.meeting)
+      .filter((m, i, arr) => i === arr.indexOf(m));
+
+    let negativeMeetings = this.negativePerformances
+      .map(p => p.meeting)
+      .filter((m, i, arr) => i === arr.indexOf(m));
+
+    return [...meetings, ...negativeMeetings]
       .filter((m, i, arr) => i === arr.indexOf(m))
       .sort((m1, m2) => m2.localeCompare(m1));
   }
 
+  get negativePerformancePeriods(): string[] {
+    return ['Recent 10 Meetings', 'Season 23/24'];
+  }
+
+  get negativePerformances(): NegativePerformance[] {
+    return this.repo.findNegativeEnginePerformances();
+  }
+
   get performances(): SeasonPerformance[] {
     return this.repo.findEnginePerformances();
+  }
+
+  get currentSeasonProgress(): string {
+    return `${Math.ceil(100 * this.meetings.length / 88)}%`;
   }
 }

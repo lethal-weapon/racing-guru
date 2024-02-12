@@ -496,16 +496,24 @@ export class TrendComponent implements OnInit {
         .filter(m => m >= (season?.opening || '') && m <= (season?.finale || ''));
     }
 
-    let performances = this.repo
+    const performances = this.repo
       .findDrawPerformances()
       .filter(p => meetings.includes(p.meeting))
       .filter(p => p.draws.length > 0);
 
-    return PLACING_MAPS.map((_, index) => ({
+    const dpByPlacings = PLACING_MAPS.map((_, index) => ({
       races: performances.length,
       hits: performances.filter(p =>
         p.draws.some(d => d.inherit && d.placing == index + 1)).length
     }));
+
+    return [
+      ...dpByPlacings,
+      {
+        races: performances.length,
+        hits: performances.filter(p => p.inheritance > 0).length
+      }
+    ];
   }
 
   getDrawPerformanceByPeriod = (period: string): Array<{ races: number, hits: number }> => {

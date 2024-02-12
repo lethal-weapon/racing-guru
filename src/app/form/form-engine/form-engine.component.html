@@ -1,3 +1,16 @@
+<div class="w-3/4 mx-auto mt-8">
+  <div class="flex flex-row justify-between mb-1 text-xl">
+    <div>Season 23/24</div>
+    <div>{{ currentSeasonProgress }}</div>
+  </div>
+  <div class="w-full h-3 bg-gray-700 rounded-full">
+    <div class="h-3 bg-yellow-400 rounded-full"
+         [style.width]="currentSeasonProgress"
+    >
+    </div>
+  </div>
+</div>
+
 <table class="mx-auto mt-8 table-fixed border-collapse border border-gray-600 text-center">
   <thead class="text-xl">
   <th class="w-32 py-2 border border-gray-600">
@@ -38,20 +51,50 @@
   </tbody>
 </table>
 
-<div class="w-3/4 mx-auto mt-8">
-  <div class="flex flex-row justify-between mb-1 text-xl">
-    <div>Season 23/24</div>
-    <div>{{ currentSeasonProgress }}</div>
-  </div>
-  <div class="w-full h-3 bg-gray-700 rounded-full">
-    <div class="h-3 bg-yellow-400 rounded-full"
-         [style.width]="currentSeasonProgress"
+<table class="mx-auto mt-4 table-fixed border-collapse border border-gray-600 text-center">
+  <thead class="text-xl">
+  <th class="w-64 py-2 border border-gray-600">
+    Negative Performance
+  </th>
+  <th class="w-32 py-2 border border-gray-600">
+    Races
+  </th>
+  <th *ngFor="let pm of PLACING_MAPS"
+      class="w-32 py-2 border border-gray-600 {{pm.color}}"
+  >
+    {{ pm.placing }}
+  </th>
+  <th class="w-32 py-2 border border-gray-600">
+    ANY
+  </th>
+  </thead>
+  <tbody class="text-lg">
+  <tr *ngFor="let period of negativePerformancePeriods"
+      class="hover:bg-gray-800"
+  >
+    <td class="py-1.5 border border-gray-700">
+      {{ period }}
+    </td>
+    <td class="py-1.5 border border-gray-700">
+      {{ getNegativePerformances(period).length }}
+    </td>
+    <td *ngFor="let per of getNegativePerformanceByPlacing(period)"
+        class="py-1.5 border border-gray-700"
     >
-    </div>
-  </div>
-</div>
+      <div class="grid grid-cols-2">
+        <div>
+          {{ per.hits }}
+        </div>
+        <div>
+          {{ (per.hits / per.races) | percent }}
+        </div>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
 
-<table class="mx-auto mt-10 table-fixed border-collapse border border-gray-600 text-center font-mono">
+<table class="mx-auto mt-8 table-fixed border-collapse border border-gray-600 text-center font-mono">
   <thead class="text-xl">
   <th class="w-24 border border-gray-600 py-1 text-yellow-400 cursor-pointer"
       (click)="isPositivePerformance = !isPositivePerformance"
