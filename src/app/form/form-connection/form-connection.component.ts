@@ -84,6 +84,12 @@ export class FormConnectionComponent implements OnInit {
     this.repo.findHorses()
       .find(s => s.code === starter.horse) || DEFAULT_HORSE
 
+  getRanking = (starter: Starter): number =>
+    1 + this.rankedOrders.indexOf(starter.order);
+
+  getReverseRanking = (starter: Starter): number =>
+    this.rankedOrders.length - this.rankedOrders.indexOf(starter.order);
+
   isTrashStarter = (starter: Starter): boolean =>
     (this.trashes.get(this.activeRace) || []).includes(starter.order)
 
@@ -112,6 +118,13 @@ export class FormConnectionComponent implements OnInit {
 
   isDrawInheritancePair = (starterA: Starter, starterB: Starter): boolean =>
     [starterA.draw, starterB.draw].every(d => this.lastTop4Draws.includes(d));
+
+  get rankedOrders(): number[] {
+    return this.activeRacecard.starters
+      .filter(s => !s.scratched)
+      .sort((s1, s2) => (s2?.chance || 0) - (s1?.chance || 0))
+      .map(s => s.order);
+  }
 
   get lastTop4Draws(): number[] {
     if (this.activeRace === 1) {

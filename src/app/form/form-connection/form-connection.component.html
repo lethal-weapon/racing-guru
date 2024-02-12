@@ -54,11 +54,20 @@
           <div class="w-28 {{ isTrashStarter(starter) ? 'line-through' : '' }}">
             {{ getHorse(starter).nameCH }}
           </div>
-          <div class="w-14 text-blue-600">
-            <span>
-              {{ getStarterWinPlaceOdds(starter, this.activeRacecard).place }}
+          <div class="w-14">
+            <span *ngIf="getRanking(starter) <= 3"
+                  class="font-bold text-green-600"
+            >
+              +{{ getRanking(starter) }}
             </span>
-            <sup class="text-xs">P</sup>
+            <span *ngIf="getRanking(starter) > 3 && getReverseRanking(starter) <= 4"
+                  class="font-bold text-blue-600"
+            >
+              -{{ getReverseRanking(starter) }}
+            </span>
+            <span *ngIf="getRanking(starter) > 3 && getReverseRanking(starter) > 4">
+              #{{ getRanking(starter) }}
+            </span>
           </div>
         </div>
       </div>
