@@ -1,7 +1,6 @@
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
-import {Meeting, PersonSummary} from '../model/meeting.model';
 import {SingularSignal, CombinationSignal} from '../model/signal.model';
 import {COLORS, JOCKEY_CODES, ODDS_INTENSITIES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
@@ -162,52 +161,4 @@ export const powerSet = (list: string[]): string[][] => {
   }
 
   return Array.from(set);
-}
-
-export const getPersonSummaryByRace = (
-  meetings: Meeting[],
-  person: string,
-  race: number,
-  venue: string = ''
-): PersonSummary => {
-
-  let ps: PersonSummary = {
-    person: person,
-    wins: 0,
-    seconds: 0,
-    thirds: 0,
-    fourths: 0,
-    engagements: 0,
-    earnings: 0,
-    starters: []
-  };
-
-  meetings
-    .filter(m => venue.length === 0 || m.venue === venue)
-    .flatMap(m => m.persons)
-    .filter(p => p.person === person)
-    .flatMap(p => p.starters)
-    .filter(s => s.race === race && s?.winOdds)
-    .forEach(s => {
-      ps.engagements += 1;
-      switch (s?.placing) {
-        case 1:
-          ps.wins += 1;
-          break;
-        case 2:
-          ps.seconds += 1;
-          break;
-        case 3:
-          ps.thirds += 1;
-          break;
-        case 4:
-          ps.fourths += 1;
-          break;
-        default:
-          break;
-      }
-    });
-
-  ps.earnings = ps.wins + ps.seconds + ps.thirds + ps.fourths;
-  return ps;
 }

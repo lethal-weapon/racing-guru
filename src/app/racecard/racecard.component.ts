@@ -7,12 +7,9 @@ import {Note} from '../model/note.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Selection} from '../model/dto.model';
+import {PersonSummary} from '../model/meeting.model';
 import {DEFAULT_SPEED_FIGURE} from '../model/speed.model';
-import {
-  COLORS,
-  COMMON_HORSE_ORIGINS,
-  PLACING_MAPS, SEASONS,
-} from '../util/strings';
+import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
 import {
   Collaboration,
   CollaborationStarter,
@@ -27,6 +24,7 @@ import {
   ONE_DAY_MILL
 } from '../util/numbers';
 import {
+  isFavorite,
   getCurrentMeeting,
   getHorseProfileUrl,
   getMaxRace,
@@ -35,9 +33,7 @@ import {
   getRaceBadgeStyle,
   getStarterQQPWinPlaceOdds,
   getStarters,
-  getStarterWinPlaceOdds,
-  getPersonSummaryByRace,
-  isFavorite
+  getStarterWinPlaceOdds
 } from '../util/functions';
 
 interface PersonStarter {
@@ -97,7 +93,6 @@ export class RacecardComponent implements OnInit {
 
     this.repo.fetchNotes();
     this.repo.fetchHorses();
-    this.repo.fetchMeetings();
     this.repo.fetchCollaborations();
     this.repo.fetchSpeedFigures();
 
@@ -132,9 +127,7 @@ export class RacecardComponent implements OnInit {
     })
 
   clickRaceBadge = (clickedRace: number) => {
-    if (!this.isEditMode) {
-      this.activeRace = clickedRace;
-    }
+    if (!this.isEditMode) this.activeRace = clickedRace;
   }
 
   clickEditButton = () => {
@@ -242,7 +235,7 @@ export class RacecardComponent implements OnInit {
       })
     )
 
-  getPersonStarters = (person: string, collaborations: Collaboration[]): PersonStarter[] =>
+  getPersonStarters = (person: string, collaborations: Collaboration[], limit: number = 20): PersonStarter[] =>
     collaborations
       .map(c =>
         c.starters.map(s => ({
@@ -262,7 +255,7 @@ export class RacecardComponent implements OnInit {
       .sort((r1, r2) =>
         r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
       )
-      .slice(0, 20)
+      .slice(0, limit)
 
   getActiveStarterWQPInvestments = (starter: Starter): Array<{ percent: string, amount: string }> => {
     const pool = this.activeRacecard?.pool;
@@ -309,25 +302,61 @@ export class RacecardComponent implements OnInit {
     this.meetingNote.starvation.includes(starter.trainer)
 
   getStarterStatSumColor = (starter: Starter, index: number): string => {
-    const starterSum = this.getPersonStatOnSameRace(starter, index)[2];
-    const isSumTop3 = this.startersSortedByChance
-      .map(s => this.getPersonStatOnSameRace(s, index)[2])
+    const starterSum = this.getPersonStatOnPlacing(starter, index)[2];
+    const isSumTop4 = this.startersSortedByChance
+      .map(s => this.getPersonStatOnPlacing(s, index)[2])
       .filter((s, i, arr) => arr.indexOf(s) === i)
-      .sort((s1, s2) => s2 - s1)
-      .slice(0, 3)
+      .sort((s1, s2) => s1 - s2)
+      .slice(0, 4)
       .includes(starterSum);
 
-    return isSumTop3 ? COLORS[index] : (starterSum < 1 ? 'opacity-0' : '');
+    return isSumTop4 ? COLORS[index] : '';
   }
 
-  getPersonStatOnSameRace = (starter: Starter, index: number): number[] => {
-    const meetings = this.repo.findMeetings()
-      .filter(m => m.meeting >= SEASONS[0].opening && m.meeting < this.activeRacecard.meeting);
+  getPersonStatOnPlacing = (starter: Starter, index: number): number[] => {
     const stats = [starter.jockey, starter.trainer]
-      .map(p => getPersonSummaryByRace(meetings, p, this.activeRace, this.activeRacecard.venue))
+      .map(p => this.getPersonStartsOnPlacing(p))
       .map(s => [s.wins, s.seconds, s.thirds, s.fourths][index]);
 
     return stats.concat([stats[0] + stats[1]]);
+  }
+
+  getPersonStartsOnPlacing = (person: string): PersonSummary => {
+    let ps: PersonSummary = {
+      person: person,
+      wins: 0,
+      seconds: 0,
+      thirds: 0,
+      fourths: 0,
+      engagements: 0,
+      earnings: 0,
+      starters: []
+    };
+
+    let done = [false, false, false, false];
+    const colls = this.repo.findCollaborations()
+      .filter(c => c.jockey === person || c.trainer === person);
+    const starts = this.getPersonStarters(person, colls, 100)
+      .filter(s => s.winOdds > 0 && s.placing > 0);
+
+    for (let j = 0; j < starts.length; j++) {
+      if (starts[j].placing >= 1 && starts[j].placing <= 4) {
+        done[starts[j].placing - 1] = true;
+      }
+
+      if (done.every(d => d)) break;
+
+      done.forEach((d, index) => {
+        if (!d) {
+          if (index === 0) ps.wins += 1;
+          if (index === 1) ps.seconds += 1;
+          if (index === 2) ps.thirds += 1;
+          if (index === 3) ps.fourths += 1;
+        }
+      });
+    }
+
+    return ps;
   }
 
   getMeetingWinnerBeforeActiveRace = (person: string): number => {
