@@ -303,14 +303,14 @@ export class RacecardComponent implements OnInit {
 
   getStarterStatSumColor = (starter: Starter, index: number): string => {
     const starterSum = this.getPersonStatOnPlacing(starter, index)[2];
-    const isSumTop4 = this.startersSortedByChance
+    const isTopSum = this.startersSortedByChance
       .map(s => this.getPersonStatOnPlacing(s, index)[2])
       .filter((s, i, arr) => arr.indexOf(s) === i)
       .sort((s1, s2) => s1 - s2)
-      .slice(0, 4)
+      .slice(0, 3)
       .includes(starterSum);
 
-    return isSumTop4 ? COLORS[index] : '';
+    return isTopSum ? COLORS[index] : '';
   }
 
   getPersonStatOnPlacing = (starter: Starter, index: number): number[] => {
@@ -359,15 +359,13 @@ export class RacecardComponent implements OnInit {
     return ps;
   }
 
-  getMeetingWinnerBeforeActiveRace = (person: string): number => {
-    return this.racecards
+  getMeetingWinnerBeforeActiveRace = (person: string): number =>
+    this.racecards
       .filter(r => r.race < this.activeRace)
-      .map(r => r.starters)
-      .reduce((prev, curr) => prev.concat(curr), [])
+      .flatMap(r => r.starters)
       .filter(s => [s.jockey, s.trainer].includes(person))
       .filter(s => (s?.placing || 0) === 1)
       .length;
-  }
 
   getWinnerPoint = (starter: Starter): number => {
     let point: number = 0;
