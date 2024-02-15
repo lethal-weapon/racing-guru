@@ -89,7 +89,7 @@ export class EarningComponent implements OnInit {
     switch (control) {
       case 'Reset': {
         this.trackingMeeting = '';
-        this.trackingPlayers = [];
+        // this.trackingPlayers = [];
         break;
       }
       case 'Opening': {
