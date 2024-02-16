@@ -338,6 +338,18 @@
           {{ count }}
         </th>
         </thead>
+        <thead *ngIf="activePerson.length > 0 && activePersonView == personViews[2]"
+               class="text-lg"
+        >
+        <th class="w-24 border border-gray-600 text-yellow-400 py-1">
+          Winner
+        </th>
+        <th *counter="let modulus of 10"
+            class="w-32 border border-gray-600"
+        >
+          %= {{ modulus % 10 }}
+        </th>
+        </thead>
         <tbody *ngIf="activePerson.length === 0">
         <tr *ngFor="let m of meetings; let last = last"
             class="hover:bg-gray-800"
@@ -462,6 +474,24 @@
                 {{ hs.partner }}
               </div>
             </div>
+          </td>
+        </tr>
+        </tbody>
+        <tbody *ngIf="activePerson.length > 0 && activePersonView == personViews[2]">
+        <tr *ngFor="let milestone of activePersonMilestoneWinners"
+            class="hover:bg-gray-800"
+        >
+          <td class="border border-gray-700 py-1 text-xl">
+            {{ milestone.startsAt - 1 }}
+          </td>
+          <td *ngFor="let leg of milestone.legs"
+              class="border border-gray-700 text-xs"
+          >
+            <span class="{{leg.winOdds >= 10 ? 'text-red-600' : ''}}">
+              {{ leg.winOdds }}
+            </span>
+            {{ getHorse(leg.horse).nameCH }}
+            {{ leg.partner }}
           </td>
         </tr>
         </tbody>

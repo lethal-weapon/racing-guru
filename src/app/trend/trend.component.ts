@@ -9,6 +9,18 @@ import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 import {DrawPerformance, DrawPlacingPerformance} from '../model/dto.model';
 import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers';
 
+interface MilestoneWinnerLeg {
+  winnerOrder: number
+  horse: string,
+  partner: string,
+  winOdds: number
+}
+
+interface MilestoneWinner {
+  startsAt: number,
+  legs: MilestoneWinnerLeg[]
+}
+
 @Component({
   selector: 'app-trend',
   templateUrl: './trend.component.html'
@@ -16,9 +28,9 @@ import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers'
 export class TrendComponent implements OnInit {
   activeSection: string = this.sections[0];
   activeSubsection: string = this.subsections[0];
-  activePersonView: string = this.personViews[0];
+  activePersonView: string = this.personViews[2];
   activeMeeting: string = '';
-  activePerson: string = '';
+  activePerson: string = 'WDJ';
   activeSyndicate: number = 0;
   meetingIndex: number = 0;
 
@@ -627,6 +639,46 @@ export class TrendComponent implements OnInit {
     return ['', '', ''];
   }
 
+  get activePersonMilestoneWinners(): MilestoneWinner[] {
+    const winnersAtStartOfLastSeason =
+      JOCKEYS.concat(TRAINERS).find(p => p.code === this.activePerson)?.careerWins || 0;
+
+    const sortedMeetings = this.meetings
+      .filter(m => m.persons.map(p => p.person).includes(this.activePerson))
+      .sort((m1, m2) => m1.meeting.localeCompare(m2.meeting));
+
+    let legs: MilestoneWinnerLeg[] = [];
+    for (let i = 0; i < sortedMeetings.length; i++) {
+      sortedMeetings[i].persons
+        .filter(ps => ps.person === this.activePerson)
+        .flatMap(ps => ps.starters)
+        .filter(s => (s?.placing || 0) === 1)
+        .sort((s1, s2) => s1.race - s2.race)
+        .forEach(s => {
+          const winnerOrder = legs.length === 0
+            ? 1 + winnersAtStartOfLastSeason
+            : 1 + legs[legs.length - 1].winnerOrder;
+          legs.push({
+            winnerOrder: winnerOrder,
+            horse: s.horse,
+            partner: s.partner,
+            winOdds: s.winOdds
+          });
+        });
+    }
+
+    return legs
+      .filter(l => l.winnerOrder % 10 === 1)
+      .map(l => l.winnerOrder)
+      .sort((w1, w2) => w2 - w1)
+      .map(winnerStartsAt => ({
+        startsAt: winnerStartsAt,
+        legs: legs
+          .filter(l => l.winnerOrder >= winnerStartsAt)
+          .filter(l => l.winnerOrder <= (9 + winnerStartsAt))
+      }));
+  }
+
   get variableStarterSyndicateKinds(): string[] {
     return ['SINGLE', 'MULTIPLE', 'OTHERS'];
   }
@@ -750,7 +802,7 @@ export class TrendComponent implements OnInit {
   }
 
   get personViews(): string[] {
-    return ['By Meeting', 'By Horse'];
+    return ['By Meeting', 'By Horse', 'By Milestone'];
   }
 
   get subsections(): string[] {
