@@ -8,7 +8,7 @@ import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {TrackworkGrade} from '../model/trackwork.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
-import {ONE_MINUTE, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
+import {PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   BOUNDARY_JOCKEYS,
   BOUNDARY_TRAINERS,
@@ -75,8 +75,6 @@ export class MeetingComponent implements OnInit {
     this.repo.fetchMeetingHorses();
     this.repo.fetchSyndicates();
     this.repo.fetchTrackworkGrades();
-
-    setInterval(() => this.repo.fetchTrackworkGrades(), ONE_MINUTE);
   }
 
   setActiveTrainer = (clicked: string) =>
