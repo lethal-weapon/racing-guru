@@ -9,29 +9,21 @@ import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {TrackworkGrade} from '../model/trackwork.model';
 import {JOCKEYS, TRAINERS} from '../model/person.model';
 import {PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
+import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, BOUNDARY_TRAINERS, RATING_GRADES} from '../util/strings';
+import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS, DividendPool} from '../model/dividend.model';
 import {
-  BOUNDARY_JOCKEYS,
-  BOUNDARY_TRAINERS,
-  BOUNDARY_POOLS,
-  RATING_GRADES, UNCOMMON_HORSE_COLORS
-} from '../util/strings';
-import {
-  DividendPool,
-  DEFAULT_SINGULARS,
-  DEFAULT_COMBINATIONS
-} from '../model/dividend.model';
-import {
-  toMillion,
+  getCurrentMeeting,
+  getHorseProfileUrl,
   getMaxRace,
+  getNewFavorites,
+  getOddsIntensityColor,
   getPlacing,
+  getPlacingColor,
   getStarter,
+  getStarterWinPlaceOdds,
   getTrainer,
   getWinPlaceOdds,
-  getHorseProfileUrl,
-  getPlacingColor,
-  getCurrentMeeting,
-  getNewFavorites,
-  getOddsIntensityColor, getStarterWinPlaceOdds
+  toMillion
 } from '../util/functions';
 
 @Component({
@@ -262,9 +254,15 @@ export class MeetingComponent implements OnInit {
     return co.points >= 6 && co.odds >= 8 && co.odds <= 60;
   }
 
-  hasUncommonColor = (horse: string): boolean => {
-    const colors = this.repo.findHorses().find(h => h.code === horse)?.colors || [];
-    return colors.length > 1 || colors.some(c => UNCOMMON_HORSE_COLORS.includes(c));
+  isTop3Starter = (jockey: string, racecard: Racecard): boolean => {
+    return racecard.starters
+      .filter(s => !s.scratched)
+      .sort((s1, s2) =>
+        ((s2?.chance || 0) - (s1?.chance || 0)) || (s1.order - s2.order)
+      )
+      .map(s => s.jockey)
+      .slice(0, 3)
+      .includes(jockey);
   }
 
   formatChallengeOdds = (odds: number): string => {

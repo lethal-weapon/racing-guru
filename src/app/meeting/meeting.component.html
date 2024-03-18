@@ -99,7 +99,7 @@
             <div>
               <a [href]="getHorseProfileUrl(getStarter(jockey, race).horse)"
                  target="_blank"
-                 [class.text-green-600]="hasUncommonColor(getStarter(jockey, race).horse)"
+                 [class.text-green-600]="isTop3Starter(jockey, race)"
               >
                 {{ getStarter(jockey, race).horse[0] }}
               </a>
