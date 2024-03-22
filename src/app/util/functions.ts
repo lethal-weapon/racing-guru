@@ -1,7 +1,7 @@
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
-import {SingularSignal, CombinationSignal} from '../model/signal.model';
+import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {COLORS, JOCKEY_CODES, ODDS_INTENSITIES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
 
@@ -103,18 +103,17 @@ export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard):
   });
 }
 
-export const getSignalColor = (signals: SingularSignal[] | CombinationSignal[]): string => {
-  if (signals.length > 1) return COLORS[0];
-
-  return COLORS[1];
-}
+export const getSignalColor = (signals: SingularSignal[] | CombinationSignal[]): string =>
+  signals.length > 1 ? COLORS[0] : COLORS[1];
 
 export const getPlacing = (jockey: string, racecard: Racecard): number => {
+  const forecast = racecard?.dividend?.forecast;
   const tierce = racecard?.dividend?.tierce;
   const quartet = racecard?.dividend?.quartet;
-  if (!tierce) return 0;
+  if (!forecast) return 0;
 
-  let orders = tierce[0].orders;
+  let orders = forecast[0].orders;
+  if (tierce) orders = tierce[0].orders;
   if (quartet) orders = quartet[0].orders;
 
   const order = getStarter(jockey, racecard)?.order;

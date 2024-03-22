@@ -215,7 +215,11 @@
         class="hover:bg-gray-800"
     >
       <td class="border border-gray-700 text-2xl">
-        {{ grade }}
+        <div class="text-xl">{{ getTrainerGroupInvestment(index).count }}</div>
+        <div>{{ grade }}</div>
+        <div *ngIf="getTrainerGroupInvestment(index).investment > 0" class="text-xl">
+          {{ getTrainerGroupInvestment(index).investment | percent }}
+        </div>
       </td>
       <td *counter="let race of maxRace"
           class="border border-gray-700"

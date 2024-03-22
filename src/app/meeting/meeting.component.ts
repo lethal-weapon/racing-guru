@@ -481,6 +481,27 @@ export class MeetingComponent implements OnInit {
       .flatMap(s => s);
   }
 
+  getTrainerGroupInvestment = (groupIndex: number):
+    { count: number, investment: number } => {
+
+    const starters = Array(this.maxRace)
+      .fill(1)
+      .map((_, index) => 1 + index)
+      .map(race => this.getStartersByTrainerGroup(race, groupIndex))
+      .flatMap(s => s);
+
+    const investment = starters
+      .map(s => s.trainer)
+      .filter((v, i, a) => a.indexOf(v) === i)
+      .map(t => this.getChallengerInvestment(t))
+      .reduce((prev, curr) => prev + curr, 0);
+
+    return {
+      count: starters.length,
+      investment: investment
+    }
+  }
+
   get syndicates(): Syndicate[] {
     return this.repo.findSyndicates()
       .filter(s => s.horses
