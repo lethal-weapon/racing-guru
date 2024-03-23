@@ -15,16 +15,12 @@ import {NegativePerformance, SeasonPerformance} from './performance.model';
 import {TrackBiasScore} from './bias.model';
 import {SpeedFigure} from './speed.model';
 import {TrackworkGrade} from './trackwork.model';
-import {
-  DividendDto,
-  DrawPerformance,
-  FavoritePost,
-  Interview,
-  SelectionPost
-} from './dto.model';
+import {DividendDto, DrawPerformance, FavoritePost, Interview, SelectionPost} from './dto.model';
+import {Player} from './player.model';
 
 @Injectable()
 export class RestRepository {
+  private players: Player[] = [];
   private notes: Note[] = [];
   private horses: Horse[] = [];
   private reports: Report[] = [];
@@ -48,6 +44,7 @@ export class RestRepository {
   constructor(private source: RestDataSource) {
   }
 
+  findPlayers = () => this.players
   findNotes = () => this.notes
   findHorses = () => this.horses
   findReports = () => this.reports
@@ -75,6 +72,20 @@ export class RestRepository {
   saveSelection = (selection: SelectionPost) =>
     this.source.saveSelection(selection).subscribe(data => {
     })
+
+  savePlayer = (
+    player: Player,
+    successCallback: () => any,
+    errorCallback: () => any
+  ) =>
+    this.source.savePlayer(player).subscribe(
+      data => {
+        this.players = this.players.filter(s => s.code !== data.code);
+        this.players.push(data);
+        successCallback();
+      },
+      error => errorCallback()
+    )
 
   saveNote = (note: Note) =>
     this.source.saveNote(note).subscribe(data => {
@@ -110,9 +121,7 @@ export class RestRepository {
         this.racecards = data;
         successCallback();
       },
-      error => {
-        errorCallback();
-      }
+      error => errorCallback()
     )
   }
 
@@ -125,6 +134,9 @@ export class RestRepository {
       callback();
     })
   }
+
+  fetchPlayers = () =>
+    this.source.getPlayers().subscribe(data => this.players = data)
 
   fetchNotes = () =>
     this.source.getNotes().subscribe(data => this.notes = data)

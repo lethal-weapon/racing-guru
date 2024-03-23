@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {JOCKEYS, TRAINERS} from '../model/person.model';
+import {JOCKEYS, TRAINERS} from '../model/player.model';
 import {BOUNDARY_PERSONS} from '../util/strings';
 import {
   Collaboration,

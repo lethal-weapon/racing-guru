@@ -1,4 +1,4 @@
-import {JOCKEYS} from '../model/person.model';
+import {JOCKEYS} from '../model/player.model';
 
 export interface PlacingMap {
   placing: string,
@@ -34,6 +34,14 @@ export const COMMON_HORSE_ORIGINS = [
 
 export const UNCOMMON_HORSE_COLORS = [
   'Grey',
+];
+
+export const LICENCES = [
+  'Club', 'Freelance',
+];
+
+export const NATIONALITIES = [
+  'HK', 'AUS', 'NZ', 'SAF', 'GB', 'FR', 'ITY', 'IRE', 'GER'
 ];
 
 export const COLORS = [

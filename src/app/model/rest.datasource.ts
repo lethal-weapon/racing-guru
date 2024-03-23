@@ -17,21 +17,20 @@ import {NegativePerformance, SeasonPerformance} from './performance.model';
 import {TrackBiasScore} from './bias.model';
 import {SpeedFigure} from './speed.model';
 import {TrackworkGrade} from './trackwork.model';
-import {
-  DividendDto,
-  DrawPerformance,
-  FavoritePost,
-  Interview,
-  SelectionPost
-} from './dto.model';
+import {DividendDto, DrawPerformance, FavoritePost, Interview, SelectionPost} from './dto.model';
+import {Player} from "./player.model";
 
 @Injectable()
 export class RestDataSource {
   baseUrl: string;
+  newBaseUrl: string;
 
   constructor(private http: HttpClient) {
     this.baseUrl =
       `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}/${env.API_PREFIX}`;
+
+    this.newBaseUrl =
+      `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.NEW_SERVER_PORT}`;
   }
 
   saveFavorite = (favorite: FavoritePost): Observable<FavoritePost> =>
@@ -42,6 +41,9 @@ export class RestDataSource {
 
   saveInterview = (interviews: Interview[]): Observable<Racecard[]> =>
     this.http.post<Racecard[]>(`${this.baseUrl}/interviews`, interviews)
+
+  savePlayer = (player: Player): Observable<Player> =>
+    this.http.post<Player>(`${this.newBaseUrl}/players`, player)
 
   saveNote = (note: Note): Observable<Note> =>
     this.http.post<Note>(`${this.baseUrl}/note`, note)
@@ -81,6 +83,9 @@ export class RestDataSource {
 
   getNegativeEnginePerformance = (): Observable<NegativePerformance[]> =>
     this.http.get<NegativePerformance[]>(`${this.baseUrl}/engine-performance-negative`)
+
+  getPlayers = (): Observable<Player[]> =>
+    this.http.get<Player[]>(`${this.newBaseUrl}/players`)
 
   getNotes = (): Observable<Note[]> =>
     this.http.get<Note[]>(`${this.baseUrl}/notes`)

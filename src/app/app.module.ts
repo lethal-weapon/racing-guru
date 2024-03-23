@@ -25,7 +25,7 @@ import {FormNoteComponent} from './form/form-note/form-note.component';
 import {FormOwnerComponent} from './form/form-owner/form-owner.component';
 import {FormBetComponent} from './form/form-bet/form-bet.component';
 import {FormEngineComponent} from './form/form-engine/form-engine.component';
-import {FormPeopleComponent} from './form/form-people/form-people.component';
+import {FormPlayerComponent} from './form/form-player/form-player.component';
 import {FormConnectionComponent} from './form/form-connection/form-connection.component';
 import {ToastWebsocketComponent} from './toast/toast-websocket/toast-websocket.component';
 import {EarningComponent} from './earning/earning.component';
@@ -50,7 +50,7 @@ import {EarningComponent} from './earning/earning.component';
     FormBetComponent,
     FormEngineComponent,
     FormConnectionComponent,
-    FormPeopleComponent,
+    FormPlayerComponent,
     ToastWebsocketComponent,
     EarningComponent,
   ],

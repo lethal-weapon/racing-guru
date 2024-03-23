@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Syndicate} from '../model/syndicate.model';
 import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
-import {JOCKEYS, TRAINERS} from '../model/person.model';
+import {JOCKEYS, TRAINERS} from '../model/player.model';
 import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES, PLACING_MAPS, SEASONS} from '../util/strings';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
 import {DrawPerformance, DrawPlacingPerformance} from '../model/dto.model';
@@ -641,7 +641,7 @@ export class TrendComponent implements OnInit {
 
   get activePersonMilestoneWinners(): MilestoneWinner[] {
     const winnersAtStartOfLastSeason =
-      JOCKEYS.concat(TRAINERS).find(p => p.code === this.activePerson)?.careerWins || 0;
+      JOCKEYS.concat(TRAINERS).find(p => p.code === this.activePerson)?.careerWins[0].wins || 0;
 
     const sortedMeetings = this.meetings
       .filter(m => m.persons.map(p => p.person).includes(this.activePerson))

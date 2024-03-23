@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {Meeting} from '../model/meeting.model';
-import {JOCKEYS, TRAINERS} from '../model/person.model';
+import {JOCKEYS, TRAINERS} from '../model/player.model';
 import {BOUNDARY_JOCKEYS, BOUNDARY_PERSONS, BOUNDARY_TRAINERS, SEASONS} from '../util/strings';
 
 interface ChartLinePoint {

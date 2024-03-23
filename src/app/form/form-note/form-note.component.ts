@@ -5,7 +5,7 @@ import {Interview} from '../../model/dto.model';
 import {Report, Fine} from '../../model/report.model';
 import {StarterChange} from '../../model/starter.model';
 import {PersonWinner, PersonBirthday} from '../../model/note.model';
-import {JOCKEYS, TRAINERS} from '../../model/person.model';
+import {JOCKEYS, TRAINERS} from '../../model/player.model';
 import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
 import {SEASONS} from '../../util/strings';
 
@@ -329,7 +329,7 @@ export class FormNoteComponent implements OnInit {
           .flatMap(m => m.persons)
           .filter(ps => ps.person === person.code)
           .map(ps => ps.wins)
-          .reduce((prev, curr) => prev + curr, person.careerWins);
+          .reduce((prev, curr) => prev + curr, person.careerWins[0].wins);
 
         return {
           person: person.code,
