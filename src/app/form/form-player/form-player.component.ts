@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../../model/rest.repository';
 import {DEFAULT_PLAYER, Player} from '../../model/player.model';
 import {LICENCES, NATIONALITIES} from '../../util/strings';
+import {ONE_DAY_MILL} from '../../util/numbers';
 
 @Component({
   selector: 'app-form-player',
@@ -34,6 +35,13 @@ export class FormPlayerComponent implements OnInit {
   //     .map(c => c.wins)
   //     .reduce((prev, curr) => prev + curr, person.careerWins)
 
+  get editingAge(): string {
+    const now = new Date().getTime();
+    const dob = new Date(this.editingPlayer.dateOfBirth).getTime();
+    const diffDays = (now - dob) / ONE_DAY_MILL;
+    return (diffDays / 365).toFixed(1);
+  }
+
   get trainers(): Player[] {
     return this.players.filter(p => !p.jockey);
   }
@@ -43,9 +51,12 @@ export class FormPlayerComponent implements OnInit {
   }
 
   get players(): Player[] {
-    return this.repo
-      .findPlayers()
+    return this.repo.findPlayers()
       .map(p => p)
-      .sort((p1, p2) => String(p1.active).length - String(p2.active).length);
+      .sort((p1, p2) =>
+        ((p1.active ? 1 : 0) - (p2.active ? 1 : 0))
+        ||
+        (p1?.order || 0 - p2?.order || 0)
+      );
   }
 }

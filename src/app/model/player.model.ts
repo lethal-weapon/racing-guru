@@ -1,5 +1,5 @@
 export interface CareerWin {
-  startDate: string,
+  upToDate: string,
   wins: number
 }
 
@@ -24,15 +24,15 @@ export class Player {
 }
 
 export const DEFAULT_PLAYER: Player = {
-  code: 'JSM',
+  code: 'SMJ',
   dateOfBirth: '1980-01-01',
   lastName: 'Smith',
   firstName: 'John',
   shortName: 'J Smith',
-  nickname: 'X',
+  nickname: 'John',
   nationality: 'AUS',
   licence: 'Club',
-  careerWins: [{startDate: '2023-09-11', wins: 0}],
+  careerWins: [{upToDate: '2023-09-11', wins: 1276}],
   order: 0,
   jockey: true,
   active: true,
@@ -50,7 +50,7 @@ export const TRAINERS = [
     'Pierre',
     'HK',
     '',
-    [{startDate: '2022-09-11', wins: 0}],
+    [{upToDate: '2022-09-11', wins: 0}],
     1,
     false,
     true,
@@ -98,7 +98,7 @@ export const JOCKEYS = [
     '',
     'AUS',
     'Club',
-    [{startDate: '2022-09-11', wins: 1431}],
+    [{upToDate: '2022-09-11', wins: 1431}],
     1,
     true,
     true,
