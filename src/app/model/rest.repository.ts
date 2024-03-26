@@ -135,8 +135,11 @@ export class RestRepository {
     })
   }
 
-  fetchPlayers = () =>
-    this.source.getPlayers().subscribe(data => this.players = data)
+  fetchPlayers = (callback: (players: Player[]) => any) =>
+    this.source.getPlayers().subscribe(data => {
+      this.players = data;
+      callback(data);
+    })
 
   fetchNotes = () =>
     this.source.getNotes().subscribe(data => this.notes = data)

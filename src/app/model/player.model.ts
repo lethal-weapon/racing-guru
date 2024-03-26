@@ -24,7 +24,7 @@ export class Player {
 }
 
 export const DEFAULT_PLAYER: Player = {
-  code: 'SMJ',
+  code: 'XXX',
   dateOfBirth: '1980-01-01',
   lastName: 'Smith',
   firstName: 'John',
@@ -32,7 +32,7 @@ export const DEFAULT_PLAYER: Player = {
   nickname: 'John',
   nationality: 'AUS',
   licence: 'Club',
-  careerWins: [{upToDate: '2023-09-11', wins: 1276}],
+  careerWins: [{upToDate: '2023-09-11', wins: 1234}],
   order: 0,
   jockey: true,
   active: true,
