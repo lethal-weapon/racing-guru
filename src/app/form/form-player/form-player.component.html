@@ -1,17 +1,46 @@
-<div class="mx-10 grid grid-cols-3 text-lg">
+<div class="mx-12 grid grid-cols-3 text-lg">
   <div class="col-span-1">
-    X
+    <div class="text-center text-xl bg-gray-800 rounded-full flex flex-row justify-between">
+      <div *ngFor="let section of sections"
+           class="w-full py-2 rounded-full {{getSectionStyle(section)}}"
+           (click)="activeSection = section"
+      >
+        {{ section }}
+      </div>
+    </div>
+    <div class="mt-6 flex justify-evenly">
+      <div *ngFor="let groupedPlayers of [trainers, jockeys]; let first = first"
+           class="flex flex-col gap-y-2 text-center"
+      >
+        <div *ngFor="let player of groupedPlayers"
+             class="w-40 px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getBadgeStyle(player)}}"
+             (click)="setActivePlayer(player)"
+        >
+          <div class="flex flex-row w-full">
+            <div class="w-2/5">
+              #{{ player?.order || 0 }}
+            </div>
+            <div class="w-3/5">
+              {{ player.code }}
+            </div>
+          </div>
+        </div>
+        <div class="px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer
+                  border border-gray-600 hover:border-yellow-400"
+             (click)="addNewPlayer(!first)"
+        >
+          New {{ first ? 'Trainer' : 'Jockey' }}
+        </div>
+      </div>
+    </div>
+
   </div>
   <div class="col-span-2 flex justify-evenly items-start">
     <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
       <div class="mb-2 grid grid-cols-2 items-center">
-        <div class="{{ isPlaceholderPlayer ? 'pl-6' : 'pl-2' }}">
-          <i *ngIf="isPlaceholderPlayer"
-             class="fa fa-3x fa-user-secret"
-          >
-          </i>
-          <img *ngIf="!isPlaceholderPlayer"
-               src="assets/people/{{editingPlayer.code}}.jpg"
+        <div class="pl-2">
+          <img src="assets/people/{{editingPlayer.code}}.jpg"
+               onerror="this.src='assets/people/XXX.svg'"
                alt="{{ editingPlayer.code }}"
                class="h-18 rounded-xl"
           />
@@ -26,6 +55,20 @@
         <th class="w-32"></th>
         </thead>
         <tbody>
+        <tr>
+          <td class="pt-3">Code</td>
+          <td class="pt-3">
+            <input
+              [(ngModel)]="editingPlayer.code"
+              required
+              type="text"
+              minlength="2"
+              maxlength="3"
+              placeholder="XXX"
+              class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+            />
+          </td>
+        </tr>
         <tr>
           <td class="pt-3">Last Name</td>
           <td class="pt-3">
@@ -69,7 +112,7 @@
               [(ngModel)]="editingPlayer.nickname"
               required
               type="text"
-              placeholder="John"
+              placeholder=""
               class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
             />
           </td>
@@ -222,7 +265,7 @@
               type="number"
               placeholder="0"
               min="0"
-              max="2000"
+              max="3000"
               class="block w-3/4 mx-auto px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
             />
           </td>
@@ -244,12 +287,18 @@
           <i class="fa fa-lg fa-plus"></i>
         </div>
         <div class="mx-auto w-16 py-2 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
+             [class.cursor-not-allowed]="!isValidPlayer"
              (click)="savePlayer()"
         >
-          <i class="fa fa-lg fa-save"></i>
+          <span *ngIf="isValidPlayer">
+            <i class="fa fa-lg fa-save"></i>
+          </span>
+          <span *ngIf="!isValidPlayer" class="text-yellow-400">
+            <i class="fa fa-lg fa-warning"></i>
+          </span>
         </div>
         <div class="{{editStatusColor}}">
-          {{editingStatus}}
+          {{ editingStatus }}
         </div>
       </div>
     </div>

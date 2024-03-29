@@ -41,7 +41,8 @@ export const LICENCES = [
 ];
 
 export const NATIONALITIES = [
-  'HK', 'AUS', 'NZ', 'SAF', 'GB', 'FR', 'ITY', 'IRE', 'GER'
+  'HK', 'AUS', 'NZ', 'SAF', 'MAU', 'BRZ', 'JPN',
+  'GB', 'FR', 'ITY', 'IRE', 'GER', 'DEN', 'BEL'
 ];
 
 export const COLORS = [

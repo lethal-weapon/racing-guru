@@ -75,14 +75,14 @@ export class RestRepository {
 
   savePlayer = (
     player: Player,
-    successCallback: () => any,
+    successCallback: (saved: Player) => any,
     errorCallback: () => any
   ) =>
     this.source.savePlayer(player).subscribe(
       data => {
         this.players = this.players.filter(s => s.code !== data.code);
         this.players.push(data);
-        successCallback();
+        successCallback(data);
       },
       error => errorCallback()
     )
