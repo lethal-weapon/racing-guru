@@ -3,18 +3,24 @@
     <div class="text-center text-xl bg-gray-800 rounded-full flex flex-row justify-between">
       <div *ngFor="let section of sections"
            class="w-full py-2 rounded-full {{getSectionStyle(section)}}"
-           (click)="activeSection = section"
+           (click)="setActiveSection(section)"
       >
         {{ section }}
       </div>
     </div>
     <div class="mt-6 flex justify-evenly">
       <div *ngFor="let groupedPlayers of [trainers, jockeys]; let first = first"
-           class="flex flex-col gap-y-2 text-center"
+           class="flex flex-col gap-y-2 text-center dd-container"
+           cdkDropList
+           (cdkDropListDropped)="dropPlayer($event, !first)"
       >
         <div *ngFor="let player of groupedPlayers"
-             class="w-40 px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getBadgeStyle(player)}}"
+             class="w-40 px-2 py-1 text-lg rounded-full hvr-float-shadow dd-container-item
+                    cursor-pointer border {{getBadgeStyle(player)}}"
+             [class.border-b-2]="player.boundary"
+             [class.border-b-green-600]="player.boundary"
              (click)="setActivePlayer(player)"
+             cdkDrag
         >
           <div class="flex flex-row w-full">
             <div class="w-2/5">
@@ -26,14 +32,19 @@
           </div>
         </div>
         <div class="px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer
-                  border border-gray-600 hover:border-yellow-400"
+                    border border-gray-600 hover:border-yellow-400"
              (click)="addNewPlayer(!first)"
         >
           New {{ first ? 'Trainer' : 'Jockey' }}
         </div>
+        <div class="px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer
+                    border border-gray-600 hover:border-yellow-400"
+             (click)="saveOrdering(!first)"
+        >
+          Save Ordering
+        </div>
       </div>
     </div>
-
   </div>
   <div class="col-span-2 flex justify-evenly items-start">
     <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">

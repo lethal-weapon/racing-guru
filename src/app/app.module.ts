@@ -3,6 +3,7 @@ import {NgOptimizedImage} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule} from '@angular/forms';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import {TooltipModule} from 'ng2-tooltip-directive';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 
@@ -63,6 +64,7 @@ import {EarningComponent} from './earning/earning.component';
     NgOptimizedImage,
     FormsModule,
     NgxChartsModule,
+    DragDropModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

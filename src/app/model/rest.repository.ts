@@ -80,9 +80,27 @@ export class RestRepository {
   ) =>
     this.source.savePlayer(player).subscribe(
       data => {
-        this.players = this.players.filter(s => s.code !== data.code);
-        this.players.push(data);
+        const index = this.players.findIndex(p => p.code === data.code);
+        if (index === -1) this.players.push(data);
+        else this.players.splice(index, 1, data);
+
         successCallback(data);
+      },
+      error => errorCallback()
+    )
+
+  savePlayerOrders = (
+    players: Player[],
+    successCallback: () => any,
+    errorCallback: () => any
+  ) =>
+    this.source.savePlayerOrders(players).subscribe(
+      data => {
+        data.forEach(saved => {
+          const index = this.players.findIndex(p => p.code === saved.code);
+          if (index !== -1) this.players.splice(index, 1, saved);
+        })
+        successCallback();
       },
       error => errorCallback()
     )

@@ -45,6 +45,9 @@ export class RestDataSource {
   savePlayer = (player: Player): Observable<Player> =>
     this.http.post<Player>(`${this.newBaseUrl}/players`, player)
 
+  savePlayerOrders = (players: Player[]): Observable<Player[]> =>
+    this.http.post<Player[]>(`${this.newBaseUrl}/players/ordering`, players)
+
   saveNote = (note: Note): Observable<Note> =>
     this.http.post<Note>(`${this.baseUrl}/note`, note)
 
