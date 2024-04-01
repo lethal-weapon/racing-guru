@@ -9,11 +9,25 @@
       </div>
     </div>
     <div class="mt-6 flex justify-evenly">
-      <div *ngFor="let groupedPlayers of [trainers, jockeys]; let first = first"
+      <div *ngFor="let groupedPlayers of [trainers, jockeys]; let index = index; let first = first"
            class="flex flex-col gap-y-2 text-center dd-container"
            cdkDropList
            (cdkDropListDropped)="dropPlayer($event, !first)"
       >
+        <div class="px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer
+                    border border-gray-600 hover:border-yellow-400 {{getStatusColor(saveOrderText[index])}}"
+             [class.cursor-not-allowed]="saveOrderText[index] != SAVE_ORDERING"
+             (click)="saveOrdering(!first, index)"
+        >
+          {{ saveOrderText[index] }}
+        </div>
+        <div class="px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer
+                    border border-gray-600 hover:border-yellow-400"
+             (click)="addNewPlayer(!first)"
+        >
+          New {{ first ? 'Trainer' : 'Jockey' }}
+        </div>
+        <div class="my-1 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
         <div *ngFor="let player of groupedPlayers"
              class="w-40 px-2 py-1 text-lg rounded-full hvr-float-shadow dd-container-item
                     cursor-pointer border {{getBadgeStyle(player)}}"
@@ -23,25 +37,13 @@
              cdkDrag
         >
           <div class="flex flex-row w-full">
-            <div class="w-2/5">
+            <div class="w-1/3 text-right">
               #{{ player?.order || 0 }}
             </div>
-            <div class="w-3/5">
+            <div class="w-2/3 pl-2">
               {{ player.code }}
             </div>
           </div>
-        </div>
-        <div class="px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer
-                    border border-gray-600 hover:border-yellow-400"
-             (click)="addNewPlayer(!first)"
-        >
-          New {{ first ? 'Trainer' : 'Jockey' }}
-        </div>
-        <div class="px-2 py-1 text-lg rounded-full hvr-float-shadow cursor-pointer
-                    border border-gray-600 hover:border-yellow-400"
-             (click)="saveOrdering(!first)"
-        >
-          Save Ordering
         </div>
       </div>
     </div>
@@ -71,6 +73,7 @@
           <td class="pt-3">
             <input
               [(ngModel)]="editingPlayer.code"
+              [readOnly]="isExistingPlayer"
               required
               type="text"
               minlength="2"
@@ -85,6 +88,7 @@
           <td class="pt-3">
             <input
               [(ngModel)]="editingPlayer.lastName"
+              [readOnly]="isExistingPlayer"
               required
               type="text"
               placeholder="Smith"
@@ -97,6 +101,7 @@
           <td class="pt-3">
             <input
               [(ngModel)]="editingPlayer.firstName"
+              [readOnly]="isExistingPlayer"
               required
               type="text"
               placeholder="John"
@@ -109,6 +114,7 @@
           <td class="pt-3">
             <input
               [(ngModel)]="editingPlayer.shortName"
+              [readOnly]="isExistingPlayer"
               required
               type="text"
               placeholder="J Smith"
@@ -133,6 +139,7 @@
           <td class="pt-3 text-right">
             <input
               [(ngModel)]="editingPlayer.dateOfBirth"
+              [readOnly]="isExistingPlayer"
               required
               type="date"
               pattern="\d{4}-\d{2}-\d{2}"
@@ -150,6 +157,7 @@
           <td class="pt-3">Nationality</td>
           <td class="pt-3 text-lg">
             <select [(ngModel)]="editingPlayer.nationality"
+                    [disabled]="isExistingPlayer"
                     class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
                            border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
             >
@@ -165,6 +173,7 @@
           <td class="py-3">Licence</td>
           <td class="py-3 text-lg">
             <select [(ngModel)]="editingPlayer.licence"
+                    [disabled]="isExistingPlayer"
                     class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
                            border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
             >
@@ -308,7 +317,7 @@
             <i class="fa fa-lg fa-warning"></i>
           </span>
         </div>
-        <div class="{{editStatusColor}}">
+        <div class="{{getStatusColor(editingStatus)}}">
           {{ editingStatus }}
         </div>
       </div>

@@ -91,7 +91,7 @@ export class RestRepository {
 
   savePlayerOrders = (
     players: Player[],
-    successCallback: () => any,
+    successCallback: (saved: Player[]) => any,
     errorCallback: () => any
   ) =>
     this.source.savePlayerOrders(players).subscribe(
@@ -99,8 +99,8 @@ export class RestRepository {
         data.forEach(saved => {
           const index = this.players.findIndex(p => p.code === saved.code);
           if (index !== -1) this.players.splice(index, 1, saved);
-        })
-        successCallback();
+        });
+        successCallback(data);
       },
       error => errorCallback()
     )

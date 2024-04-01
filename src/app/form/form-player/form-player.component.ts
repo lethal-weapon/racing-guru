@@ -6,6 +6,11 @@ import {CareerWin, DEFAULT_PLAYER, Player} from '../../model/player.model';
 import {LICENCES, NATIONALITIES} from '../../util/strings';
 import {ONE_DAY_MILL} from '../../util/numbers';
 
+const ERROR = 'Error';
+const SAVED = 'Saved';
+const SAVING = 'Saving';
+const SAVE_ORDERING = 'Save Ordering';
+
 @Component({
   selector: 'app-form-player',
   templateUrl: './form-player.component.html',
@@ -15,8 +20,9 @@ export class FormPlayerComponent implements OnInit {
 
   jockeys: Player[] = [];
   trainers: Player[] = [];
+  saveOrderText: string[] = [SAVE_ORDERING, SAVE_ORDERING];
   activeSection: string = this.sections[0];
-  editingStatus: string = 'Unchanged';
+  editingStatus: string = SAVED;
   editingPlayer: Player = {
     ...DEFAULT_PLAYER,
     careerWins: [...DEFAULT_PLAYER.careerWins]
@@ -24,6 +30,7 @@ export class FormPlayerComponent implements OnInit {
 
   protected readonly LICENCES = LICENCES;
   protected readonly NATIONALITIES = NATIONALITIES;
+  protected readonly SAVE_ORDERING = SAVE_ORDERING;
 
   constructor(private repo: RestRepository) {
   }
@@ -63,24 +70,13 @@ export class FormPlayerComponent implements OnInit {
     players.forEach((p, index) => p.order = startingOrder + index);
   }
 
-  saveOrdering = (isJockeyGroup: boolean) =>
-    this.repo.savePlayerOrders(
-      isJockeyGroup ? this.jockeys : this.trainers,
-      () => this.initializeLocalPlayers(),
-      () => {
-      }
-    )
-
   setActiveSection = (section: string) => {
     this.activeSection = section;
     this.initializeLocalPlayers();
   }
 
   setActivePlayer = (player: Player) =>
-    this.editingPlayer = {
-      ...player,
-      careerWins: [...player.careerWins]
-    }
+    this.editingPlayer = {...player, careerWins: [...player.careerWins]}
 
   addCareerWin = () =>
     this.editingPlayer.careerWins.push({upToDate: '2022-09-01', wins: 0})
@@ -92,14 +88,14 @@ export class FormPlayerComponent implements OnInit {
     }
   }
 
-  addNewPlayer = (isJockey: boolean) =>
+  addNewPlayer = (isJockeyGroup: boolean) =>
     this.editingPlayer = {
       ...DEFAULT_PLAYER,
-      jockey: isJockey,
+      jockey: isJockeyGroup,
       active: this.activeSection === this.sections[0],
       careerWins: [...DEFAULT_PLAYER.careerWins],
       order: 1 + (
-        (isJockey ? this.jockeys : this.trainers)
+        (isJockeyGroup ? this.jockeys : this.trainers)
           .map(p => p.order)
           .sort((o1, o2) => o1 - o2)
           .pop() || 0
@@ -109,19 +105,42 @@ export class FormPlayerComponent implements OnInit {
   savePlayer = () => {
     if (!this.isValidPlayer) return;
 
-    this.editingStatus = 'Saving';
+    this.editingStatus = SAVING;
     setTimeout(() => {
       this.repo.savePlayer(
         this.editingPlayer,
         (saved: Player) => {
-          this.editingPlayer = {
-            ...saved,
-            careerWins: [...saved.careerWins]
-          };
-          this.editingStatus = 'Saved';
+          this.editingPlayer = {...saved, careerWins: [...saved.careerWins]};
+          this.editingStatus = SAVED;
           this.initializeLocalPlayers();
         },
-        () => this.editingStatus = 'Error'
+        () => this.editingStatus = ERROR
+      );
+    }, 500);
+  }
+
+  saveOrdering = (isJockeyGroup: boolean, index: number) => {
+    if (this.saveOrderText[index] !== SAVE_ORDERING) return;
+
+    this.saveOrderText[index] = SAVING;
+    setTimeout(() => {
+      this.repo.savePlayerOrders(
+        isJockeyGroup ? this.jockeys : this.trainers,
+        (saved: Player[]) => {
+          const savedIndex = saved.findIndex(s => s.code === this.editingPlayer.code);
+          if (savedIndex !== -1) {
+            this.editingPlayer = {
+              ...saved[savedIndex],
+              careerWins: [...saved[savedIndex].careerWins]
+            };
+          }
+          this.saveOrderText[index] = SAVED;
+          setTimeout(() => this.saveOrderText[index] = SAVE_ORDERING, 2_500);
+        },
+        () => {
+          this.saveOrderText[index] = ERROR;
+          setTimeout(() => this.saveOrderText[index] = SAVE_ORDERING, 5_000);
+        }
       );
     }, 500);
   }
@@ -136,15 +155,13 @@ export class FormPlayerComponent implements OnInit {
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
 
-  get editStatusColor(): string {
-    switch (this.editingStatus) {
-      case 'Unchanged':
-        return '';
-      case 'Saving':
+  getStatusColor = (status: string): string => {
+    switch (status) {
+      case SAVING:
         return 'text-yellow-400';
-      case 'Saved':
+      case SAVED:
         return 'text-green-600';
-      case 'Error':
+      case ERROR:
         return 'text-red-600';
       default:
         return '';
@@ -158,8 +175,14 @@ export class FormPlayerComponent implements OnInit {
     return (diffDays / 365).toFixed(1);
   }
 
+  get isExistingPlayer(): boolean {
+    return this.repo.findPlayers()
+      .some(p => p.code === this.editingPlayer.code);
+  }
+
   get isValidPlayer(): boolean {
-    return this.editingPlayer.code.length >= 2;
+    return this.editingPlayer.code.length >= 2 &&
+      this.editingPlayer.code.length <= 3;
   }
 
   get sections(): string[] {
