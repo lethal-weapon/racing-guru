@@ -136,7 +136,7 @@ export class FormOwnerComponent implements OnInit {
       'Mr & Mrs', 'MR & MRS', 'Mrs', '先生及夫人', '及夫人', '夫婦',
       '女士', '醫生', '博士', '爵士', '議員',
       '(董事)', '（董事）', '(名譽董事)', '（名譽董事）',
-      '遺產執行人',
+      '遺產執行人', '教授'
     ];
   }
 
