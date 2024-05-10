@@ -110,11 +110,12 @@
         <div>2<sup>nd</sup></div>
         <div>1<sup>st</sup></div>
       </td>
-      <td *ngFor="let starter of getStarters(this.activeRacecard)"
+      <td *ngFor="let starter of getStarters(this.activeRacecard); let index = index"
           class="w-20 border border-gray-700 {{getPlacingColor(starter.jockey, activeRacecard)}}"
           [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starter.jockey"
           [class.cursor-pointer]="!isFavorite(starter, this.activeRacecard)"
           [class.cursor-not-allowed]="isFavorite(starter, this.activeRacecard)"
+          [class.border-r-yellow-400]="index + 1 === activeRaceStarterHalfCount"
           (click)="toggleTrash(starter)"
           (mouseenter)="hoveredJockey = starter.jockey"
       >
@@ -144,9 +145,10 @@
     <tr *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"
         class="hover:bg-gray-800"
     >
-      <td class="border border-gray-700 font-bold"
+      <td class="border border-gray-700 font-bold "
           tooltip="{{getSingularSignalTooltip(starterA)}}"
           [hideDelay]="0"
+          [class.border-b-yellow-400]="indexA + 1 === activeRaceStarterHalfCount"
       >
         <div class="grid grid-cols-4">
           <div class="text-red-600">
@@ -183,6 +185,8 @@
           [class.text-gray-300]="isPeopleConnected(starterA, starterB)"
           [class.bg-gray-600]="isBothFavorite(starterA, starterB)"
           [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starterB.jockey"
+          [class.border-b-yellow-400]="indexA + 1 === activeRaceStarterHalfCount"
+          [class.border-r-yellow-400]="indexB + 1 === activeRaceStarterHalfCount"
           [class.diagonal-line]="starterA.order === starterB.order"
           (mouseenter)="hoveredJockey = starterB.jockey"
       >

@@ -529,6 +529,8 @@ export class OddsComponent implements OnInit {
   }
 
   isSameGroupStarter = (starterA: Starter, starterB: Starter): boolean =>
+    (starterA.trainer !== starterB.trainer)
+    &&
     PLAYER_GROUPS.some(group =>
       (group.includes(starterA.jockey) && group.includes(starterB.jockey))
       ||
@@ -754,6 +756,10 @@ export class OddsComponent implements OnInit {
 
   get activeNextTrash(): number[] {
     return this.trashes.get(this.activeRace + 1) || [];
+  }
+
+  get activeRaceStarterHalfCount(): number {
+    return Math.floor(this.activeRacecard.starters.length / 2);
   }
 
   get activeRacecard(): Racecard {
