@@ -93,3 +93,15 @@ export const BOUNDARY_PERSONS =
 export const BOUNDARY_POOLS = [
   'F-F', 'QTT', 'PLA-3', 'QPL-3'
 ];
+
+export const PLAYER_GROUPS = [
+  ['PZ', 'BH', 'MCJ', 'AVB', 'TBE'],
+  ['TEK', 'HEL', 'FEL', 'DMK'],
+  ['AA', 'BA', 'BHW', 'HAA'],
+  ['HCY', 'CML', 'LDE', 'YML'],
+  ['CCY', 'CJE', 'PMF', 'CHA', 'WEC', 'MHT'],
+  ['NPC', 'SJJ', 'YTP', 'LFC', 'HDA', 'RW', 'NM'],
+  ['CAS', 'YPF', 'LKW', 'MKL', 'SCS'],
+  ['FC', 'WDJ', 'HAD', 'SWY', 'CCW'],
+  ['YCH', 'TKH', 'TYS', 'MWK'],
+];

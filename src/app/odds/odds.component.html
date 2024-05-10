@@ -196,7 +196,7 @@
                [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
                (click)="toggleBet('qin', starterA, starterB)"
           >
-            <div>
+            <div class="{{isSameGroupStarter(starterA, starterB) ? 'line-through decoration-2 decoration-yellow-400' : ''}}">
               {{ isShowOdds('qin', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[0] : '-' }}
             </div>
             <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[0])}}">
@@ -232,7 +232,7 @@
                [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
                (click)="toggleBet('fct', starterA, starterB)"
           >
-            <div>
+            <div class="{{isSameGroupStarter(starterA, starterB) ? 'line-through decoration-2 decoration-yellow-400' : ''}}">
               {{ isShowOdds('fct', starterA, starterB) ? getStarterFCTOdds(starterA, starterB)[0] : '-' }}
             </div>
             <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[2])}}">
@@ -250,7 +250,7 @@
                [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
                (click)="toggleBet('fct', starterB, starterA)"
           >
-            <div>
+            <div class="{{isSameGroupStarter(starterA, starterB) ? 'line-through decoration-2 decoration-yellow-400' : ''}}">
               {{ isShowOdds('fct', starterB, starterA, true) ? getStarterFCTOdds(starterA, starterB)[1] : '-' }}
             </div>
             <div class="text-sm {{getSignalColor(getCombinationSignals(starterB, starterA)[2])}}">

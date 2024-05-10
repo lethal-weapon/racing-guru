@@ -5,35 +5,35 @@ import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
-import {SingularSignal, CombinationSignal} from '../model/signal.model';
-import {COLORS} from '../util/strings';
+import {CombinationSignal, SingularSignal} from '../model/signal.model';
+import {COLORS, PLAYER_GROUPS} from '../util/strings';
 import {
-  THREE_SECONDS,
-  MAX_RACE_PER_MEETING,
-  DEFAULT_MIN_QPL_ODDS,
-  DEFAULT_MAX_QPL_ODDS,
-  DEFAULT_MIN_QIN_ODDS,
-  DEFAULT_MAX_QIN_ODDS,
-  DEFAULT_MIN_FCT_ODDS,
-  DEFAULT_MAX_FCT_ODDS,
-  DEFAULT_MIN_DBL_ODDS,
-  DEFAULT_MAX_DBL_ODDS,
-  QPL_ODDS_STEP,
-  QIN_ODDS_STEP,
-  FCT_ODDS_STEP,
   DBL_ODDS_STEP,
-  QIN_FCT_DIFF_RATE
+  DEFAULT_MAX_DBL_ODDS,
+  DEFAULT_MAX_FCT_ODDS,
+  DEFAULT_MAX_QIN_ODDS,
+  DEFAULT_MAX_QPL_ODDS,
+  DEFAULT_MIN_DBL_ODDS,
+  DEFAULT_MIN_FCT_ODDS,
+  DEFAULT_MIN_QIN_ODDS,
+  DEFAULT_MIN_QPL_ODDS,
+  FCT_ODDS_STEP,
+  MAX_RACE_PER_MEETING,
+  QIN_FCT_DIFF_RATE,
+  QIN_ODDS_STEP,
+  QPL_ODDS_STEP,
+  THREE_SECONDS
 } from '../util/numbers';
 import {
+  getCurrentMeeting,
   getMaxRace,
   getPlacing,
   getPlacingColor,
-  getSignalColor,
   getRaceBadgeStyle,
+  getSignalColor,
   getStarterQQPWinPlaceOdds,
-  getStarterWinPlaceOdds,
   getStarters,
-  getCurrentMeeting,
+  getStarterWinPlaceOdds,
   isFavorite,
   toRelativeTime
 } from '../util/functions';
@@ -527,6 +527,13 @@ export class OddsComponent implements OnInit {
     const dbl = this.getStarterDBLOdds(starterA, starterB);
     return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
   }
+
+  isSameGroupStarter = (starterA: Starter, starterB: Starter): boolean =>
+    PLAYER_GROUPS.some(group =>
+      (group.includes(starterA.jockey) && group.includes(starterB.jockey))
+      ||
+      (group.includes(starterA.trainer) && group.includes(starterB.trainer))
+    )
 
   getDBLCellBackground = (currIndex: number, nextIndex: number): string => {
     const currStarters = getStarters(this.activeRacecard).length;
