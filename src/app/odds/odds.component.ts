@@ -316,6 +316,9 @@ export class OddsComponent implements OnInit {
         const orderB = starterB.order;
         if (this.isTrash(starterB)) continue;
 
+        // skip same group starters
+        if (this.isSameGroupStarter(starterA, starterB)) continue;
+
         // skip non-connected combinations
         if (!this.isPeopleConnected(starterA, starterB)) continue;
 
