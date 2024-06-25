@@ -3,12 +3,11 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../model/websocket.service';
 import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
-import {Note} from '../model/note.model';
+import {Reminder} from '../model/reminder.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Selection} from '../model/dto.model';
 import {PersonSummary} from '../model/meeting.model';
-import {DEFAULT_SPEED_FIGURE} from '../model/speed.model';
 import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
 import {
   Collaboration,
@@ -91,10 +90,9 @@ export class RacecardComponent implements OnInit {
   ngOnInit(): void {
     setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
 
-    this.repo.fetchNotes();
+    this.repo.fetchReminders();
     this.repo.fetchHorses();
     this.repo.fetchCollaborations();
-    this.repo.fetchSpeedFigures();
 
     setInterval(() => this.repo.fetchCollaborations(), THIRTY_SECONDS);
   }
@@ -163,22 +161,6 @@ export class RacecardComponent implements OnInit {
     )
       .filter(s => s.order === starter.order && s.placing === placing)
       .length === 1
-
-  getHorseRecent3StartAvgSpeedFigure = (starter: Starter): number => {
-    const figures = this.getHorse(starter).pastStarters
-      .slice(0, 3)
-      .map(ps => this.getHorseSpeedFigure(starter.horse, ps.meeting))
-      .filter(f => f > 0);
-
-    if (figures.length < 1) return 0;
-
-    const figureSum = figures.reduce((prev, curr) => prev + curr, 0);
-    return Math.floor(figureSum / figures.length);
-  }
-
-  getHorseSpeedFigure = (horse: string, meeting: string): number =>
-    (this.repo.findSpeedFigures().find(f => f.horse === horse) || DEFAULT_SPEED_FIGURE)
-      ?.figures.find(f => f.meeting === meeting)?.figure || 0
 
   getHorse = (starter: Starter): Horse =>
     this.repo.findHorses()
@@ -297,10 +279,6 @@ export class RacecardComponent implements OnInit {
     return bottoms.includes(starter.order) && (publicChance - modelChance >= 3);
   }
 
-  isInStarvationList = (starter: Starter): boolean =>
-    this.meetingNote.starvation.includes(starter.jockey) ||
-    this.meetingNote.starvation.includes(starter.trainer)
-
   getStarterStatSumColor = (starter: Starter, index: number): string => {
     const starterSum = this.getPersonStatOnPlacing(starter, index)[2];
     const isTopSum = this.startersSortedByChance
@@ -359,56 +337,13 @@ export class RacecardComponent implements OnInit {
     return ps;
   }
 
-  getMeetingWinnerBeforeActiveRace = (person: string): number =>
+  getMeetingWinnerBeforeActiveRace = (player: string): number =>
     this.racecards
       .filter(r => r.race < this.activeRace)
       .flatMap(r => r.starters)
-      .filter(s => [s.jockey, s.trainer].includes(person))
+      .filter(s => [s.jockey, s.trainer].includes(player))
       .filter(s => (s?.placing || 0) === 1)
       .length;
-
-  getWinnerPoint = (starter: Starter): number => {
-    let point: number = 0;
-    const pair = [starter.jockey, starter.trainer];
-    const blacklist = this.meetingNote.blacklist.map(pw => pw.person);
-    const whitelist = this.meetingNote.whitelist.map(pw => pw.person);
-    const birthlist = this.meetingNote.birthdays.map(bp => bp.person);
-
-    const blacks = pair.filter(p => blacklist.includes(p)).length;
-    const whites = pair.filter(p => whitelist.includes(p)).length;
-
-    point -= blacks;
-    point += whites;
-
-    if (blacks > 0) {
-      point += pair
-        .filter(p => blacklist.includes(p))
-        .map(p => this.getMeetingWinnerBeforeActiveRace(p))
-        .filter(w => w > 0)
-        .length;
-    }
-    if (whites > 0) {
-      point -= pair
-        .filter(p => whitelist.includes(p))
-        .map(p => {
-          const careerWinnersBeforeCurrentMeeting =
-            this.meetingNote.whitelist.find(pw => pw.person === p)?.career || 0;
-
-          return careerWinnersBeforeCurrentMeeting +
-            this.getMeetingWinnerBeforeActiveRace(p);
-        })
-        .filter(w => w % 10 === 0)
-        .length;
-    }
-
-    if (birthlist.includes(starter.jockey)) point += 1;
-    if (birthlist.includes(starter.trainer)) point += 1;
-
-    if (this.meetingNote.starvation.includes(starter.jockey)) point += 1;
-    if (this.meetingNote.starvation.includes(starter.trainer)) point += 1;
-
-    return point;
-  }
 
   get startersSortedByChance(): Starter[] {
     return this.activeRacecard.starters
@@ -416,9 +351,9 @@ export class RacecardComponent implements OnInit {
       .sort((s1, s2) => (s2?.chance || 0) - (s1?.chance || 0))
   }
 
-  get meetingNote(): Note {
+  get meetingReminder(): Reminder {
     // @ts-ignore
-    return this.repo.findNotes()
+    return this.repo.findReminders()
       .find(n => n.meeting === getCurrentMeeting(this.racecards));
   }
 

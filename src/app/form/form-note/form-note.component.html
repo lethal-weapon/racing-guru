@@ -75,12 +75,6 @@
         </div>
       </div>
     </div>
-    <div class="px-6 py-2 text-xl rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
-         (click)="saveNotes()"
-    >
-      <i class="fa fa-save"></i>
-      <span class="ml-2">Save Notes</span>
-    </div>
   </div>
 
   <div class="flex flex-col gap-y-6 items-start">
@@ -230,8 +224,8 @@
             <th class="py-1 px-3">Age</th>
             </thead>
             <tbody>
-            <tr *ngFor="let pb of personBirthdays">
-              <td class="py-0.5">{{pb.person}}</td>
+            <tr *ngFor="let pb of playerBirthdays">
+              <td class="py-0.5">{{pb.player}}</td>
               <td class="py-0.5">{{formatBirthday(pb.date)}}</td>
               <td class="py-0.5">{{pb.age}}</td>
             </tr>
@@ -251,10 +245,10 @@
             <th class="py-1 px-2">Career</th>
             </thead>
             <tbody>
-            <tr *ngFor="let pw of personMilestoneCloseWinners">
-              <td class="py-0.5">{{pw.person}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.season % 10 >= 9">{{pw.season}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.career % 10 >= 8 || pw.career == 0">{{pw.career}}</td>
+            <tr *ngFor="let pw of playerCloseMilestone">
+              <td class="py-0.5">{{pw.player}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.seasonWins % 10 >= 9">{{pw.seasonWins}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.careerWins % 10 >= 8 || pw.careerWins == 0">{{pw.careerWins}}</td>
             </tr>
             </tbody>
           </table>
@@ -270,10 +264,10 @@
             <th class="py-1 px-2">Career</th>
             </thead>
             <tbody>
-            <tr *ngFor="let pw of personMilestonePassWinners">
-              <td class="py-0.5">{{pw.person}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.season % 10 == 0">{{pw.season}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.career % 10 == 0">{{pw.career}}</td>
+            <tr *ngFor="let pw of playerReachedMilestone">
+              <td class="py-0.5">{{pw.player}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.seasonWins % 10 == 0">{{pw.seasonWins}}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.careerWins % 10 == 0">{{pw.careerWins}}</td>
             </tr>
             </tbody>
           </table>

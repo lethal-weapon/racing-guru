@@ -2,11 +2,11 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../../model/rest.repository';
 import {Interview} from '../../model/dto.model';
-import {Report, Fine} from '../../model/report.model';
+import {Fine, Report} from '../../model/report.model';
 import {StarterChange} from '../../model/starter.model';
-import {PersonWinner, PersonBirthday} from '../../model/note.model';
+import {PlayerBirthday, PlayerWinner, Reminder} from '../../model/reminder.model';
 import {JOCKEYS, TRAINERS} from '../../model/player.model';
-import {ONE_DAY_MILL, TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
+import {TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
 import {SEASONS} from '../../util/strings';
 
 @Component({
@@ -29,7 +29,7 @@ export class FormNoteComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchNotes();
+    this.repo.fetchReminders();
     this.repo.fetchReports();
     this.repo.fetchMeetings();
     this.repo.fetchRacecards('latest', () => {
@@ -180,26 +180,6 @@ export class FormNoteComponent implements OnInit {
     return 0;
   }
 
-  saveNotes = () => {
-    const note = this.repo.findNotes().find(n => n.meeting === this.activeMeeting);
-    if (note) {
-      this.repo.saveNote({
-        ...note,
-        birthdays: this.personBirthdays,
-        blacklist: this.personMilestonePassWinners,
-        whitelist: this.personMilestoneCloseWinners,
-      });
-    } else {
-      this.repo.saveNote({
-        meeting: this.activeMeeting,
-        birthdays: this.personBirthdays,
-        blacklist: this.personMilestonePassWinners,
-        whitelist: this.personMilestoneCloseWinners,
-        starvation: []
-      });
-    }
-  }
-
   getBadgeStyle = (render: string): string =>
     this.activeMeeting === render
       ? `text-yellow-400 border-yellow-400`
@@ -260,86 +240,22 @@ export class FormNoteComponent implements OnInit {
       .sort((sc1, sc2) => ((sc1?.race || 1) - (sc2?.race || 1)) || (sc1.order || sc2.order))
   }
 
-  get personBirthdays(): PersonBirthday[] {
-    return JOCKEYS.concat(TRAINERS).map(person => {
-      const birthYear = person.dateOfBirth.slice(0, 4);
-      const activeYear = this.activeMeeting.slice(0, 4);
-      const age = parseInt(activeYear) - parseInt(birthYear);
-
-      const birthMonthDay = person.dateOfBirth.slice(5);
-      const thisBirthday = `${activeYear}-${birthMonthDay}`;
-      return {
-        person: person.code,
-        date: thisBirthday,
-        age: age
-      }
-    })
-      .filter(pb => {
-        if (this.activeMeeting === pb.date) return true;
-
-        const meeting = new Date(this.activeMeeting).getTime();
-        const birthday = new Date(pb.date).getTime();
-        const diffDays = (birthday - meeting) / ONE_DAY_MILL;
-
-        return diffDays >= -7 && diffDays <= 21;
-      })
-      .sort((pb1, pb2) =>
-        pb1.date.localeCompare(pb2.date) || pb2.age - pb1.age
-      );
+  get playerReachedMilestone(): PlayerWinner[] {
+    return this.meetingReminder.winners.filter(pw => pw.isReachedMilestone)
   }
 
-  get personMilestonePassWinners(): PersonWinner[] {
-    return this.personWinners.filter(pw =>
-      (pw.career > 0 && pw.career % 10 === 0)
-    );
+  get playerCloseMilestone(): PlayerWinner[] {
+    return this.meetingReminder.winners.filter(pw => pw.isCloseToMilestone)
   }
 
-  get personMilestoneCloseWinners(): PersonWinner[] {
-    return this.personWinners.filter(pw =>
-      (pw.career === 0) || (pw.career % 10 >= 8) || (pw.season % 10 >= 9)
-    );
+  get playerBirthdays(): PlayerBirthday[] {
+    return this.meetingReminder.birthdays;
   }
 
-  get personWinners(): PersonWinner[] {
-    return JOCKEYS.concat(TRAINERS)
-      .filter(person =>
-        (this.repo.findMeetings().find(m => m.meeting === this.activeMeeting)?.persons || [])
-          .map(ps => ps.person)
-          .includes(person.code)
-      )
-      .map(person => {
-        let seasonWins = 0;
-        for (const season of SEASONS) {
-          if (this.activeMeeting >= season.opening && this.activeMeeting <= season.finale) {
-            if (this.activeMeeting === season.opening) break;
-
-            seasonWins = this.repo.findMeetings()
-              .filter(m => m.meeting >= season.opening && m.meeting < this.activeMeeting)
-              .flatMap(m => m.persons)
-              .filter(ps => ps.person === person.code)
-              .map(ps => ps.wins)
-              .reduce((prev, curr) => prev + curr, 0);
-
-            break;
-          }
-        }
-
-        const careerWins = this.repo.findMeetings()
-          .filter(m => m.meeting < this.activeMeeting)
-          .flatMap(m => m.persons)
-          .filter(ps => ps.person === person.code)
-          .map(ps => ps.wins)
-          .reduce((prev, curr) => prev + curr, person.careerWins[0].wins);
-
-        return {
-          person: person.code,
-          season: seasonWins,
-          career: careerWins
-        }
-      })
-      .sort((p1, p2) =>
-        (p2.career - p1.career) || (p2.season - p1.season)
-      );
+  get meetingReminder(): Reminder {
+    // @ts-ignore
+    return this.repo.findReminders()
+      .find(n => n.meeting === this.activeMeeting);
   }
 
   get isValidInterview(): boolean {

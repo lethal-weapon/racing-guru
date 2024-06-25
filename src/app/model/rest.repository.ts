@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {RestDataSource} from './rest.datasource';
-import {Note} from './note.model';
+import {Reminder} from './reminder.model';
 import {Horse} from './horse.model';
 import {Syndicate, SyndicatePerformance} from './syndicate.model';
 import {Meeting} from './meeting.model';
@@ -12,16 +12,14 @@ import {Racecard} from './racecard.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
 import {NegativePerformance, SeasonPerformance} from './performance.model';
-import {TrackBiasScore} from './bias.model';
-import {SpeedFigure} from './speed.model';
 import {TrackworkGrade} from './trackwork.model';
-import {DividendDto, DrawPerformance, FavoritePost, Interview, SelectionPost} from './dto.model';
+import {DrawPerformance, FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Player} from './player.model';
 
 @Injectable()
 export class RestRepository {
   private players: Player[] = [];
-  private notes: Note[] = [];
+  private reminders: Reminder[] = [];
   private horses: Horse[] = [];
   private reports: Report[] = [];
   private records: Record[] = [];
@@ -32,12 +30,9 @@ export class RestRepository {
   private factorHits: FactorHit[] = [];
   private enginePerformances: SeasonPerformance[] = [];
   private negativeEnginePerformances: NegativePerformance[] = [];
-  private dividends: DividendDto[] = [];
   private syndicatePerformances: SyndicatePerformance[] = [];
   private connections: RaceConnection[] = [];
   private connectionDividends: ConnectionDividend[] = [];
-  private trackBiasScores: TrackBiasScore[] = [];
-  private speedFigures: SpeedFigure[] = [];
   private drawPerformances: DrawPerformance[] = [];
   private trackworkGrades: TrackworkGrade[] = [];
 
@@ -45,7 +40,7 @@ export class RestRepository {
   }
 
   findPlayers = () => this.players
-  findNotes = () => this.notes
+  findReminders = () => this.reminders
   findHorses = () => this.horses
   findReports = () => this.reports
   findRecords = () => this.records
@@ -56,12 +51,9 @@ export class RestRepository {
   findEnginePerformances = () => this.enginePerformances
   findNegativeEnginePerformances = () => this.negativeEnginePerformances
   findSyndicates = () => this.syndicates
-  findDividends = () => this.dividends
   findSyndicatePerformances = () => this.syndicatePerformances
   findConnections = () => this.connections
   findConnectionDividends = () => this.connectionDividends
-  findTrackBiasScores = () => this.trackBiasScores
-  findSpeedFigures = () => this.speedFigures
   findDrawPerformances = () => this.drawPerformances
   findTrackworkGrades = () => this.trackworkGrades
 
@@ -104,10 +96,6 @@ export class RestRepository {
       },
       error => errorCallback()
     )
-
-  saveNote = (note: Note) =>
-    this.source.saveNote(note).subscribe(data => {
-    })
 
   saveSyndicate = (
     syndicate: Syndicate,
@@ -159,8 +147,8 @@ export class RestRepository {
       callback(data);
     })
 
-  fetchNotes = () =>
-    this.source.getNotes().subscribe(data => this.notes = data)
+  fetchReminders = () =>
+    this.source.getReminders().subscribe(data => this.reminders = data)
 
   fetchHorses = () =>
     this.source.getHorses().subscribe(data => this.horses = data)
@@ -195,9 +183,6 @@ export class RestRepository {
   fetchSyndicates = () =>
     this.source.getSyndicates().subscribe(data => this.syndicates = data)
 
-  fetchDividends = () =>
-    this.source.getDividends().subscribe(data => this.dividends = data)
-
   fetchSyndicatePerformance = () =>
     this.source.getSyndicatePerformance().subscribe(data => this.syndicatePerformances = data)
 
@@ -206,12 +191,6 @@ export class RestRepository {
 
   fetchConnectionDividends = () =>
     this.source.getConnectionDividends().subscribe(data => this.connectionDividends = data)
-
-  fetchTrackBiasScores = () =>
-    this.source.getTrackBiasScores().subscribe(data => this.trackBiasScores = data)
-
-  fetchSpeedFigures = () =>
-    this.source.getSpeedFigures().subscribe(data => this.speedFigures = data)
 
   fetchDrawPerformance = () =>
     this.source.getDrawPerformance().subscribe(data => this.drawPerformances = data)

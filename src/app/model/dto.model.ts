@@ -22,26 +22,6 @@ export interface SelectionPost {
   selections: Selection[]
 }
 
-export interface DividendDto {
-  meeting: string,
-  race: number,
-  win: number,
-  quinella: number,
-  forecast: number,
-  tierce: number,
-  quartet: number
-}
-
-export const DEFAULT_DIVIDEND: DividendDto = {
-  meeting: '',
-  race: 0,
-  win: 0,
-  quinella: 0,
-  forecast: 0,
-  tierce: 0,
-  quartet: 0
-}
-
 export interface DrawPlacingPerformance {
   draw: number,
   placing: number,

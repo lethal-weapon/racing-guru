@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
-import {Note} from './note.model';
+import {Reminder} from './reminder.model';
 import {Horse} from './horse.model';
 import {Syndicate, SyndicatePerformance} from './syndicate.model';
 import {ConnectionDividend, RaceConnection} from './connection.model';
@@ -14,10 +14,8 @@ import {FactorHit} from './backtest.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
 import {NegativePerformance, SeasonPerformance} from './performance.model';
-import {TrackBiasScore} from './bias.model';
-import {SpeedFigure} from './speed.model';
 import {TrackworkGrade} from './trackwork.model';
-import {DividendDto, DrawPerformance, FavoritePost, Interview, SelectionPost} from './dto.model';
+import {DrawPerformance, FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Player} from "./player.model";
 
 @Injectable()
@@ -47,9 +45,6 @@ export class RestDataSource {
 
   savePlayerOrders = (players: Player[]): Observable<Player[]> =>
     this.http.post<Player[]>(`${this.newBaseUrl}/players/ordering`, players)
-
-  saveNote = (note: Note): Observable<Note> =>
-    this.http.post<Note>(`${this.baseUrl}/note`, note)
 
   saveSyndicate = (syndicate: Syndicate): Observable<Syndicate> =>
     this.http.post<Syndicate>(`${this.baseUrl}/syndicates`, syndicate)
@@ -90,14 +85,11 @@ export class RestDataSource {
   getPlayers = (): Observable<Player[]> =>
     this.http.get<Player[]>(`${this.newBaseUrl}/players`)
 
-  getNotes = (): Observable<Note[]> =>
-    this.http.get<Note[]>(`${this.baseUrl}/notes`)
+  getReminders = (): Observable<Reminder[]> =>
+    this.http.get<Reminder[]>(`${this.baseUrl}/notes`)
 
   getSyndicates = (): Observable<Syndicate[]> =>
     this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
-
-  getDividends = (): Observable<DividendDto[]> =>
-    this.http.get<DividendDto[]>(`${this.baseUrl}/dividends`)
 
   getSyndicatePerformance = (): Observable<SyndicatePerformance[]> =>
     this.http.get<SyndicatePerformance[]>(`${this.baseUrl}/syndicate-performance`)
@@ -107,12 +99,6 @@ export class RestDataSource {
 
   getConnectionDividends = (): Observable<ConnectionDividend[]> =>
     this.http.get<ConnectionDividend[]>(`${this.baseUrl}/graph/connections/dividends`)
-
-  getTrackBiasScores = (): Observable<TrackBiasScore[]> =>
-    this.http.get<TrackBiasScore[]>(`${this.baseUrl}/track-bias-scores`)
-
-  getSpeedFigures = (): Observable<SpeedFigure[]> =>
-    this.http.get<SpeedFigure[]>(`${this.baseUrl}/speed-figures`)
 
   getDrawPerformance = (): Observable<DrawPerformance[]> =>
     this.http.get<DrawPerformance[]>(`${this.baseUrl}/draw-performance`)
