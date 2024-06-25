@@ -8,7 +8,7 @@ export interface Report {
 export interface Fine {
   race: number,
   horse: string,
-  person: string,
+  player: string,
   amount: number,
   reason: string
 }
@@ -23,7 +23,7 @@ export interface Withdrawal {
 export interface Suspension {
   race: number,
   horse: string,
-  person: string,
+  player: string,
   startAt: string,
   resumeAt: string,
   racedays: number

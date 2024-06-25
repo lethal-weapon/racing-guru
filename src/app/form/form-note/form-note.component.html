@@ -45,7 +45,7 @@
           <div *ngFor="let sus of report.suspensions"
                class="grid grid-cols-4"
           >
-            <div class="col-span-1">{{sus.person}}</div>
+            <div class="col-span-1">{{sus.player}}</div>
             <div class="col-span-2 text-right">
               {{formatMeeting(sus.startAt)}} / {{sus.racedays}}D
             </div>
@@ -59,7 +59,7 @@
           <div *ngFor="let fine of report.fines"
                class="grid grid-cols-4"
           >
-            <div class="col-span-1">{{fine.person}}</div>
+            <div class="col-span-1">{{fine.player}}</div>
             <div class="col-span-2 text-right"
                  [class.text-red-600]="fine.amount >= TEN_THOUSAND"
             >

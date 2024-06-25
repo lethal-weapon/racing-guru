@@ -6,7 +6,7 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
-import {TrackworkGrade} from '../model/trackwork.model';
+import {TrackworkStarter} from '../model/trackwork.model';
 import {JOCKEYS, TRAINERS} from '../model/player.model';
 import {PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, BOUNDARY_TRAINERS, RATING_GRADES} from '../util/strings';
@@ -23,7 +23,7 @@ import {
   getStarterWinPlaceOdds,
   getTrainer,
   getWinPlaceOdds,
-  toMillion
+  toMillion, toPlacingColor
 } from '../util/functions';
 
 @Component({
@@ -39,6 +39,7 @@ export class MeetingComponent implements OnInit {
 
   protected readonly RATING_GRADES = RATING_GRADES;
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
+  protected readonly toPlacingColor = toPlacingColor;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;
@@ -66,7 +67,7 @@ export class MeetingComponent implements OnInit {
 
     this.repo.fetchMeetingHorses();
     this.repo.fetchSyndicates();
-    this.repo.fetchTrackworkGrades();
+    this.repo.fetchTrackworkSnapshots();
   }
 
   setActiveTrainer = (clicked: string) =>
@@ -446,10 +447,13 @@ export class MeetingComponent implements OnInit {
           .includes(h)
       )
 
-  getTrackworkGrades = (race: number, grade: string): TrackworkGrade[] =>
-    this.repo.findTrackworkGrades()
-      .filter(g => g.race === race && g.grade === grade)
-      .sort((g1, g2) => g1.order - g2.order)
+  getTrackworkStarters = (race: number, grade: string): TrackworkStarter[] =>
+    this.repo
+      .findTrackworkSnapshots()
+      .find(ts => ts.meeting === getCurrentMeeting(this.racecards))
+      ?.starters
+      .filter(s => s.race === race && s.grade === grade)
+      .sort((s1, s2) => s1.order - s2.order) || []
 
   getStartersByTrainerGroup = (race: number, groupIndex: number): Starter[] => {
     let startIndex = 0;
@@ -521,7 +525,7 @@ export class MeetingComponent implements OnInit {
         ||
         s2.members.length - s1.members.length
         ||
-        s1.id - s2.id
+        s1.id.localeCompare(s2.id)
       );
   }
 
@@ -626,4 +630,5 @@ export class MeetingComponent implements OnInit {
   get isLoading(): boolean {
     return this.racecards.length === 0;
   }
+
 }

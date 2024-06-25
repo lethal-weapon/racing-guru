@@ -3,7 +3,6 @@ import {Injectable} from '@angular/core';
 import {RestDataSource} from './rest.datasource';
 import {Reminder} from './reminder.model';
 import {Horse} from './horse.model';
-import {Syndicate, SyndicatePerformance} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {ConnectionDividend, RaceConnection} from './connection.model';
@@ -12,8 +11,10 @@ import {Racecard} from './racecard.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
 import {NegativePerformance, SeasonPerformance} from './performance.model';
-import {TrackworkGrade} from './trackwork.model';
-import {DrawPerformance, FavoritePost, Interview, SelectionPost} from './dto.model';
+import {DrawInheritance} from './draw.model';
+import {Syndicate, SyndicateSnapshot} from './syndicate.model';
+import {TrackworkSnapshot} from './trackwork.model';
+import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {Player} from './player.model';
 
 @Injectable()
@@ -30,11 +31,11 @@ export class RestRepository {
   private factorHits: FactorHit[] = [];
   private enginePerformances: SeasonPerformance[] = [];
   private negativeEnginePerformances: NegativePerformance[] = [];
-  private syndicatePerformances: SyndicatePerformance[] = [];
   private connections: RaceConnection[] = [];
   private connectionDividends: ConnectionDividend[] = [];
-  private drawPerformances: DrawPerformance[] = [];
-  private trackworkGrades: TrackworkGrade[] = [];
+  private drawInheritances: DrawInheritance[] = [];
+  private syndicateSnapshots: SyndicateSnapshot[] = [];
+  private trackworkSnapshots: TrackworkSnapshot[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -51,11 +52,11 @@ export class RestRepository {
   findEnginePerformances = () => this.enginePerformances
   findNegativeEnginePerformances = () => this.negativeEnginePerformances
   findSyndicates = () => this.syndicates
-  findSyndicatePerformances = () => this.syndicatePerformances
   findConnections = () => this.connections
   findConnectionDividends = () => this.connectionDividends
-  findDrawPerformances = () => this.drawPerformances
-  findTrackworkGrades = () => this.trackworkGrades
+  findDrawInheritances = () => this.drawInheritances
+  findSyndicateSnapshots = () => this.syndicateSnapshots
+  findTrackworkSnapshots = () => this.trackworkSnapshots
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -180,22 +181,22 @@ export class RestRepository {
   fetchNegativeEnginePerformance = () =>
     this.source.getNegativeEnginePerformance().subscribe(data => this.negativeEnginePerformances = data)
 
-  fetchSyndicates = () =>
-    this.source.getSyndicates().subscribe(data => this.syndicates = data)
-
-  fetchSyndicatePerformance = () =>
-    this.source.getSyndicatePerformance().subscribe(data => this.syndicatePerformances = data)
-
   fetchConnections = (meeting: string = 'latest') =>
     this.source.getConnections(meeting).subscribe(data => this.connections = data)
 
   fetchConnectionDividends = () =>
     this.source.getConnectionDividends().subscribe(data => this.connectionDividends = data)
 
-  fetchDrawPerformance = () =>
-    this.source.getDrawPerformance().subscribe(data => this.drawPerformances = data)
+  fetchDrawInheritances = () =>
+    this.source.getDrawInheritances().subscribe(data => this.drawInheritances = data)
 
-  fetchTrackworkGrades = () =>
-    this.source.getTrackworkGrades().subscribe(data => this.trackworkGrades = data)
+  fetchSyndicates = () =>
+    this.source.getSyndicates().subscribe(data => this.syndicates = data)
+
+  fetchSyndicateSnapshots = () =>
+    this.source.getSyndicateSnapshots().subscribe(data => this.syndicateSnapshots = data)
+
+  fetchTrackworkSnapshots = () =>
+    this.source.getTrackworkSnapshots().subscribe(data => this.trackworkSnapshots = data)
 
 }

@@ -121,6 +121,9 @@ export const getPlacing = (jockey: string, racecard: Racecard): number => {
   return orders.indexOf(order) + 1;
 }
 
+export const toPlacingColor = (placing: number): string =>
+  (placing && placing >= 1 && placing <= 4) ? COLORS[placing - 1] : ''
+
 export const getPlacingColor = (jockey: string, racecard: Racecard): string => {
   const placing = getPlacing(jockey, racecard);
   return placing > 0 ? COLORS[placing - 1] : '';

@@ -5,7 +5,6 @@ import {Observable} from 'rxjs';
 import {environment as env} from '../../environments/environment';
 import {Reminder} from './reminder.model';
 import {Horse} from './horse.model';
-import {Syndicate, SyndicatePerformance} from './syndicate.model';
 import {ConnectionDividend, RaceConnection} from './connection.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
@@ -14,9 +13,11 @@ import {FactorHit} from './backtest.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
 import {NegativePerformance, SeasonPerformance} from './performance.model';
-import {TrackworkGrade} from './trackwork.model';
-import {DrawPerformance, FavoritePost, Interview, SelectionPost} from './dto.model';
-import {Player} from "./player.model";
+import {DrawInheritance} from './draw.model';
+import {Syndicate, SyndicateSnapshot} from './syndicate.model';
+import {TrackworkSnapshot} from './trackwork.model';
+import {FavoritePost, Interview, SelectionPost} from './dto.model';
+import {Player} from './player.model';
 
 @Injectable()
 export class RestDataSource {
@@ -65,10 +66,10 @@ export class RestDataSource {
     this.http.get<Horse[]>(`${this.baseUrl}/horses/latest`)
 
   getReports = (): Observable<Report[]> =>
-    this.http.get<Report[]>(`${this.baseUrl}/reports`)
+    this.http.get<Report[]>(`${this.newBaseUrl}/reports`)
 
   getRecords = (): Observable<Record[]> =>
-    this.http.get<Record[]>(`${this.baseUrl}/records`)
+    this.http.get<Record[]>(`${this.newBaseUrl}/records`)
 
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
@@ -82,28 +83,28 @@ export class RestDataSource {
   getNegativeEnginePerformance = (): Observable<NegativePerformance[]> =>
     this.http.get<NegativePerformance[]>(`${this.baseUrl}/engine-performance-negative`)
 
-  getPlayers = (): Observable<Player[]> =>
-    this.http.get<Player[]>(`${this.newBaseUrl}/players`)
-
-  getReminders = (): Observable<Reminder[]> =>
-    this.http.get<Reminder[]>(`${this.baseUrl}/notes`)
-
-  getSyndicates = (): Observable<Syndicate[]> =>
-    this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
-
-  getSyndicatePerformance = (): Observable<SyndicatePerformance[]> =>
-    this.http.get<SyndicatePerformance[]>(`${this.baseUrl}/syndicate-performance`)
-
   getConnections = (meeting: string): Observable<RaceConnection[]> =>
     this.http.get<RaceConnection[]>(`${this.baseUrl}/graph/connections?meeting=${meeting}`)
 
   getConnectionDividends = (): Observable<ConnectionDividend[]> =>
     this.http.get<ConnectionDividend[]>(`${this.baseUrl}/graph/connections/dividends`)
 
-  getDrawPerformance = (): Observable<DrawPerformance[]> =>
-    this.http.get<DrawPerformance[]>(`${this.baseUrl}/draw-performance`)
+  getPlayers = (): Observable<Player[]> =>
+    this.http.get<Player[]>(`${this.newBaseUrl}/players`)
 
-  getTrackworkGrades = (): Observable<TrackworkGrade[]> =>
-    this.http.get<TrackworkGrade[]>(`${this.baseUrl}/trackwork-grades`)
+  getReminders = (): Observable<Reminder[]> =>
+    this.http.get<Reminder[]>(`${this.newBaseUrl}/reminders`)
+
+  getDrawInheritances = (): Observable<DrawInheritance[]> =>
+    this.http.get<DrawInheritance[]>(`${this.newBaseUrl}/racecards/draw-inheritance`)
+
+  getSyndicates = (): Observable<Syndicate[]> =>
+    this.http.get<Syndicate[]>(`${this.newBaseUrl}/syndicates`)
+
+  getSyndicateSnapshots = (): Observable<SyndicateSnapshot[]> =>
+    this.http.get<SyndicateSnapshot[]>(`${this.newBaseUrl}/syndicates/snapshots`)
+
+  getTrackworkSnapshots = (): Observable<TrackworkSnapshot[]> =>
+    this.http.get<TrackworkSnapshot[]>(`${this.newBaseUrl}/trackworks/snapshots`)
 
 }

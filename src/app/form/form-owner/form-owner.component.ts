@@ -13,7 +13,7 @@ export class FormOwnerComponent implements OnInit {
 
   criteria: string = 'California';
   hoverHorse: string = '';
-  activeSyndicate: Syndicate = {id: 0, members: [], horses: []};
+  activeSyndicate: Syndicate = {id: '', members: [], horses: []};
 
   constructor(
     private repo: RestRepository,
@@ -34,10 +34,10 @@ export class FormOwnerComponent implements OnInit {
       .filter(m => isTeam ? m.includes('團體') : !m.includes('團體'))
 
   addSyndicate = () =>
-    this.activeSyndicate = {id: 0, members: [], horses: []}
+    this.activeSyndicate = {id: '', members: [], horses: []}
 
   deleteSyndicate = () => {
-    if (this.activeSyndicate.id !== 0) {
+    if (this.activeSyndicate.id !== '') {
       this.repo.deleteSyndicate(
         this.activeSyndicate,
         this.addSyndicate
@@ -148,9 +148,9 @@ export class FormOwnerComponent implements OnInit {
   }
 
   get syndicateLabel(): string {
-    return this.activeSyndicate.id === 0
+    return this.activeSyndicate.id === ''
       ? `* New Syndicate *`
-      : `Syndicate #${this.activeSyndicate.id}`;
+      : `Syndicate #${this.activeSyndicate.id.slice(0, 7)}`;
   }
 
   get activeSyndicateHorses(): Horse[] {

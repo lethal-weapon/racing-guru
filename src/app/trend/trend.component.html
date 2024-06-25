@@ -295,7 +295,7 @@
       </div>
     </div>
 
-    <div *ngIf="activeSubsection == subsections[2] && activeSyndicate > 0"
+    <div *ngIf="activeSubsection == subsections[2] && activeSyndicate.length > 0"
          class="mx-24 mb-4 text-3xl text-yellow-400"
     >
       Syndicate #{{ activeSyndicate }}
@@ -520,7 +520,7 @@
             </div>
           </td>
         </tr>
-        <ng-container *ngIf="activeSyndicate === 0">
+        <ng-container *ngIf="activeSyndicate === ''">
           <tr *ngFor="let m of meetings">
             <td class="h-10 border border-gray-700 text-xl py-1 cursor-pointer"
                 [class.font-bold]="activeMeeting === m.meeting"
@@ -544,7 +544,7 @@
             </td>
           </tr>
         </ng-container>
-        <ng-container *ngIf="activeSyndicate > 0">
+        <ng-container *ngIf="activeSyndicate.length > 0">
           <tr *ngFor="let m of meetings">
             <td class="h-10 border border-gray-700 text-xl py-1"
                 [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"

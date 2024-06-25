@@ -1,8 +1,21 @@
-export interface TrackworkGrade {
+export interface TrackworkStarter {
   race: number,
   order: number,
+  draw: number,
+  placing: number,
+  winOdds: number,
   horse: string,
-  grade: string
+  horseNameCH: string,
+  jockey: string,
   trainer: string,
-  trainerFocus: boolean
+  scratched: boolean,
+  trainerFocus: boolean,
+  intensity: number,
+  grade: string
+}
+
+export interface TrackworkSnapshot {
+  meeting: string,
+  venue: string,
+  starters: TrackworkStarter[]
 }

@@ -269,22 +269,22 @@
       <td *counter="let race of maxRace"
           class="border border-gray-700"
       >
-        <div *ngFor="let tg of getTrackworkGrades(race, grade)"
-             class="{{getPlacingColorByHorse(tg.horse, race)}} text-sm"
-             [class.underline]="tg.trainerFocus"
+        <div *ngFor="let ts of getTrackworkStarters(race, grade)"
+             class="{{toPlacingColor(ts.placing)}} text-sm"
+             [class.underline]="ts.trainerFocus"
         >
-          {{ tg.order }}
+          {{ ts.order }}
           <span class="text-xs">
-            {{ getHorseDetail(tg.horse, race).name }}
-            {{ tg.trainer }}
+            {{ ts.horseNameCH }}
+            {{ ts.trainer }}
           </span>
-          <span *ngIf="getHorseDetail(tg.horse, race).odds > 0"
-                class="{{ getPlacingColorByHorse(tg.horse, race).length === 0
-                          ? getOddsIntensityColor(getHorseDetail(tg.horse, race).odds)
+          <span *ngIf="getHorseDetail(ts.horse, race).odds > 0"
+                class="{{ toPlacingColor(ts.placing).length === 0
+                          ? getOddsIntensityColor(getHorseDetail(ts.horse, race).odds)
                           : ''
                        }}"
           >
-            {{ getHorseDetail(tg.horse, race).odds }}
+            {{ getHorseDetail(ts.horse, race).odds }}
           </span>
         </div>
       </td>

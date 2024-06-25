@@ -21,17 +21,3 @@ export interface SelectionPost {
   race: number,
   selections: Selection[]
 }
-
-export interface DrawPlacingPerformance {
-  draw: number,
-  placing: number,
-  inherit: boolean
-}
-
-export interface DrawPerformance {
-  meeting: string,
-  race: number,
-  venue: string,
-  inheritance: number,
-  draws: DrawPlacingPerformance[]
-}

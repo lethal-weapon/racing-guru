@@ -6,8 +6,8 @@ import {EarningStarter, Meeting, PersonSummary} from '../model/meeting.model';
 import {JOCKEYS, TRAINERS} from '../model/player.model';
 import {BOUNDARY_PERSONS, COLORS, JOCKEY_CODES, PLACING_MAPS, SEASONS} from '../util/strings';
 import {DEFAULT_HORSE, Horse} from '../model/horse.model';
-import {DrawPerformance, DrawPlacingPerformance} from '../model/dto.model';
-import {MAX_RACE_PER_MEETING, ONE_MINUTE, TWENTY_SECONDS} from '../util/numbers';
+import {DrawInheritance, DrawPlacingPerformance} from '../model/draw.model';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../util/numbers';
 
 interface MilestoneWinnerLeg {
   winnerOrder: number
@@ -31,7 +31,7 @@ export class TrendComponent implements OnInit {
   activePersonView: string = this.personViews[2];
   activeMeeting: string = '';
   activePerson: string = 'WDJ';
-  activeSyndicate: number = 0;
+  activeSyndicate: string = '';
   meetingIndex: number = 0;
 
   protected readonly COLORS = COLORS;
@@ -42,17 +42,16 @@ export class TrendComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchReminders();
     this.repo.fetchHorses();
     this.repo.fetchMeetings();
     this.repo.fetchSyndicates();
-    this.repo.fetchSyndicatePerformance();
-    this.repo.fetchDrawPerformance();
+    this.repo.fetchSyndicateSnapshots();
+    this.repo.fetchDrawInheritances();
 
-    setInterval(() => this.repo.fetchMeetings(), TWENTY_SECONDS);
     setInterval(() => {
-      this.repo.fetchSyndicatePerformance();
-      this.repo.fetchDrawPerformance();
+      this.repo.fetchMeetings();
+      this.repo.fetchSyndicateSnapshots();
+      this.repo.fetchDrawInheritances();
     }, ONE_MINUTE);
   }
 
@@ -71,13 +70,13 @@ export class TrendComponent implements OnInit {
   setActivePerson = (clicked: string) =>
     this.activePerson = this.activePerson == clicked ? '' : clicked
 
-  setActiveSyndicate = (clicked: number) =>
-    this.activeSyndicate = this.activeSyndicate == clicked ? 0 : clicked
+  setActiveSyndicate = (clicked: string) =>
+    this.activeSyndicate = this.activeSyndicate == clicked ? '' : clicked
 
   setActiveSyndicateByHorse = (horse: string) => {
     this.activeSyndicate = this.syndicates
       .find(s => s.horses.includes(horse))
-      ?.id || 0;
+      ?.id || '';
   }
 
   shiftMeeting = (length: number) => {
@@ -171,14 +170,14 @@ export class TrendComponent implements OnInit {
         .filter(s => {
           const e = this.getSyndicateCellValue(s, selectedMeeting, 'engagements');
           if (e.length === 0) return false;
-          if (engagements === 'OTHERS') return true;
+          if (engagements === 'SOLE') return true;
 
           return engagements === 'SINGLE' ? parseInt(e) === 1 : parseInt(e) > 1;
         })
         .map(s => s.horses)
         .reduce((prev, curr) => prev.concat(curr), []);
 
-      const targetHorses = engagements !== 'OTHERS'
+      const targetHorses = engagements !== 'SOLE'
         ? syndicateHorses
         : this.repo.findHorses()
           .map(h => h.code)
@@ -453,8 +452,8 @@ export class TrendComponent implements OnInit {
   getDrawPlacingPerformance = (meeting: string, race: number): DrawPlacingPerformance[] =>
     this.getDrawPerformance(meeting, race)?.draws || []
 
-  getDrawPerformance = (meeting: string, race: number): DrawPerformance | undefined =>
-    this.repo.findDrawPerformances()
+  getDrawPerformance = (meeting: string, race: number): DrawInheritance | undefined =>
+    this.repo.findDrawInheritances()
       .find(d => d.meeting === meeting && d.race === race);
 
   getDrawPerformanceByPlacing = (period: string): Array<{ races: number, hits: number }> => {
@@ -474,7 +473,7 @@ export class TrendComponent implements OnInit {
     }
 
     const performances = this.repo
-      .findDrawPerformances()
+      .findDrawInheritances()
       .filter(p => meetings.includes(p.meeting))
       .filter(p => p.draws.length > 0);
 
@@ -510,9 +509,9 @@ export class TrendComponent implements OnInit {
     }
 
     return this.drawPerformanceVenues.map(v => {
-      let performances = this.repo.findDrawPerformances();
+      let performances = this.repo.findDrawInheritances();
       if (v !== 'Total') {
-        performances = this.repo.findDrawPerformances().filter(p => p.venue === v);
+        performances = this.repo.findDrawInheritances().filter(p => p.venue === v);
       }
 
       performances = performances
@@ -590,14 +589,17 @@ export class TrendComponent implements OnInit {
   }
 
   getSyndicatePerformanceHits = (meeting: string, race: number): string[] => {
-    const performance = this.repo.findSyndicatePerformances()
-      .find(sp => sp.meeting === meeting && sp.race === race);
+    const performance = this.repo
+      .findSyndicateSnapshots()
+      .find(ss => ss.meeting === meeting)
+      ?.performances
+      .find(p => p.race === race);
 
     if (performance) {
       return [
         performance?.single || '',
         performance?.multiple || '',
-        performance?.others || ''
+        performance?.sole || ''
       ];
     }
 
@@ -645,7 +647,7 @@ export class TrendComponent implements OnInit {
   }
 
   get variableStarterSyndicateKinds(): string[] {
-    return ['SINGLE', 'MULTIPLE', 'OTHERS'];
+    return ['SINGLE', 'MULTIPLE', 'SOLE'];
   }
 
   get maxActivePersonHorseTop4Count(): number {
@@ -701,7 +703,7 @@ export class TrendComponent implements OnInit {
         ||
         s2.members.length - s1.members.length
         ||
-        s1.id - s2.id
+        s1.id.localeCompare(s2.id)
       );
   }
 
