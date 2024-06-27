@@ -1,3 +1,9 @@
+export interface TrackworkSnapshot {
+  meeting: string,
+  venue: string,
+  starters: TrackworkStarter[]
+}
+
 export interface TrackworkStarter {
   race: number,
   order: number,
@@ -12,10 +18,4 @@ export interface TrackworkStarter {
   trainerFocus: boolean,
   intensity: number,
   grade: string
-}
-
-export interface TrackworkSnapshot {
-  meeting: string,
-  venue: string,
-  starters: TrackworkStarter[]
 }

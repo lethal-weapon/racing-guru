@@ -27,18 +27,18 @@ export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
   return `${seconds}S`;
 }
 
-export const isFavorite = (starter: Starter, racecard: Racecard): boolean =>
-  racecard.favorites.includes(starter.order)
-
-export const getNewFavorites = (starter: Starter, racecard: Racecard): number[] => {
-  const order = starter.order;
-  let favorites = racecard.favorites.map(f => f);
-
-  if (favorites.includes(order)) favorites = favorites.filter(f => f !== order);
-  else favorites.push(order);
-
-  return favorites;
-}
+// export const isFavorite = (starter: Starter, racecard: Racecard): boolean =>
+//   racecard.favorites.includes(starter.order)
+//
+// export const getNewFavorites = (starter: Starter, racecard: Racecard): number[] => {
+//   const order = starter.order;
+//   let favorites = racecard.favorites.map(f => f);
+//
+//   if (favorites.includes(order)) favorites = favorites.filter(f => f !== order);
+//   else favorites.push(order);
+//
+//   return favorites;
+// }
 
 export const getHorseProfileUrl = (brand: string): string => {
   return `

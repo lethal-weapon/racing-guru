@@ -1,15 +1,17 @@
-export class Pool {
-  constructor(
-    public win            : number,
-    public place          : number,
-    public quinella       : number,
-    public forecast       : number,
-    public tierce         : number,
-    public trio           : number,
-    public firstFour     ?: number,
-    public quartet       ?: number,
-    public quinellaPlace ?: number,
-    public double        ?: number
-  ) {
-  }
+export interface Pool {
+  win: number,
+  place: number,
+  quinella: number,
+  quinellaPlace: number,
+  forecast: number,
+  trio: number,
+  tierce: number,
+  firstFour: number,
+  quartet: number,
+  doubles: number,
+  treble: number,
+  doubleTrio: number,
+  tripleTrio: number,
+  sixUp: number,
+  meetingTotal: number
 }

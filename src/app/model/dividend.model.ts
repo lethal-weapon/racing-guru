@@ -1,24 +1,20 @@
-import {Singular, Combination} from './odds.model';
+import {Combination, CrossRaceCombination, Singular} from './odds.model';
 
-export class Dividend {
-  constructor(
-    public win           ?: Singular[],
-    public place         ?: Singular[],
-    public quinella      ?: Combination[],
-    public quinellaPlace ?: Combination[],
-    public forecast      ?: Combination[],
-    public tierce        ?: Combination[],
-    public trio          ?: Combination[],
-    public firstFour     ?: Combination[],
-    public quartet       ?: Combination[],
-    public double        ?: Combination[]
-  ) {
-  }
-}
-
-export interface DividendPool {
-  name: string,
-  threshold: number
+export interface Dividend {
+  win: Singular[],
+  place: Singular[],
+  quinella: Combination[],
+  quinellaPlace: Combination[],
+  forecast: Combination[],
+  trio: Combination[],
+  tierce: Combination[],
+  firstFour: Combination[],
+  quartet: Combination[],
+  doubles: CrossRaceCombination[],
+  treble: CrossRaceCombination[],
+  sixUp: CrossRaceCombination[],
+  doubleTrio: CrossRaceCombination[],
+  tripleTrio: CrossRaceCombination[]
 }
 
 export const DEFAULT_SINGULARS: Singular[] = [{order: 0, odds: 0}]

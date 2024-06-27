@@ -1,25 +1,21 @@
-export class Betline {
-  constructor(
-    public command  : string,
-    public credit   : number,
-    public debit    : number,
-    public race    ?: number
-  ) {
-  }
+export interface Record {
+  meeting: string,
+  venue: string,
+  account: string,
+  balance: number,
+  computedBalance: number,
+  suspicious: boolean,
+  fund: number,
+  deposit: number,
+  withdrawal: number,
+  debit: number,
+  credit: number,
+  betlines: Betline[]
 }
 
-export class Record {
-  constructor(
-    public meeting    : string,
-    public venue      : string,
-    public account    : string,
-    public fund       : number,
-    public deposit    : number,
-    public withdrawal : number,
-    public balance    : number,
-    public debit      : number,
-    public credit     : number,
-    public betlines   : Betline[]
-  ) {
-  }
+export interface Betline {
+  race: number,
+  command: string,
+  debit: number,
+  credit: number
 }

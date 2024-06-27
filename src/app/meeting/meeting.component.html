@@ -1,394 +1,394 @@
-<div *ngIf="isLoading">
-  <app-spinner></app-spinner>
-</div>
+<!--<div *ngIf="isLoading">-->
+<!--  <app-spinner></app-spinner>-->
+<!--</div>-->
 
-<div *ngIf="!isLoading" class="noselect">
-  <div class="mt-4 flex flex-row justify-evenly">
-    <div *ngIf="summary.length > 0"
-         class="px-6 py-4 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
-    >
-      {{ summary[0] }}
-      <br>
-      {{ summary[1] }}
-    </div>
-    <div class="p-2 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
-      <table>
-        <tr *counter="let row of (pools.length / 4)">
-          <td *ngFor="let obj of pools.slice((row-1) * 4, (row-1) * 4 + 4)"
-              class="p-1"
-          >
-            <div class="flex flex-row justify-between hover:text-yellow-400">
-              <div class="px-2 font-bold">{{ obj.pool }}&#58;</div>
-              <div class="px-2">${{ obj.amount }}M</div>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div class="w-40 pt-2 text-center">
-      <div class="text-2xl">
-        NEXT RACE
-      </div>
-      <div class="pt-2 text-4xl text-red-600">
-        {{ remainingTime }}
-      </div>
-    </div>
-  </div>
+<!--<div *ngIf="!isLoading" class="noselect">-->
+<!--  <div class="mt-4 flex flex-row justify-evenly">-->
+<!--    <div *ngIf="summary.length > 0"-->
+<!--         class="px-6 py-4 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"-->
+<!--    >-->
+<!--      {{ summary[0] }}-->
+<!--      <br>-->
+<!--      {{ summary[1] }}-->
+<!--    </div>-->
+<!--    <div class="p-2 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">-->
+<!--      <table>-->
+<!--        <tr *counter="let row of (pools.length / 4)">-->
+<!--          <td *ngFor="let obj of pools.slice((row-1) * 4, (row-1) * 4 + 4)"-->
+<!--              class="p-1"-->
+<!--          >-->
+<!--            <div class="flex flex-row justify-between hover:text-yellow-400">-->
+<!--              <div class="px-2 font-bold">{{ obj.pool }}&#58;</div>-->
+<!--              <div class="px-2">${{ obj.amount }}M</div>-->
+<!--            </div>-->
+<!--          </td>-->
+<!--        </tr>-->
+<!--      </table>-->
+<!--    </div>-->
+<!--    <div class="w-40 pt-2 text-center">-->
+<!--      <div class="text-2xl">-->
+<!--        NEXT RACE-->
+<!--      </div>-->
+<!--      <div class="pt-2 text-4xl text-red-600">-->
+<!--        {{ remainingTime }}-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
 
-  <table class="mt-4 mx-auto table-fixed border-collapse border border-gray-500 text-center">
-    <thead>
-    <th class="w-20 border border-gray-600"
-        [class.border-b-red-900]="nextRace === 1"
-    >
-      <i class="fa fa-dollar fa-lg"></i>
-    </th>
-    <th *ngFor="let jockey of jockeys"
-        class="w-20 border border-gray-600"
-        [class.border-r-red-900]="isBoundaryJockey(jockey)"
-        [class.border-b-red-900]="nextRace === 1"
-    >
-      <div [class.text-yellow-400]="isHighlightEarning(jockey)">
-        {{ getMeetingEarning(jockey) === 0 ? '-' : getMeetingEarning(jockey) }}
-      </div>
-      <div>
-        {{ jockey }}
-      </div>
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let race of racecards">
-      <td class="border border-gray-700"
-          [class.text-yellow-400]="isSpecialRace(race)"
-          [class.border-b-red-900]="race.race === lastRace"
-          tooltip="{{getRaceTooltip(race)}}"
-          [hideDelay]="0"
-      >
-        <div class="hover:underline">
-          <a [href]="race.resultUrl" target="_blank">
-            {{ race.race == 10 ? 'X' : (race.race == 11 ? 'E' : race.race) }}
-            {{ formatRaceGrade(race.grade) }}
-          </a>
-        </div>
-        <div class="hover:underline">
-          <a [href]="race.videoUrl" target="_blank">
-            {{ race.distance }}
-          </a>
-        </div>
-      </td>
-      <td *ngFor="let jockey of jockeys"
-          class="border border-gray-700 hover:bg-gray-800 text-sm {{getPlacingColor(jockey, race)}}"
-          [class.border-r-red-900]="isBoundaryJockey(jockey)"
-          [class.border-b-red-900]="race.race === lastRace"
-          [class.border-b-gray-900]="hideBottomBorder(jockey, race)"
-          [class.border-r-gray-900]="hideRightBorder(jockey, race)"
-      >
-        <div *ngIf="rideThisRace(jockey, race)"
-             class="flex flex-col"
-             tooltip="{{getStarterTooltip(jockey, race)}}"
-             [hideDelay]="0"
-        >
-          <div class="flex flex-row justify-between">
-            <div class="w-5 h-5 rounded-full border cursor-pointer"
-                 [class.border-gray-700]="!isPersonalFavorite(getStarter(jockey, race), race)"
-                 [class.border-yellow-400]="isPersonalFavorite(getStarter(jockey, race), race)"
-                 [class.text-yellow-400]="isPersonalFavorite(getStarter(jockey, race), race)"
-                 (click)="toggleFavorite(getStarter(jockey, race), race)"
-            >
-              {{ getStarter(jockey, race).order }}
-            </div>
-            <div>
-              <a [href]="getHorseProfileUrl(getStarter(jockey, race).horse)"
-                 target="_blank"
-                 [class.text-green-600]="isTop3Starter(jockey, race)"
-              >
-                {{ getStarter(jockey, race).horse[0] }}
-              </a>
-            </div>
-            <div class="w-5 h-5 border cursor-pointer"
-                 [class.border-gray-700]="activeDraw !== getStarter(jockey, race).draw"
-                 [class.border-yellow-400]="activeDraw === getStarter(jockey, race).draw"
-                 [class.text-yellow-400]="activeDraw === getStarter(jockey, race).draw"
-                 (click)="setActiveDraw(getStarter(jockey, race).draw)"
-            >
-              {{ getStarter(jockey, race).draw }}
-            </div>
-          </div>
-          <div class="flex flex-row justify-evenly">
-            <div *ngIf="isTrainerLastRace(jockey, race)"
-                 class="text-yellow-400"
-            >
-              &#952;
-            </div>
-            <div class="cursor-pointer"
-                 [class.italic]="emphasiseTrainer(jockey, race)"
-                 [class.underline]="emphasiseTrainer(jockey, race)"
-                 [class.font-bold]="activeTrainer === getTrainer(jockey, race)"
-                 [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race)"
-                 (click)="setActiveTrainer(getTrainer(jockey, race))"
-            >
-              {{ getTrainer(jockey, race) }}
-            </div>
-            <div *ngIf="isPublicFavorite(jockey, race)"
-                 class="text-yellow-400"
-            >
-              &#937;
-            </div>
-          </div>
-          <div class="flex flex-row justify-around"
-               [class.font-bold]="race.race == nextRace"
-          >
-            <div [class.text-red-600]="(race.race == nextRace) || (isComingFavoured(jockey, race))">
-              {{ getWinPlaceOdds(jockey, race).win == 0 ? '-' : getWinPlaceOdds(jockey, race).win }}
-            </div>
-            <div [class.text-blue-600]="race.race == nextRace">
-              {{ getWinPlaceOdds(jockey, race).place == 0 ? '-' : getWinPlaceOdds(jockey, race).place }}
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<!--  <table class="mt-4 mx-auto table-fixed border-collapse border border-gray-500 text-center">-->
+<!--    <thead>-->
+<!--    <th class="w-20 border border-gray-600"-->
+<!--        [class.border-b-red-900]="nextRace === 1"-->
+<!--    >-->
+<!--      <i class="fa fa-dollar fa-lg"></i>-->
+<!--    </th>-->
+<!--    <th *ngFor="let jockey of jockeys"-->
+<!--        class="w-20 border border-gray-600"-->
+<!--        [class.border-r-red-900]="isBoundaryJockey(jockey)"-->
+<!--        [class.border-b-red-900]="nextRace === 1"-->
+<!--    >-->
+<!--      <div [class.text-yellow-400]="isHighlightEarning(jockey)">-->
+<!--        {{ getMeetingEarning(jockey) === 0 ? '-' : getMeetingEarning(jockey) }}-->
+<!--      </div>-->
+<!--      <div>-->
+<!--        {{ jockey }}-->
+<!--      </div>-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let race of racecards">-->
+<!--      <td class="border border-gray-700"-->
+<!--          [class.text-yellow-400]="isSpecialRace(race)"-->
+<!--          [class.border-b-red-900]="race.race === lastRace"-->
+<!--          tooltip="{{getRaceTooltip(race)}}"-->
+<!--          [hideDelay]="0"-->
+<!--      >-->
+<!--        <div class="hover:underline">-->
+<!--          <a [href]="race.resultUrl" target="_blank">-->
+<!--            {{ race.race == 10 ? 'X' : (race.race == 11 ? 'E' : race.race) }}-->
+<!--            {{ formatRaceGrade(race.grade) }}-->
+<!--          </a>-->
+<!--        </div>-->
+<!--        <div class="hover:underline">-->
+<!--          <a [href]="race.replayUrl" target="_blank">-->
+<!--            {{ race.distance }}-->
+<!--          </a>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td *ngFor="let jockey of jockeys"-->
+<!--          class="border border-gray-700 hover:bg-gray-800 text-sm {{getPlacingColor(jockey, race)}}"-->
+<!--          [class.border-r-red-900]="isBoundaryJockey(jockey)"-->
+<!--          [class.border-b-red-900]="race.race === lastRace"-->
+<!--          [class.border-b-gray-900]="hideBottomBorder(jockey, race)"-->
+<!--          [class.border-r-gray-900]="hideRightBorder(jockey, race)"-->
+<!--      >-->
+<!--        <div *ngIf="rideThisRace(jockey, race)"-->
+<!--             class="flex flex-col"-->
+<!--             tooltip="{{getStarterTooltip(jockey, race)}}"-->
+<!--             [hideDelay]="0"-->
+<!--        >-->
+<!--          <div class="flex flex-row justify-between">-->
+<!--            <div class="w-5 h-5 rounded-full border cursor-pointer"-->
+<!--                 [class.border-gray-700]="!isPersonalFavorite(getStarter(jockey, race), race)"-->
+<!--                 [class.border-yellow-400]="isPersonalFavorite(getStarter(jockey, race), race)"-->
+<!--                 [class.text-yellow-400]="isPersonalFavorite(getStarter(jockey, race), race)"-->
+<!--                 (click)="toggleFavorite(getStarter(jockey, race), race)"-->
+<!--            >-->
+<!--              {{ getStarter(jockey, race).order }}-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              <a [href]="getHorseProfileUrl(getStarter(jockey, race).horse)"-->
+<!--                 target="_blank"-->
+<!--                 [class.text-green-600]="isTop3Starter(jockey, race)"-->
+<!--              >-->
+<!--                {{ getStarter(jockey, race).horse[0] }}-->
+<!--              </a>-->
+<!--            </div>-->
+<!--            <div class="w-5 h-5 border cursor-pointer"-->
+<!--                 [class.border-gray-700]="activeDraw !== getStarter(jockey, race).draw"-->
+<!--                 [class.border-yellow-400]="activeDraw === getStarter(jockey, race).draw"-->
+<!--                 [class.text-yellow-400]="activeDraw === getStarter(jockey, race).draw"-->
+<!--                 (click)="setActiveDraw(getStarter(jockey, race).draw)"-->
+<!--            >-->
+<!--              {{ getStarter(jockey, race).draw }}-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="flex flex-row justify-evenly">-->
+<!--            <div *ngIf="isTrainerLastRace(jockey, race)"-->
+<!--                 class="text-yellow-400"-->
+<!--            >-->
+<!--              &#952;-->
+<!--            </div>-->
+<!--            <div class="cursor-pointer"-->
+<!--                 [class.italic]="emphasiseTrainer(jockey, race)"-->
+<!--                 [class.underline]="emphasiseTrainer(jockey, race)"-->
+<!--                 [class.font-bold]="activeTrainer === getTrainer(jockey, race)"-->
+<!--                 [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race)"-->
+<!--                 (click)="setActiveTrainer(getTrainer(jockey, race))"-->
+<!--            >-->
+<!--              {{ getTrainer(jockey, race) }}-->
+<!--            </div>-->
+<!--            <div *ngIf="isPublicFavorite(jockey, race)"-->
+<!--                 class="text-yellow-400"-->
+<!--            >-->
+<!--              &#937;-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="flex flex-row justify-around"-->
+<!--               [class.font-bold]="race.race == nextRace"-->
+<!--          >-->
+<!--            <div [class.text-red-600]="(race.race == nextRace) || (isComingFavoured(jockey, race))">-->
+<!--              {{ getWinPlaceOdds(jockey, race).win == 0 ? '-' : getWinPlaceOdds(jockey, race).win }}-->
+<!--            </div>-->
+<!--            <div [class.text-blue-600]="race.race == nextRace">-->
+<!--              {{ getWinPlaceOdds(jockey, race).place == 0 ? '-' : getWinPlaceOdds(jockey, race).place }}-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
 
-  <table *ngIf="maxChallengerOrder > 0"
-         class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center"
-  >
-    <thead>
-    <th class="w-28 border border-gray-600 border-b-red-900">
-    </th>
-    <th *counter="let order of maxChallengerOrder"
-        class="w-28 border border-gray-600 border-b-red-900"
-    >
-      {{ order }}
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let personType of ['Jockey', 'Jockey', 'Jockey', 'Trainer', 'Trainer', 'Trainer']; let index = index"
-        class="hover:bg-gray-800"
-    >
-      <td class="border border-gray-700"
-          [class.border-b-red-900]="index == 2"
-      >
-        <div *ngIf="index % 3 === 0">
-          {{ personType === 'Jockey' ? 'JKC' : 'TNC' }}
-        </div>
-      </td>
-      <td *counter="let order of maxChallengerOrder"
-          class="border border-gray-700"
-          [class.border-b-red-900]="index == 2"
-          [class.text-yellow-400]="isPreferredChallenger(personType, order)"
-      >
-        <div *ngIf="index % 3 === 0">
-          {{ getChallengeOdds(personType, order).challenger }}
-          <span *ngIf="getChallengeOdds(personType, order).challenger.length > 0">
-            <span *ngIf="getChallengeOdds(personType, order).points > 0">
-              ({{ getChallengeOdds(personType, order).points }})
-            </span>
-          </span>
-        </div>
-        <div *ngIf="index % 3 === 1">
-          {{ formatChallengeOdds(getChallengeOdds(personType, order).odds) }}
-        </div>
-        <div *ngIf="index % 3 === 2">
-          <span *ngIf="getChallengerInvestment(getChallengeOdds(personType, order).challenger) > 0">
-          {{ getChallengerInvestment(getChallengeOdds(personType, order).challenger) | percent }}
-          </span>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<!--  <table *ngIf="maxChallengerOrder > 0"-->
+<!--         class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center"-->
+<!--  >-->
+<!--    <thead>-->
+<!--    <th class="w-28 border border-gray-600 border-b-red-900">-->
+<!--    </th>-->
+<!--    <th *counter="let order of maxChallengerOrder"-->
+<!--        class="w-28 border border-gray-600 border-b-red-900"-->
+<!--    >-->
+<!--      {{ order }}-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let personType of ['Jockey', 'Jockey', 'Jockey', 'Trainer', 'Trainer', 'Trainer']; let index = index"-->
+<!--        class="hover:bg-gray-800"-->
+<!--    >-->
+<!--      <td class="border border-gray-700"-->
+<!--          [class.border-b-red-900]="index == 2"-->
+<!--      >-->
+<!--        <div *ngIf="index % 3 === 0">-->
+<!--          {{ personType === 'Jockey' ? 'JKC' : 'TNC' }}-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td *counter="let order of maxChallengerOrder"-->
+<!--          class="border border-gray-700"-->
+<!--          [class.border-b-red-900]="index == 2"-->
+<!--          [class.text-yellow-400]="isPreferredChallenger(personType, order)"-->
+<!--      >-->
+<!--        <div *ngIf="index % 3 === 0">-->
+<!--          {{ getChallengeOdds(personType, order).challenger }}-->
+<!--          <span *ngIf="getChallengeOdds(personType, order).challenger.length > 0">-->
+<!--            <span *ngIf="getChallengeOdds(personType, order).points > 0">-->
+<!--              ({{ getChallengeOdds(personType, order).points }})-->
+<!--            </span>-->
+<!--          </span>-->
+<!--        </div>-->
+<!--        <div *ngIf="index % 3 === 1">-->
+<!--          {{ formatChallengeOdds(getChallengeOdds(personType, order).odds) }}-->
+<!--        </div>-->
+<!--        <div *ngIf="index % 3 === 2">-->
+<!--          <span *ngIf="getChallengerInvestment(getChallengeOdds(personType, order).challenger) > 0">-->
+<!--          {{ getChallengerInvestment(getChallengeOdds(personType, order).challenger) | percent }}-->
+<!--          </span>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
 
-  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
-    <thead>
-    <th class="w-20 border border-gray-600">
-      Trainer
-    </th>
-    <th *counter="let race of maxRace"
-        class="w-36 border border-gray-600"
-    >
-      {{ race }}
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let grade of RATING_GRADES; let index = index"
-        class="hover:bg-gray-800"
-    >
-      <td class="border border-gray-700 text-2xl">
-        <div class="text-xl">{{ getTrainerGroupInvestment(index).count }}</div>
-        <div>{{ grade }}</div>
-        <div *ngIf="getTrainerGroupInvestment(index).investment > 0" class="text-xl">
-          {{ getTrainerGroupInvestment(index).investment | percent }}
-        </div>
-      </td>
-      <td *counter="let race of maxRace"
-          class="border border-gray-700"
-      >
-        <div *ngFor="let starter of getStartersByTrainerGroup(race, index)"
-             class="{{getPlacingColorByHorse(starter.horse, race)}} text-sm"
-        >
-          {{ starter.order }}
-          <span class="text-xs">
-            {{ getHorseDetail(starter.horse, race).name }}
-            {{ starter.trainer }}
-          </span>
-          <span *ngIf="getHorseDetail(starter.horse, race).odds > 0"
-                class="{{ getPlacingColorByHorse(starter.horse, race).length === 0
-                         ? getOddsIntensityColor(getHorseDetail(starter.horse, race).odds)
-                         : ''
-                      }}"
-          >
-            {{ getHorseDetail(starter.horse, race).odds }}
-          </span>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<!--  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">-->
+<!--    <thead>-->
+<!--    <th class="w-20 border border-gray-600">-->
+<!--      Trainer-->
+<!--    </th>-->
+<!--    <th *counter="let race of maxRace"-->
+<!--        class="w-36 border border-gray-600"-->
+<!--    >-->
+<!--      {{ race }}-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let grade of RATING_GRADES; let index = index"-->
+<!--        class="hover:bg-gray-800"-->
+<!--    >-->
+<!--      <td class="border border-gray-700 text-2xl">-->
+<!--        <div class="text-xl">{{ getTrainerGroupInvestment(index).count }}</div>-->
+<!--        <div>{{ grade }}</div>-->
+<!--        <div *ngIf="getTrainerGroupInvestment(index).investment > 0" class="text-xl">-->
+<!--          {{ getTrainerGroupInvestment(index).investment | percent }}-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td *counter="let race of maxRace"-->
+<!--          class="border border-gray-700"-->
+<!--      >-->
+<!--        <div *ngFor="let starter of getStartersByTrainerGroup(race, index)"-->
+<!--             class="{{getPlacingColorByHorse(starter.horse, race)}} text-sm"-->
+<!--        >-->
+<!--          {{ starter.order }}-->
+<!--          <span class="text-xs">-->
+<!--            {{ getHorseDetail(starter.horse, race).name }}-->
+<!--            {{ starter.trainer }}-->
+<!--          </span>-->
+<!--          <span *ngIf="getHorseDetail(starter.horse, race).odds > 0"-->
+<!--                class="{{ getPlacingColorByHorse(starter.horse, race).length === 0-->
+<!--                         ? getOddsIntensityColor(getHorseDetail(starter.horse, race).odds)-->
+<!--                         : ''-->
+<!--                      }}"-->
+<!--          >-->
+<!--            {{ getHorseDetail(starter.horse, race).odds }}-->
+<!--          </span>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
 
-  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+<!--  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>-->
 
-  <table class="mx-auto table-fixed border-collapse border border-gray-700 text-center">
-    <thead>
-    <th class="w-20 border border-gray-600">
-      Twork
-    </th>
-    <th *counter="let race of maxRace"
-        class="w-36 border border-gray-600"
-    >
-      {{ race }}
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let grade of RATING_GRADES"
-        class="hover:bg-gray-800"
-    >
-      <td class="border border-gray-700 text-2xl">
-        {{ grade }}
-      </td>
-      <td *counter="let race of maxRace"
-          class="border border-gray-700"
-      >
-        <div *ngFor="let ts of getTrackworkStarters(race, grade)"
-             class="{{toPlacingColor(ts.placing)}} text-sm"
-             [class.underline]="ts.trainerFocus"
-        >
-          {{ ts.order }}
-          <span class="text-xs">
-            {{ ts.horseNameCH }}
-            {{ ts.trainer }}
-          </span>
-          <span *ngIf="getHorseDetail(ts.horse, race).odds > 0"
-                class="{{ toPlacingColor(ts.placing).length === 0
-                          ? getOddsIntensityColor(getHorseDetail(ts.horse, race).odds)
-                          : ''
-                       }}"
-          >
-            {{ getHorseDetail(ts.horse, race).odds }}
-          </span>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<!--  <table class="mx-auto table-fixed border-collapse border border-gray-700 text-center">-->
+<!--    <thead>-->
+<!--    <th class="w-20 border border-gray-600">-->
+<!--      Twork-->
+<!--    </th>-->
+<!--    <th *counter="let race of maxRace"-->
+<!--        class="w-36 border border-gray-600"-->
+<!--    >-->
+<!--      {{ race }}-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let grade of RATING_GRADES"-->
+<!--        class="hover:bg-gray-800"-->
+<!--    >-->
+<!--      <td class="border border-gray-700 text-2xl">-->
+<!--        {{ grade }}-->
+<!--      </td>-->
+<!--      <td *counter="let race of maxRace"-->
+<!--          class="border border-gray-700"-->
+<!--      >-->
+<!--        <div *ngFor="let ts of getTrackworkStarters(race, grade)"-->
+<!--             class="{{toPlacingColor(ts.placing)}} text-sm"-->
+<!--             [class.underline]="ts.trainerFocus"-->
+<!--        >-->
+<!--          {{ ts.order }}-->
+<!--          <span class="text-xs">-->
+<!--            {{ ts.horseNameCH }}-->
+<!--            {{ ts.trainer }}-->
+<!--          </span>-->
+<!--          <span *ngIf="getHorseDetail(ts.horse, race).odds > 0"-->
+<!--                class="{{ toPlacingColor(ts.placing).length === 0-->
+<!--                          ? getOddsIntensityColor(getHorseDetail(ts.horse, race).odds)-->
+<!--                          : ''-->
+<!--                       }}"-->
+<!--          >-->
+<!--            {{ getHorseDetail(ts.horse, race).odds }}-->
+<!--          </span>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
 
-  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+<!--  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>-->
 
-  <table class="mx-auto table-fixed border-collapse border border-gray-700 text-center">
-    <thead>
-    <th class="w-28 border border-gray-600">
-      Syndicate
-    </th>
-    <th *counter="let race of maxRace"
-        class="w-36 border border-gray-600"
-    >
-      {{ race }}
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let syn of syndicates"
-        class="hover:bg-gray-800"
-    >
-      <td class="border border-gray-700">
-        <div class="grid grid-cols-5">
-          <div class="col-span-2">
-            #{{ syn.id }}
-          </div>
-          <div class="col-span-3">
-            ({{ syn.members.length }}, {{ getSyndicateServiceHorseCount(syn.horses) }})
-          </div>
-        </div>
-      </td>
-      <td *counter="let race of maxRace"
-          class="border border-gray-700"
-          [class.bg-gray-700]="getSyndicateStarters(syn, race).length > 1"
-      >
-        <div *ngFor="let h of getSyndicateStarters(syn, race)"
-             class="{{getPlacingColorByHorse(h, race)}} leading-5"
-        >
-          <div>
-            {{ getHorseDetail(h, race).order }}
-            {{ getHorseDetail(h, race).name }}
-            <span *ngIf="getHorseDetail(h, race).odds > 0"
-                  class="{{ getPlacingColorByHorse(h, race).length === 0
-                          ? getOddsIntensityColor(getHorseDetail(h, race).odds)
-                          : ''
-                       }}"
-            >
-              {{ getHorseDetail(h, race).odds }}
-            </span>
-          </div>
-          <div class="flex flex-row justify-around">
-            <div>
-              {{ getHorseDetail(h, race).jockey }}
-            </div>
-            <div>
-              {{ getHorseDetail(h, race).trainer }}
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<!--  <table class="mx-auto table-fixed border-collapse border border-gray-700 text-center">-->
+<!--    <thead>-->
+<!--    <th class="w-28 border border-gray-600">-->
+<!--      Syndicate-->
+<!--    </th>-->
+<!--    <th *counter="let race of maxRace"-->
+<!--        class="w-36 border border-gray-600"-->
+<!--    >-->
+<!--      {{ race }}-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let syn of syndicates"-->
+<!--        class="hover:bg-gray-800"-->
+<!--    >-->
+<!--      <td class="border border-gray-700">-->
+<!--        <div class="grid grid-cols-5">-->
+<!--          <div class="col-span-2">-->
+<!--            #{{ syn.id }}-->
+<!--          </div>-->
+<!--          <div class="col-span-3">-->
+<!--            ({{ syn.members.length }}, {{ getSyndicateServiceHorseCount(syn.horses) }})-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td *counter="let race of maxRace"-->
+<!--          class="border border-gray-700"-->
+<!--          [class.bg-gray-700]="getSyndicateStarters(syn, race).length > 1"-->
+<!--      >-->
+<!--        <div *ngFor="let h of getSyndicateStarters(syn, race)"-->
+<!--             class="{{getPlacingColorByHorse(h, race)}} leading-5"-->
+<!--        >-->
+<!--          <div>-->
+<!--            {{ getHorseDetail(h, race).order }}-->
+<!--            {{ getHorseDetail(h, race).name }}-->
+<!--            <span *ngIf="getHorseDetail(h, race).odds > 0"-->
+<!--                  class="{{ getPlacingColorByHorse(h, race).length === 0-->
+<!--                          ? getOddsIntensityColor(getHorseDetail(h, race).odds)-->
+<!--                          : ''-->
+<!--                       }}"-->
+<!--            >-->
+<!--              {{ getHorseDetail(h, race).odds }}-->
+<!--            </span>-->
+<!--          </div>-->
+<!--          <div class="flex flex-row justify-around">-->
+<!--            <div>-->
+<!--              {{ getHorseDetail(h, race).jockey }}-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              {{ getHorseDetail(h, race).trainer }}-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
 
-  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
-    <thead>
-    <th class="w-16 border border-gray-600">
-      Race
-    </th>
-    <th class="w-32 border border-gray-600 border-r-red-900">
-      Top 4
-    </th>
-    <th *ngFor="let pool of dividendPools"
-        class="w-20 border border-gray-600"
-        [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
-    >
-      {{ pool.name }}
-    </th>
-    </thead>
-    <tbody>
-    <tr *counter="let race of getMaxRace(this.racecards)"
-        class="hover:bg-gray-800"
-    >
-      <td class="border border-gray-700">
-        {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
-      </td>
-      <td class="px-1 border border-gray-700 border-r-red-900">
-        <div class="grid grid-cols-4">
-          <div *ngFor="let s of getDividendTop4(race)">
-            {{ s }}
-          </div>
-        </div>
-      </td>
-      <td *ngFor="let pool of dividendPools"
-          class="border border-gray-700"
-          [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
-          [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
-      >
-        {{ getDividendOdds(race, pool.name) > 0 ? getDividendOdds(race, pool.name) : '' }}
-      </td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+<!--  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">-->
+<!--    <thead>-->
+<!--    <th class="w-16 border border-gray-600">-->
+<!--      Race-->
+<!--    </th>-->
+<!--    <th class="w-32 border border-gray-600 border-r-red-900">-->
+<!--      Top 4-->
+<!--    </th>-->
+<!--    <th *ngFor="let pool of dividendPools"-->
+<!--        class="w-20 border border-gray-600"-->
+<!--        [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"-->
+<!--    >-->
+<!--      {{ pool.name }}-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *counter="let race of getMaxRace(this.racecards)"-->
+<!--        class="hover:bg-gray-800"-->
+<!--    >-->
+<!--      <td class="border border-gray-700">-->
+<!--        {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}-->
+<!--      </td>-->
+<!--      <td class="px-1 border border-gray-700 border-r-red-900">-->
+<!--        <div class="grid grid-cols-4">-->
+<!--          <div *ngFor="let s of getDividendTop4(race)">-->
+<!--            {{ s }}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td *ngFor="let pool of dividendPools"-->
+<!--          class="border border-gray-700"-->
+<!--          [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"-->
+<!--          [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"-->
+<!--      >-->
+<!--        {{ getDividendOdds(race, pool.name) > 0 ? getDividendOdds(race, pool.name) : '' }}-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+<!--</div>-->

@@ -7,7 +7,7 @@ import {Reminder} from '../model/reminder.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {Selection} from '../model/dto.model';
-import {PersonSummary} from '../model/meeting.model';
+import {PlayerSummary} from '../model/meeting.model';
 import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
 import {
   Collaboration,
@@ -23,11 +23,9 @@ import {
   ONE_DAY_MILL
 } from '../util/numbers';
 import {
-  isFavorite,
   getCurrentMeeting,
   getHorseProfileUrl,
   getMaxRace,
-  getNewFavorites,
   getPlacingBorderBackground,
   getRaceBadgeStyle,
   getStarterQQPWinPlaceOdds,
@@ -68,7 +66,6 @@ export class RacecardComponent implements OnInit {
   protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly SENIOR_HORSE_AGE = SENIOR_HORSE_AGE;
   protected readonly COMMON_HORSE_ORIGINS = COMMON_HORSE_ORIGINS;
-  protected readonly isFavorite = isFavorite;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarters = getStarters;
   protected readonly getRaceBadgeStyle = getRaceBadgeStyle;
@@ -97,268 +94,268 @@ export class RacecardComponent implements OnInit {
     setInterval(() => this.repo.fetchCollaborations(), THIRTY_SECONDS);
   }
 
-  formatMeeting = (meeting: string): string => {
-    const pastMeeting = new Date(meeting).getTime();
-    const currentMeeting = new Date(this.racecards[0].meeting).getTime();
-    const diffDays = (currentMeeting - pastMeeting) / ONE_DAY_MILL;
-    const diffMonths = (diffDays / 30).toFixed(1);
-    const diffYears = (diffDays / 365).toFixed(1);
-
-    if (diffDays < 100) return `${diffDays}D`;
-    if (diffDays < 365) return `${diffMonths}M`;
-    return `${diffYears}Y`;
-  }
-
-  formatVenue = (venue: string): string =>
-    ['HV', 'ST'].includes(venue) ? venue : 'OS'
-
-  formatPerson = (person: string): string =>
-    person.length <= 3
-      ? person
-      : person.split(' ')[1].slice(0, 3).toUpperCase()
-
-  toggleFavorite = (starter: Starter) =>
-    this.repo.saveFavorite({
-      meeting: getCurrentMeeting(this.racecards),
-      race: this.activeRace,
-      favorites: getNewFavorites(starter, this.activeRacecard)
-    })
-
-  clickRaceBadge = (clickedRace: number) => {
-    if (!this.isEditMode) this.activeRace = clickedRace;
-  }
-
-  clickEditButton = () => {
-    if (!this.isEditMode) {
-      this.isEditMode = true;
-      this.editingSelections = this.activeRacecard.selections.map(s => s);
-
-    } else {
-      this.isEditMode = false;
-      this.repo.saveSelection({
-        meeting: getCurrentMeeting(this.racecards),
-        race: this.activeRace,
-        selections: this.editingSelections
-      });
-    }
-  }
-
-  toggleSelection = (starter: Starter, placing: number) => {
-    if (!this.isEditMode) return;
-
-    if (this.isSelection(starter, placing))
-      this.editingSelections = this.editingSelections
-        .filter(s => !(s.order === starter.order && s.placing === placing));
-    else
-      this.editingSelections.push({order: starter.order, placing: placing});
-  }
-
-  isSelection = (starter: Starter, placing: number): boolean =>
-    (
-      this.isEditMode
-        ? this.editingSelections
-        : this.activeRacecard.selections
-    )
-      .filter(s => s.order === starter.order && s.placing === placing)
-      .length === 1
-
-  getHorse = (starter: Starter): Horse =>
-    this.repo.findHorses()
-      .find(s => s.code === starter.horse) || DEFAULT_HORSE
-
-  getCollaboration = (starter: Starter): Collaboration =>
-    this.repo.findCollaborations()
-      .find(c => c.jockey === starter.jockey && c.trainer === starter.trainer)
-    || DEFAULT_COLLABORATION;
-
-  getHorseStatistics = (starter: Starter): string => {
-    const h = this.getHorse(starter);
-    return `${h.total1st}-${h.total2nd}-${h.total3rd}/${h.totalRuns}`;
-  }
-
-  getPastHorseStarters = (current: Starter): PastStarter[] =>
-    (
-      this.repo.findHorses()
-        .find(s => s.code === current.horse)
-        ?.pastStarters || []
-    )
-      .slice(0, 20)
-
-  getPastCollaborationStarters = (current: Starter): CollaborationStarter[] =>
-    (
-      this.repo.findCollaborations()
-        .filter(c => c.jockey === current.jockey && c.trainer === current.trainer)
-        .pop()
-        ?.starters || []
-    )
-      .filter(s => {
-        if (s.meeting !== getCurrentMeeting(this.racecards)) return true;
-        return s.meeting === getCurrentMeeting(this.racecards) && s.race < this.activeRace;
-      })
-      .sort((r1, r2) =>
-        r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
-      )
-      .slice(0, 35)
-
-  getPersonSections = (starter: Starter): PersonSection[] =>
-    [
-      (this.repo.findCollaborations().filter(c => c.jockey === starter.jockey) || []),
-      (this.repo.findCollaborations().filter(c => c.trainer === starter.trainer) || [])
-    ].map((colls, index) => ({
-        person: index === 0 ? starter.jockey : starter.trainer,
-        wins: colls.map(c => c.wins).reduce((prev, curr) => prev + curr, 0),
-        seconds: colls.map(c => c.seconds).reduce((prev, curr) => prev + curr, 0),
-        thirds: colls.map(c => c.thirds).reduce((prev, curr) => prev + curr, 0),
-        fourths: colls.map(c => c.fourths).reduce((prev, curr) => prev + curr, 0),
-        starters: this.getPersonStarters(
-          index === 0 ? starter.jockey : starter.trainer,
-          colls
-        )
-      })
-    )
-
-  getPersonStarters = (person: string, collaborations: Collaboration[], limit: number = 20): PersonStarter[] =>
-    collaborations
-      .map(c =>
-        c.starters.map(s => ({
-          meeting: s.meeting,
-          race: s.race,
-          partner: [c.jockey, c.trainer].find(p => p !== person) || '?',
-          horse: s.horseNameCH,
-          placing: s?.placing || 0,
-          winOdds: s?.winOdds || 0
-        }))
-      )
-      .reduce((prev, curr) => prev.concat(curr), [])
-      .filter(s => {
-        if (s.meeting !== getCurrentMeeting(this.racecards)) return true;
-        return s.meeting === getCurrentMeeting(this.racecards) && s.race < this.activeRace;
-      })
-      .sort((r1, r2) =>
-        r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
-      )
-      .slice(0, limit)
-
-  getActiveStarterWQPInvestments = (starter: Starter): Array<{ percent: string, amount: string }> => {
-    const pool = this.activeRacecard?.pool;
-    if (!pool) return [];
-
-    const WP = getStarterWinPlaceOdds(starter, this.activeRacecard);
-    const QQP_WP = getStarterQQPWinPlaceOdds(starter, this.activeRacecard);
-
-    return [
-      {odds: WP.win, amount: pool.win},
-      {odds: QQP_WP[0], amount: pool.quinella},
-      {odds: 3 * WP.place, amount: pool.place},
-      {odds: 3 * QQP_WP[1], amount: pool?.quinellaPlace || 0}
-    ].map(o => ({
-      percent: `${(100 * PAYOUT_RATE / o.odds).toFixed(1)}%`,
-      amount: `$${(o.amount * PAYOUT_RATE / o.odds / ONE_MILLION).toFixed(2)}M`
-    }));
-  }
-
-  isPublicUnderEstimated = (starter: Starter): boolean => {
-    const investments = this.getActiveStarterWQPInvestments(starter);
-    if (investments.length === 0) return false;
-
-    const modelChance = 100 * (starter?.chance || 0);
-    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
-    const tops = this.startersSortedByChance.map(s => s.order).slice(0, 6);
-
-    return tops.includes(starter.order) && (modelChance - publicChance >= 3);
-  }
-
-  isModelUnderEstimated = (starter: Starter): boolean => {
-    const investments = this.getActiveStarterWQPInvestments(starter);
-    if (investments.length === 0) return false;
-
-    const modelChance = 100 * (starter?.chance || 0);
-    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
-    const bottoms = this.startersSortedByChance.map(s => s.order).slice(6);
-
-    return bottoms.includes(starter.order) && (publicChance - modelChance >= 3);
-  }
-
-  getStarterStatSumColor = (starter: Starter, index: number): string => {
-    const starterSum = this.getPersonStatOnPlacing(starter, index)[2];
-    const isTopSum = this.startersSortedByChance
-      .map(s => this.getPersonStatOnPlacing(s, index)[2])
-      .filter((s, i, arr) => arr.indexOf(s) === i)
-      .sort((s1, s2) => s1 - s2)
-      .slice(0, 3)
-      .includes(starterSum);
-
-    return isTopSum ? COLORS[index] : '';
-  }
-
-  getPersonStatOnPlacing = (starter: Starter, index: number): number[] => {
-    const stats = [starter.jockey, starter.trainer]
-      .map(p => this.getPersonStartsOnPlacing(p))
-      .map(s => [s.wins, s.seconds, s.thirds, s.fourths][index]);
-
-    return stats.concat([stats[0] + stats[1]]);
-  }
-
-  getPersonStartsOnPlacing = (person: string): PersonSummary => {
-    let ps: PersonSummary = {
-      person: person,
-      wins: 0,
-      seconds: 0,
-      thirds: 0,
-      fourths: 0,
-      engagements: 0,
-      earnings: 0,
-      starters: []
-    };
-
-    let done = [false, false, false, false];
-    const colls = this.repo.findCollaborations()
-      .filter(c => c.jockey === person || c.trainer === person);
-    const starts = this.getPersonStarters(person, colls, 100)
-      .filter(s => s.winOdds > 0 && s.placing > 0);
-
-    for (let j = 0; j < starts.length; j++) {
-      if (starts[j].placing >= 1 && starts[j].placing <= 4) {
-        done[starts[j].placing - 1] = true;
-      }
-
-      if (done.every(d => d)) break;
-
-      done.forEach((d, index) => {
-        if (!d) {
-          if (index === 0) ps.wins += 1;
-          if (index === 1) ps.seconds += 1;
-          if (index === 2) ps.thirds += 1;
-          if (index === 3) ps.fourths += 1;
-        }
-      });
-    }
-
-    return ps;
-  }
-
-  getMeetingWinnerBeforeActiveRace = (player: string): number =>
-    this.racecards
-      .filter(r => r.race < this.activeRace)
-      .flatMap(r => r.starters)
-      .filter(s => [s.jockey, s.trainer].includes(player))
-      .filter(s => (s?.placing || 0) === 1)
-      .length;
-
-  get startersSortedByChance(): Starter[] {
-    return this.activeRacecard.starters
-      .filter(s => !s.scratched)
-      .sort((s1, s2) => (s2?.chance || 0) - (s1?.chance || 0))
-  }
-
-  get meetingReminder(): Reminder {
-    // @ts-ignore
-    return this.repo.findReminders()
-      .find(n => n.meeting === getCurrentMeeting(this.racecards));
-  }
-
-  get activeRacecard(): Racecard {
-    // @ts-ignore
-    return this.racecards.find(r => r.race === this.activeRace);
-  }
+  // formatMeeting = (meeting: string): string => {
+  //   const pastMeeting = new Date(meeting).getTime();
+  //   const currentMeeting = new Date(this.racecards[0].meeting).getTime();
+  //   const diffDays = (currentMeeting - pastMeeting) / ONE_DAY_MILL;
+  //   const diffMonths = (diffDays / 30).toFixed(1);
+  //   const diffYears = (diffDays / 365).toFixed(1);
+  //
+  //   if (diffDays < 100) return `${diffDays}D`;
+  //   if (diffDays < 365) return `${diffMonths}M`;
+  //   return `${diffYears}Y`;
+  // }
+  //
+  // formatVenue = (venue: string): string =>
+  //   ['HV', 'ST'].includes(venue) ? venue : 'OS'
+  //
+  // formatPerson = (person: string): string =>
+  //   person.length <= 3
+  //     ? person
+  //     : person.split(' ')[1].slice(0, 3).toUpperCase()
+  //
+  // toggleFavorite = (starter: Starter) =>
+  //   this.repo.saveFavorite({
+  //     meeting: getCurrentMeeting(this.racecards),
+  //     race: this.activeRace,
+  //     favorites: getNewFavorites(starter, this.activeRacecard)
+  //   })
+  //
+  // clickRaceBadge = (clickedRace: number) => {
+  //   if (!this.isEditMode) this.activeRace = clickedRace;
+  // }
+  //
+  // clickEditButton = () => {
+  //   if (!this.isEditMode) {
+  //     this.isEditMode = true;
+  //     this.editingSelections = this.activeRacecard.selections.map(s => s);
+  //
+  //   } else {
+  //     this.isEditMode = false;
+  //     this.repo.saveSelection({
+  //       meeting: getCurrentMeeting(this.racecards),
+  //       race: this.activeRace,
+  //       selections: this.editingSelections
+  //     });
+  //   }
+  // }
+  //
+  // toggleSelection = (starter: Starter, placing: number) => {
+  //   if (!this.isEditMode) return;
+  //
+  //   if (this.isSelection(starter, placing))
+  //     this.editingSelections = this.editingSelections
+  //       .filter(s => !(s.order === starter.order && s.placing === placing));
+  //   else
+  //     this.editingSelections.push({order: starter.order, placing: placing});
+  // }
+  //
+  // isSelection = (starter: Starter, placing: number): boolean =>
+  //   (
+  //     this.isEditMode
+  //       ? this.editingSelections
+  //       : this.activeRacecard.selections
+  //   )
+  //     .filter(s => s.order === starter.order && s.placing === placing)
+  //     .length === 1
+  //
+  // getHorse = (starter: Starter): Horse =>
+  //   this.repo.findHorses()
+  //     .find(s => s.code === starter.horse) || DEFAULT_HORSE
+  //
+  // getCollaboration = (starter: Starter): Collaboration =>
+  //   this.repo.findCollaborations()
+  //     .find(c => c.jockey === starter.jockey && c.trainer === starter.trainer)
+  //   || DEFAULT_COLLABORATION;
+  //
+  // getHorseStatistics = (starter: Starter): string => {
+  //   const h = this.getHorse(starter);
+  //   return `${h.total1st}-${h.total2nd}-${h.total3rd}/${h.totalRuns}`;
+  // }
+  //
+  // getPastHorseStarters = (current: Starter): PastStarter[] =>
+  //   (
+  //     this.repo.findHorses()
+  //       .find(s => s.code === current.horse)
+  //       ?.pastStarters || []
+  //   )
+  //     .slice(0, 20)
+  //
+  // getPastCollaborationStarters = (current: Starter): CollaborationStarter[] =>
+  //   (
+  //     this.repo.findCollaborations()
+  //       .filter(c => c.jockey === current.jockey && c.trainer === current.trainer)
+  //       .pop()
+  //       ?.starters || []
+  //   )
+  //     .filter(s => {
+  //       if (s.meeting !== getCurrentMeeting(this.racecards)) return true;
+  //       return s.meeting === getCurrentMeeting(this.racecards) && s.race < this.activeRace;
+  //     })
+  //     .sort((r1, r2) =>
+  //       r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
+  //     )
+  //     .slice(0, 35)
+  //
+  // getPersonSections = (starter: Starter): PersonSection[] =>
+  //   [
+  //     (this.repo.findCollaborations().filter(c => c.jockey === starter.jockey) || []),
+  //     (this.repo.findCollaborations().filter(c => c.trainer === starter.trainer) || [])
+  //   ].map((colls, index) => ({
+  //       person: index === 0 ? starter.jockey : starter.trainer,
+  //       wins: colls.map(c => c.wins).reduce((prev, curr) => prev + curr, 0),
+  //       seconds: colls.map(c => c.seconds).reduce((prev, curr) => prev + curr, 0),
+  //       thirds: colls.map(c => c.thirds).reduce((prev, curr) => prev + curr, 0),
+  //       fourths: colls.map(c => c.fourths).reduce((prev, curr) => prev + curr, 0),
+  //       starters: this.getPersonStarters(
+  //         index === 0 ? starter.jockey : starter.trainer,
+  //         colls
+  //       )
+  //     })
+  //   )
+  //
+  // getPersonStarters = (person: string, collaborations: Collaboration[], limit: number = 20): PersonStarter[] =>
+  //   collaborations
+  //     .map(c =>
+  //       c.starters.map(s => ({
+  //         meeting: s.meeting,
+  //         race: s.race,
+  //         partner: [c.jockey, c.trainer].find(p => p !== person) || '?',
+  //         horse: s.horseNameCH,
+  //         placing: s?.placing || 0,
+  //         winOdds: s?.winOdds || 0
+  //       }))
+  //     )
+  //     .reduce((prev, curr) => prev.concat(curr), [])
+  //     .filter(s => {
+  //       if (s.meeting !== getCurrentMeeting(this.racecards)) return true;
+  //       return s.meeting === getCurrentMeeting(this.racecards) && s.race < this.activeRace;
+  //     })
+  //     .sort((r1, r2) =>
+  //       r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
+  //     )
+  //     .slice(0, limit)
+  //
+  // getActiveStarterWQPInvestments = (starter: Starter): Array<{ percent: string, amount: string }> => {
+  //   const pool = this.activeRacecard?.pool;
+  //   if (!pool) return [];
+  //
+  //   const WP = getStarterWinPlaceOdds(starter, this.activeRacecard);
+  //   const QQP_WP = getStarterQQPWinPlaceOdds(starter, this.activeRacecard);
+  //
+  //   return [
+  //     {odds: WP.win, amount: pool.win},
+  //     {odds: QQP_WP[0], amount: pool.quinella},
+  //     {odds: 3 * WP.place, amount: pool.place},
+  //     {odds: 3 * QQP_WP[1], amount: pool?.quinellaPlace || 0}
+  //   ].map(o => ({
+  //     percent: `${(100 * PAYOUT_RATE / o.odds).toFixed(1)}%`,
+  //     amount: `$${(o.amount * PAYOUT_RATE / o.odds / ONE_MILLION).toFixed(2)}M`
+  //   }));
+  // }
+  //
+  // isPublicUnderEstimated = (starter: Starter): boolean => {
+  //   const investments = this.getActiveStarterWQPInvestments(starter);
+  //   if (investments.length === 0) return false;
+  //
+  //   const modelChance = 100 * (starter?.chance || 0);
+  //   const publicChance = parseFloat(investments[0].percent.replace('%', ''));
+  //   const tops = this.startersSortedByChance.map(s => s.order).slice(0, 6);
+  //
+  //   return tops.includes(starter.order) && (modelChance - publicChance >= 3);
+  // }
+  //
+  // isModelUnderEstimated = (starter: Starter): boolean => {
+  //   const investments = this.getActiveStarterWQPInvestments(starter);
+  //   if (investments.length === 0) return false;
+  //
+  //   const modelChance = 100 * (starter?.chance || 0);
+  //   const publicChance = parseFloat(investments[0].percent.replace('%', ''));
+  //   const bottoms = this.startersSortedByChance.map(s => s.order).slice(6);
+  //
+  //   return bottoms.includes(starter.order) && (publicChance - modelChance >= 3);
+  // }
+  //
+  // getStarterStatSumColor = (starter: Starter, index: number): string => {
+  //   const starterSum = this.getPersonStatOnPlacing(starter, index)[2];
+  //   const isTopSum = this.startersSortedByChance
+  //     .map(s => this.getPersonStatOnPlacing(s, index)[2])
+  //     .filter((s, i, arr) => arr.indexOf(s) === i)
+  //     .sort((s1, s2) => s1 - s2)
+  //     .slice(0, 3)
+  //     .includes(starterSum);
+  //
+  //   return isTopSum ? COLORS[index] : '';
+  // }
+  //
+  // getPersonStatOnPlacing = (starter: Starter, index: number): number[] => {
+  //   const stats = [starter.jockey, starter.trainer]
+  //     .map(p => this.getPersonStartsOnPlacing(p))
+  //     .map(s => [s.wins, s.seconds, s.thirds, s.fourths][index]);
+  //
+  //   return stats.concat([stats[0] + stats[1]]);
+  // }
+  //
+  // getPersonStartsOnPlacing = (person: string): PlayerSummary => {
+  //   let ps: PlayerSummary = {
+  //     player: person,
+  //     wins: 0,
+  //     seconds: 0,
+  //     thirds: 0,
+  //     fourths: 0,
+  //     engagements: 0,
+  //     earnings: 0,
+  //     starters: []
+  //   };
+  //
+  //   let done = [false, false, false, false];
+  //   const colls = this.repo.findCollaborations()
+  //     .filter(c => c.jockey === person || c.trainer === person);
+  //   const starts = this.getPersonStarters(person, colls, 100)
+  //     .filter(s => s.winOdds > 0 && s.placing > 0);
+  //
+  //   for (let j = 0; j < starts.length; j++) {
+  //     if (starts[j].placing >= 1 && starts[j].placing <= 4) {
+  //       done[starts[j].placing - 1] = true;
+  //     }
+  //
+  //     if (done.every(d => d)) break;
+  //
+  //     done.forEach((d, index) => {
+  //       if (!d) {
+  //         if (index === 0) ps.wins += 1;
+  //         if (index === 1) ps.seconds += 1;
+  //         if (index === 2) ps.thirds += 1;
+  //         if (index === 3) ps.fourths += 1;
+  //       }
+  //     });
+  //   }
+  //
+  //   return ps;
+  // }
+  //
+  // getMeetingWinnerBeforeActiveRace = (player: string): number =>
+  //   this.racecards
+  //     .filter(r => r.race < this.activeRace)
+  //     .flatMap(r => r.starters)
+  //     .filter(s => [s.jockey, s.trainer].includes(player))
+  //     .filter(s => (s?.placing || 0) === 1)
+  //     .length;
+  //
+  // get startersSortedByChance(): Starter[] {
+  //   return this.activeRacecard.starters
+  //     .filter(s => !s.scratched)
+  //     .sort((s1, s2) => (s2?.chance || 0) - (s1?.chance || 0))
+  // }
+  //
+  // get meetingReminder(): Reminder {
+  //   // @ts-ignore
+  //   return this.repo.findReminders()
+  //     .find(n => n.meeting === getCurrentMeeting(this.racecards));
+  // }
+  //
+  // get activeRacecard(): Racecard {
+  //   // @ts-ignore
+  //   return this.racecards.find(r => r.race === this.activeRace);
+  // }
 }

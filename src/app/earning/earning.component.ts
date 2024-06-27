@@ -135,8 +135,8 @@ export class EarningComponent implements OnInit {
   getPlayerEarningUpToMeeting = (player: string, meeting: string): number => {
     return this.meetings
       .filter(m => m.meeting >= SEASONS[0].opening && m.meeting <= meeting)
-      .flatMap(m => m.persons)
-      .filter(ps => ps.person === player)
+      .flatMap(m => m.players)
+      .filter(ps => ps.player === player)
       .map(ps =>
         ps.earnings -
         ps.starters.filter(s => s?.winOdds && s?.placing > 4).length
@@ -154,8 +154,8 @@ export class EarningComponent implements OnInit {
   getCollaborationEarning = (jockey: string, trainer: string): number =>
     this.meetings
       .filter(m => m.meeting >= SEASONS[0].opening)
-      .flatMap(m => m.persons)
-      .filter(ps => ps.person === jockey)
+      .flatMap(m => m.players)
+      .filter(ps => ps.player === jockey)
       .flatMap(ps => ps.starters)
       .filter(es => es.partner === trainer)
       .map(es => es.earning)
@@ -232,8 +232,8 @@ export class EarningComponent implements OnInit {
                     ? this.trackingMeeting : s.finale
                 )
               )
-              .flatMap(m => m.persons)
-              .filter(ps => ps.person === p.code)
+              .flatMap(m => m.players)
+              .filter(ps => ps.player === p.code)
               .map(ps => ps.earnings)
               .reduce((prev, curr) => prev + curr, 0)
           )

@@ -7,6 +7,14 @@ export class Syndicate {
   }
 }
 
+export interface SyndicateSnapshot {
+  meeting: string,
+  venue: string,
+  syndicates: MeetingSyndicate[],
+  soleStarters: StarterSnapshot[],
+  performances: OwnerPerformance[]
+}
+
 export interface StarterSnapshot {
   race: number,
   order: number,
@@ -33,12 +41,4 @@ export interface OwnerPerformance {
   single: string,
   multiple: string,
   sole: string,
-}
-
-export interface SyndicateSnapshot {
-  meeting: string,
-  venue: string,
-  syndicates: MeetingSyndicate[],
-  soleStarters: StarterSnapshot[],
-  performances: OwnerPerformance[]
 }
