@@ -634,5 +634,4 @@ export class MeetingComponent implements OnInit {
   // get isLoading(): boolean {
   //   return this.racecards.length === 0;
   // }
-
 }

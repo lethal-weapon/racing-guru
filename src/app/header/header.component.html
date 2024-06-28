@@ -1,11 +1,11 @@
-<header class="mb-5 px-10 py-2 shadow-2xl bg-gradient-to-br from-gray-700 to-gray-900">
+<header class="mb-5 px-10 py-2 shadow-2xl bg-gradient-to-b from-gray-700 to-gray-900">
   <div class="flex flex-row">
     <div class="basis-1/12">
       <img src="assets/logo.svg" alt="Logo" class="w-10 h-10"/>
     </div>
     <div class="basis-10/12 flex flex-row">
       <div *ngFor="let page of pages"
-           class="px-5 text-2xl font-bold"
+           class="px-4 text-2xl font-bold"
       >
         <a [routerLink]="page.link"
            [class.hvr-push]="currentUrl !== page.link"
@@ -16,7 +16,7 @@
         </a>
       </div>
     </div>
-    <div class="basis-1/12 pt-1 text-right text-2xl noselect">
+    <div class="basis-1/12 pt-1 text-right text-2xl">
       {{hour}} &#58; {{minute}}
     </div>
   </div>

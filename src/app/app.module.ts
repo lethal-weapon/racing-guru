@@ -16,18 +16,18 @@ import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {TrendComponent} from './trend/trend.component';
-import {CollaborationComponent} from './collaboration/collaboration.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
 import {SpinnerComponent} from './spinner/spinner.component';
 import {FormComponent} from './form/form.component';
-import {FormNoteComponent} from './form/form-note/form-note.component';
+import {FormReminderComponent} from './form/form-reminder/form-reminder.component';
 import {FormOwnerComponent} from './form/form-owner/form-owner.component';
 import {FormBetComponent} from './form/form-bet/form-bet.component';
 import {FormEngineComponent} from './form/form-engine/form-engine.component';
 import {FormPlayerComponent} from './form/form-player/form-player.component';
 import {FormConnectionComponent} from './form/form-connection/form-connection.component';
+import {FormFixtureComponent} from './form/form-fixture/form-fixture.component';
 import {ToastWebsocketComponent} from './toast/toast-websocket/toast-websocket.component';
 import {EarningComponent} from './earning/earning.component';
 
@@ -42,16 +42,16 @@ import {EarningComponent} from './earning/earning.component';
     RacecardComponent,
     OddsComponent,
     TrendComponent,
-    CollaborationComponent,
     BacktestComponent,
     SpinnerComponent,
     FormComponent,
-    FormNoteComponent,
+    FormReminderComponent,
     FormOwnerComponent,
+    FormPlayerComponent,
     FormBetComponent,
+    FormFixtureComponent,
     FormEngineComponent,
     FormConnectionComponent,
-    FormPlayerComponent,
     ToastWebsocketComponent,
     EarningComponent,
   ],

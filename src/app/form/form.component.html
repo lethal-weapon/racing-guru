@@ -1,38 +1,24 @@
-<div class="mx-12 my-8 text-center text-2xl bg-gray-800 rounded-full flex flex-row justify-between noselect">
+<div class="mx-12 my-8 text-center text-2xl bg-gray-800 rounded-full flex flex-row justify-between">
   <div *ngFor="let section of sections"
        class="w-full py-2.5 rounded-full {{getSectionStyle(section)}}"
        (click)="activeSection = section"
   >
-    {{section}}
+    {{ section }}
   </div>
 </div>
 
-<div class="noselect">
-  <div *ngIf="activeSection === sections[0]">
-    <app-form-note></app-form-note>
-  </div>
-  <div *ngIf="activeSection === sections[1]">
-    <app-form-owner></app-form-owner>
-  </div>
-  <div *ngIf="activeSection === sections[2]">
-    <app-form-bet></app-form-bet>
-  </div>
-  <div *ngIf="activeSection === sections[3]">
-    <app-form-connection></app-form-connection>
-  </div>
-  <div *ngIf="activeSection === sections[4]">
-    <app-form-engine></app-form-engine>
-  </div>
-  <div *ngIf="activeSection === sections[5]">
-    <app-form-player></app-form-player>
-  </div>
-  <div *ngIf="activeSection === sections[6]">
-    <div class="my-8 text-4xl text-green-600 text-center">
-      Racing Fixture 23/24
-      <img src="assets/fixture-23-24.png"
-           alt="Racing Fixture 23/24"
-           class="block mx-auto pt-6 w-2/3"
-      />
-    </div>
-  </div>
+<div *ngIf="activeSection === sections[0]">
+  <app-form-reminder></app-form-reminder>
+</div>
+<div *ngIf="activeSection === sections[1]">
+  <app-form-owner></app-form-owner>
+</div>
+<div *ngIf="activeSection === sections[2]">
+  <app-form-player></app-form-player>
+</div>
+<div *ngIf="activeSection === sections[3]">
+  <app-form-bet></app-form-bet>
+</div>
+<div *ngIf="activeSection === sections[4]">
+  <app-form-fixture></app-form-fixture>
 </div>

@@ -9,11 +9,14 @@ import {JOCKEYS, TRAINERS} from '../../model/player.model';
 import {TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
 import {SEASONS} from '../../util/strings';
 
+const REPORT_WINDOW_SIZE = 6;
+const MEETING_WINDOW_SIZE = 12;
+
 @Component({
-  selector: 'app-form-note',
-  templateUrl: './form-note.component.html'
+  selector: 'app-form-reminder',
+  templateUrl: './form-reminder.component.html'
 })
-export class FormNoteComponent implements OnInit {
+export class FormReminderComponent implements OnInit {
   activeMeeting: string = '';
   reportIndex: number = 0;
   meetingIndex: number = 0;
@@ -29,9 +32,8 @@ export class FormNoteComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchReminders();
     this.repo.fetchReports();
-    this.repo.fetchMeetings();
+    this.repo.fetchReminders();
     this.repo.fetchRacecards('latest', () => {
       this.activeMeeting = this.repo.findRacecards()
         .map(r => r.meeting)
@@ -186,21 +188,21 @@ export class FormNoteComponent implements OnInit {
       : `border-gray-600 hover:border-yellow-400`
 
   shiftReport = (length: number) => {
-    const ws = this.reportWindowSize;
+    const ws = REPORT_WINDOW_SIZE;
     const maxIndex = this.reports.length - ws;
 
     switch (length) {
-      case -99:
+      case -999:
         this.reportIndex = 0;
         break;
-      case 99:
+      case 999:
         this.reportIndex = maxIndex;
         break;
-      case -this.meetingWindowSize:
+      case -MEETING_WINDOW_SIZE:
         if (this.reportIndex >= ws) this.reportIndex -= ws;
         else this.reportIndex = 0;
         break;
-      case this.meetingWindowSize:
+      case MEETING_WINDOW_SIZE:
         if (this.reportIndex < maxIndex - ws) this.reportIndex += ws;
         else this.reportIndex = maxIndex;
         break;
@@ -208,14 +210,14 @@ export class FormNoteComponent implements OnInit {
   }
 
   shiftMeeting = (length: number) => {
-    const ws = this.meetingWindowSize;
+    const ws = MEETING_WINDOW_SIZE;
     const maxIndex = this.meetings.length - ws;
 
     switch (length) {
-      case -99:
+      case -999:
         this.meetingIndex = 0;
         break;
-      case 99:
+      case 999:
         this.meetingIndex = maxIndex;
         break;
       case -ws:
@@ -229,45 +231,19 @@ export class FormNoteComponent implements OnInit {
     }
   }
 
-  get starterChanges(): StarterChange[] {
-    return this.repo.findRacecards()
-      .map(r => r.changes.map(c => {
-          c.race = r.race;
-          return c;
-        })
-      )
-      .reduce((prev, curr) => prev.concat(curr), [])
-      .sort((sc1, sc2) => ((sc1?.race || 1) - (sc2?.race || 1)) || (sc1.order || sc2.order))
-  }
-
-  get playerReachedMilestone(): PlayerWinner[] {
-    return this.meetingReminder.winners.filter(pw => pw.isReachedMilestone)
-  }
-
-  get playerCloseMilestone(): PlayerWinner[] {
-    return this.meetingReminder.winners.filter(pw => pw.isCloseToMilestone)
-  }
-
-  get playerBirthdays(): PlayerBirthday[] {
-    return this.meetingReminder.birthdays;
-  }
-
-  get meetingReminder(): Reminder {
-    // @ts-ignore
-    return this.repo.findReminders()
-      .find(n => n.meeting === this.activeMeeting);
-  }
-
   get isValidInterview(): boolean {
     if (this.interviews.length === 0) return false;
 
-    for (let i = 0; i < this.interviews.length - 1; i++)
-      for (let j = i + 1; j < this.interviews.length; j++)
+    for (let i = 0; i < this.interviews.length - 1; i++) {
+      for (let j = i + 1; j < this.interviews.length; j++) {
         if (
           this.interviews[i].race === this.interviews[j].race &&
           this.interviews[i].order === this.interviews[j].order
-        )
+        ) {
           return false;
+        }
+      }
+    }
 
     return true;
   }
@@ -282,6 +258,38 @@ export class FormNoteComponent implements OnInit {
       || this.isInterviewSuccessToSave;
   }
 
+  get starterChanges(): StarterChange[] {
+    return this.repo.findRacecards()
+      .flatMap(r => r.changes.map(c => {
+          c.race = r.race;
+          return c;
+        })
+      )
+      .sort((sc1, sc2) =>
+        ((sc1?.race || 1) - (sc2?.race || 1))
+        ||
+        (sc1.order || sc2.order)
+      );
+  }
+
+  get playerReachedMilestone(): PlayerWinner[] {
+    return this.meetingReminder.winners.filter(w => w.reachedMilestone);
+  }
+
+  get playerCloseMilestone(): PlayerWinner[] {
+    return this.meetingReminder.winners.filter(pw => pw.closeToMilestone);
+  }
+
+  get playerBirthdays(): PlayerBirthday[] {
+    return this.meetingReminder.birthdays;
+  }
+
+  get meetingReminder(): Reminder {
+    // @ts-ignore
+    return this.repo.findReminders()
+      .find(n => n.meeting === this.activeMeeting);
+  }
+
   get maxRace(): number {
     return this.repo.findRacecards()
       .map(r => r.race)
@@ -291,29 +299,21 @@ export class FormNoteComponent implements OnInit {
 
   get paginationControls(): Array<{ icon: string, length: number }> {
     return [
-      {icon: 'fa fa-2x fa-long-arrow-left', length: -99},
-      {icon: 'fa fa-2x fa-angle-double-left', length: -this.meetingWindowSize},
-      {icon: 'fa fa-2x fa-angle-double-right', length: this.meetingWindowSize},
-      {icon: 'fa fa-2x fa-long-arrow-right', length: 99},
+      {icon: 'fa fa-2x fa-long-arrow-left', length: -999},
+      {icon: 'fa fa-2x fa-angle-double-left', length: -MEETING_WINDOW_SIZE},
+      {icon: 'fa fa-2x fa-angle-double-right', length: MEETING_WINDOW_SIZE},
+      {icon: 'fa fa-2x fa-long-arrow-right', length: 999},
     ]
   }
 
   get windowReports(): Report[] {
     return this.reports
-      .slice(this.reportIndex, this.reportIndex + this.reportWindowSize);
+      .slice(this.reportIndex, this.reportIndex + REPORT_WINDOW_SIZE);
   }
 
   get windowMeetings(): string[] {
     return this.meetings
-      .slice(this.meetingIndex, this.meetingIndex + this.meetingWindowSize);
-  }
-
-  get reportWindowSize(): number {
-    return 6;
-  }
-
-  get meetingWindowSize(): number {
-    return 12;
+      .slice(this.meetingIndex, this.meetingIndex + MEETING_WINDOW_SIZE);
   }
 
   get reports(): Report[] {
@@ -323,6 +323,12 @@ export class FormNoteComponent implements OnInit {
   }
 
   get meetings(): string[] {
-    return this.repo.findMeetings().map(m => m.meeting);
+    return this.repo.findReminders().map(m => m.meeting);
+  }
+
+  get isLoading(): boolean {
+    return this.repo.findReports().length === 0
+      || this.repo.findReminders().length === 0
+      || this.repo.findRacecards().length === 0
   }
 }

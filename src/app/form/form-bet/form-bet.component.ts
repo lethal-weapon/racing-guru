@@ -26,7 +26,7 @@ export class FormBetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchRecords();
+    // this.repo.fetchRecords();
   }
 
   setActiveItem = (sectionIndex: number, item: string) => {

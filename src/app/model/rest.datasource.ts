@@ -3,32 +3,28 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
-import {Reminder} from './reminder.model';
+import {Player} from './player.model';
 import {Horse} from './horse.model';
-import {ConnectionDividend, RaceConnection} from './connection.model';
-import {Meeting} from './meeting.model';
-import {Collaboration} from './collaboration.model';
 import {Racecard} from './racecard.model';
-import {FactorHit} from './backtest.model';
+import {Reminder} from './reminder.model';
 import {Report} from './report.model';
 import {Record} from './record.model';
-import {NegativePerformance, SeasonPerformance} from './performance.model';
+import {Meeting} from './meeting.model';
+import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {FavoritePost, Interview, SelectionPost} from './dto.model';
-import {Player} from './player.model';
+import {FactorHit} from './backtest.model';
+import {NegativePerformance, SeasonPerformance} from './performance.model';
+import {ConnectionDividend, RaceConnection} from './connection.model';
 
 @Injectable()
 export class RestDataSource {
   baseUrl: string;
-  newBaseUrl: string;
 
   constructor(private http: HttpClient) {
     this.baseUrl =
-      `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}/${env.API_PREFIX}`;
-
-    this.newBaseUrl =
       `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.NEW_SERVER_PORT}`;
   }
 
@@ -39,13 +35,13 @@ export class RestDataSource {
     this.http.post<SelectionPost>(`${this.baseUrl}/selection`, selection)
 
   saveInterview = (interviews: Interview[]): Observable<Racecard[]> =>
-    this.http.post<Racecard[]>(`${this.baseUrl}/interviews`, interviews)
+    this.http.post<Racecard[]>(`${this.baseUrl}/racecards/interviews`, interviews)
 
   savePlayer = (player: Player): Observable<Player> =>
-    this.http.post<Player>(`${this.newBaseUrl}/players`, player)
+    this.http.post<Player>(`${this.baseUrl}/players`, player)
 
   savePlayerOrders = (players: Player[]): Observable<Player[]> =>
-    this.http.post<Player[]>(`${this.newBaseUrl}/players/ordering`, players)
+    this.http.post<Player[]>(`${this.baseUrl}/players/ordering`, players)
 
   saveSyndicate = (syndicate: Syndicate): Observable<Syndicate> =>
     this.http.post<Syndicate>(`${this.baseUrl}/syndicates`, syndicate)
@@ -66,10 +62,10 @@ export class RestDataSource {
     this.http.get<Horse[]>(`${this.baseUrl}/horses/latest`)
 
   getReports = (): Observable<Report[]> =>
-    this.http.get<Report[]>(`${this.newBaseUrl}/reports`)
+    this.http.get<Report[]>(`${this.baseUrl}/reports`)
 
   getRecords = (): Observable<Record[]> =>
-    this.http.get<Record[]>(`${this.newBaseUrl}/records`)
+    this.http.get<Record[]>(`${this.baseUrl}/records`)
 
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
@@ -90,21 +86,20 @@ export class RestDataSource {
     this.http.get<ConnectionDividend[]>(`${this.baseUrl}/graph/connections/dividends`)
 
   getPlayers = (): Observable<Player[]> =>
-    this.http.get<Player[]>(`${this.newBaseUrl}/players`)
+    this.http.get<Player[]>(`${this.baseUrl}/players`)
 
   getReminders = (): Observable<Reminder[]> =>
-    this.http.get<Reminder[]>(`${this.newBaseUrl}/reminders`)
+    this.http.get<Reminder[]>(`${this.baseUrl}/reminders`)
 
   getDrawInheritances = (): Observable<DrawInheritance[]> =>
-    this.http.get<DrawInheritance[]>(`${this.newBaseUrl}/racecards/draw-inheritance`)
+    this.http.get<DrawInheritance[]>(`${this.baseUrl}/racecards/draw-inheritance`)
 
   getSyndicates = (): Observable<Syndicate[]> =>
-    this.http.get<Syndicate[]>(`${this.newBaseUrl}/syndicates`)
+    this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
 
   getSyndicateSnapshots = (): Observable<SyndicateSnapshot[]> =>
-    this.http.get<SyndicateSnapshot[]>(`${this.newBaseUrl}/syndicates/snapshots`)
+    this.http.get<SyndicateSnapshot[]>(`${this.baseUrl}/syndicates/snapshots`)
 
   getTrackworkSnapshots = (): Observable<TrackworkSnapshot[]> =>
-    this.http.get<TrackworkSnapshot[]>(`${this.newBaseUrl}/trackworks/snapshots`)
-
+    this.http.get<TrackworkSnapshot[]>(`${this.baseUrl}/trackworks/snapshots`)
 }

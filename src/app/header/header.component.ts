@@ -15,8 +15,6 @@ export class HeaderComponent implements OnInit {
     {title: 'Trend', link: '/trend'},
     {title: 'Form', link: '/form'},
     {title: 'Backtest', link: '/backtest'},
-    // {title: 'Top4s', link: '/top4s'},
-    // {title: 'C11N', link: '/collaboration'},
   ]
 
   hour = 'HH';
@@ -31,9 +29,9 @@ export class HeaderComponent implements OnInit {
   }
 
   tick = () => {
-    const d = new Date();
-    const hours = d.getHours() % 12;
-    const minutes = d.getMinutes();
+    const date = new Date();
+    const hours = date.getHours() % 12;
+    const minutes = date.getMinutes();
 
     this.hour = hours ? `${hours}` : `12`;
     this.minute = minutes >= 10 ? `${minutes}` : `0${minutes}`;

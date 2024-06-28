@@ -1,4 +1,10 @@
-<div class="mx-12 flex flex-row gap-x-6 items-start text-center">
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!isLoading"
+     class="mx-12 flex flex-row gap-x-6 items-start text-center"
+>
   <div class="w-64 pt-4 pb-5 px-6 rounded-2xl shadow-md shadow-sky-700/50">
     <div class="mb-2 text-xl font-bold text-green-600">
       Meetings
@@ -16,12 +22,13 @@
            class="px-4 py-2 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getBadgeStyle(meeting)}}"
            (click)="setActiveMeeting(meeting)"
       >
-        #{{getMeetingIndex(meeting)}}
+        #{{ getMeetingIndex(meeting) }}
         &nbsp;
-        {{meeting}}
+        {{ meeting }}
       </div>
     </div>
   </div>
+
   <div class="w-64 flex flex-col gap-y-6 items-center">
     <div class="w-full pt-4 pb-5 px-6 rounded-2xl shadow-md shadow-sky-700/50">
       <div class="mb-2 text-xl font-bold text-green-600">
@@ -40,14 +47,14 @@
              class="text-lg"
         >
           <div class="text-xl text-left italic text-blue-600">
-            {{report.meeting}}
+            {{ report.meeting }}
           </div>
           <div *ngFor="let sus of report.suspensions"
                class="grid grid-cols-4"
           >
-            <div class="col-span-1">{{sus.player}}</div>
+            <div class="col-span-1">{{ sus.player }}</div>
             <div class="col-span-2 text-right">
-              {{formatMeeting(sus.startAt)}} / {{sus.racedays}}D
+              {{ formatMeeting(sus.startAt) }} / {{ sus.racedays }}D
             </div>
             <div class="col-span-1 text-right"
                  tooltip="R#{{sus.race}}: {{sus.horse}}"
@@ -59,11 +66,11 @@
           <div *ngFor="let fine of report.fines"
                class="grid grid-cols-4"
           >
-            <div class="col-span-1">{{fine.player}}</div>
+            <div class="col-span-1">{{ fine.player }}</div>
             <div class="col-span-2 text-right"
                  [class.text-red-600]="fine.amount >= TEN_THOUSAND"
             >
-              {{fine.amount | currency:'USD':'symbol':'1.0-0'}}
+              {{ fine.amount | currency:'USD':'symbol':'1.0-0' }}
             </div>
             <div class="col-span-1 text-right"
                  tooltip="{{formatFineTooltip(fine)}}"
@@ -94,26 +101,27 @@
         </thead>
         <tbody>
         <tr *ngFor="let sc of starterChanges">
-          <td class="py-0.5">{{sc.race}}</td>
-          <td class="py-0.5">{{sc.order}}</td>
-          <td class="py-0.5">{{sc.previousJockey}}</td>
-          <td class="py-0.5">{{sc.previousTrainer}}</td>
+          <td class="py-0.5">{{ sc.race }}</td>
+          <td class="py-0.5">{{ sc.order }}</td>
+          <td class="py-0.5">{{ sc.previousJockey }}</td>
+          <td class="py-0.5">{{ sc.previousTrainer }}</td>
           <td class="py-0.5"><i class="fa fa-lg fa-long-arrow-right"></i></td>
           <td class="py-0.5">
             <div *ngIf="sc.scratched">
               <i class="fa fa-times"></i>
             </div>
             <div *ngIf="!sc.scratched">
-              {{sc.currentJockey}}
+              {{ sc.currentJockey }}
             </div>
           </td>
           <td class="py-0.5">
-            {{sc.scratched ? '' : sc.currentTrainer}}
+            {{ sc.scratched ? '' : sc.currentTrainer }}
           </td>
         </tr>
         </tbody>
       </table>
     </div>
+
     <div class="flex flex-row gap-x-6 items-start">
       <div class="flex flex-col gap-y-6 items-start">
         <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
@@ -137,7 +145,7 @@
                                  border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
                   >
                     <option *counter="let race of maxRace" [ngValue]="race">
-                      {{race}}
+                      {{ race }}
                     </option>
                   </select>
                 </td>
@@ -150,7 +158,7 @@
                     <option *ngFor="let order of getPossibleOrders(interview.race, interview.order)"
                             [ngValue]="order"
                     >
-                      {{order}}
+                      {{ order }}
                     </option>
                   </select>
                 </td>
@@ -162,7 +170,7 @@
                     <option *ngFor="let person of getPossibleInterviewees(interview.race, interview.order)"
                             [ngValue]="person"
                     >
-                      {{person}}
+                      {{ person }}
                     </option>
                   </select>
                 </td>
@@ -225,14 +233,15 @@
             </thead>
             <tbody>
             <tr *ngFor="let pb of playerBirthdays">
-              <td class="py-0.5">{{pb.player}}</td>
-              <td class="py-0.5">{{formatBirthday(pb.date)}}</td>
-              <td class="py-0.5">{{pb.age}}</td>
+              <td class="py-0.5">{{ pb.player }}</td>
+              <td class="py-0.5">{{ formatBirthday(pb.date) }}</td>
+              <td class="py-0.5">{{ pb.age }}</td>
             </tr>
             </tbody>
           </table>
         </div>
       </div>
+
       <div class="flex flex-col gap-y-6 items-start">
         <div class="pt-3 pb-4 px-6 rounded-2xl shadow-md shadow-sky-700/50">
           <div class="mb-2 text-xl font-bold text-green-600">
@@ -246,9 +255,11 @@
             </thead>
             <tbody>
             <tr *ngFor="let pw of playerCloseMilestone">
-              <td class="py-0.5">{{pw.player}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.seasonWins % 10 >= 9">{{pw.seasonWins}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.careerWins % 10 >= 8 || pw.careerWins == 0">{{pw.careerWins}}</td>
+              <td class="py-0.5">{{ pw.player }}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.seasonWins % 10 >= 9">{{ pw.seasonWins }}</td>
+              <td class="py-0.5"
+                  [class.text-green-600]="pw.careerWins % 10 >= 8 || pw.careerWins == 0">{{ pw.careerWins }}
+              </td>
             </tr>
             </tbody>
           </table>
@@ -265,9 +276,9 @@
             </thead>
             <tbody>
             <tr *ngFor="let pw of playerReachedMilestone">
-              <td class="py-0.5">{{pw.player}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.seasonWins % 10 == 0">{{pw.seasonWins}}</td>
-              <td class="py-0.5" [class.text-green-600]="pw.careerWins % 10 == 0">{{pw.careerWins}}</td>
+              <td class="py-0.5">{{ pw.player }}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.seasonWins % 10 == 0">{{ pw.seasonWins }}</td>
+              <td class="py-0.5" [class.text-green-600]="pw.careerWins % 10 == 0">{{ pw.careerWins }}</td>
             </tr>
             </tbody>
           </table>

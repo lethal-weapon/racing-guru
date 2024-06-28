@@ -7,7 +7,6 @@ import {OddsComponent} from './odds/odds.component';
 import {TrendComponent} from './trend/trend.component';
 import {FormComponent} from './form/form.component';
 import {BacktestComponent} from './backtest/backtest.component';
-import {CollaborationComponent} from './collaboration/collaboration.component';
 
 const routes: Routes = [
   {path: 'meeting', component: MeetingComponent},
@@ -16,9 +15,8 @@ const routes: Routes = [
   {path: 'trend', component: TrendComponent},
   {path: 'form', component: FormComponent},
   {path: 'backtest', component: BacktestComponent},
-  {path: 'collaboration', component: CollaborationComponent},
   {path: '**', component: MeetingComponent}
-];
+]
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

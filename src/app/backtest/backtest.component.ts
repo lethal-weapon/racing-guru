@@ -30,7 +30,7 @@ export class BacktestComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.runTests();
+    // this.runTests();
   }
 
   clickAccuracyFieldHeader = (field: string) => {

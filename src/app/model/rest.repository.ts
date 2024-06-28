@@ -198,5 +198,4 @@ export class RestRepository {
 
   fetchTrackworkSnapshots = () =>
     this.source.getTrackworkSnapshots().subscribe(data => this.trackworkSnapshots = data)
-
 }

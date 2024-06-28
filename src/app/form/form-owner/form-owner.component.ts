@@ -22,8 +22,8 @@ export class FormOwnerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchHorses();
-    this.repo.fetchSyndicates();
+    // this.repo.fetchHorses();
+    // this.repo.fetchSyndicates();
   }
 
   copyText = (text: string) =>

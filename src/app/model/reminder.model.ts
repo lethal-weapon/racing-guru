@@ -5,8 +5,8 @@ export interface PlayerWinner {
   meetingsSinceLastWin: number,
   startsSinceLastWin: number,
   averageStartsPerWin: number,
-  isCloseToMilestone: boolean,
-  isReachedMilestone: boolean
+  closeToMilestone: boolean,
+  reachedMilestone: boolean
 }
 
 export interface PlayerBirthday {
