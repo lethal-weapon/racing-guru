@@ -16,8 +16,7 @@ import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {FavoritePost, Interview, SelectionPost} from './dto.model';
 import {FactorHit} from './backtest.model';
-import {NegativePerformance, SeasonPerformance} from './performance.model';
-import {ConnectionDividend, RaceConnection} from './connection.model';
+import {RaceConnection} from './connection.model';
 
 @Injectable()
 export class RestDataSource {
@@ -73,17 +72,8 @@ export class RestDataSource {
   getCollaborations = (): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
 
-  getEnginePerformance = (): Observable<SeasonPerformance[]> =>
-    this.http.get<SeasonPerformance[]>(`${this.baseUrl}/engine-performance`)
-
-  getNegativeEnginePerformance = (): Observable<NegativePerformance[]> =>
-    this.http.get<NegativePerformance[]>(`${this.baseUrl}/engine-performance-negative`)
-
   getConnections = (meeting: string): Observable<RaceConnection[]> =>
     this.http.get<RaceConnection[]>(`${this.baseUrl}/graph/connections?meeting=${meeting}`)
-
-  getConnectionDividends = (): Observable<ConnectionDividend[]> =>
-    this.http.get<ConnectionDividend[]>(`${this.baseUrl}/graph/connections/dividends`)
 
   getPlayers = (): Observable<Player[]> =>
     this.http.get<Player[]>(`${this.baseUrl}/players`)

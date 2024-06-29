@@ -5,12 +5,11 @@ import {Reminder} from './reminder.model';
 import {Horse} from './horse.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
-import {ConnectionDividend, RaceConnection} from './connection.model';
+import {RaceConnection} from './connection.model';
 import {FactorHit} from './backtest.model';
 import {Racecard} from './racecard.model';
 import {Report} from './report.model';
 import {Bet} from './bet.model';
-import {NegativePerformance, SeasonPerformance} from './performance.model';
 import {DrawInheritance} from './draw.model';
 import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {TrackworkSnapshot} from './trackwork.model';
@@ -29,10 +28,7 @@ export class RestRepository {
   private collaborations: Collaboration[] = [];
   private racecards: Racecard[] = [];
   private factorHits: FactorHit[] = [];
-  private enginePerformances: SeasonPerformance[] = [];
-  private negativeEnginePerformances: NegativePerformance[] = [];
   private connections: RaceConnection[] = [];
-  private connectionDividends: ConnectionDividend[] = [];
   private drawInheritances: DrawInheritance[] = [];
   private syndicateSnapshots: SyndicateSnapshot[] = [];
   private trackworkSnapshots: TrackworkSnapshot[] = [];
@@ -41,22 +37,19 @@ export class RestRepository {
   }
 
   findBets = () => this.bets
-  findPlayers = () => this.players
-  findReminders = () => this.reminders
   findHorses = () => this.horses
+  findPlayers = () => this.players
   findReports = () => this.reports
+  findReminders = () => this.reminders
+  findSyndicates = () => this.syndicates
+  findRacecards = () => this.racecards
   findMeetings = () => this.meetings
   findCollaborations = () => this.collaborations
-  findRacecards = () => this.racecards
-  findFactorHits = () => this.factorHits
-  findEnginePerformances = () => this.enginePerformances
-  findNegativeEnginePerformances = () => this.negativeEnginePerformances
-  findSyndicates = () => this.syndicates
-  findConnections = () => this.connections
-  findConnectionDividends = () => this.connectionDividends
   findDrawInheritances = () => this.drawInheritances
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
+  findFactorHits = () => this.factorHits
+  findConnections = () => this.connections
 
   saveFavorite = (favorite: FavoritePost) =>
     this.source.saveFavorite(favorite).subscribe(data => {
@@ -175,17 +168,8 @@ export class RestRepository {
       callback();
     })
 
-  fetchEnginePerformance = () =>
-    this.source.getEnginePerformance().subscribe(data => this.enginePerformances = data)
-
-  fetchNegativeEnginePerformance = () =>
-    this.source.getNegativeEnginePerformance().subscribe(data => this.negativeEnginePerformances = data)
-
   fetchConnections = (meeting: string = 'latest') =>
     this.source.getConnections(meeting).subscribe(data => this.connections = data)
-
-  fetchConnectionDividends = () =>
-    this.source.getConnectionDividends().subscribe(data => this.connectionDividends = data)
 
   fetchDrawInheritances = () =>
     this.source.getDrawInheritances().subscribe(data => this.drawInheritances = data)

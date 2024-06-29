@@ -13,19 +13,3 @@ export interface RaceConnection {
   race: number,
   connections: Connection[]
 }
-
-export interface DividendStarter {
-  order: number,
-  draw: number,
-  placing: number,
-  odds: number,
-  jockey: string,
-  trainer: string
-}
-
-export interface ConnectionDividend {
-  meeting: string,
-  race: number,
-  starters: DividendStarter[],
-  distantPairs: number[][]
-}

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {WebsocketService} from '../../model/websocket.service';
+import {WebsocketService} from '../model/websocket.service';
 
 @Component({
   selector: 'app-toast-websocket',
