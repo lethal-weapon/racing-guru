@@ -4,8 +4,12 @@ import {RouterModule, Routes} from '@angular/router';
 import {MeetingComponent} from './meeting/meeting.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {OddsComponent} from './odds/odds.component';
-import {TrendComponent} from './trend/trend.component';
 import {BacktestComponent} from './backtest/backtest.component';
+import {TrendComponent} from './trend/trend.component';
+import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component';
+import {TrendEarningComponent} from './trend-earning/trend-earning.component';
+import {TrendTopsComponent} from './trend-tops/trend-tops.component';
+import {TrendDrawComponent} from './trend-draw/trend-draw.component';
 import {FormComponent} from './form/form.component';
 import {FormReminderComponent} from './form-reminder/form-reminder.component';
 import {FormOwnerComponent} from './form-owner/form-owner.component';
@@ -17,8 +21,33 @@ const routes: Routes = [
   {path: 'meeting', component: MeetingComponent},
   {path: 'racecard', component: RacecardComponent},
   {path: 'odds', component: OddsComponent},
-  {path: 'trend', component: TrendComponent},
   {path: 'backtest', component: BacktestComponent},
+  {
+    path: 'trend',
+    component: TrendComponent,
+    children: [
+      {
+        path: '',
+        component: TrendEveryoneComponent,
+      },
+      {
+        path: 'everyone',
+        component: TrendEveryoneComponent,
+      },
+      {
+        path: 'earning',
+        component: TrendEarningComponent,
+      },
+      {
+        path: 'tops',
+        component: TrendTopsComponent,
+      },
+      {
+        path: 'draw',
+        component: TrendDrawComponent,
+      },
+    ]
+  },
   {
     path: 'form',
     component: FormComponent,

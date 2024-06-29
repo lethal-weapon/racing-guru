@@ -66,20 +66,23 @@ export class RestDataSource {
   getBets = (): Observable<Bet[]> =>
     this.http.get<Bet[]>(`${this.baseUrl}/bets`)
 
-  getMeetings = (): Observable<Meeting[]> =>
-    this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
-
-  getCollaborations = (): Observable<Collaboration[]> =>
-    this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
-
   getConnections = (meeting: string): Observable<RaceConnection[]> =>
     this.http.get<RaceConnection[]>(`${this.baseUrl}/graph/connections?meeting=${meeting}`)
 
   getPlayers = (): Observable<Player[]> =>
     this.http.get<Player[]>(`${this.baseUrl}/players`)
 
+  getActivePlayers = (): Observable<Player[]> =>
+    this.http.get<Player[]>(`${this.baseUrl}/players/active`)
+
   getReminders = (): Observable<Reminder[]> =>
     this.http.get<Reminder[]>(`${this.baseUrl}/reminders`)
+
+  getMeetings = (): Observable<Meeting[]> =>
+    this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
+
+  getCollaborations = (): Observable<Collaboration[]> =>
+    this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
 
   getDrawInheritances = (): Observable<DrawInheritance[]> =>
     this.http.get<DrawInheritance[]>(`${this.baseUrl}/racecards/draw-inheritance`)

@@ -42,3 +42,11 @@ export interface OwnerPerformance {
   multiple: string,
   sole: string,
 }
+
+export const DEFAULT_SYNDICATE_SNAPSHOT: SyndicateSnapshot = {
+  meeting: '',
+  venue: '',
+  syndicates: [],
+  soleStarters: [],
+  performances: []
+}

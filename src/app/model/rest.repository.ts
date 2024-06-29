@@ -141,6 +141,9 @@ export class RestRepository {
       callback(data);
     })
 
+  fetchActivePlayers = () =>
+    this.source.getActivePlayers().subscribe(data => this.players = data)
+
   fetchReminders = () =>
     this.source.getReminders().subscribe(data => this.reminders = data)
 
@@ -156,12 +159,6 @@ export class RestRepository {
   fetchBets = () =>
     this.source.getBets().subscribe(data => this.bets = data)
 
-  fetchMeetings = () =>
-    this.source.getMeetings().subscribe(data => this.meetings = data)
-
-  fetchCollaborations = () =>
-    this.source.getCollaborations().subscribe(data => this.collaborations = data)
-
   fetchFactorHits = (factorCombinations: string[][], callback: () => any) =>
     this.source.getBacktestFactorHits(factorCombinations).subscribe(data => {
       this.factorHits = data;
@@ -170,6 +167,12 @@ export class RestRepository {
 
   fetchConnections = (meeting: string = 'latest') =>
     this.source.getConnections(meeting).subscribe(data => this.connections = data)
+
+  fetchMeetings = () =>
+    this.source.getMeetings().subscribe(data => this.meetings = data)
+
+  fetchCollaborations = () =>
+    this.source.getCollaborations().subscribe(data => this.collaborations = data)
 
   fetchDrawInheritances = () =>
     this.source.getDrawInheritances().subscribe(data => this.drawInheritances = data)

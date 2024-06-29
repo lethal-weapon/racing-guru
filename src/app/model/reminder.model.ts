@@ -20,3 +20,14 @@ export interface Reminder {
   winners: PlayerWinner[],
   birthdays: PlayerBirthday[]
 }
+
+export const DEFAULT_PLAYER_WINNER: PlayerWinner = {
+  player: '',
+  seasonWins: 0,
+  careerWins: 0,
+  meetingsSinceLastWin: 0,
+  startsSinceLastWin: 0,
+  averageStartsPerWin: 0,
+  closeToMilestone: false,
+  reachedMilestone: false
+}

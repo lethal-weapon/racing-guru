@@ -21,10 +21,10 @@ interface PlayerGroup {
 }
 
 @Component({
-  selector: 'app-earning',
-  templateUrl: './earning.component.html',
+  selector: 'app-trend-earning',
+  templateUrl: './trend-earning.component.html',
 })
-export class EarningComponent implements OnInit {
+export class TrendEarningComponent implements OnInit {
   // trackingMeeting: string = '';
   // trackingPlayers: string[] = [];
   // activePlayerGroup: PlayerGroup = this.playerGroups[0];
@@ -165,8 +165,8 @@ export class EarningComponent implements OnInit {
   //     ? `border border-gray-900 bg-gradient-to-r from-sky-800 to-indigo-800`
   //     : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
   //
-  // isBoundaryPerson = (person: string): boolean =>
-  //   BOUNDARY_PERSONS.includes(person)
+  // isBoundaryPlayer = (player: string): boolean =>
+  //   BOUNDARY_PERSONS.includes(player)
   //
   // get playerGroups(): PlayerGroup[] {
   //   return [
@@ -219,7 +219,7 @@ export class EarningComponent implements OnInit {
   //   return `${Math.ceil(100 * currentSeasonMeetings / 88)}%`;
   // }
   //
-  // get personEarnings(): Array<Array<{ person: string, earnings: number[] }>> {
+  // get personEarnings(): Array<Array<{ player: string, earnings: number[] }>> {
   //   return [TRAINERS, JOCKEYS].map(pl =>
   //     pl.map(p => {
   //       const seasonEarnings = SEASONS
@@ -239,14 +239,14 @@ export class EarningComponent implements OnInit {
   //         .map(e => Math.floor(e));
   //
   //       return {
-  //         person: p.code,
+  //         player: p.code,
   //         earnings: seasonEarnings
   //       };
   //     })
   //       .sort((p1, p2) =>
   //         (p2.earnings[0] - p1.earnings[0]) ||
   //         (p2.earnings[1] - p1.earnings[1]) ||
-  //         (p1.person.localeCompare(p2.person))
+  //         (p1.player.localeCompare(p2.player))
   //       )
   //   );
   // }

@@ -1,0 +1,49 @@
+trend-tops
+<!--  <div *ngIf="activeSection === sections[1]"-->
+<!--       class="m-6"-->
+<!--  >-->
+<!--    <div *ngFor="let meeting of meetings"-->
+<!--         class="my-4 flex flex-row justify-around items-center"-->
+<!--    >-->
+<!--      <div class="w-64 px-5 pt-2 pb-2.5 text-2xl rounded-2xl border border-gray-700">-->
+<!--        <div class="mb-2 text-center">-->
+<!--          {{ formatMeeting(meeting.meeting) }}-->
+<!--          &nbsp;-->
+<!--          {{ meeting.races }}R-->
+<!--          &nbsp;-->
+<!--          ${{ meeting.turnover }}-->
+<!--        </div>-->
+<!--        <div class="grid grid-cols-5 items-center">-->
+<!--          <div class="col-span-1 text-right">-->
+<!--            {{ meeting.venue }}-->
+<!--          </div>-->
+<!--          <div class="col-span-3 text-center">-->
+<!--            ${{ getAverageTurnoverPerRace(meeting) }}/R-->
+<!--          </div>-->
+<!--          <div class="col-span-1 text-right">-->
+<!--            <div class="w-5 h-5 rounded-full {{getTurnoverIntensityColor(meeting)}}">-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="text-lg text-center flex flex-row justify-evenly items-center">-->
+<!--        <div *ngFor="let ps of getOnBoardPersons(meeting); let index = index"-->
+<!--             class="p-1 border-2 rounded-xl"-->
+<!--             [class.ml-10]="index === topPlayerSize"-->
+<!--             [class.border-gray-900]="activePlayer !== ps.player"-->
+<!--             [class.border-yellow-400]="activePlayer == ps.player"-->
+<!--             (click)="setActivePerson(ps.player)"-->
+<!--        >-->
+<!--          <div>-->
+<!--            <img src="assets/people/{{ps.player}}.jpg"-->
+<!--                 alt="{{ps.player}}"-->
+<!--                 class="h-16 rounded-xl"-->
+<!--            />-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            {{ ps.earnings }}-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->

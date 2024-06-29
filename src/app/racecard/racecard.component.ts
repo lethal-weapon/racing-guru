@@ -109,10 +109,10 @@ export class RacecardComponent implements OnInit {
   // formatVenue = (venue: string): string =>
   //   ['HV', 'ST'].includes(venue) ? venue : 'OS'
   //
-  // formatPerson = (person: string): string =>
-  //   person.length <= 3
-  //     ? person
-  //     : person.split(' ')[1].slice(0, 3).toUpperCase()
+  // formatPerson = (player: string): string =>
+  //   player.length <= 3
+  //     ? player
+  //     : player.split(' ')[1].slice(0, 3).toUpperCase()
   //
   // toggleFavorite = (starter: Starter) =>
   //   this.repo.saveFavorite({
@@ -202,7 +202,7 @@ export class RacecardComponent implements OnInit {
   //     (this.repo.findCollaborations().filter(c => c.jockey === starter.jockey) || []),
   //     (this.repo.findCollaborations().filter(c => c.trainer === starter.trainer) || [])
   //   ].map((colls, index) => ({
-  //       person: index === 0 ? starter.jockey : starter.trainer,
+  //       player: index === 0 ? starter.jockey : starter.trainer,
   //       wins: colls.map(c => c.wins).reduce((prev, curr) => prev + curr, 0),
   //       seconds: colls.map(c => c.seconds).reduce((prev, curr) => prev + curr, 0),
   //       thirds: colls.map(c => c.thirds).reduce((prev, curr) => prev + curr, 0),
@@ -214,13 +214,13 @@ export class RacecardComponent implements OnInit {
   //     })
   //   )
   //
-  // getPersonStarters = (person: string, collaborations: Collaboration[], limit: number = 20): PersonStarter[] =>
+  // getPersonStarters = (player: string, collaborations: Collaboration[], limit: number = 20): PersonStarter[] =>
   //   collaborations
   //     .map(c =>
   //       c.starters.map(s => ({
   //         meeting: s.meeting,
   //         race: s.race,
-  //         partner: [c.jockey, c.trainer].find(p => p !== person) || '?',
+  //         partner: [c.jockey, c.trainer].find(p => p !== player) || '?',
   //         horse: s.horseNameCH,
   //         placing: s?.placing || 0,
   //         winOdds: s?.winOdds || 0
@@ -296,9 +296,9 @@ export class RacecardComponent implements OnInit {
   //   return stats.concat([stats[0] + stats[1]]);
   // }
   //
-  // getPersonStartsOnPlacing = (person: string): PlayerSummary => {
+  // getPersonStartsOnPlacing = (player: string): PlayerSummary => {
   //   let ps: PlayerSummary = {
-  //     player: person,
+  //     player: player,
   //     wins: 0,
   //     seconds: 0,
   //     thirds: 0,
@@ -310,8 +310,8 @@ export class RacecardComponent implements OnInit {
   //
   //   let done = [false, false, false, false];
   //   const colls = this.repo.findCollaborations()
-  //     .filter(c => c.jockey === person || c.trainer === person);
-  //   const starts = this.getPersonStarters(person, colls, 100)
+  //     .filter(c => c.jockey === player || c.trainer === player);
+  //   const starts = this.getPersonStarters(player, colls, 100)
   //     .filter(s => s.winOdds > 0 && s.placing > 0);
   //
   //   for (let j = 0; j < starts.length; j++) {

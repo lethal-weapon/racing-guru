@@ -1,0 +1,342 @@
+<div class="mb-4 mx-24 text-xl flex flex-row justify-between">
+  <div class="w-full flex flex-row justify-between bg-gray-800 rounded-full">
+    <div *ngFor="let playerType of playerTypes"
+         class="w-full py-2 rounded-full {{getSectionStyle(playerType)}}"
+         (click)="activePlayerType = playerType"
+    >
+      {{ playerType }}
+    </div>
+  </div>
+  <div class="w-full px-10 flex flex-row justify-evenly items-center">
+    <div class="{{controlStyle}}"
+         (click)="shiftMeeting(-999)"
+    >
+      <i class="fa fa-2x fa-long-arrow-left"></i>
+    </div>
+    <div class="{{controlStyle}}"
+         (click)="shiftMeeting(-MEETING_WINDOW_SIZE)"
+    >
+      <i class="fa fa-2x fa-angle-double-left"></i>
+    </div>
+    <div class="{{controlStyle}}"
+         (click)="shiftMeeting(-1)"
+    >
+      <i class="fa fa-2x fa-angle-left"></i>
+    </div>
+    <div class="{{controlStyle}}"
+         (click)="shiftMeeting(1)"
+    >
+      <i class="fa fa-2x fa-angle-right"></i>
+    </div>
+    <div class="{{controlStyle}}"
+         (click)="shiftMeeting(MEETING_WINDOW_SIZE)"
+    >
+      <i class="fa fa-2x fa-angle-double-right"></i>
+    </div>
+    <div class="{{controlStyle}}"
+         (click)="shiftMeeting(999)"
+    >
+      <i class="fa fa-2x fa-long-arrow-right"></i>
+    </div>
+  </div>
+</div>
+
+<table *ngIf="activePlayerType != playerTypes[2]"
+       class="mb-4 mx-auto table-fixed border-collapse"
+>
+  <tr class="text-lg">
+    <td class="w-16 border border-gray-700"></td>
+    <td class="w-12 border border-gray-700 cursor-help"
+        tooltip="Meetings since a winner"
+        [hideDelay]="0"
+    >
+      <i class="fa fa-medkit"></i>
+    </td>
+    <td class="w-12 border border-gray-700 cursor-help"
+        tooltip="Starts since a winner"
+        [hideDelay]="0"
+    >
+      <i class="fa fa-ambulance"></i>
+    </td>
+    <td class="w-12 border border-gray-700 cursor-help"
+        tooltip="Avg. starts per winner"
+        [hideDelay]="0"
+    >
+      <i class="fa fa-eraser"></i>
+    </td>
+    <td *ngFor="let overview of overviews"
+        colspan="6"
+        class="border border-gray-700 cursor-pointer"
+        [class.text-yellow-400]="activeMeeting === overview.meeting"
+        (click)="activeMeeting = overview.meeting"
+    >
+      {{ overview.title }}
+    </td>
+  </tr>
+  <tr>
+    <td class="border border-gray-700 border-b-gray-400"></td>
+    <td class="border border-gray-700 border-b-gray-400"></td>
+    <td class="border border-gray-700 border-b-gray-400"></td>
+    <td class="border border-gray-700 border-b-gray-400"></td>
+    <ng-container *ngFor="let meeting of windowMeetings">
+      <td *ngFor="let placing of placings; let last = last"
+          colspan="1"
+          class="border border-b-gray-400 border-gray-900 {{placing.color}} {{placing.width}}"
+          [class.border-r-gray-700]="last"
+      >
+        {{ placing.placing }}
+      </td>
+    </ng-container>
+  </tr>
+
+  <tr *ngFor="let player of players">
+    <td class="border border-gray-700 cursor-pointer"
+        (click)="activePlayer = player"
+        [class.text-yellow-400]="activePlayer === player"
+        [class.border-b-gray-400]="isBoundaryPlayer(player)"
+    >
+      {{ player }}
+    </td>
+    <td class="border border-gray-700"
+        [class.border-b-gray-400]="isBoundaryPlayer(player)"
+    >
+      <span *ngIf="getWinner(player).meetingsSinceLastWin === 0">
+        <i class="fa fa-check"></i>
+      </span>
+      <span *ngIf="getWinner(player).meetingsSinceLastWin > 0"
+            class="{{getWinner(player).meetingsSinceLastWin >= 4 ? 'text-red-600 font-bold' : ''}}"
+      >
+        {{ getWinner(player).meetingsSinceLastWin }}
+      </span>
+    </td>
+    <td class="border border-gray-700"
+        [class.border-b-gray-400]="isBoundaryPlayer(player)"
+    >
+      <span *ngIf="getWinner(player).startsSinceLastWin === 0">
+        <i class="fa fa-check"></i>
+      </span>
+      <span *ngIf="getWinner(player).startsSinceLastWin > 0"
+            class="{{getWinner(player).startsSinceLastWin >= 20 ? 'text-red-600 font-bold' : ''}}"
+      >
+        {{ getWinner(player).startsSinceLastWin }}
+      </span>
+    </td>
+    <td class="border border-gray-700"
+        [class.border-b-gray-400]="isBoundaryPlayer(player)"
+    >
+      <span
+        class="{{getWinner(player).startsSinceLastWin > getWinner(player).averageStartsPerWin  ? 'text-red-600 font-bold' : ''}}">
+        {{ getWinner(player).averageStartsPerWin }}
+      </span>
+    </td>
+    <ng-container *ngFor="let meeting of windowMeetings">
+      <td *ngFor="let placing of placings; let last = last"
+          colspan="1"
+          class="border border-gray-900 {{placing.color}}"
+          [class.border-r-gray-700]="last"
+          [class.border-b-gray-400]="isBoundaryPlayer(player)"
+          [class.border-b-gray-700]="!isBoundaryPlayer(player)"
+          [class.text-yellow-400]="'X' == getCellValue(player, meeting.meeting, placing.key)"
+      >
+        {{ getCellValue(player, meeting.meeting, placing.key) }}
+      </td>
+    </ng-container>
+  </tr>
+</table>
+
+<div *ngIf="activePlayerType != playerTypes[2]"
+     class="mb-4"
+>
+  <div class="mx-24 mb-4 grid grid-cols-2">
+    <div class="text-3xl text-yellow-400">
+      {{ activePlayerName }}
+    </div>
+    <div>
+      <div class="w-full flex flex-row justify-between bg-gray-800 rounded-full text-xl">
+        <div *ngFor="let view of playerViews"
+             class="w-full py-2 rounded-full {{getSectionStyle(view)}}"
+             (click)="activePlayerView = view"
+        >
+          {{ view }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mx-4">
+    <div *counter="let row of 2">
+      <div class="my-1 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+      <div class="flex flex-row justify-evenly">
+        <div *ngFor="let meeting of meetings.slice((row - 1) * 24, row * 24)"
+             class="flex flex-col gap-y-1"
+        >
+          <div>
+            {{ meeting.meeting.slice(5) }}
+          </div>
+          <div class="bg-sky-600"
+               [style.height]="getCellValue(activePlayer, meeting.meeting, 'earnings') + 'px'"
+          >
+          </div>
+          <div [class.text-yellow-400]="'X' == getCellValue(activePlayer, meeting.meeting, 'earnings')">
+            {{ getCellValue(activePlayer, meeting.meeting, 'earnings') }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table *ngIf="activePlayerType != playerTypes[2] && activePlayerView == playerViews[0]"
+       class="mx-auto table-fixed border-collapse font-mono"
+>
+  <thead class="text-xl">
+    <th class="w-24 border border-gray-600 py-1">
+      <i class="fa fa-calendar"></i>
+    </th>
+    <th *counter="let race of MAX_RACE_PER_MEETING"
+        class="w-32 border border-gray-600"
+    >
+      {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
+    </th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let m of meetings; let last = last"
+        class="hover:bg-gray-800"
+    >
+      <td class="h-10 border border-gray-700 text-xl py-1"
+          [class.border-b-yellow-400]="!last && isBoundaryMeeting(m.meeting)"
+      >
+        {{ formatMeeting(m.meeting) }}
+      </td>
+      <td *counter="let race of MAX_RACE_PER_MEETING"
+          class="h-10 border border-gray-700 text-xs py-1"
+          [class.bg-gray-700]="getStarters(m, race).length > 1"
+          [class.border-b-yellow-400]="!last && isBoundaryMeeting(m.meeting)"
+      >
+        <div class="flex flex-col gap-y-1">
+          <div *ngFor="let starter of getStarters(m, race)"
+               class="{{toPlacingColor(starter.placing)}}"
+               [class.line-through]="starter.scratched"
+               [class.text-yellow-400]="starter.scratched"
+          >
+            {{ starter?.winOdds || 0 > 0 ? (starter.winOdds | number: '1.0-1') : '' }}
+            {{ starter.horseNameCH }}
+            {{ starter.partner }}
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table *ngIf="activePlayerType != playerTypes[2] && activePlayerView == playerViews[1]"
+       class="mx-auto table-fixed border-collapse font-mono"
+>
+  <thead class="text-lg">
+    <th class="w-20 border border-gray-600 py-1">
+      #
+    </th>
+    <th class="w-28 border border-gray-600 text-yellow-400">
+      Horse
+    </th>
+    <th *counter="let count of maxActivePersonHorseTop4Count"
+        class="w-28 border border-gray-600"
+    >
+      {{ count }}
+    </th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let hv of activePersonViewByHorse; let index = index"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700 py-0.5">
+        {{ index + 1 }}
+      </td>
+      <td class="border border-gray-700">
+        <span *ngIf="isOnMostRecentRacecard(hv.horse)"
+              class="text-yellow-400"
+        >
+          <i class="fa fa-star"></i>
+        </span>
+        {{ hv.horseNameCH }}
+      </td>
+      <td *ngFor="let hs of hv.starters"
+          class="border border-gray-700 {{COLORS[hs.placing - 1]}}"
+      >
+        <div class="grid grid-cols-2">
+          <div>
+            {{ hs?.winOdds | number: '1.0-1' }}
+          </div>
+          <div>
+            {{ hs.partner }}
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table *ngIf="activePlayerType == playerTypes[2]"
+       class="mx-auto table-fixed border-collapse font-mono"
+>
+  <thead class="text-xl">
+    <th class="w-24 border border-gray-600 py-1">
+      <i class="fa fa-calendar"></i>
+    </th>
+    <th *counter="let race of MAX_RACE_PER_MEETING"
+        class="w-32 border border-gray-600"
+    >
+      {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
+    </th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let kind of syndicateKinds; let last = last">
+      <td class="border border-gray-700"
+          [class.border-b-yellow-400]="last"
+      >
+        <div>{{ kind }}</div>
+        <div class="text-lg">
+          {{ getSyndicateStarterCount(kind) }}
+        </div>
+      </td>
+      <td *counter="let race of MAX_RACE_PER_MEETING"
+          class="border border-gray-700 text-xs py-3"
+          [class.border-b-yellow-400]="last"
+      >
+        <div class="flex flex-col gap-y-2">
+          <div *ngFor="let starter of getSyndicateStarters(kind, race)"
+               class="{{toPlacingColor(starter.placing)}}"
+               [class.line-through]="starter.scratched"
+               [class.text-yellow-400]="starter.scratched"
+          >
+            {{ starter.order }}
+            {{ starter.horseNameCH }}
+            {{ starter?.winOdds || 0 > 0 ? '@' + (starter.winOdds | number: '1.0-1') : '' }}
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr *ngFor="let m of meetings">
+      <td class="h-10 border border-gray-700 text-xl py-1 cursor-pointer"
+          [class.font-bold]="activeMeeting === m.meeting"
+          [class.text-yellow-400]="activeMeeting === m.meeting"
+          [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+          (click)="activeMeeting = m.meeting"
+      >
+        {{ formatMeeting(m.meeting) }}
+      </td>
+      <td *counter="let race of MAX_RACE_PER_MEETING"
+          class="h-10 border border-gray-700 py-1"
+          [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+      >
+        <div class="grid grid-cols-3">
+          <div *ngFor="let hit of getSyndicatePerformanceHits(m.meeting, race)"
+               class="{{getSyndicatePerformanceHitColor(hit)}}"
+          >
+            {{ hit }}
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -42,10 +42,10 @@
 <!--      <div class="w-20 text-center"-->
 <!--           [class.ml-2.5]="last"-->
 <!--      >-->
-<!--        <div class="w-16 py-0.5 text-lg rounded-full cursor-pointer {{getTrackingPlayerStyle(pe.person)}}"-->
-<!--             (click)="toggleTrackingPlayer(pe.person)"-->
+<!--        <div class="w-16 py-0.5 text-lg rounded-full cursor-pointer {{getTrackingPlayerStyle(pe.player)}}"-->
+<!--             (click)="toggleTrackingPlayer(pe.player)"-->
 <!--        >-->
-<!--          {{ pe.person }}-->
+<!--          {{ pe.player }}-->
 <!--        </div>-->
 <!--      </div>-->
 <!--      <div class="flex flex-col justify-evenly leading-4">-->
@@ -134,7 +134,7 @@
 <!--  <th *ngFor="let trainer of trainers"-->
 <!--      class="w-20 h-7 border border-gray-600"-->
 <!--      (mouseenter)="setHoveredTrainer(trainer)"-->
-<!--      [class.border-r-red-900]="isBoundaryPerson(trainer)"-->
+<!--      [class.border-r-red-900]="isBoundaryPlayer(trainer)"-->
 <!--      [class.bg-gray-800]="hoveredTrainer === trainer"-->
 <!--  >-->
 <!--    {{ trainer }}-->
@@ -145,15 +145,15 @@
 <!--      class="hover:bg-gray-800"-->
 <!--  >-->
 <!--    <td class="h-7 border border-gray-600 font-bold"-->
-<!--        [class.border-b-red-900]="isBoundaryPerson(jockey)"-->
+<!--        [class.border-b-red-900]="isBoundaryPlayer(jockey)"-->
 <!--    >-->
 <!--      {{ jockey }}-->
 <!--    </td>-->
 <!--    <td *ngFor="let trainer of trainers"-->
 <!--        class="h-7 border border-gray-700 {{getCollaborationEarningStyle(jockey, trainer)}}"-->
 <!--        (mouseenter)="setHoveredTrainer(trainer)"-->
-<!--        [class.border-b-red-900]="isBoundaryPerson(jockey)"-->
-<!--        [class.border-r-red-900]="isBoundaryPerson(trainer)"-->
+<!--        [class.border-b-red-900]="isBoundaryPlayer(jockey)"-->
+<!--        [class.border-r-red-900]="isBoundaryPlayer(trainer)"-->
 <!--        [class.bg-gray-800]="hoveredTrainer === trainer"-->
 <!--    >-->
 <!--      {{-->
