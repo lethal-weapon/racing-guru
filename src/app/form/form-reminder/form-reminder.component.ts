@@ -329,6 +329,6 @@ export class FormReminderComponent implements OnInit {
   get isLoading(): boolean {
     return this.repo.findReports().length === 0
       || this.repo.findReminders().length === 0
-      || this.repo.findRacecards().length === 0
+      || this.repo.findRacecards().length === 0;
   }
 }

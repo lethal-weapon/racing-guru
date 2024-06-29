@@ -22,8 +22,8 @@ export class FormOwnerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.repo.fetchHorses();
-    // this.repo.fetchSyndicates();
+    this.repo.fetchHorses();
+    this.repo.fetchSyndicates();
   }
 
   copyText = (text: string) =>
@@ -61,8 +61,7 @@ export class FormOwnerComponent implements OnInit {
   isBelongToOtherSyndicate = (horse: Horse) =>
     this.syndicates
       .filter(s => s.id !== this.activeSyndicate.id)
-      .map(s => s.horses)
-      .reduce((prev, curr) => prev.concat(curr), [])
+      .flatMap(s => s.horses)
       .includes(horse.code)
 
   goToSyndicate = (horse: Horse) => {
@@ -101,8 +100,7 @@ export class FormOwnerComponent implements OnInit {
 
     this.activeSyndicate.members = this.horses
       .filter(h => this.activeSyndicate.horses.includes(h.code))
-      .map(h => this.cleanOwner(h.ownerCH))
-      .reduce((prev, curr) => prev.concat(curr), [])
+      .flatMap(h => this.cleanOwner(h.ownerCH))
       .filter((o, i, arr) => arr.indexOf(o) === i)
       .sort((o1, o2) => o1.localeCompare(o2));
   }
@@ -280,5 +278,10 @@ export class FormOwnerComponent implements OnInit {
 
   get syndicates(): Syndicate[] {
     return this.repo.findSyndicates();
+  }
+
+  get isLoading(): boolean {
+    return this.repo.findHorses().length === 0
+      || this.repo.findSyndicates().length === 0;
   }
 }
