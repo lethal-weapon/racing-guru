@@ -8,7 +8,7 @@ import {Horse} from './horse.model';
 import {Racecard} from './racecard.model';
 import {Reminder} from './reminder.model';
 import {Report} from './report.model';
-import {Record} from './record.model';
+import {Bet} from './bet.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
@@ -64,8 +64,8 @@ export class RestDataSource {
   getReports = (): Observable<Report[]> =>
     this.http.get<Report[]>(`${this.baseUrl}/reports`)
 
-  getRecords = (): Observable<Record[]> =>
-    this.http.get<Record[]>(`${this.baseUrl}/records`)
+  getBets = (): Observable<Bet[]> =>
+    this.http.get<Bet[]>(`${this.baseUrl}/bets`)
 
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)

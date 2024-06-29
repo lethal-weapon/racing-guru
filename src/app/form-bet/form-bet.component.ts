@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {Record} from '../model/record.model';
+import {Bet} from '../model/bet.model';
 import {SEASONS} from '../util/strings';
 
 interface MonthlySummary {
@@ -14,6 +14,9 @@ interface MonthlySummary {
   betlines: number[]
 }
 
+const BY_MONTH = 'By Month';
+const BY_MEETING = 'By Meeting';
+
 @Component({
   selector: 'app-form-bet',
   templateUrl: './form-bet.component.html'
@@ -22,11 +25,14 @@ export class FormBetComponent implements OnInit {
   activeGroup: string = this.subsections[1][0];
   activeSeason: string = SEASONS[0].label;
 
+  protected readonly BY_MONTH = BY_MONTH;
+  protected readonly BY_MEETING = BY_MEETING;
+
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    // this.repo.fetchRecords();
+    this.repo.fetchBets();
   }
 
   setActiveItem = (sectionIndex: number, item: string) => {
@@ -34,17 +40,17 @@ export class FormBetComponent implements OnInit {
     else this.activeGroup = item;
   }
 
-  countBetlinesOnMeeting = (record: Record): number[] =>
+  countBetlinesOnMeeting = (bet: Bet): number[] =>
     [
-      record.betlines.filter(b => b.credit > b.debit).length,
-      record.betlines.length
+      bet.betlines.filter(b => b.credit > b.debit).length,
+      bet.betlines.length
     ]
 
-  getReturnOnInvestment = (record: Record): number =>
-    parseFloat((record.credit / record.debit - 1).toFixed(2))
+  getReturnOnInvestment = (bet: Bet): number =>
+    parseFloat((bet.credit / bet.debit - 1).toFixed(2))
 
-  getMeetingROIColor = (record: Record): string => {
-    const roi = this.getReturnOnInvestment(record);
+  getMeetingROIColor = (bet: Bet): string => {
+    const roi = this.getReturnOnInvestment(bet);
     return roi < 0
       ? 'text-red-600'
       : roi >= 1
@@ -52,14 +58,14 @@ export class FormBetComponent implements OnInit {
         : 'text-green-600';
   }
 
-  getProfitRacesOnMeeting = (record: Record): number[] =>
+  getProfitRacesOnMeeting = (bet: Bet): number[] =>
     // @ts-ignore
-    record.betlines
+    bet.betlines
       .map(b => b.race)
       .filter(r => r)
       .filter((r, index, arr) => index === arr.indexOf(r))
       .filter(r =>
-        0 < record.betlines
+        0 < bet.betlines
           .filter(b => b.race === r)
           .map(b => b.credit - b.debit)
           .reduce((prev, curr) => prev + curr, 0)
@@ -71,22 +77,20 @@ export class FormBetComponent implements OnInit {
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
 
   get monthlySummaries(): MonthlySummary[] {
-    return this.records
+    return this.bets
       .map(r => r.meeting.slice(0, 7))
       .filter((m, index, arr) => index === arr.indexOf(m))
       .sort((m1, m2) => m2.localeCompare(m1))
       .map(m => {
-          const monthRecords = this.records.filter(r => r.meeting.startsWith(m));
-          const monthDebit = monthRecords.map(r => r.debit).reduce((prev, curr) => prev + curr, 0);
-          const monthCredit = monthRecords.map(r => r.credit).reduce((prev, curr) => prev + curr, 0);
-          const monthBetlines = monthRecords
-            .map(r => r.betlines)
-            .reduce((prev, curr) => prev.concat(curr), []);
+          const monthBets = this.bets.filter(r => r.meeting.startsWith(m));
+          const monthDebit = monthBets.map(r => r.debit).reduce((prev, curr) => prev + curr, 0);
+          const monthCredit = monthBets.map(r => r.credit).reduce((prev, curr) => prev + curr, 0);
+          const monthBetlines = monthBets.flatMap(r => r.betlines);
 
           return {
             year: m.slice(0, 4).replace('20', '\''),
-            month: new Date(monthRecords[0].meeting).toLocaleString('en-US', {month: 'short'}),
-            meetings: monthRecords.length,
+            month: new Date(monthBets[0].meeting).toLocaleString('en-US', {month: 'short'}),
+            meetings: monthBets.length,
             debit: monthDebit,
             credit: monthCredit,
             roi: parseFloat((monthCredit / monthDebit - 1).toFixed(3)),
@@ -100,24 +104,21 @@ export class FormBetComponent implements OnInit {
   }
 
   get seasonBetlines(): number[] {
-    const totalBetlines = this.records
-      .map(r => r.betlines)
-      .reduce((prev, curr) => prev.concat(curr), []);
-
+    const betlines = this.bets.flatMap(r => r.betlines);
     return [
-      totalBetlines.filter(b => b.credit > b.debit).length,
-      totalBetlines.length
+      betlines.filter(b => b.credit > b.debit).length,
+      betlines.length
     ];
   }
 
   get seasonSummary(): ({ debit: number, credit: number, roi: number }) {
-    if (this.records.length === 0) return {debit: 0, credit: 0, roi: 0};
+    if (this.bets.length === 0) return {debit: 0, credit: 0, roi: 0};
 
-    const totalDebit = this.records
+    const totalDebit = this.bets
       .map(r => r.debit)
       .reduce((prev, curr) => prev + curr, 0);
 
-    const totalCredit = this.records
+    const totalCredit = this.bets
       .map(r => r.credit)
       .reduce((prev, curr) => prev + curr, 0);
 
@@ -138,15 +139,15 @@ export class FormBetComponent implements OnInit {
   get subsections(): string[][] {
     return [
       SEASONS.map(s => s.label),
-      ['By Meeting', 'By Month'],
+      [BY_MEETING, BY_MONTH],
     ];
   }
 
-  get records(): Record[] {
+  get bets(): Bet[] {
     const season = SEASONS.find(s => s.label === this.activeSeason);
     return !season
       ? []
-      : this.repo.findRecords()
+      : this.repo.findBets()
         .filter(r => r.meeting >= season.opening && r.meeting <= season.finale);
   }
 }

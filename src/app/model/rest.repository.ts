@@ -9,7 +9,7 @@ import {ConnectionDividend, RaceConnection} from './connection.model';
 import {FactorHit} from './backtest.model';
 import {Racecard} from './racecard.model';
 import {Report} from './report.model';
-import {Record} from './record.model';
+import {Bet} from './bet.model';
 import {NegativePerformance, SeasonPerformance} from './performance.model';
 import {DrawInheritance} from './draw.model';
 import {Syndicate, SyndicateSnapshot} from './syndicate.model';
@@ -19,11 +19,11 @@ import {Player} from './player.model';
 
 @Injectable()
 export class RestRepository {
+  private bets: Bet[] = [];
   private players: Player[] = [];
   private reminders: Reminder[] = [];
   private horses: Horse[] = [];
   private reports: Report[] = [];
-  private records: Record[] = [];
   private meetings: Meeting[] = [];
   private syndicates: Syndicate[] = [];
   private collaborations: Collaboration[] = [];
@@ -40,11 +40,11 @@ export class RestRepository {
   constructor(private source: RestDataSource) {
   }
 
+  findBets = () => this.bets
   findPlayers = () => this.players
   findReminders = () => this.reminders
   findHorses = () => this.horses
   findReports = () => this.reports
-  findRecords = () => this.records
   findMeetings = () => this.meetings
   findCollaborations = () => this.collaborations
   findRacecards = () => this.racecards
@@ -160,8 +160,8 @@ export class RestRepository {
   fetchReports = () =>
     this.source.getReports().subscribe(data => this.reports = data)
 
-  fetchRecords = () =>
-    this.source.getRecords().subscribe(data => this.records = data)
+  fetchBets = () =>
+    this.source.getBets().subscribe(data => this.bets = data)
 
   fetchMeetings = () =>
     this.source.getMeetings().subscribe(data => this.meetings = data)

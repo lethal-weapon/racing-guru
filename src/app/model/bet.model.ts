@@ -1,4 +1,4 @@
-export interface Record {
+export interface Bet {
   meeting: string,
   venue: string,
   account: string,

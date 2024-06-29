@@ -1,170 +1,168 @@
-Form-Bet
+<div class="mb-6 mx-24 text-xl flex flex-row justify-between text-center">
+  <div *ngFor="let section of subsections; let index = index"
+       class="w-full flex flex-row justify-between bg-gray-800 rounded-full"
+  >
+    <div *ngFor="let item of section"
+         class="w-full py-2 rounded-full {{getSectionStyle(item)}}"
+         (click)="setActiveItem(index, item)"
+    >
+      {{ item }}
+    </div>
+  </div>
+</div>
 
-<!--<div class="mb-6 mx-24 text-xl flex flex-row justify-between text-center">-->
-<!--  <div *ngFor="let section of subsections; let index = index"-->
-<!--       class="w-full flex flex-row justify-between bg-gray-800 rounded-full"-->
-<!--  >-->
-<!--    <div *ngFor="let item of section"-->
-<!--         class="w-full py-2 rounded-full {{getSectionStyle(item)}}"-->
-<!--         (click)="setActiveItem(index, item)"-->
-<!--    >-->
-<!--      {{item}}-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
+<div class="mb-6 mx-36 pt-2 pb-2.5 flex flex-row justify-evenly text-xl text-center
+            rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
+>
+  <div>
+    <span class="mr-2">Betlines:</span>
+    <span class="text-green-600">
+      {{ seasonBetlines[0] | number }}
+    </span>
+    <span class="mx-2">/</span>
+    <span>
+      {{ seasonBetlines[1] | number }}
+    </span>
+  </div>
+  <div>
+    <span class="mr-2">Debit:</span>
+    <span class="text-red-600">
+      -{{ seasonSummary.debit | currency:'USD':'symbol':'1.0-0' }}
+    </span>
+  </div>
+  <div>
+    <span class="mr-2">Credit:</span>
+    <span class="text-green-600">
+      +{{ seasonSummary.credit | currency:'USD':'symbol':'1.0-0' }}
+    </span>
+  </div>
+  <div>
+    <span class="mr-2">P / L:</span>
+    <span [class.text-red-600]="seasonSummary.credit < seasonSummary.debit"
+          [class.text-green-600]="seasonSummary.credit > seasonSummary.debit"
+    >
+      {{ (seasonSummary.credit - seasonSummary.debit) | currency:'USD':'symbol':'1.0-0' }}
+    </span>
+  </div>
+  <div>
+    <span class="mr-2">ROI:</span>
+    <span class="{{seasonSummary.roi > 0 ? 'text-green-600' : 'text-red-600'}}">
+      {{ seasonSummary.roi | percent:'1.1-2' }}
+    </span>
+  </div>
+</div>
 
-<!--<div class="mb-6 mx-36 pt-2 pb-2.5 flex flex-row justify-evenly text-xl text-center-->
-<!--            rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"-->
-<!--&gt;-->
-<!--  <div>-->
-<!--    <span class="mr-2">Betlines:</span>-->
-<!--    <span class="text-green-600">-->
-<!--      {{seasonBetlines[0]}}-->
-<!--    </span>-->
-<!--    <span class="mx-2">/</span>-->
-<!--    <span>-->
-<!--      {{seasonBetlines[1]}}-->
-<!--    </span>-->
-<!--  </div>-->
-<!--  <div>-->
-<!--    <span class="mr-2">Debit:</span>-->
-<!--    <span class="text-red-600">-->
-<!--      -{{seasonSummary.debit | currency:'USD':'symbol':'1.0-0'}}-->
-<!--    </span>-->
-<!--  </div>-->
-<!--  <div>-->
-<!--    <span class="mr-2">Credit:</span>-->
-<!--    <span class="text-green-600">-->
-<!--      +{{seasonSummary.credit | currency:'USD':'symbol':'1.0-0'}}-->
-<!--    </span>-->
-<!--  </div>-->
-<!--  <div>-->
-<!--    <span class="mr-2">P / L:</span>-->
-<!--    <span [class.text-red-600]="seasonSummary.credit < seasonSummary.debit"-->
-<!--          [class.text-green-600]="seasonSummary.credit > seasonSummary.debit"-->
-<!--    >-->
-<!--      {{(seasonSummary.credit - seasonSummary.debit) | currency:'USD':'symbol':'1.0-0'}}-->
-<!--    </span>-->
-<!--  </div>-->
-<!--  <div>-->
-<!--    <span class="mr-2">ROI:</span>-->
-<!--    <span class="{{seasonSummary.roi > 0 ? 'class.text-green-600' : 'text-red-600'}}">-->
-<!--      {{seasonSummary.roi | percent:'1.1-2'}}-->
-<!--    </span>-->
-<!--  </div>-->
-<!--</div>-->
+<table *ngIf="activeGroup === BY_MEETING"
+       class="mx-auto border-collapse border border-gray-600 text-center"
+>
+  <thead class="text-lg">
+    <th class="border border-gray-600 py-1.5 px-6">
+      #
+    </th>
+    <th *ngFor="let field of meetingViewFields; let index = index"
+        class="border border-gray-600 py-1.5"
+        [class.px-6]="[1,4].includes(index)"
+        [class.px-8]="![1,4].includes(index)"
+    >
+      {{ field }}
+    </th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let bet of bets; let index = index"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700 py-1 font-mono">
+        {{ bets.length - index }}
+      </td>
+      <td class="border border-gray-700 py-1 font-mono">
+        {{ bet.meeting }}
+      </td>
+      <td class="border border-gray-700 py-1">
+        {{ bet.venue }}
+      </td>
+      <td class="border border-gray-700 py-1 px-2">
+        <div class="grid grid-cols-6 gap-x-2">
+          <div *ngFor="let race of getProfitRacesOnMeeting(bet)">
+            {{ race }}
+          </div>
+        </div>
+      </td>
+      <td class="border border-gray-700 py-1 px-4">
+        <div class="grid grid-cols-3 gap-x-1">
+          <div class="{{countBetlinesOnMeeting(bet)[0] === 0 ? 'text-red-600' : 'text-green-600'}}">
+            {{ countBetlinesOnMeeting(bet)[0] | number }}
+          </div>
+          <div>/</div>
+          <div>
+            {{ countBetlinesOnMeeting(bet)[1] | number }}
+          </div>
+        </div>
+      </td>
+      <td class="border border-gray-700 py-1 text-red-600">
+        -{{ bet.debit | currency:'USD':'symbol':'1.0-0' }}
+      </td>
+      <td class="border border-gray-700 py-1">
+        <span *ngIf="bet.credit > 0" class="text-green-600">
+          +{{ bet.credit | currency:'USD':'symbol':'1.0-0' }}
+        </span>
+        <span *ngIf="bet.credit <= 0" class="text-red-600">
+          X
+        </span>
+      </td>
+      <td class="border border-gray-700 py-1"
+          [class.text-red-600]="bet.credit < bet.debit"
+          [class.text-green-600]="bet.credit > bet.debit"
+      >
+        {{ (bet.credit - bet.debit) | currency:'USD':'symbol':'1.0-0' }}
+      </td>
+      <td class="border border-gray-700 py-1 {{getMeetingROIColor(bet)}}">
+        {{ getReturnOnInvestment(bet) }}
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-<!--<table *ngIf="activeGroup === 'By Meeting'"-->
-<!--       class="mx-auto border-collapse border border-gray-600 text-center"-->
-<!--&gt;-->
-<!--  <thead class="text-lg">-->
-<!--  <th class="border border-gray-600 py-1.5 px-6">-->
-<!--    #-->
-<!--  </th>-->
-<!--  <th *ngFor="let field of meetingViewFields; let index = index"-->
-<!--      class="border border-gray-600 py-1.5"-->
-<!--      [class.px-6]="[1,4].includes(index)"-->
-<!--      [class.px-8]="![1,4].includes(index)"-->
-<!--  >-->
-<!--    {{field}}-->
-<!--  </th>-->
-<!--  </thead>-->
-<!--  <tbody>-->
-<!--  <tr *ngFor="let record of records; let index = index"-->
-<!--      class="hover:bg-gray-800"-->
-<!--  >-->
-<!--    <td class="border border-gray-700 py-1 font-mono">-->
-<!--      {{records.length - index}}-->
-<!--    </td>-->
-<!--    <td class="border border-gray-700 py-1 font-mono">-->
-<!--      {{record.meeting}}-->
-<!--    </td>-->
-<!--    <td class="border border-gray-700 py-1">-->
-<!--      {{record.venue}}-->
-<!--    </td>-->
-<!--    <td class="border border-gray-700 py-1 px-2">-->
-<!--      <div class="grid grid-cols-6 gap-x-2">-->
-<!--        <div *ngFor="let race of getProfitRacesOnMeeting(record)">-->
-<!--          {{race}}-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </td>-->
-<!--    <td class="border border-gray-700 py-1 px-4">-->
-<!--      <div class="grid grid-cols-3 gap-x-1">-->
-<!--        <div class="{{countBetlinesOnMeeting(record)[0] === 0 ? 'text-red-600' : 'text-green-600'}}">-->
-<!--          {{countBetlinesOnMeeting(record)[0]}}-->
-<!--        </div>-->
-<!--        <div>/</div>-->
-<!--        <div>-->
-<!--          {{countBetlinesOnMeeting(record)[1]}}-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </td>-->
-<!--    <td class="border border-gray-700 py-1 text-red-600">-->
-<!--      -{{record.debit | currency:'USD':'symbol':'1.0-0'}}-->
-<!--    </td>-->
-<!--    <td class="border border-gray-700 py-1">-->
-<!--      <span *ngIf="record.credit > 0" class="text-green-600">-->
-<!--        +{{record.credit | currency:'USD':'symbol':'1.0-0'}}-->
-<!--      </span>-->
-<!--      <span *ngIf="record.credit <= 0" class="text-red-600">-->
-<!--        X-->
-<!--      </span>-->
-<!--    </td>-->
-<!--    <td class="border border-gray-700 py-1"-->
-<!--        [class.text-red-600]="record.credit < record.debit"-->
-<!--        [class.text-green-600]="record.credit > record.debit"-->
-<!--    >-->
-<!--      {{(record.credit - record.debit) | currency:'USD':'symbol':'1.0-0'}}-->
-<!--    </td>-->
-<!--    <td class="border border-gray-700 py-1 {{getMeetingROIColor(record)}}">-->
-<!--      {{getReturnOnInvestment(record) ? getReturnOnInvestment(record) : ''}}-->
-<!--    </td>-->
-<!--  </tr>-->
-<!--  </tbody>-->
-<!--</table>-->
-
-<!--<div *ngIf="activeGroup === 'By Month'"-->
-<!--     class="mx-24 grid grid-cols-4 gap-x-6 gap-y-3 text-center text-lg"-->
-<!--&gt;-->
-<!--  <div *ngFor="let ms of monthlySummaries"-->
-<!--       class="px-4 pt-2 pb-2.5 rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"-->
-<!--  >-->
-<!--    <div class="text-xl text-blue-600">-->
-<!--      {{ms.month}} {{ms.year}}-->
-<!--    </div>-->
-<!--    <div class="px-4 grid grid-cols-2 gap-x-8 gap-y-1">-->
-<!--      <div class="text-left">Meetings</div>-->
-<!--      <div class="text-right">{{ms.meetings}}</div>-->
-<!--      <div class="text-left">Betlines</div>-->
-<!--      <div class="text-right">-->
-<!--        <span class="text-green-600">-->
-<!--          {{ms.betlines[0]}}-->
-<!--        </span>-->
-<!--        <span class="mx-1">/</span>-->
-<!--        <span>-->
-<!--          {{ms.betlines[1]}}-->
-<!--        </span>-->
-<!--      </div>-->
-<!--      <div class="text-left">Debit</div>-->
-<!--      <div class="text-red-600 text-right">-->
-<!--        -{{ms.debit | currency:'USD':'symbol':'1.0-0'}}-->
-<!--      </div>-->
-<!--      <div class="text-left">Credit</div>-->
-<!--      <div class="text-green-600 text-right">-->
-<!--        +{{ms.credit | currency:'USD':'symbol':'1.0-0'}}-->
-<!--      </div>-->
-<!--      <div class="text-left">P / L</div>-->
-<!--      <div class="text-right"-->
-<!--           [class.text-red-600]="ms.credit < ms.debit"-->
-<!--           [class.text-green-600]="ms.credit > ms.debit"-->
-<!--      >-->
-<!--        {{(ms.credit - ms.debit) | currency:'USD':'symbol':'1.0-0'}}-->
-<!--      </div>-->
-<!--      <div class="text-left">ROI</div>-->
-<!--      <div class="text-right {{ms.roi > 0 ? 'class.text-green-600' : 'text-red-600'}}">-->
-<!--        {{ms.roi | percent:'1.1-2'}}-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
+<div *ngIf="activeGroup === BY_MONTH"
+     class="mx-24 grid grid-cols-4 gap-x-6 gap-y-3 text-center text-lg"
+>
+  <div *ngFor="let ms of monthlySummaries"
+       class="px-4 pt-2 pb-2.5 rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
+  >
+    <div class="text-xl text-blue-600">
+      {{ ms.month }} {{ ms.year }}
+    </div>
+    <div class="px-4 grid grid-cols-2 gap-x-8 gap-y-1">
+      <div class="text-left">Meetings</div>
+      <div class="text-right">{{ ms.meetings }}</div>
+      <div class="text-left">Betlines</div>
+      <div class="text-right">
+        <span class="text-green-600">
+          {{ ms.betlines[0] | number }}
+        </span>
+        <span class="mx-1">/</span>
+        <span>
+          {{ ms.betlines[1] | number }}
+        </span>
+      </div>
+      <div class="text-left">Debit</div>
+      <div class="text-red-600 text-right">
+        -{{ ms.debit | currency:'USD':'symbol':'1.0-0' }}
+      </div>
+      <div class="text-left">Credit</div>
+      <div class="text-green-600 text-right">
+        +{{ ms.credit | currency:'USD':'symbol':'1.0-0' }}
+      </div>
+      <div class="text-left">P / L</div>
+      <div class="text-right"
+           [class.text-red-600]="ms.credit < ms.debit"
+           [class.text-green-600]="ms.credit > ms.debit"
+      >
+        {{ (ms.credit - ms.debit) | currency:'USD':'symbol':'1.0-0' }}
+      </div>
+      <div class="text-left">ROI</div>
+      <div class="text-right {{ms.roi > 0 ? 'text-green-600' : 'text-red-600'}}">
+        {{ ms.roi | percent:'1.1-2' }}
+      </div>
+    </div>
+  </div>
+</div>
