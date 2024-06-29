@@ -1,8 +1,3 @@
-export interface CareerWin {
-  upToDate: string,
-  wins: number
-}
-
 export class Player {
   constructor(
     public code: string,
@@ -21,6 +16,11 @@ export class Player {
     public newcomer: boolean
   ) {
   }
+}
+
+export interface CareerWin {
+  upToDate: string,
+  wins: number
 }
 
 export const DEFAULT_PLAYER: Player = {

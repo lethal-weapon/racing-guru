@@ -64,195 +64,199 @@
       </div>
       <table class="mx-auto table-fixed text-left text-xl">
         <thead>
-        <th class="w-36"></th>
-        <th class="w-32"></th>
+          <th class="w-36"></th>
+          <th class="w-32"></th>
         </thead>
         <tbody>
-        <tr>
-          <td class="pt-3">Code</td>
-          <td class="pt-3">
-            <input
-              [(ngModel)]="editingPlayer.code"
-              [readOnly]="isExistingPlayer"
-              required
-              type="text"
-              minlength="2"
-              maxlength="3"
-              placeholder="XXX"
-              class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td class="pt-3">Last Name</td>
-          <td class="pt-3">
-            <input
-              [(ngModel)]="editingPlayer.lastName"
-              [readOnly]="isExistingPlayer"
-              required
-              type="text"
-              placeholder="Smith"
-              class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td class="pt-3">First Name</td>
-          <td class="pt-3">
-            <input
-              [(ngModel)]="editingPlayer.firstName"
-              [readOnly]="isExistingPlayer"
-              required
-              type="text"
-              placeholder="John"
-              class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td class="pt-3">Short Name</td>
-          <td class="pt-3">
-            <input
-              [(ngModel)]="editingPlayer.shortName"
-              [readOnly]="isExistingPlayer"
-              required
-              type="text"
-              placeholder="J Smith"
-              class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td class="pt-3">Nickname</td>
-          <td class="pt-3">
-            <input
-              [(ngModel)]="editingPlayer.nickname"
-              required
-              type="text"
-              placeholder=""
-              class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td class="pt-3">DOB</td>
-          <td class="pt-3 text-right">
-            <input
-              [(ngModel)]="editingPlayer.dateOfBirth"
-              [readOnly]="isExistingPlayer"
-              required
-              type="date"
-              pattern="\d{4}-\d{2}-\d{2}"
-              class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td class="pt-3">Age</td>
-          <td class="pt-3 text-right">
-            {{ editingAge }}
-          </td>
-        </tr>
-        <tr>
-          <td class="pt-3">Nationality</td>
-          <td class="pt-3 text-lg">
-            <select [(ngModel)]="editingPlayer.nationality"
-                    [disabled]="isExistingPlayer"
-                    class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
-                           border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
-            >
-              <option *ngFor="let nation of NATIONALITIES"
-                      [ngValue]="nation"
+          <tr>
+            <td class="pt-3">Code</td>
+            <td class="pt-3">
+              <input
+                [(ngModel)]="editingPlayer.code"
+                [readOnly]="isExistingPlayer"
+                required
+                type="text"
+                minlength="2"
+                maxlength="3"
+                placeholder="XXX"
+                class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="pt-3">Last Name</td>
+            <td class="pt-3">
+              <input
+                [(ngModel)]="editingPlayer.lastName"
+                [readOnly]="isExistingPlayer"
+                required
+                type="text"
+                placeholder="Smith"
+                class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="pt-3">First Name</td>
+            <td class="pt-3">
+              <input
+                [(ngModel)]="editingPlayer.firstName"
+                [readOnly]="isExistingPlayer"
+                required
+                type="text"
+                placeholder="John"
+                class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="pt-3">Short Name</td>
+            <td class="pt-3">
+              <input
+                [(ngModel)]="editingPlayer.shortName"
+                [readOnly]="isExistingPlayer"
+                required
+                type="text"
+                placeholder="J Smith"
+                class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="pt-3">Nickname</td>
+            <td class="pt-3">
+              <input
+                [(ngModel)]="editingPlayer.nickname"
+                required
+                type="text"
+                placeholder=""
+                class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="pt-3">DOB</td>
+            <td class="pt-3 text-right">
+              <input
+                [(ngModel)]="editingPlayer.dateOfBirth"
+                [readOnly]="isExistingPlayer"
+                required
+                type="date"
+                pattern="\d{4}-\d{2}-\d{2}"
+                class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="pt-3">Age</td>
+            <td class="pt-3 text-right">{{ editingAge }}</td>
+          </tr>
+          <tr>
+            <td class="pt-3">Nationality</td>
+            <td class="pt-3 text-lg">
+              <select
+                [(ngModel)]="editingPlayer.nationality"
+                [disabled]="isExistingPlayer"
+                class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                       border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
               >
-                {{ nation }}
-              </option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <td class="py-3">Licence</td>
-          <td class="py-3 text-lg">
-            <select [(ngModel)]="editingPlayer.licence"
-                    [disabled]="isExistingPlayer"
-                    class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
-                           border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
-            >
-              <option *ngFor="let licence of LICENCES"
-                      [ngValue]="licence"
+                <option *ngFor="let nation of NATIONALITIES" [ngValue]="nation">
+                  {{ nation }}
+                </option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="py-3">Licence</td>
+            <td class="py-3 text-lg">
+              <select
+                [(ngModel)]="editingPlayer.licence"
+                [disabled]="isExistingPlayer"
+                class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                       border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
               >
-                {{ licence }}
-              </option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <td class="">Jockey?</td>
-          <td class="pt-3 float-right">
-            <label class="inline-flex cursor-pointer">
-              <input [(ngModel)]="editingPlayer.jockey"
-                     type="checkbox"
-                     class="sr-only peer"
-              >
-              <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600 rtl:peer-checked:after:-translate-x-full
-                        peer-focus:ring-0 peer-focus:outline-none peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
-                        after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
-                        after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
-              >
-              </div>
-            </label>
-          </td>
-        </tr>
-        <tr>
-          <td class="">Active?</td>
-          <td class="pt-3 float-right">
-            <label class="inline-flex cursor-pointer">
-              <input [(ngModel)]="editingPlayer.active"
-                     type="checkbox"
-                     class="sr-only peer"
-              >
-              <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600 rtl:peer-checked:after:-translate-x-full
-                        peer-focus:ring-0 peer-focus:outline-none peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
-                        after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
-                        after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
-              >
-              </div>
-            </label>
-          </td>
-        </tr>
-        <tr>
-          <td class="">Boundary?</td>
-          <td class="pt-3 float-right">
-            <label class="inline-flex cursor-pointer">
-              <input [(ngModel)]="editingPlayer.boundary"
-                     type="checkbox"
-                     class="sr-only peer"
-              >
-              <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600 rtl:peer-checked:after:-translate-x-full
-                        peer-focus:ring-0 peer-focus:outline-none peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
-                        after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
-                        after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
-              >
-              </div>
-            </label>
-          </td>
-        </tr>
-        <tr>
-          <td class="">Newcomer?</td>
-          <td class="pt-3 float-right">
-            <label class="inline-flex cursor-pointer">
-              <input [(ngModel)]="editingPlayer.newcomer"
-                     type="checkbox"
-                     class="sr-only peer"
-              >
-              <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600 rtl:peer-checked:after:-translate-x-full
-                        peer-focus:ring-0 peer-focus:outline-none peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
-                        after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
-                        after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
-              >
-              </div>
-            </label>
-          </td>
-        </tr>
+                <option *ngFor="let licence of LICENCES" [ngValue]="licence">
+                  {{ licence }}
+                </option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Jockey?</td>
+            <td class="pt-3 float-right">
+              <label class="inline-flex cursor-pointer">
+                <input
+                  [(ngModel)]="editingPlayer.jockey"
+                  type="checkbox"
+                  class="sr-only peer"
+                />
+                <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600
+                            rtl:peer-checked:after:-translate-x-full peer-focus:ring-0 peer-focus:outline-none
+                            peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
+                            after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
+                            after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
+                >
+                </div>
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td>Active?</td>
+            <td class="pt-3 float-right">
+              <label class="inline-flex cursor-pointer">
+                <input
+                  [(ngModel)]="editingPlayer.active"
+                  type="checkbox"
+                  class="sr-only peer"
+                />
+                <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600
+                            rtl:peer-checked:after:-translate-x-full peer-focus:ring-0 peer-focus:outline-none
+                            peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
+                            after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
+                            after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
+                >
+                </div>
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td>Boundary?</td>
+            <td class="pt-3 float-right">
+              <label class="inline-flex cursor-pointer">
+                <input
+                  [(ngModel)]="editingPlayer.boundary"
+                  type="checkbox"
+                  class="sr-only peer"
+                />
+                <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600
+                            rtl:peer-checked:after:-translate-x-full peer-focus:ring-0 peer-focus:outline-none
+                            peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
+                            after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
+                            after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
+                >
+                </div>
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td>Newcomer?</td>
+            <td class="pt-3 float-right">
+              <label class="inline-flex cursor-pointer">
+                <input
+                  [(ngModel)]="editingPlayer.newcomer"
+                  type="checkbox"
+                  class="sr-only peer"
+                />
+                <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600
+                            rtl:peer-checked:after:-translate-x-full peer-focus:ring-0 peer-focus:outline-none
+                            peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
+                            after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
+                            after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
+                >
+                </div>
+              </label>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -263,41 +267,42 @@
       </div>
       <table class="mx-auto table-fixed text-center text-xl">
         <thead>
-        <th class="w-24 py-2">Up-To-Date</th>
-        <th class="w-32 py-2">Count</th>
-        <th class="w-14 py-2 opacity-0">X</th>
+          <th class="w-24 py-2">Up-To-Date</th>
+          <th class="w-32 py-2">Count</th>
+          <th class="w-14 py-2 opacity-0">X</th>
         </thead>
         <tbody>
-        <tr *ngFor="let career of editingPlayer.careerWins">
-          <td class="pt-3">
-            <input
-              [(ngModel)]="career.upToDate"
-              required
-              type="date"
-              pattern="\d{4}-\d{2}-\d{2}"
-              class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
-            />
-          </td>
-          <td class="pt-3">
-            <input
-              [(ngModel)]="career.wins"
-              required
-              type="number"
-              placeholder="0"
-              min="0"
-              max="3000"
-              class="block w-3/4 mx-auto px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
-            />
-          </td>
-          <td class="pt-3">
-            <div class="px-2 py-0.5 rounded-2xl cursor-pointer border border-gray-600 hover:border-yellow-400"
-                 [class.cursor-not-allowed]="this.editingPlayer.careerWins.length <= 1"
-                 (click)="deleteCareerWin(career)"
-            >
-              <i class="fa fa-trash"></i>
-            </div>
-          </td>
-        </tr>
+          <tr *ngFor="let career of editingPlayer.careerWins">
+            <td class="pt-3">
+              <input
+                [(ngModel)]="career.upToDate"
+                required
+                type="date"
+                pattern="\d{4}-\d{2}-\d{2}"
+                class="block w-full px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+              />
+            </td>
+            <td class="pt-3">
+              <input
+                [(ngModel)]="career.wins"
+                required
+                type="number"
+                placeholder="0"
+                min="0"
+                max="3000"
+                class="block w-3/4 mx-auto px-3 py-1 text-lg bg-transparent border border-gray-600 rounded-lg"
+              />
+            </td>
+            <td class="pt-3">
+              <div class="px-2 py-0.5 rounded-2xl border border-gray-600 hover:border-yellow-400"
+                   [class.cursor-pointer]="this.editingPlayer.careerWins.length > 1"
+                   [class.cursor-not-allowed]="this.editingPlayer.careerWins.length <= 1"
+                   (click)="deleteCareerWin(career)"
+              >
+                <i class="fa fa-trash"></i>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
       <div class="mt-4 grid grid-cols-3 items-center text-xl text-center">

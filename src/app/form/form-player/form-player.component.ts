@@ -78,8 +78,15 @@ export class FormPlayerComponent implements OnInit {
   setActivePlayer = (player: Player) =>
     this.editingPlayer = {...player, careerWins: [...player.careerWins]}
 
-  addCareerWin = () =>
-    this.editingPlayer.careerWins.push({upToDate: '2022-09-01', wins: 0})
+  addCareerWin = () => {
+    const earliestYear = this.editingPlayer.careerWins
+      .map(cw => parseInt(cw.upToDate.slice(0, 4)))
+      .sort((year1, year2) => year1 - year2)
+      .shift() || (new Date().getFullYear());
+
+    this.editingPlayer.careerWins
+      .push({upToDate: `${earliestYear - 1}-09-01`, wins: 0});
+  }
 
   deleteCareerWin = (career: CareerWin) => {
     if (this.editingPlayer.careerWins.length > 1) {
