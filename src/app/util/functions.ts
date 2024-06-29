@@ -2,7 +2,7 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
-import {COLORS, JOCKEY_CODES, ODDS_INTENSITIES} from './strings';
+import {COLORS, ODDS_INTENSITIES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
 
 export const toMillion = (amount: number): string =>
@@ -65,9 +65,7 @@ export const getStarters = (racecard: Racecard): Starter[] => {
     const odds1 = getWinPlaceOdds(s1.jockey, racecard);
     const odds2 = getWinPlaceOdds(s2.jockey, racecard);
 
-    return odds1.win - odds2.win
-      || odds1.place - odds2.place
-      || JOCKEY_CODES.indexOf(s1.jockey) - JOCKEY_CODES.indexOf(s2.jockey);
+    return (odds1.win - odds2.win) || (odds1.place - odds2.place);
   });
 }
 

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
-import {RestRepository} from '../../model/rest.repository';
-import {CareerWin, DEFAULT_PLAYER, Player} from '../../model/player.model';
-import {LICENCES, NATIONALITIES} from '../../util/strings';
-import {ONE_DAY_MILL} from '../../util/numbers';
+import {RestRepository} from '../model/rest.repository';
+import {CareerWin, DEFAULT_PLAYER, Player} from '../model/player.model';
+import {LICENCES, NATIONALITIES} from '../util/strings';
+import {ONE_DAY_MILL} from '../util/numbers';
 
 const ERROR = 'Error';
 const SAVED = 'Saved';

@@ -7,9 +7,8 @@ import {Racecard} from '../model/racecard.model';
 import {Syndicate} from '../model/syndicate.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {TrackworkStarter} from '../model/trackwork.model';
-import {JOCKEYS, TRAINERS} from '../model/player.model';
 import {PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
-import {BOUNDARY_JOCKEYS, BOUNDARY_POOLS, BOUNDARY_TRAINERS, RATING_GRADES} from '../util/strings';
+import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
 import {
   getCurrentMeeting,

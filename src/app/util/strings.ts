@@ -1,5 +1,3 @@
-import {JOCKEYS} from '../model/player.model';
-
 export interface PlacingMap {
   placing: string,
   color: string
@@ -81,19 +79,6 @@ export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
   {order: 11, factor: 'horseOwner', abbreviation: 'HO'},
   {order: 12, factor: 'occasion', abbreviation: 'OCC'},
 ];
-
-export const JOCKEY_CODES = JOCKEYS.map(j => j.code);
-
-export const BOUNDARY_JOCKEYS = [
-  'TBE', 'DMK', 'HAA',
-];
-
-export const BOUNDARY_TRAINERS = [
-  'NM', 'SCS', 'CCW',
-];
-
-export const BOUNDARY_PERSONS =
-  BOUNDARY_JOCKEYS.concat(BOUNDARY_TRAINERS);
 
 export const BOUNDARY_POOLS = [
   'F-F', 'QTT', 'PLA-3', 'QPL-3'

@@ -1,24 +1,33 @@
 import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html'
 })
 export class FormComponent implements OnInit {
-  activeSection: string = this.sections[2];
+  pages: Array<{ section: string, link: string }> = [
+    {section: 'Reminders', link: 'reminder'},
+    {section: 'Owners', link: 'owner'},
+    {section: 'Players', link: 'player'},
+    {section: 'Bets', link: 'bet'},
+    {section: 'Fixtures', link: 'fixture'},
+  ]
 
-  constructor() {
+  constructor(private router: Router) {
   }
 
   ngOnInit(): void {
   }
 
-  getSectionStyle = (section: string): string =>
-    this.activeSection === section
+  getSectionStyle = (link: string): string =>
+    (this.currentUrl.endsWith(link))
+    ||
+    (this.currentUrl.endsWith('/form') && link === 'reminder')
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
 
-  get sections(): string[] {
-    return ['Reminders', 'Owners', 'Players', 'Bets', 'Fixtures'];
+  get currentUrl(): string {
+    return this.router.url;
   }
 }

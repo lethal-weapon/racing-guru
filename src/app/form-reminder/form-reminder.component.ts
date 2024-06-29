@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../../model/rest.repository';
-import {Interview} from '../../model/dto.model';
-import {Fine, Report} from '../../model/report.model';
-import {StarterChange} from '../../model/starter.model';
-import {PlayerBirthday, PlayerWinner, Reminder} from '../../model/reminder.model';
-import {JOCKEYS, TRAINERS} from '../../model/player.model';
-import {TEN_THOUSAND, TWO_SECONDS} from '../../util/numbers';
-import {SEASONS} from '../../util/strings';
+import {RestRepository} from '../model/rest.repository';
+import {Interview} from '../model/dto.model';
+import {Fine, Report} from '../model/report.model';
+import {StarterChange} from '../model/starter.model';
+import {PlayerBirthday, PlayerWinner, Reminder} from '../model/reminder.model';
+import {TEN_THOUSAND, TWO_SECONDS} from '../util/numbers';
+import {SEASONS} from '../util/strings';
 
 const REPORT_WINDOW_SIZE = 6;
 const MEETING_WINDOW_SIZE = 12;
@@ -154,7 +153,7 @@ export class FormReminderComponent implements OnInit {
 
     return starter
       ? [starter.jockey, starter.trainer]
-      : JOCKEYS.concat(TRAINERS).map(p => p.code);
+      : ['???', '???'];
   }
 
   getPossibleOrders = (race: number, order: number): number[] =>
@@ -303,7 +302,7 @@ export class FormReminderComponent implements OnInit {
       {icon: 'fa fa-2x fa-angle-double-left', length: -MEETING_WINDOW_SIZE},
       {icon: 'fa fa-2x fa-angle-double-right', length: MEETING_WINDOW_SIZE},
       {icon: 'fa fa-2x fa-long-arrow-right', length: 999},
-    ]
+    ];
   }
 
   get windowReports(): Report[] {

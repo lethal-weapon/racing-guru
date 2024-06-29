@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../../model/rest.repository';
-import {Record} from '../../model/record.model';
-import {SEASONS} from '../../util/strings';
+import {RestRepository} from '../model/rest.repository';
+import {Record} from '../model/record.model';
+import {SEASONS} from '../util/strings';
 
 interface MonthlySummary {
   year: string,

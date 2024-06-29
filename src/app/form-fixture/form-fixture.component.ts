@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../../model/rest.repository';
+import {RestRepository} from '../model/rest.repository';
 
 @Component({
   selector: 'app-form-fixture',

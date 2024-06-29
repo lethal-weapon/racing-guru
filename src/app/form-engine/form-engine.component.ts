@@ -1,15 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../../model/rest.repository';
-import {PLACING_MAPS, SEASONS} from '../../util/strings';
-import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../../util/numbers';
-import {formatOdds} from '../../util/functions';
+import {RestRepository} from '../model/rest.repository';
+import {PLACING_MAPS, SEASONS} from '../util/strings';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../util/numbers';
+import {formatOdds} from '../util/functions';
 import {
   DEFAULT_NEGATIVE_PERFORMANCE_STARTER,
   NegativePerformance,
   NegativePerformanceStarter,
   SeasonPerformance
-} from '../../model/performance.model';
+} from '../model/performance.model';
 
 @Component({
   selector: 'app-form-engine',

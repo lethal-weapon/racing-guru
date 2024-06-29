@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../../model/rest.repository';
-import {Starter} from '../../model/starter.model';
-import {Racecard} from '../../model/racecard.model';
-import {ConnectionDividend} from '../../model/connection.model';
-import {Horse, DEFAULT_HORSE} from '../../model/horse.model';
-import {PLACING_MAPS, SEASONS} from '../../util/strings';
-import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../../util/numbers';
+import {RestRepository} from '../model/rest.repository';
+import {Starter} from '../model/starter.model';
+import {Racecard} from '../model/racecard.model';
+import {ConnectionDividend} from '../model/connection.model';
+import {Horse, DEFAULT_HORSE} from '../model/horse.model';
+import {PLACING_MAPS, SEASONS} from '../util/strings';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE, TEN_SECONDS} from '../util/numbers';
 import {
   getMaxRace,
   getPlacing,
@@ -14,7 +14,7 @@ import {
   getRaceBadgeStyle,
   getStarterWinPlaceOdds,
   getPlacingBorderBackground
-} from '../../util/functions';
+} from '../util/functions';
 
 interface DualCount {
   dual: string,
