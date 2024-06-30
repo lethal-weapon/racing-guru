@@ -181,6 +181,9 @@ export class RestRepository {
   fetchCollaborations = () =>
     this.source.getCollaborations().subscribe(data => this.collaborations = data)
 
+  fetchRecentCollaborations = () =>
+    this.source.getRecentCollaborations().subscribe(data => this.collaborations = data)
+
   fetchDrawInheritances = () =>
     this.source.getDrawInheritances().subscribe(data => this.drawInheritances = data)
 

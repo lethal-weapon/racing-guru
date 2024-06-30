@@ -11,9 +11,10 @@ import {ONE_MINUTE} from '../util/numbers';
 export class TrendComponent implements OnInit {
   pages: Array<{ section: string, link: string }> = [
     {section: 'Everyone', link: 'everyone'},
-    {section: 'Top Player', link: 'tops'},
+    {section: 'Board', link: 'tops'},
     {section: 'Earning', link: 'earning'},
-    {section: 'Draw Inheritance', link: 'draw'},
+    {section: 'Collaboration', link: 'collaboration'},
+    {section: 'Draw', link: 'draw'},
   ]
 
   constructor(
@@ -28,6 +29,7 @@ export class TrendComponent implements OnInit {
     this.repo.fetchActivePlayers();
     this.repo.fetchDrawInheritances();
     this.repo.fetchSyndicateSnapshots();
+    this.repo.fetchRecentCollaborations();
 
     setInterval(() => {
       this.repo.fetchLatestMeeting();
@@ -51,6 +53,7 @@ export class TrendComponent implements OnInit {
     return this.repo.findPlayers().length === 0
       || this.repo.findMeetings().length === 0
       || this.repo.findReminders().length === 0
+      || this.repo.findCollaborations().length === 0
       || this.repo.findDrawInheritances().length === 0
       || this.repo.findSyndicateSnapshots().length === 0;
   }

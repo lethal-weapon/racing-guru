@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {Meeting} from '../model/meeting.model';
-import {SEASONS} from '../util/strings';
 import {Player} from '../model/player.model';
+import {SEASONS} from '../util/strings';
 
 interface ChartLinePoint {
   name: string,
@@ -26,11 +26,11 @@ interface PlayerGroup {
   templateUrl: './trend-earning.component.html',
 })
 export class TrendEarningComponent implements OnInit {
-  hoveredTrainer: string = '';
+
+  chartData: ChartLine[] = [];
   trackingMeeting: string = '';
   trackingPlayers: string[] = [];
   activePlayerGroup: PlayerGroup = this.playerGroups[0];
-  chartData: ChartLine[] = [];
 
   constructor(private repo: RestRepository) {
   }
@@ -38,9 +38,6 @@ export class TrendEarningComponent implements OnInit {
   ngOnInit(): void {
     this.setActivePlayerGroup(this.playerGroups[0]);
   }
-
-  setHoveredTrainer = (hovered: string) =>
-    this.hoveredTrainer = hovered
 
   setActivePlayerGroup = (clicked: PlayerGroup) => {
     this.activePlayerGroup = clicked;
@@ -133,8 +130,8 @@ export class TrendEarningComponent implements OnInit {
     }
   }
 
-  getPlayerEarningUpToMeeting = (player: string, meeting: string): number => {
-    return this.meetings
+  getPlayerEarningUpToMeeting = (player: string, meeting: string): number =>
+    this.meetings
       .filter(m => m.meeting >= SEASONS[0].opening && m.meeting <= meeting)
       .flatMap(m => m.players)
       .filter(ps => ps.player === player)
@@ -142,24 +139,6 @@ export class TrendEarningComponent implements OnInit {
         ps.earnings -
         ps.starters.filter(s => s?.winOdds && s?.placing > 4).length
       )
-      .reduce((e1, e2) => e1 + e2, 0);
-  }
-
-  getCollaborationEarningStyle = (jockey: string, trainer: string): string => {
-    const earnings = this.getCollaborationEarning(jockey, trainer);
-    return earnings < 20
-      ? 'opacity-50'
-      : earnings < 50 ? '' : 'text-yellow-400';
-  }
-
-  getCollaborationEarning = (jockey: string, trainer: string): number =>
-    this.meetings
-      .filter(m => m.meeting >= SEASONS[0].opening)
-      .flatMap(m => m.players)
-      .filter(ps => ps.player === jockey)
-      .flatMap(ps => ps.starters)
-      .filter(es => es.partner === trainer)
-      .map(es => es.earning)
       .reduce((e1, e2) => e1 + e2, 0)
 
   getTrackingPlayerStyle = (player: string) =>

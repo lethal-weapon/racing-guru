@@ -8,6 +8,7 @@ import {BacktestComponent} from './backtest/backtest.component';
 import {TrendComponent} from './trend/trend.component';
 import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component';
 import {TrendEarningComponent} from './trend-earning/trend-earning.component';
+import {TrendCollaborationComponent} from './trend-collaboration/trend-collaboration.component';
 import {TrendTopsComponent} from './trend-tops/trend-tops.component';
 import {TrendDrawComponent} from './trend-draw/trend-draw.component';
 import {FormComponent} from './form/form.component';
@@ -37,6 +38,10 @@ const routes: Routes = [
       {
         path: 'earning',
         component: TrendEarningComponent,
+      },
+      {
+        path: 'collaboration',
+        component: TrendCollaborationComponent,
       },
       {
         path: 'tops',

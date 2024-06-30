@@ -21,8 +21,9 @@ import {RacecardComponent} from './racecard/racecard.component';
 import {OddsComponent} from './odds/odds.component';
 import {TrendComponent} from './trend/trend.component';
 import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component';
-import {TrendEarningComponent} from './trend-earning/trend-earning.component';
 import {TrendTopsComponent} from './trend-tops/trend-tops.component';
+import {TrendEarningComponent} from './trend-earning/trend-earning.component';
+import {TrendCollaborationComponent} from './trend-collaboration/trend-collaboration.component';
 import {TrendDrawComponent} from './trend-draw/trend-draw.component';
 import {BacktestComponent} from './backtest/backtest.component';
 import {FormComponent} from './form/form.component';
@@ -49,6 +50,7 @@ import {FormFixtureComponent} from './form-fixture/form-fixture.component';
     TrendEveryoneComponent,
     TrendEarningComponent,
     TrendTopsComponent,
+    TrendCollaborationComponent,
     TrendDrawComponent,
     FormComponent,
     FormReminderComponent,

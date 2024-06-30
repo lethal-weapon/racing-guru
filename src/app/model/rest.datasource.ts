@@ -87,6 +87,9 @@ export class RestDataSource {
   getCollaborations = (): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
 
+  getRecentCollaborations = (): Observable<Collaboration[]> =>
+    this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations/recent`)
+
   getDrawInheritances = (): Observable<DrawInheritance[]> =>
     this.http.get<DrawInheritance[]>(`${this.baseUrl}/racecards/draw-inheritance`)
 
