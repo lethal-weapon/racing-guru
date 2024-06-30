@@ -81,11 +81,17 @@ export class RestDataSource {
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
 
+  getLatestMeeting = (): Observable<Meeting> =>
+    this.http.get<Meeting>(`${this.baseUrl}/meetings/latest`)
+
   getCollaborations = (): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
 
   getDrawInheritances = (): Observable<DrawInheritance[]> =>
     this.http.get<DrawInheritance[]>(`${this.baseUrl}/racecards/draw-inheritance`)
+
+  getLatestDrawInheritances = (): Observable<DrawInheritance[]> =>
+    this.http.get<DrawInheritance[]>(`${this.baseUrl}/racecards/draw-inheritance/latest`)
 
   getSyndicates = (): Observable<Syndicate[]> =>
     this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
@@ -93,6 +99,12 @@ export class RestDataSource {
   getSyndicateSnapshots = (): Observable<SyndicateSnapshot[]> =>
     this.http.get<SyndicateSnapshot[]>(`${this.baseUrl}/syndicates/snapshots`)
 
+  getLatestSyndicateSnapshot = (): Observable<SyndicateSnapshot> =>
+    this.http.get<SyndicateSnapshot>(`${this.baseUrl}/syndicates/snapshot`)
+
   getTrackworkSnapshots = (): Observable<TrackworkSnapshot[]> =>
     this.http.get<TrackworkSnapshot[]>(`${this.baseUrl}/trackworks/snapshots`)
+
+  getLatestTrackworkSnapshot = (): Observable<TrackworkSnapshot> =>
+    this.http.get<TrackworkSnapshot>(`${this.baseUrl}/trackworks/snapshot`)
 }

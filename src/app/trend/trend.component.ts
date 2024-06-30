@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 
 import {RestRepository} from '../model/rest.repository';
-import {Router} from '@angular/router';
+import {ONE_MINUTE} from '../util/numbers';
 
 @Component({
   selector: 'app-trend',
@@ -28,11 +29,11 @@ export class TrendComponent implements OnInit {
     this.repo.fetchDrawInheritances();
     this.repo.fetchSyndicateSnapshots();
 
-    // setInterval(() => {
-    //   this.repo.fetchMeetings();
-    //   this.repo.fetchDrawInheritances();
-    //   this.repo.fetchSyndicateSnapshots();
-    // }, ONE_MINUTE);
+    setInterval(() => {
+      this.repo.fetchLatestMeeting();
+      this.repo.fetchLatestDrawInheritances();
+      this.repo.fetchLatestSyndicateSnapshot();
+    }, ONE_MINUTE);
   }
 
   getSectionStyle = (link: string): string =>

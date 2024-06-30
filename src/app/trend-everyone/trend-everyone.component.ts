@@ -6,13 +6,12 @@ import {DEFAULT_PLAYER_WINNER, PlayerWinner} from '../model/reminder.model';
 import {COLORS} from '../util/strings';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
 import {toPlacingColor} from '../util/functions';
-import {
-  DEFAULT_SYNDICATE_SNAPSHOT,
-  StarterSnapshot,
-  SyndicateSnapshot
-} from '../model/syndicate.model';
+import {DEFAULT_SYNDICATE_SNAPSHOT, StarterSnapshot, SyndicateSnapshot} from '../model/syndicate.model';
 
 const MEETING_WINDOW_SIZE = 7;
+const SYNDICATE_KIND_SINGLE = 'SINGLE';
+const SYNDICATE_KIND_MULTIPLE = 'MULTIPLE';
+const SYNDICATE_KIND_SOLE = 'SOLE';
 
 interface MeetingOverview {
   title: string,
@@ -115,21 +114,21 @@ export class TrendEveryoneComponent implements OnInit {
 
   getSyndicateStarters = (kind: string, race: number): StarterSnapshot[] => {
     switch (kind) {
-      case 'SINGLE':
+      case SYNDICATE_KIND_SINGLE:
         return this.activeSyndicateSnapshot.syndicates
           .filter(s => s.starterCount === 1)
           .flatMap(s => s.starters)
           .filter(s => s.race === race)
           .sort((s1, s2) => s1.order - s2.order);
 
-      case 'MULTIPLE':
+      case SYNDICATE_KIND_MULTIPLE:
         return this.activeSyndicateSnapshot.syndicates
           .filter(s => s.starterCount > 1)
           .flatMap(s => s.starters)
           .filter(s => s.race === race)
           .sort((s1, s2) => s1.order - s2.order);
 
-      case 'SOLE':
+      case SYNDICATE_KIND_SOLE:
         return this.activeSyndicateSnapshot.soleStarters
           .filter(s => s.race === race)
           .sort((s1, s2) => s1.order - s2.order);
@@ -141,17 +140,17 @@ export class TrendEveryoneComponent implements OnInit {
 
   getSyndicateStarterCount = (kind: string): number => {
     switch (kind) {
-      case 'SINGLE':
+      case SYNDICATE_KIND_SINGLE:
         return this.activeSyndicateSnapshot.syndicates
           .filter(s => s.starterCount === 1)
           .length;
 
-      case 'MULTIPLE':
+      case SYNDICATE_KIND_MULTIPLE:
         return this.activeSyndicateSnapshot.syndicates
           .filter(s => s.starterCount > 1)
           .length;
 
-      case 'SOLE':
+      case SYNDICATE_KIND_SOLE:
         return this.activeSyndicateSnapshot.soleStarters.length;
 
       default:
@@ -318,7 +317,11 @@ export class TrendEveryoneComponent implements OnInit {
   }
 
   get syndicateKinds(): string[] {
-    return ['SINGLE', 'MULTIPLE', 'SOLE'];
+    return [
+      SYNDICATE_KIND_SINGLE,
+      SYNDICATE_KIND_MULTIPLE,
+      SYNDICATE_KIND_SOLE,
+    ];
   }
 
   get playerViews(): string[] {

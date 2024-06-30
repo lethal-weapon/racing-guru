@@ -171,11 +171,29 @@ export class RestRepository {
   fetchMeetings = () =>
     this.source.getMeetings().subscribe(data => this.meetings = data)
 
+  fetchLatestMeeting = () =>
+    this.source.getLatestMeeting().subscribe(data => {
+      const index = this.meetings.findIndex(m => m.meeting === data.meeting);
+      if (index === -1) this.meetings.unshift(data);
+      else this.meetings.splice(index, 1, data);
+    })
+
   fetchCollaborations = () =>
     this.source.getCollaborations().subscribe(data => this.collaborations = data)
 
   fetchDrawInheritances = () =>
     this.source.getDrawInheritances().subscribe(data => this.drawInheritances = data)
+
+  fetchLatestDrawInheritances = () =>
+    this.source.getLatestDrawInheritances().subscribe(data => {
+      data.forEach(d => {
+        const index = this.drawInheritances
+          .findIndex(s => s.meeting === d.meeting && s.race === d.race);
+
+        if (index === -1) this.drawInheritances.unshift(d);
+        else this.drawInheritances.splice(index, 1, d);
+      });
+    })
 
   fetchSyndicates = () =>
     this.source.getSyndicates().subscribe(data => this.syndicates = data)
@@ -183,6 +201,20 @@ export class RestRepository {
   fetchSyndicateSnapshots = () =>
     this.source.getSyndicateSnapshots().subscribe(data => this.syndicateSnapshots = data)
 
+  fetchLatestSyndicateSnapshot = () =>
+    this.source.getLatestSyndicateSnapshot().subscribe(data => {
+      const index = this.syndicateSnapshots.findIndex(s => s.meeting === data.meeting);
+      if (index === -1) this.syndicateSnapshots.unshift(data);
+      else this.syndicateSnapshots.splice(index, 1, data);
+    })
+
   fetchTrackworkSnapshots = () =>
     this.source.getTrackworkSnapshots().subscribe(data => this.trackworkSnapshots = data)
+
+  fetchLatestTrackworkSnapshot = () =>
+    this.source.getLatestTrackworkSnapshot().subscribe(data => {
+      const index = this.trackworkSnapshots.findIndex(s => s.meeting === data.meeting);
+      if (index === -1) this.trackworkSnapshots.unshift(data);
+      else this.trackworkSnapshots.splice(index, 1, data);
+    })
 }
