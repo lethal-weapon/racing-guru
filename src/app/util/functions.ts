@@ -4,12 +4,16 @@ import {WinPlaceOdds} from '../model/odds.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {COLORS, ODDS_INTENSITIES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
+import {Meeting} from "../model/meeting.model";
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
 
 export const formatOdds = (odds: number): string =>
   odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString()
+
+export const formatMeeting = (meeting: string): string =>
+  meeting.replace(/^\d{4}-/g, '')
 
 export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
   const spotTime = new Date(detectedAt);
@@ -39,6 +43,18 @@ export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
 //
 //   return favorites;
 // }
+
+export const isBoundaryMeeting = (meetings: Meeting[], meeting: string): boolean =>
+  meetings
+    .map(m => m.meeting.slice(0, 7))
+    .filter((prefix, i, array) => array.indexOf(prefix) === i)
+    .map(prefix => meetings
+      .map(m => m.meeting)
+      .filter(m => m.startsWith(prefix))
+      .sort((m1, m2) => m1.localeCompare(m2))
+      .shift()
+    )
+    .includes(meeting)
 
 export const getHorseProfileUrl = (brand: string): string => {
   return `

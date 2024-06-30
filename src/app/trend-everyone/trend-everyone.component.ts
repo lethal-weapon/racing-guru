@@ -3,10 +3,10 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting} from '../model/meeting.model';
 import {DEFAULT_PLAYER_WINNER, PlayerWinner} from '../model/reminder.model';
+import {DEFAULT_SYNDICATE_SNAPSHOT, StarterSnapshot, SyndicateSnapshot} from '../model/syndicate.model';
 import {COLORS} from '../util/strings';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
-import {toPlacingColor} from '../util/functions';
-import {DEFAULT_SYNDICATE_SNAPSHOT, StarterSnapshot, SyndicateSnapshot} from '../model/syndicate.model';
+import {formatMeeting, isBoundaryMeeting, toPlacingColor} from '../util/functions';
 
 const MEETING_WINDOW_SIZE = 7;
 const SYNDICATE_KIND_SINGLE = 'SINGLE';
@@ -47,16 +47,15 @@ export class TrendEveryoneComponent implements OnInit {
   protected readonly COLORS = COLORS;
   protected readonly MEETING_WINDOW_SIZE = MEETING_WINDOW_SIZE;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
+  protected readonly formatMeeting = formatMeeting;
   protected readonly toPlacingColor = toPlacingColor;
+  protected readonly isBoundaryMeeting = isBoundaryMeeting;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
   }
-
-  formatMeeting = (meeting: string): string =>
-    meeting.replace(/^\d{4}-/g, '')
 
   shiftMeeting = (length: number) => {
     const ws = MEETING_WINDOW_SIZE;
@@ -206,18 +205,6 @@ export class TrendEveryoneComponent implements OnInit {
       .map(s => s.horse)
       .includes(code);
   }
-
-  isBoundaryMeeting = (meeting: string): boolean =>
-    this.meetings
-      .map(m => m.meeting.slice(0, 7))
-      .filter((prefix, i, array) => array.indexOf(prefix) === i)
-      .map(prefix => this.meetings
-        .map(m => m.meeting)
-        .filter(m => m.startsWith(prefix))
-        .sort((m1, m2) => m1.localeCompare(m2))
-        .shift()
-      )
-      .includes(meeting)
 
   isBoundaryPlayer = (player: string): boolean =>
     this.repo.findPlayers().find(p => p.code === player)?.boundary || false

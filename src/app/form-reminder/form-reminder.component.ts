@@ -7,6 +7,7 @@ import {StarterChange} from '../model/starter.model';
 import {PlayerBirthday, PlayerWinner, Reminder} from '../model/reminder.model';
 import {TEN_THOUSAND, TWO_SECONDS} from '../util/numbers';
 import {SEASONS} from '../util/strings';
+import {formatMeeting} from '../util/functions';
 
 const REPORT_WINDOW_SIZE = 6;
 const MEETING_WINDOW_SIZE = 12;
@@ -26,6 +27,7 @@ export class FormReminderComponent implements OnInit {
   isInterviewSuccessToSave: boolean = false;
 
   protected readonly TEN_THOUSAND = TEN_THOUSAND;
+  protected readonly formatMeeting = formatMeeting;
 
   constructor(private repo: RestRepository) {
   }
@@ -40,9 +42,6 @@ export class FormReminderComponent implements OnInit {
       this.initializeInterview();
     });
   }
-
-  formatMeeting = (meeting: string): string =>
-    meeting.replace(/^\d{4}-/g, '')
 
   formatBirthday = (date: string): string => {
     const birthday = new Date(date);

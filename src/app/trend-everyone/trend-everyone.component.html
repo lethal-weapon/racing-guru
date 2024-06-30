@@ -203,14 +203,14 @@
         class="hover:bg-gray-800"
     >
       <td class="h-10 border border-gray-700 text-xl py-1"
-          [class.border-b-yellow-400]="!last && isBoundaryMeeting(m.meeting)"
+          [class.border-b-yellow-400]="!last && isBoundaryMeeting(meetings, m.meeting)"
       >
         {{ formatMeeting(m.meeting) }}
       </td>
       <td *counter="let race of MAX_RACE_PER_MEETING"
           class="h-10 border border-gray-700 text-xs py-1"
           [class.bg-gray-700]="getStarters(m, race).length > 1"
-          [class.border-b-yellow-400]="!last && isBoundaryMeeting(m.meeting)"
+          [class.border-b-yellow-400]="!last && isBoundaryMeeting(meetings, m.meeting)"
       >
         <div class="flex flex-col gap-y-1">
           <div *ngFor="let starter of getStarters(m, race)"
@@ -320,14 +320,14 @@
       <td class="h-10 border border-gray-700 text-xl py-1 cursor-pointer"
           [class.font-bold]="activeMeeting === m.meeting"
           [class.text-yellow-400]="activeMeeting === m.meeting"
-          [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+          [class.border-b-yellow-400]="isBoundaryMeeting(meetings, m.meeting)"
           (click)="activeMeeting = m.meeting"
       >
         {{ formatMeeting(m.meeting) }}
       </td>
       <td *counter="let race of MAX_RACE_PER_MEETING"
           class="h-10 border border-gray-700 py-1"
-          [class.border-b-yellow-400]="isBoundaryMeeting(m.meeting)"
+          [class.border-b-yellow-400]="isBoundaryMeeting(meetings, m.meeting)"
       >
         <div class="grid grid-cols-3">
           <div *ngFor="let hit of getSyndicatePerformanceHits(m.meeting, race)"

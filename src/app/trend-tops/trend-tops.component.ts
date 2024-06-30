@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {Meeting, PlayerSummary} from '../model/meeting.model';
+import {formatMeeting} from '../util/functions';
 
 const TOP_PLAYER_SIZE = 7;
 
@@ -14,15 +15,13 @@ export class TrendTopsComponent implements OnInit {
   activePlayer: string = '';
 
   protected readonly TOP_PLAYER_SIZE = TOP_PLAYER_SIZE;
+  protected readonly formatMeeting = formatMeeting;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
   }
-
-  formatMeeting = (meeting: string): string =>
-    meeting.replace(/^\d{4}-/g, '')
 
   setActivePlayer = (clicked: string) =>
     this.activePlayer = this.activePlayer === clicked ? '' : clicked;
