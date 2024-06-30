@@ -181,8 +181,8 @@
         </div>
       </td>
       <td *ngFor="let starterB of getStarters(this.activeRacecard); let indexB = index"
-          class="border border-gray-700 text-purple-600"
-          [class.text-gray-300]="isPeopleConnected(starterA, starterB)"
+          class="border border-gray-700"
+          [class.text-purple-600]="!isPeopleConnected(starterA, starterB)"
           [class.bg-gray-600]="isBothFavorite(starterA, starterB)"
           [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starterB.jockey"
           [class.border-b-yellow-400]="indexA + 1 === activeRaceStarterHalfCount"
