@@ -11,8 +11,8 @@ import {ONE_MINUTE} from '../util/numbers';
 export class TrendComponent implements OnInit {
   pages: Array<{ section: string, link: string }> = [
     {section: 'Everyone', link: 'everyone'},
-    {section: 'Earning', link: 'earning'},
     {section: 'Top Player', link: 'tops'},
+    {section: 'Earning', link: 'earning'},
     {section: 'Draw Inheritance', link: 'draw'},
   ]
 
