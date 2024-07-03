@@ -184,7 +184,7 @@
           class="border border-gray-700"
           [class.text-purple-600]="!isPeopleConnected(starterA, starterB)"
           [class.bg-gray-600]="isBothFavorite(starterA, starterB)"
-          [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starterB.jockey"
+          [class.bg-gray-800]="!isBothFavorite(starterA, starterB) && !onDoubleTable && hoveredJockey === starterB.jockey"
           [class.border-b-yellow-400]="indexA + 1 === activeRaceStarterHalfCount"
           [class.border-r-yellow-400]="indexB + 1 === activeRaceStarterHalfCount"
           [class.diagonal-line]="starterA.order === starterB.order"
@@ -453,8 +453,8 @@
       </td>
       <td *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"
           class="border border-gray-700 {{getDBLCellBackground(indexA, indexB)}}"
-          [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"
           [class.bg-gray-600]="isBothFavorite(starterA, starterB, true)"
+          [class.bg-gray-800]="!isBothFavorite(starterA, starterB, true) && onDoubleTable && hoveredJockey === starterA.jockey"
           (mouseenter)="hoveredJockey = starterA.jockey"
       >
         <div class="flex flex-col w-3/4 mx-auto cursor-pointer border {{getPairBorder('dbl', starterA, starterB)}}"
