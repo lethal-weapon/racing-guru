@@ -5,11 +5,7 @@ import {Player} from '../model/player.model';
 import {Meeting} from '../model/meeting.model';
 import {SEASONS} from '../util/strings';
 import {toPlacingColor} from '../util/functions';
-import {
-  Collaboration,
-  CollaborationStarter,
-  DEFAULT_COLLABORATION
-} from '../model/collaboration.model';
+import {Collaboration, CollaborationStarter, DEFAULT_COLLABORATION} from '../model/collaboration.model';
 
 @Component({
   selector: 'app-trend-collaboration',
@@ -50,9 +46,9 @@ export class TrendCollaborationComponent implements OnInit {
     const coll = this.getCollaboration(jockey, trainer);
     return [coll.wins, coll.total].map((v, index) => {
       let style = '';
-      if (index === 0 && v >= 5) style = 'text-red-600';
-      if (index === 1 && v >= 50) style = 'text-yellow-400';
-      if (index === 1 && v <= 30 && coll.wins === 0) style = 'opacity-50';
+      if (index === 0 && this.topWinnerCounts.includes(v)) style = 'text-red-600';
+      if (index === 1 && this.topCollaborationCounts.includes(v)) style = 'text-yellow-400';
+      if (index === 1 && !this.topCollaborationCounts.includes(v) && coll.wins === 0) style = 'opacity-50';
       return {
         value: v,
         style: style
@@ -142,6 +138,22 @@ export class TrendCollaborationComponent implements OnInit {
           ?.starters.length || 0
       })
       .sort((n1, n2) => n1 - n2).pop() || 3;
+  }
+
+  get topWinnerCounts(): number[] {
+    return this.collaborations
+      .map(c => c.wins)
+      .filter((c, i, arr) => arr.indexOf(c) === i)
+      .sort((w1, w2) => w2 - w1)
+      .slice(0, 5);
+  }
+
+  get topCollaborationCounts(): number[] {
+    return this.collaborations
+      .map(c => c.total)
+      .filter((c, i, arr) => arr.indexOf(c) === i)
+      .sort((w1, w2) => w2 - w1)
+      .slice(0, 10);
   }
 
   get activePlayerName(): string {
