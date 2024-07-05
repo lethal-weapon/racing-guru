@@ -4,7 +4,7 @@ import {WinPlaceOdds} from '../model/odds.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {COLORS, ODDS_INTENSITIES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
-import {Meeting} from "../model/meeting.model";
+import {Meeting} from '../model/meeting.model';
 
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)

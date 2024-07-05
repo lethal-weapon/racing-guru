@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {Interview} from '../model/dto.model';
+import {Interview} from '../model/interview.model';
 import {Fine, Report} from '../model/report.model';
 import {StarterChange} from '../model/starter.model';
 import {PlayerBirthday, PlayerWinner, Reminder} from '../model/reminder.model';

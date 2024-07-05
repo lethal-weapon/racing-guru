@@ -3,20 +3,21 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import {environment as env} from '../../environments/environment';
-import {Player} from './player.model';
-import {Horse} from './horse.model';
-import {Racecard} from './racecard.model';
-import {Reminder} from './reminder.model';
-import {Report} from './report.model';
+import {Interview} from './interview.model';
+import {Pick} from './pick.model';
 import {Bet} from './bet.model';
+import {Horse} from './horse.model';
+import {Player} from './player.model';
+import {Report} from './report.model';
+import {Reminder} from './reminder.model';
+import {Racecard} from './racecard.model';
+import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
-import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {TrackworkSnapshot} from './trackwork.model';
-import {FavoritePost, Interview, SelectionPost} from './dto.model';
+import {BlacklistConnection} from './connection.model';
 import {FactorHit} from './backtest.model';
-import {RaceConnection} from './connection.model';
 
 @Injectable()
 export class RestDataSource {
@@ -27,32 +28,14 @@ export class RestDataSource {
       `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.NEW_SERVER_PORT}`;
   }
 
-  saveFavorite = (favorite: FavoritePost): Observable<FavoritePost> =>
-    this.http.post<FavoritePost>(`${this.baseUrl}/favorite`, favorite)
+  getPick = (): Observable<Pick> =>
+    this.http.get<Pick>(`${this.baseUrl}/picks`)
 
-  saveSelection = (selection: SelectionPost): Observable<SelectionPost> =>
-    this.http.post<SelectionPost>(`${this.baseUrl}/selection`, selection)
+  savePick = (newPick: Pick): Observable<Pick> =>
+    this.http.post<Pick>(`${this.baseUrl}/picks`, newPick)
 
-  saveInterview = (interviews: Interview[]): Observable<Racecard[]> =>
-    this.http.post<Racecard[]>(`${this.baseUrl}/racecards/interviews`, interviews)
-
-  savePlayer = (player: Player): Observable<Player> =>
-    this.http.post<Player>(`${this.baseUrl}/players`, player)
-
-  savePlayerOrders = (players: Player[]): Observable<Player[]> =>
-    this.http.post<Player[]>(`${this.baseUrl}/players/ordering`, players)
-
-  saveSyndicate = (syndicate: Syndicate): Observable<Syndicate> =>
-    this.http.post<Syndicate>(`${this.baseUrl}/syndicates`, syndicate)
-
-  deleteSyndicate = (syndicate: Syndicate): Observable<any> =>
-    this.http.delete(`${this.baseUrl}/syndicates/${syndicate.id}`)
-
-  getBacktestFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
-    this.http.post<FactorHit[]>(`${this.baseUrl}/backtest`, factorCombinations)
-
-  getRacecards = (meeting: string): Observable<Racecard[]> =>
-    this.http.get<Racecard[]>(`${this.baseUrl}/racecards?meeting=${meeting}`)
+  getBets = (): Observable<Bet[]> =>
+    this.http.get<Bet[]>(`${this.baseUrl}/bets`)
 
   getHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses`)
@@ -60,23 +43,38 @@ export class RestDataSource {
   getMeetingHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses/latest`)
 
-  getReports = (): Observable<Report[]> =>
-    this.http.get<Report[]>(`${this.baseUrl}/reports`)
-
-  getBets = (): Observable<Bet[]> =>
-    this.http.get<Bet[]>(`${this.baseUrl}/bets`)
-
-  getConnections = (meeting: string): Observable<RaceConnection[]> =>
-    this.http.get<RaceConnection[]>(`${this.baseUrl}/graph/connections?meeting=${meeting}`)
-
   getPlayers = (): Observable<Player[]> =>
     this.http.get<Player[]>(`${this.baseUrl}/players`)
 
   getActivePlayers = (): Observable<Player[]> =>
     this.http.get<Player[]>(`${this.baseUrl}/players/active`)
 
+  savePlayer = (player: Player): Observable<Player> =>
+    this.http.post<Player>(`${this.baseUrl}/players`, player)
+
+  savePlayerOrders = (players: Player[]): Observable<Player[]> =>
+    this.http.post<Player[]>(`${this.baseUrl}/players/ordering`, players)
+
+  getReports = (): Observable<Report[]> =>
+    this.http.get<Report[]>(`${this.baseUrl}/reports`)
+
   getReminders = (): Observable<Reminder[]> =>
     this.http.get<Reminder[]>(`${this.baseUrl}/reminders`)
+
+  saveInterview = (interviews: Interview[]): Observable<Racecard[]> =>
+    this.http.post<Racecard[]>(`${this.baseUrl}/racecards/interviews`, interviews)
+
+  getRacecards = (meeting: string): Observable<Racecard[]> =>
+    this.http.get<Racecard[]>(`${this.baseUrl}/racecards?meeting=${meeting}`)
+
+  getSyndicates = (): Observable<Syndicate[]> =>
+    this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
+
+  saveSyndicate = (syndicate: Syndicate): Observable<Syndicate> =>
+    this.http.post<Syndicate>(`${this.baseUrl}/syndicates`, syndicate)
+
+  deleteSyndicate = (syndicate: Syndicate): Observable<any> =>
+    this.http.delete(`${this.baseUrl}/syndicates/${syndicate.id}`)
 
   getMeetings = (): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
@@ -96,9 +94,6 @@ export class RestDataSource {
   getLatestDrawInheritances = (): Observable<DrawInheritance[]> =>
     this.http.get<DrawInheritance[]>(`${this.baseUrl}/racecards/draw-inheritance/latest`)
 
-  getSyndicates = (): Observable<Syndicate[]> =>
-    this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
-
   getSyndicateSnapshots = (): Observable<SyndicateSnapshot[]> =>
     this.http.get<SyndicateSnapshot[]>(`${this.baseUrl}/syndicates/snapshots`)
 
@@ -110,4 +105,10 @@ export class RestDataSource {
 
   getLatestTrackworkSnapshot = (): Observable<TrackworkSnapshot> =>
     this.http.get<TrackworkSnapshot>(`${this.baseUrl}/trackworks/snapshot`)
+
+  getBlacklistConnections = (meeting: string): Observable<BlacklistConnection[]> =>
+    this.http.get<BlacklistConnection[]>(`${this.baseUrl}/players/blacklist-connections?meeting=${meeting}`)
+
+  getBacktestFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
+    this.http.post<FactorHit[]>(`${this.baseUrl}/backtest`, factorCombinations)
 }

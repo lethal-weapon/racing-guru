@@ -22,6 +22,10 @@ export interface Season {
   finale: string
 }
 
+export const BOUNDARY_POOLS = [
+  'F-F', 'QTT', 'PLA-3', 'QPL-3'
+];
+
 export const RATING_GRADES = [
   'A', 'B', 'C', 'D',
 ]
@@ -78,8 +82,4 @@ export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
   {order: 10, factor: 'individualAbsorption', abbreviation: 'IA'},
   {order: 11, factor: 'horseOwner', abbreviation: 'HO'},
   {order: 12, factor: 'occasion', abbreviation: 'OCC'},
-];
-
-export const BOUNDARY_POOLS = [
-  'F-F', 'QTT', 'PLA-3', 'QPL-3'
 ];

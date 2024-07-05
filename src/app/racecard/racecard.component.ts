@@ -6,7 +6,7 @@ import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
 import {Reminder} from '../model/reminder.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
-import {Selection} from '../model/dto.model';
+// import {Selection} from '../model/dto.model';
 import {PlayerSummary} from '../model/meeting.model';
 import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
 import {

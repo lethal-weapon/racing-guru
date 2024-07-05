@@ -1,62 +1,81 @@
 import {Injectable} from '@angular/core';
 
 import {RestDataSource} from './rest.datasource';
-import {Reminder} from './reminder.model';
+import {Interview} from './interview.model';
+import {DEFAULT_PICK, Pick} from './pick.model';
+import {Bet} from './bet.model';
 import {Horse} from './horse.model';
+import {Player} from './player.model';
+import {Report} from './report.model';
+import {Reminder} from './reminder.model';
+import {Racecard} from './racecard.model';
+import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
-import {RaceConnection} from './connection.model';
-import {FactorHit} from './backtest.model';
-import {Racecard} from './racecard.model';
-import {Report} from './report.model';
-import {Bet} from './bet.model';
 import {DrawInheritance} from './draw.model';
-import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {TrackworkSnapshot} from './trackwork.model';
-import {FavoritePost, Interview, SelectionPost} from './dto.model';
-import {Player} from './player.model';
+import {BlacklistConnection} from './connection.model';
+import {FactorHit} from './backtest.model';
 
 @Injectable()
 export class RestRepository {
+  private pick: Pick = DEFAULT_PICK;
   private bets: Bet[] = [];
-  private players: Player[] = [];
-  private reminders: Reminder[] = [];
   private horses: Horse[] = [];
+  private players: Player[] = [];
   private reports: Report[] = [];
-  private meetings: Meeting[] = [];
-  private syndicates: Syndicate[] = [];
-  private collaborations: Collaboration[] = [];
+  private reminders: Reminder[] = [];
   private racecards: Racecard[] = [];
-  private factorHits: FactorHit[] = [];
-  private connections: RaceConnection[] = [];
+  private syndicates: Syndicate[] = [];
+  private meetings: Meeting[] = [];
+  private collaborations: Collaboration[] = [];
   private drawInheritances: DrawInheritance[] = [];
   private syndicateSnapshots: SyndicateSnapshot[] = [];
   private trackworkSnapshots: TrackworkSnapshot[] = [];
+  private blacklistConnections: BlacklistConnection[] = [];
+  private factorHits: FactorHit[] = [];
 
   constructor(private source: RestDataSource) {
   }
 
+  findPick = () => this.pick
   findBets = () => this.bets
   findHorses = () => this.horses
   findPlayers = () => this.players
   findReports = () => this.reports
   findReminders = () => this.reminders
-  findSyndicates = () => this.syndicates
   findRacecards = () => this.racecards
+  findSyndicates = () => this.syndicates
   findMeetings = () => this.meetings
   findCollaborations = () => this.collaborations
   findDrawInheritances = () => this.drawInheritances
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
+  findBlacklistConnections = () => this.blacklistConnections
   findFactorHits = () => this.factorHits
-  findConnections = () => this.connections
 
-  saveFavorite = (favorite: FavoritePost) =>
-    this.source.saveFavorite(favorite).subscribe(data => {
-    })
+  fetchPick = () =>
+    this.source.getPick().subscribe(data => this.pick = data)
 
-  saveSelection = (selection: SelectionPost) =>
-    this.source.saveSelection(selection).subscribe(data => {
+  savePick = (newPick: Pick) =>
+    this.source.savePick(newPick).subscribe(data => this.pick = data)
+
+  fetchBets = () =>
+    this.source.getBets().subscribe(data => this.bets = data)
+
+  fetchHorses = () =>
+    this.source.getHorses().subscribe(data => this.horses = data)
+
+  fetchMeetingHorses = () =>
+    this.source.getMeetingHorses().subscribe(data => this.horses = data)
+
+  fetchActivePlayers = () =>
+    this.source.getActivePlayers().subscribe(data => this.players = data)
+
+  fetchPlayers = (callback: (players: Player[]) => any) =>
+    this.source.getPlayers().subscribe(data => {
+      this.players = data;
+      callback(data);
     })
 
   savePlayer = (
@@ -91,25 +110,11 @@ export class RestRepository {
       error => errorCallback()
     )
 
-  saveSyndicate = (
-    syndicate: Syndicate,
-    successCallback: (saved: Syndicate) => any
-  ) => {
-    this.source.saveSyndicate(syndicate).subscribe(data => {
-      this.syndicates = this.syndicates.filter(s => s.id !== data.id);
-      this.syndicates.push(data);
-      successCallback(data);
-    })
-  }
+  fetchReports = () =>
+    this.source.getReports().subscribe(data => this.reports = data)
 
-  deleteSyndicate = (
-    syndicate: Syndicate,
-    successCallback: () => any
-  ) =>
-    this.source.deleteSyndicate(syndicate).subscribe(data => {
-      this.syndicates = this.syndicates.filter(s => s.id !== syndicate.id);
-      successCallback();
-    })
+  fetchReminders = () =>
+    this.source.getReminders().subscribe(data => this.reminders = data)
 
   saveInterview = (
     interviews: Interview[],
@@ -135,38 +140,28 @@ export class RestRepository {
     })
   }
 
-  fetchPlayers = (callback: (players: Player[]) => any) =>
-    this.source.getPlayers().subscribe(data => {
-      this.players = data;
-      callback(data);
+  fetchSyndicates = () =>
+    this.source.getSyndicates().subscribe(data => this.syndicates = data)
+
+  saveSyndicate = (
+    syndicate: Syndicate,
+    successCallback: (saved: Syndicate) => any
+  ) => {
+    this.source.saveSyndicate(syndicate).subscribe(data => {
+      this.syndicates = this.syndicates.filter(s => s.id !== data.id);
+      this.syndicates.push(data);
+      successCallback(data);
     })
+  }
 
-  fetchActivePlayers = () =>
-    this.source.getActivePlayers().subscribe(data => this.players = data)
-
-  fetchReminders = () =>
-    this.source.getReminders().subscribe(data => this.reminders = data)
-
-  fetchHorses = () =>
-    this.source.getHorses().subscribe(data => this.horses = data)
-
-  fetchMeetingHorses = () =>
-    this.source.getMeetingHorses().subscribe(data => this.horses = data)
-
-  fetchReports = () =>
-    this.source.getReports().subscribe(data => this.reports = data)
-
-  fetchBets = () =>
-    this.source.getBets().subscribe(data => this.bets = data)
-
-  fetchFactorHits = (factorCombinations: string[][], callback: () => any) =>
-    this.source.getBacktestFactorHits(factorCombinations).subscribe(data => {
-      this.factorHits = data;
-      callback();
+  deleteSyndicate = (
+    syndicate: Syndicate,
+    successCallback: () => any
+  ) =>
+    this.source.deleteSyndicate(syndicate).subscribe(data => {
+      this.syndicates = this.syndicates.filter(s => s.id !== syndicate.id);
+      successCallback();
     })
-
-  fetchConnections = (meeting: string = 'latest') =>
-    this.source.getConnections(meeting).subscribe(data => this.connections = data)
 
   fetchMeetings = () =>
     this.source.getMeetings().subscribe(data => this.meetings = data)
@@ -198,9 +193,6 @@ export class RestRepository {
       });
     })
 
-  fetchSyndicates = () =>
-    this.source.getSyndicates().subscribe(data => this.syndicates = data)
-
   fetchSyndicateSnapshots = () =>
     this.source.getSyndicateSnapshots().subscribe(data => this.syndicateSnapshots = data)
 
@@ -219,5 +211,14 @@ export class RestRepository {
       const index = this.trackworkSnapshots.findIndex(s => s.meeting === data.meeting);
       if (index === -1) this.trackworkSnapshots.unshift(data);
       else this.trackworkSnapshots.splice(index, 1, data);
+    })
+
+  fetchBlacklistConnections = (meeting: string = 'latest') =>
+    this.source.getBlacklistConnections(meeting).subscribe(data => this.blacklistConnections = data)
+
+  fetchFactorHits = (factorCombinations: string[][], callback: () => any) =>
+    this.source.getBacktestFactorHits(factorCombinations).subscribe(data => {
+      this.factorHits = data;
+      callback();
     })
 }

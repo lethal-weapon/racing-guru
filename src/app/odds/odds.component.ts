@@ -122,7 +122,7 @@ export class OddsComponent implements OnInit {
       // if (this.trackModeOn) this.trackQuinellaAndForecast();
     }, THREE_SECONDS);
 
-    this.repo.fetchConnections();
+    // this.repo.fetchConnections();
     this.repo.fetchMeetingHorses();
 
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {

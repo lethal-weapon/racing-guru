@@ -1,15 +1,6 @@
-export interface Pair {
-  personA: string,
-  personB: string
-}
-
-export interface Connection {
-  orders: number[],
-  pairs: Pair[]
-}
-
-export interface RaceConnection {
+export interface BlacklistConnection {
   meeting: string,
+  venue: string,
   race: number,
-  connections: Connection[]
+  orders: number[][],
 }
