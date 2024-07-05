@@ -23,8 +23,11 @@
     "animate.css": "^4.1.1",
     "font-awesome": "^4.7.0",
     "hover.css": "^2.3.2",
+    "net": "^1.0.2",
     "ng2-tooltip-directive": "^2.10.3",
     "rxjs": "~7.5.0",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

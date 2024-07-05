@@ -340,3 +340,61 @@
     </tr>
   </tbody>
 </table>
+
+<!--  <table class="mx-auto table-fixed border-collapse border border-gray-700 text-center">-->
+<!--    <thead>-->
+<!--    <th class="w-28 border border-gray-600">-->
+<!--      Syndicate-->
+<!--    </th>-->
+<!--    <th *counter="let race of maxRace"-->
+<!--        class="w-36 border border-gray-600"-->
+<!--    >-->
+<!--      {{ race }}-->
+<!--    </th>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let syn of syndicates"-->
+<!--        class="hover:bg-gray-800"-->
+<!--    >-->
+<!--      <td class="border border-gray-700">-->
+<!--        <div class="grid grid-cols-5">-->
+<!--          <div class="col-span-2">-->
+<!--            #{{ syn.id }}-->
+<!--          </div>-->
+<!--          <div class="col-span-3">-->
+<!--            ({{ syn.members.length }}, {{ getSyndicateServiceHorseCount(syn.horses) }})-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--      <td *counter="let race of maxRace"-->
+<!--          class="border border-gray-700"-->
+<!--          [class.bg-gray-700]="getSyndicateStarters(syn, race).length > 1"-->
+<!--      >-->
+<!--        <div *ngFor="let h of getSyndicateStarters(syn, race)"-->
+<!--             class="{{getPlacingColorByHorse(h, race)}} leading-5"-->
+<!--        >-->
+<!--          <div>-->
+<!--            {{ getHorseDetail(h, race).order }}-->
+<!--            {{ getHorseDetail(h, race).name }}-->
+<!--            <span *ngIf="getHorseDetail(h, race).odds > 0"-->
+<!--                  class="{{ getPlacingColorByHorse(h, race).length === 0-->
+<!--                          ? getOddsIntensityColor(getHorseDetail(h, race).odds)-->
+<!--                          : ''-->
+<!--                       }}"-->
+<!--            >-->
+<!--              {{ getHorseDetail(h, race).odds }}-->
+<!--            </span>-->
+<!--          </div>-->
+<!--          <div class="flex flex-row justify-around">-->
+<!--            <div>-->
+<!--              {{ getHorseDetail(h, race).jockey }}-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              {{ getHorseDetail(h, race).trainer }}-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->

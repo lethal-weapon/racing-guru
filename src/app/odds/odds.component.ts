@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {Clipboard} from '@angular/cdk/clipboard';
 
 import {RestRepository} from '../model/rest.repository';
-import {WebsocketService} from '../model/websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
 import {SingularSignal, CombinationSignal} from '../model/signal.model';
@@ -106,21 +105,12 @@ export class OddsComponent implements OnInit {
 
   constructor(
     private repo: RestRepository,
-    private socket: WebsocketService,
     private clipboard: Clipboard
   ) {
-    socket.addCloseCallback(() => socket.racecards.unsubscribe());
-    socket.addReconnectCallback(() =>
-      socket.racecards.subscribe(data => this.racecards = data));
-
-    socket.racecards.subscribe(data => this.racecards = data);
   }
 
   ngOnInit(): void {
-    setInterval(() => {
-      this.socket.racecards.next([]);
-      // if (this.trackModeOn) this.trackQuinellaAndForecast();
-    }, THREE_SECONDS);
+    // if (this.trackModeOn) this.trackQuinellaAndForecast();
 
     // this.repo.fetchConnections();
     this.repo.fetchMeetingHorses();

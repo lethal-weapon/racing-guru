@@ -5,9 +5,8 @@ export const environment = {
   API_PREFIX: 'api',
 
   WS_PROTOCOL: 'ws',
-  WS_PREFIX: 'ws',
+  WS_SERVER_PORT: 8086,
 
   SERVER_HOSTNAME: '192.168.1.2',
-  SERVER_PORT: 8000,
-  NEW_SERVER_PORT: 8080,
+  SERVER_PORT: 8080,
 };

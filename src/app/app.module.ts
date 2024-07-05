@@ -13,6 +13,7 @@ import {CounterDirective} from './directives/counter.directive';
 import {TruncatePipe} from './directives/truncate.pipe';
 import {AppComponent} from './app.component';
 import {SpinnerComponent} from './spinner/spinner.component';
+import {WebsocketService} from './websocket.service';
 import {ToastWebsocketComponent} from './toast-websocket/toast-websocket.component';
 import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
@@ -70,7 +71,9 @@ import {FormFixtureComponent} from './form-fixture/form-fixture.component';
     NgxChartsModule,
     DragDropModule,
   ],
-  providers: [],
+  providers: [
+    WebsocketService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

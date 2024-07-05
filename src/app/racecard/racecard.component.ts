@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {WebsocketService} from '../model/websocket.service';
 import {Horse, PastStarter, DEFAULT_HORSE} from '../model/horse.model';
 import {Reminder} from '../model/reminder.model';
 import {Starter} from '../model/starter.model';
@@ -75,18 +74,10 @@ export class RacecardComponent implements OnInit {
 
   constructor(
     private repo: RestRepository,
-    private socket: WebsocketService
   ) {
-    socket.addCloseCallback(() => socket.racecards.unsubscribe());
-    socket.addReconnectCallback(() =>
-      socket.racecards.subscribe(data => this.racecards = data));
-
-    socket.racecards.subscribe(data => this.racecards = data);
   }
 
   ngOnInit(): void {
-    setInterval(() => this.socket.racecards.next([]), THREE_SECONDS);
-
     this.repo.fetchReminders();
     this.repo.fetchHorses();
     this.repo.fetchCollaborations();

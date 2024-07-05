@@ -25,7 +25,7 @@ export class RestDataSource {
 
   constructor(private http: HttpClient) {
     this.baseUrl =
-      `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.NEW_SERVER_PORT}`;
+      `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}`;
   }
 
   getPick = (): Observable<Pick> =>
