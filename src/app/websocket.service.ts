@@ -4,6 +4,7 @@ import * as Stomp from 'stompjs';
 
 import {environment as env} from '../environments/environment';
 import {THIRTY_SECONDS} from './util/numbers';
+import {Pick} from './model/pick.model';
 import {Racecard} from './model/racecard.model';
 
 @Injectable({providedIn: 'root'})
@@ -13,11 +14,14 @@ export class WebsocketService {
   socketUrl: string =
     `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.WS_SERVER_PORT}/socket-connect`;
 
+  pickTopic = '/topic/pick';
+  onPickCallbacks: ((newPick: Pick) => any)[] = [];
+
   racecardTopic = '/topic/racecard';
+  onRacecardCallbacks: ((newCard: Racecard) => any)[] = [];
 
   onCloseCallbacks: (() => any)[] = [];
   onReconnectCallbacks: (() => any)[] = [];
-  onRacecardCallbacks: ((newCard: Racecard) => any)[] = [];
 
   constructor() {
     this.connect();
@@ -29,6 +33,9 @@ export class WebsocketService {
   addReconnectCallback = (callback: () => any) =>
     this.onReconnectCallbacks.push(callback)
 
+  addPickCallback = (callback: (newPick: Pick) => any) =>
+    this.onPickCallbacks.push(callback)
+
   addRacecardCallback = (callback: (newCard: Racecard) => any) =>
     this.onRacecardCallbacks.push(callback)
 
@@ -38,6 +45,7 @@ export class WebsocketService {
     this.client.connect(
       {},
       (frame: any) => {
+        this.subscribeToPickTopic();
         this.subscribeToRacecardTopic();
       },
       (error: any) => {
@@ -51,6 +59,13 @@ export class WebsocketService {
   reconnect = () => {
     this.connect();
     this.onReconnectCallbacks.forEach(callback => callback());
+  }
+
+  subscribeToPickTopic = () => {
+    this.client.subscribe(this.pickTopic, (message: any) => {
+      const newPick = JSON.parse(message.body) as Pick;
+      this.onPickCallbacks.forEach(callback => callback(newPick));
+    });
   }
 
   subscribeToRacecardTopic = () => {

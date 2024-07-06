@@ -2,11 +2,12 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../websocket.service';
+import {DEFAULT_PICK, Pick} from '../model/pick.model';
 import {Player} from '../model/player.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
-import {PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
+import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
 import {
@@ -14,7 +15,6 @@ import {
   getMaxRace,
   getOddsIntensityColor,
   getPlacing,
-  getPlacingColor,
   getStarter,
   getStarterWinPlaceOdds,
   getTrainer,
@@ -33,12 +33,14 @@ interface DividendPool {
   templateUrl: './meeting.component.html'
 })
 export class MeetingComponent implements OnInit {
+  pick: Pick = DEFAULT_PICK;
   racecards: Racecard[] = [];
 
   remainingTime: string = '---';
   activeTrainer: string = '';
   activeDraw: number = 0;
 
+  protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly RATING_GRADES = RATING_GRADES;
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
   protected readonly toPlacingColor = toPlacingColor;
@@ -46,7 +48,6 @@ export class MeetingComponent implements OnInit {
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;
   protected readonly getWinPlaceOdds = getWinPlaceOdds;
-  protected readonly getPlacingColor = getPlacingColor;
   protected readonly getHorseProfileUrl = getHorseProfileUrl;
   protected readonly getOddsIntensityColor = getOddsIntensityColor;
 
@@ -54,6 +55,10 @@ export class MeetingComponent implements OnInit {
     private repo: RestRepository,
     private socket: WebsocketService
   ) {
+    socket.addPickCallback((newPick: Pick) => {
+      if (this.pick != newPick) this.pick = newPick;
+    });
+
     socket.addRacecardCallback((newCard: Racecard) => {
       const oldCard = this.racecards
         .find(r => r.meeting === newCard.meeting && r.race === newCard.race);
@@ -71,12 +76,15 @@ export class MeetingComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchPick(() => {
+      this.pick = this.repo.findPick();
+    });
+
     this.repo.fetchRacecards('latest', () => {
       this.racecards = this.repo.findRacecards();
     });
 
     setInterval(() => this.tick(), THREE_SECONDS);
-    this.repo.fetchPick();
     this.repo.fetchActivePlayers();
     this.repo.fetchMeetingHorses();
   }
@@ -117,18 +125,26 @@ export class MeetingComponent implements OnInit {
   }
 
   toggleFavorite = (starter: Starter, racecard: Racecard) => {
-    //   this.repo.saveFavorite({
-    //     meeting: getCurrentMeeting(this.racecards),
-    //     race: racecard.race,
-    //     favorites: getNewFavorites(starter, racecard)
-    //   });
+    if (this.pick.meeting !== this.racecards[0].meeting) return;
+
+    const order = starter.order;
+    const race = racecard.race;
+    const favorites = this.pick.races.find(r => r.race === race)?.favorites || [];
+    let newFavorites = [...favorites];
+
+    if (favorites.includes(order)) newFavorites = newFavorites.filter(f => f !== order);
+    else newFavorites.push(order);
+
+    let newPick: Pick = {...this.pick, races: [...this.pick.races]};
+    let newRacePick = newPick.races.find(r => r.race === race);
+    if (!newRacePick) return;
+
+    newRacePick.favorites = newFavorites;
+    this.repo.savePick(newPick);
   }
 
-  isHighlightEarning = (jockey: string): boolean =>
-    this.getMeetingEarning(jockey) >= 12
-
   isPersonalFavorite = (starter: Starter, race: number): boolean => {
-    return this.repo.findPick().races
+    return this.pick.races
       .filter(r => r.race === race)
       .some(r => r.favorites.includes(starter.order));
   }
@@ -234,7 +250,9 @@ export class MeetingComponent implements OnInit {
       race.track === 'TURF'
       && race.grade.startsWith('C')
       && race.distance > 1000
+      && (!race.name.includes('JUG'))
       && (!race.name.includes('CUP'))
+      && (!race.name.includes('PLATE'))
       && (!race.name.includes('TROPHY'))
       && (!race.name.includes('CHALLENGE'))
       && (!race.name.includes('CHAMPIONSHIP'))
@@ -378,16 +396,22 @@ export class MeetingComponent implements OnInit {
     }
   }
 
-  getDividendTop4 = (race: number): number[] => {
-    const dividend = this.racecards.find(r => r.race === race)?.dividend;
-    const tierce = dividend?.tierce;
-    const quartet = dividend?.quartet;
+  getDividendTop4 = (race: number): string[] => {
+    const starters = this.racecards
+        .find(r => r.race === race)
+        ?.starters
+        .filter(s => (s?.placing || 0) >= 1 && (s?.placing || 0) <= 4)
+        .sort((s1, s2) => (s1.placing - s2.placing) || (s1.order - s2.order))
+      || [];
 
-    if (!tierce) return [];
-    let orders = tierce[0].orders;
-    if (quartet) orders = quartet[0].orders;
+    if (starters.length === 0) return [];
 
-    return orders;
+    return Array(4).fill(1)
+      .map((_, index) => 1 + index)
+      .map(p => starters
+        .filter(s => s.placing === p)
+        .map(s => s.order)
+        .join('/'));
   }
 
   getHorseDetail = (horse: string, race: number):
@@ -404,18 +428,11 @@ export class MeetingComponent implements OnInit {
     trainer: this.starters.find(s => s.horse === horse)?.trainer || '?'
   })
 
-  // getTrackworkStarters = (race: number, grade: string): TrackworkStarter[] =>
-  //   this.repo
-  //     .findTrackworkSnapshots()
-  //     .find(ts => ts.meeting === getCurrentMeeting(this.racecards))
-  //     ?.starters
-  //     .filter(s => s.race === race && s.grade === grade)
-  //     .sort((s1, s2) => s1.order - s2.order) || []
-
   getStartersByTrainerGroup = (race: number, groupIndex: number): Starter[] => {
     let startIndex = 0;
     if (groupIndex > 0) {
-      startIndex = 1 + this.allTrainers.findIndex(p => p === this.boundaryTrainers[groupIndex - 1]);
+      startIndex = 1 + this.allTrainers
+        .findIndex(p => p === this.boundaryTrainers[groupIndex - 1]);
     }
 
     let endIndex = groupIndex < this.boundaryTrainers.length
@@ -573,11 +590,12 @@ export class MeetingComponent implements OnInit {
   }
 
   get next(): Racecard | undefined {
-    return this.racecards.filter(r => !r.dividend?.win).shift();
+    return this.racecards.filter(r => !r.dividend?.win)[0];
   }
 
   get isLoading(): boolean {
-    return this.racecards.length === 0
+    return this.pick.races.length === 0
+      || this.racecards.length === 0
       || this.repo.findPlayers().length === 0
       || this.repo.findHorses().length === 0;
   }

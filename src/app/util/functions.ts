@@ -31,19 +31,6 @@ export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
   return `${seconds}S`;
 }
 
-// export const isFavorite = (starter: Starter, racecard: Racecard): boolean =>
-//   racecard.favorites.includes(starter.order)
-//
-// export const getNewFavorites = (starter: Starter, racecard: Racecard): number[] => {
-//   const order = starter.order;
-//   let favorites = racecard.favorites.map(f => f);
-//
-//   if (favorites.includes(order)) favorites = favorites.filter(f => f !== order);
-//   else favorites.push(order);
-//
-//   return favorites;
-// }
-
 export const isBoundaryMeeting = (meetings: Meeting[], meeting: string): boolean =>
   meetings
     .map(m => m.meeting.slice(0, 7))
@@ -135,7 +122,7 @@ export const getPlacing = (jockey: string, racecard: Racecard): number => {
   return orders.indexOf(order) + 1;
 }
 
-export const toPlacingColor = (placing: number): string =>
+export const toPlacingColor = (placing: number | undefined): string =>
   (placing && placing >= 1 && placing <= 4) ? COLORS[placing - 1] : ''
 
 export const getPlacingColor = (jockey: string, racecard: Racecard): string => {

@@ -10,6 +10,7 @@ export const TEN_THOUSAND = 10_000;
 export const ONE_MILLION = 1_000_000;
 export const ONE_DAY_MILL = 1000 * 3600 * 24;
 
+export const EARNING_THRESHOLD = 12;
 export const PAYOUT_RATE = 0.825;
 export const FCT_PAYOUT_RATE = 0.805;
 export const TRI_PAYOUT_RATE = 0.77;

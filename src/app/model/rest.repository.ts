@@ -54,8 +54,11 @@ export class RestRepository {
   findBlacklistConnections = () => this.blacklistConnections
   findFactorHits = () => this.factorHits
 
-  fetchPick = () =>
-    this.source.getPick().subscribe(data => this.pick = data)
+  fetchPick = (callback: () => any) =>
+    this.source.getPick().subscribe(data => {
+      this.pick = data;
+      callback();
+    })
 
   savePick = (newPick: Pick) =>
     this.source.savePick(newPick).subscribe(data => this.pick = data)
