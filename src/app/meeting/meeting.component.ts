@@ -1,15 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../websocket.service';
+import {RestRepository} from '../model/rest.repository';
 import {DEFAULT_PICK, Pick} from '../model/pick.model';
 import {Player} from '../model/player.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
+import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
-import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
 import {
   getHorseProfileUrl,
   getMaxRace,
@@ -26,6 +26,14 @@ import {
 interface DividendPool {
   name: string,
   threshold: number
+}
+
+interface HorseDetail {
+  name: string,
+  order: number,
+  odds: number,
+  jockey: string,
+  trainer: string
 }
 
 @Component({
@@ -296,6 +304,7 @@ export class MeetingComponent implements OnInit {
       .replace('RESTRICTED', '')
       .replace('4 YEAR OLDS', '4Y')
       .replace('GRIFFIN RACE', 'GF')
+      .replace('GRIFFIN', 'GF')
       .trim();
     return `${clean[0]}${clean.slice(-1)}`
   }
@@ -414,9 +423,7 @@ export class MeetingComponent implements OnInit {
         .join('/'));
   }
 
-  getHorseDetail = (horse: string, race: number):
-    { name: string, order: number, odds: number, jockey: string, trainer: string } => ({
-
+  getHorseDetail = (horse: string, race: number): HorseDetail => ({
     name: this.repo.findHorses().find(h => h.code === horse)?.nameCH || '?',
     order: this.starters.find(s => s.horse === horse)?.order || 0,
     odds: getWinPlaceOdds(
