@@ -1,478 +1,497 @@
-<!--<div *ngIf="isLoading">-->
-<!--  <app-spinner></app-spinner>-->
-<!--</div>-->
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
+</div>
 
-<!--<div *ngIf="!isLoading">-->
-<!--  <div class="flex flex-row justify-evenly"-->
-<!--       [class.mt-8]="maxMeetingStarterOrder <= 12"-->
-<!--       [class.mt-6]="maxMeetingStarterOrder === 13"-->
-<!--       [class.mt-4]="maxMeetingStarterOrder === 14"-->
-<!--  >-->
-<!--    <div *counter="let race of getMaxRace(this.racecards)"-->
-<!--         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"-->
-<!--         (click)="activeRace = race"-->
-<!--    >-->
-<!--      Race {{ race }}-->
-<!--    </div>-->
-<!--  </div>-->
+<div *ngIf="!isLoading">
+  <div class="flex flex-row justify-evenly"
+       [class.mt-8]="maxMeetingStarterOrder <= 12"
+       [class.mt-6]="maxMeetingStarterOrder === 13"
+       [class.mt-4]="maxMeetingStarterOrder === 14"
+  >
+    <div *counter="let race of getMaxRace(this.racecards)"
+         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getRaceBadgeStyle(this.activeRace, race)}}"
+         (click)="activeRace = race"
+    >
+      Race {{ race }}
+    </div>
+  </div>
 
-<!--  <div class="m-4 grid grid-cols-4">-->
-<!--    <div *ngFor="let c of rangeControls.slice(0, 3)"-->
-<!--         class="flex flex-row justify-evenly items-center px-6 text-center"-->
-<!--    >-->
-<!--      <div class="flex flex-col gap-y-1">-->
-<!--        <div class="{{oddsButtonStyle}}"-->
-<!--             (click)="adjustOdds(c.pool, c.step, true, false)"-->
-<!--        >-->
-<!--          <i class="fa fa-minus"></i>-->
-<!--        </div>-->
-<!--        <div class="text-2xl">-->
-<!--          {{ c.minOdds }}-->
-<!--        </div>-->
-<!--        <div class="{{oddsButtonStyle}}"-->
-<!--             (click)="adjustOdds(c.pool, c.step, true, true)"-->
-<!--        >-->
-<!--          <i class="fa fa-plus"></i>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="text-2xl">-->
-<!--        &#8828;-->
-<!--      </div>-->
-<!--      <div class="flex flex-col gap-y-1">-->
-<!--        <div class="{{oddsButtonStyle}} text-yellow-400">-->
-<!--          {{ getSelectedBetCount(c.pool) }}-->
-<!--        </div>-->
-<!--        <div class="text-2xl">-->
-<!--          {{ c.pool }}-->
-<!--        </div>-->
-<!--        <div class="{{oddsButtonStyle}}"-->
-<!--             (click)="copyBets(c.pool)"-->
-<!--        >-->
-<!--          <i class="fa fa-copy"></i>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="text-2xl">-->
-<!--        &#8828;-->
-<!--      </div>-->
-<!--      <div class="flex flex-col gap-y-1">-->
-<!--        <div class="{{oddsButtonStyle}}"-->
-<!--             (click)="adjustOdds(c.pool, c.step, false, false)"-->
-<!--        >-->
-<!--          <i class="fa fa-minus"></i>-->
-<!--        </div>-->
-<!--        <div class="text-2xl">-->
-<!--          {{ c.maxOdds }}-->
-<!--        </div>-->
-<!--        <div class="{{oddsButtonStyle}}"-->
-<!--             (click)="adjustOdds(c.pool, c.step, false, true)"-->
-<!--        >-->
-<!--          <i class="fa fa-plus"></i>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="grid grid-cols-3 px-2 py-4 gap-4 text-center">-->
-<!--      <div class="{{controlButtonStyle}}"-->
-<!--           (click)="resetBets()"-->
-<!--      >-->
-<!--        Reset B.-->
-<!--      </div>-->
-<!--      <div class="text-lg pt-1">-->
-<!--        My Bets-->
-<!--      </div>-->
-<!--      <div class="text-2xl text-center text-yellow-400">-->
-<!--        {{ totalSelectedBetCount }}-->
-<!--      </div>-->
-<!--      <div class="{{controlButtonStyle}}"-->
-<!--           (click)="resetFavorites()"-->
-<!--      >-->
-<!--        Reset F.-->
-<!--      </div>-->
-<!--      <div class="{{controlButtonStyle}}"-->
-<!--           (click)="copyBets()"-->
-<!--      >-->
-<!--        Copy-->
-<!--      </div>-->
-<!--      <div class="{{controlButtonStyle}}"-->
-<!--           [class.font-bold]="trackModeOn"-->
-<!--           [class.text-yellow-400]="trackModeOn"-->
-<!--           (click)="trackModeOn = !trackModeOn"-->
-<!--      >-->
-<!--        {{ trackModeOn ? 'Stop' : 'Track' }}-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
+  <div class="m-4 grid grid-cols-4">
+    <div *ngFor="let c of rangeControls.slice(0, 3)"
+         class="flex flex-row justify-evenly items-center px-6 text-center"
+    >
+      <div class="flex flex-col gap-y-1">
+        <div class="{{oddsButtonStyle}}"
+             (click)="adjustOdds(c.pool, c.step, true, false)"
+        >
+          <i class="fa fa-minus"></i>
+        </div>
+        <div class="text-2xl">
+          {{ c.minOdds }}
+        </div>
+        <div class="{{oddsButtonStyle}}"
+             (click)="adjustOdds(c.pool, c.step, true, true)"
+        >
+          <i class="fa fa-plus"></i>
+        </div>
+      </div>
+      <div class="text-2xl">
+        &#8828;
+      </div>
+      <div class="flex flex-col gap-y-1">
+        <div class="{{oddsButtonStyle}} text-yellow-400">
+          {{ getSelectedBetCount(c.pool) }}
+        </div>
+        <div class="text-2xl">
+          {{ c.pool }}
+        </div>
+        <div class="{{oddsButtonStyle}}"
+             (click)="copyBets(c.pool)"
+        >
+          <i class="fa fa-copy"></i>
+        </div>
+      </div>
+      <div class="text-2xl">
+        &#8828;
+      </div>
+      <div class="flex flex-col gap-y-1">
+        <div class="{{oddsButtonStyle}}"
+             (click)="adjustOdds(c.pool, c.step, false, false)"
+        >
+          <i class="fa fa-minus"></i>
+        </div>
+        <div class="text-2xl">
+          {{ c.maxOdds }}
+        </div>
+        <div class="{{oddsButtonStyle}}"
+             (click)="adjustOdds(c.pool, c.step, false, true)"
+        >
+          <i class="fa fa-plus"></i>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 px-2 py-4 gap-4 text-center">
+      <div class="{{controlButtonStyle}}"
+           (click)="resetBets()"
+      >
+        Reset B.
+      </div>
+      <div class="text-lg pt-1">
+        My Bets
+      </div>
+      <div class="text-2xl text-center text-yellow-400">
+        {{ totalSelectedBetCount }}
+      </div>
+      <div class="{{controlButtonStyle}}"
+           (click)="resetFavorites()"
+      >
+        Reset F.
+      </div>
+      <div class="{{controlButtonStyle}}"
+           (click)="copyBets()"
+      >
+        Copy
+      </div>
+      <div class="{{controlButtonStyle}}"
+           [class.font-bold]="trackModeOn"
+           [class.text-yellow-400]="trackModeOn"
+           (click)="trackModeOn = !trackModeOn"
+      >
+        {{ trackModeOn ? 'Stop' : 'Track' }}
+      </div>
+    </div>
+  </div>
 
-<!--  <table class="mx-auto table-fixed text-center border-collapse border border-gray-700 noselect"-->
-<!--         (mouseleave)="hoveredJockey = ''"-->
-<!--  >-->
-<!--    <tr class="font-bold">-->
-<!--      <td class="w-40 border border-gray-700">-->
-<!--        <div>2<sup>nd</sup></div>-->
-<!--        <div>1<sup>st</sup></div>-->
-<!--      </td>-->
-<!--      <td *ngFor="let starter of getStarters(this.activeRacecard)"-->
-<!--          class="w-20 border border-gray-700 {{getPlacingColor(starter.jockey, activeRacecard)}}"-->
-<!--          [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starter.jockey"-->
-<!--          [class.cursor-pointer]="!isFavorite(starter, this.activeRacecard)"-->
-<!--          [class.cursor-not-allowed]="isFavorite(starter, this.activeRacecard)"-->
-<!--          (click)="toggleTrash(starter)"-->
-<!--          (mouseenter)="hoveredJockey = starter.jockey"-->
-<!--      >-->
-<!--        <div>-->
-<!--          {{ starter.jockey }}-->
-<!--        </div>-->
-<!--        <div class="{{getTrainerColor(starter)}}">-->
-<!--          {{ starter.trainer }}-->
-<!--        </div>-->
-<!--        <div class="flex flex-row justify-evenly">-->
-<!--          <div>-->
-<!--            {{ starter.order }}-->
-<!--          </div>-->
-<!--          <div *ngIf="isTrash(starter)"-->
-<!--               class="text-gray-500"-->
-<!--          >-->
-<!--            <i class="fa fa-trash"></i>-->
-<!--          </div>-->
-<!--          <div *ngIf="isFavorite(starter, this.activeRacecard)"-->
-<!--               class="text-yellow-400"-->
-<!--          >-->
-<!--            <i class="fa fa-star"></i>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--    <tr *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"-->
-<!--        class="hover:bg-gray-800"-->
-<!--    >-->
-<!--      <td class="border border-gray-700 font-bold"-->
-<!--          tooltip="{{getSingularSignalTooltip(starterA)}}"-->
-<!--          [hideDelay]="0"-->
-<!--      >-->
-<!--        <div class="grid grid-cols-4">-->
-<!--          <div class="text-red-600">-->
-<!--            {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).win }}-->
-<!--          </div>-->
-<!--          <div class="col-span-2">-->
-<!--            {{ getHorseNameCH(starterA.horse) }}-->
-<!--          </div>-->
-<!--          <div>-->
-<!--            {{ starterA.order }}-->
-<!--          </div>-->
-<!--          <div class="text-blue-600">-->
-<!--            {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).place }}-->
-<!--          </div>-->
-<!--          <div class="col-span-2 text-green-600">-->
-<!--            {{ getStarterQQPWinPlaceOdds(starterA, this.activeRacecard)[0].toFixed(1) }}-->
-<!--          </div>-->
-<!--          <div class="flex flex-row justify-evenly">-->
-<!--            <div *ngIf="getSingularSignals(starterA)[0].length > 0"-->
-<!--                 class="text-red-600"-->
-<!--            >-->
-<!--              {{ getSingularSignals(starterA)[0].length }}-->
-<!--            </div>-->
-<!--            <div *ngIf="getSingularSignals(starterA)[1].length > 0"-->
-<!--                 class="text-blue-600"-->
-<!--            >-->
-<!--              {{ getSingularSignals(starterA)[1].length }}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </td>-->
-<!--      <td *ngFor="let starterB of getStarters(this.activeRacecard); let indexB = index"-->
-<!--          class="border border-gray-700 text-purple-600"-->
-<!--          [class.text-gray-300]="isPeopleConnected(starterA, starterB)"-->
-<!--          [class.bg-gray-600]="isBothFavorite(starterA, starterB)"-->
-<!--          [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starterB.jockey"-->
-<!--          [class.diagonal-line]="starterA.order === starterB.order"-->
-<!--          (mouseenter)="hoveredJockey = starterB.jockey"-->
-<!--      >-->
-<!--        <div *ngIf="starterA.order !== starterB.order"-->
-<!--             class="grid grid-cols-2"-->
-<!--        >-->
-<!--          <div *ngIf="indexB > indexA"-->
-<!--               class="flex flex-col cursor-pointer border {{getPairBorder('qin', starterA, starterB)}}"-->
-<!--               tooltip="{{getCombinationSignalTooltip(starterA, starterB)[0]}}"-->
-<!--               [hideDelay]="0"-->
-<!--               [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"-->
-<!--               (click)="toggleBet('qin', starterA, starterB)"-->
-<!--          >-->
-<!--            <div>-->
-<!--              {{ isShowOdds('qin', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[0] : '-' }}-->
-<!--            </div>-->
-<!--            <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[0])}}">-->
-<!--              {{-->
-<!--                getCombinationSignals(starterA, starterB)[0].length > 0-->
-<!--                  ? getCombinationSignals(starterA, starterB)[0].length-->
-<!--                  : ''-->
-<!--              }}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div *ngIf="indexB > indexA"-->
-<!--               class="flex flex-col cursor-pointer border {{getPairBorder('qpl', starterA, starterB)}}"-->
-<!--               tooltip="{{getCombinationSignalTooltip(starterA, starterB)[1]}}"-->
-<!--               [hideDelay]="0"-->
-<!--               [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"-->
-<!--               (click)="toggleBet('qpl', starterA, starterB)"-->
-<!--          >-->
-<!--            <div>-->
-<!--              {{ isShowOdds('qpl', starterA, starterB) ? getStarterQQPOdds(starterA, starterB)[1] : '-' }}-->
-<!--            </div>-->
-<!--            <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[1])}}">-->
-<!--              {{-->
-<!--                getCombinationSignals(starterA, starterB)[1].length > 0-->
-<!--                  ? getCombinationSignals(starterA, starterB)[1].length-->
-<!--                  : ''-->
-<!--              }}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div *ngIf="indexA > indexB"-->
-<!--               class="flex flex-col cursor-pointer border {{getPairBorder('fct', starterA, starterB)}}"-->
-<!--               tooltip="{{getCombinationSignalTooltip(starterA, starterB)[2]}}"-->
-<!--               [hideDelay]="0"-->
-<!--               [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"-->
-<!--               (click)="toggleBet('fct', starterA, starterB)"-->
-<!--          >-->
-<!--            <div>-->
-<!--              {{ isShowOdds('fct', starterA, starterB) ? getStarterFCTOdds(starterA, starterB)[0] : '-' }}-->
-<!--            </div>-->
-<!--            <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[2])}}">-->
-<!--              {{-->
-<!--                getCombinationSignals(starterA, starterB)[2].length > 0-->
-<!--                  ? getCombinationSignals(starterA, starterB)[2].length-->
-<!--                  : ''-->
-<!--              }}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div *ngIf="indexA > indexB"-->
-<!--               class="flex flex-col cursor-pointer border {{getPairBorder('fct', starterB, starterA)}}"-->
-<!--               tooltip="{{getCombinationSignalTooltip(starterB, starterA)[2]}}"-->
-<!--               [hideDelay]="0"-->
-<!--               [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"-->
-<!--               (click)="toggleBet('fct', starterB, starterA)"-->
-<!--          >-->
-<!--            <div>-->
-<!--              {{ isShowOdds('fct', starterB, starterA, true) ? getStarterFCTOdds(starterA, starterB)[1] : '-' }}-->
-<!--            </div>-->
-<!--            <div class="text-sm {{getSignalColor(getCombinationSignals(starterB, starterA)[2])}}">-->
-<!--              {{-->
-<!--                getCombinationSignals(starterB, starterA)[2].length > 0-->
-<!--                  ? getCombinationSignals(starterB, starterA)[2].length-->
-<!--                  : ''-->
-<!--              }}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--  </table>-->
+  <table class="mx-auto table-fixed text-center border-collapse border border-gray-700"
+         (mouseleave)="hoveredJockey = ''"
+  >
+    <tr class="font-bold">
+      <td class="w-40 border border-gray-700">
+        <div>2<sup>nd</sup></div>
+        <div>1<sup>st</sup></div>
+      </td>
+      <td *ngFor="let starter of getStarters(this.activeRacecard)"
+          class="w-20 border border-gray-700 {{toPlacingColor(starter?.placing)}}"
+          [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starter.jockey"
+          [class.cursor-pointer]="!isFavorite(starter, this.activeRacecard)"
+          [class.cursor-not-allowed]="isFavorite(starter, this.activeRacecard)"
+          (click)="toggleTrash(starter)"
+          (mouseenter)="hoveredJockey = starter.jockey"
+      >
+        <div>
+          {{ starter.jockey }}
+        </div>
+        <div class="{{getTrainerColor(starter)}}">
+          {{ starter.trainer }}
+        </div>
+        <div class="flex flex-row justify-evenly">
+          <div>
+            {{ starter.order }}
+          </div>
+          <div *ngIf="isTrash(starter)"
+               class="text-gray-500"
+          >
+            <i class="fa fa-trash"></i>
+          </div>
+          <div *ngIf="isFavorite(starter, this.activeRacecard)"
+               class="text-yellow-400"
+          >
+            <i class="fa fa-star"></i>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700 font-bold"
+          tooltip="{{getSingularSignalTooltip(starterA)}}"
+          [hideDelay]="0"
+      >
+        <div class="grid grid-cols-4">
+          <div class="text-red-600">
+            {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).win | number: '1.0-1' }}
+          </div>
+          <div class="col-span-2">
+            {{ getHorseNameCH(starterA.horse) }}
+          </div>
+          <div>
+            {{ starterA.order }}
+          </div>
+          <div class="text-blue-600">
+            {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).place | number: '1.0-1' }}
+          </div>
+          <div class="col-span-2 text-green-600">
+            {{ getStarterQQPWinPlaceOdds(starterA, this.activeRacecard)[0] | number: '1.0-1' }}
+          </div>
+          <div class="flex flex-row justify-evenly">
+            <div *ngIf="getSingularSignals(starterA)[0].length > 0"
+                 class="text-red-600"
+            >
+              {{ getSingularSignals(starterA)[0].length }}
+            </div>
+            <div *ngIf="getSingularSignals(starterA)[1].length > 0"
+                 class="text-blue-600"
+            >
+              {{ getSingularSignals(starterA)[1].length }}
+            </div>
+          </div>
+        </div>
+      </td>
+      <td *ngFor="let starterB of getStarters(this.activeRacecard); let indexB = index"
+          class="border border-gray-700"
+          [class.text-gray-300]="isPeopleConnected(starterA, starterB)"
+          [class.text-purple-600]="!isPeopleConnected(starterA, starterB)"
+          [class.bg-gray-600]="isBothFavorite(starterA, starterB)"
+          [class.bg-gray-800]="!isBothFavorite(starterA, starterB) && !onDoubleTable && hoveredJockey === starterB.jockey"
+          [class.diagonal-line]="starterA.order === starterB.order"
+          (mouseenter)="hoveredJockey = starterB.jockey"
+      >
+        <div *ngIf="starterA.order !== starterB.order"
+             class="grid grid-cols-2"
+        >
+          <div *ngIf="indexB > indexA"
+               class="flex flex-col cursor-pointer border {{getPairBorder('qin', starterA, starterB)}}"
+               tooltip="{{getCombinationSignalTooltip(starterA, starterB)[0]}}"
+               [hideDelay]="0"
+               [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[0]"
+               (click)="toggleBet('qin', starterA, starterB)"
+          >
+            <div>
+              {{
+                isShowOdds('qin', starterA, starterB)
+                  ? (getStarterQQPOdds(starterA, starterB)[0] | number: '1.0-1')
+                  : '-'
+              }}
+            </div>
+            <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[0])}}">
+              {{
+                getCombinationSignals(starterA, starterB)[0].length > 0
+                  ? getCombinationSignals(starterA, starterB)[0].length
+                  : ''
+              }}
+            </div>
+          </div>
+          <div *ngIf="indexB > indexA"
+               class="flex flex-col cursor-pointer border {{getPairBorder('qpl', starterA, starterB)}}"
+               tooltip="{{getCombinationSignalTooltip(starterA, starterB)[1]}}"
+               [hideDelay]="0"
+               [class.text-yellow-400]="isFinalQQPCombination(starterA, starterB)[1]"
+               (click)="toggleBet('qpl', starterA, starterB)"
+          >
+            <div>
+              {{
+                isShowOdds('qpl', starterA, starterB)
+                  ? (getStarterQQPOdds(starterA, starterB)[1] | number: '1.0-1')
+                  : '-'
+              }}
+            </div>
+            <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[1])}}">
+              {{
+                getCombinationSignals(starterA, starterB)[1].length > 0
+                  ? getCombinationSignals(starterA, starterB)[1].length
+                  : ''
+              }}
+            </div>
+          </div>
+          <div *ngIf="indexA > indexB"
+               class="flex flex-col cursor-pointer border {{getPairBorder('fct', starterA, starterB)}}"
+               tooltip="{{getCombinationSignalTooltip(starterA, starterB)[2]}}"
+               [hideDelay]="0"
+               [class.text-yellow-400]="isFinalFCTCombination(starterA, starterB)"
+               (click)="toggleBet('fct', starterA, starterB)"
+          >
+            <div>
+              {{
+                isShowOdds('fct', starterA, starterB)
+                  ? (getStarterFCTOdds(starterA, starterB)[0] | number: '1.0-1')
+                  : '-'
+              }}
+            </div>
+            <div class="text-sm {{getSignalColor(getCombinationSignals(starterA, starterB)[2])}}">
+              {{
+                getCombinationSignals(starterA, starterB)[2].length > 0
+                  ? getCombinationSignals(starterA, starterB)[2].length
+                  : ''
+              }}
+            </div>
+          </div>
+          <div *ngIf="indexA > indexB"
+               class="flex flex-col cursor-pointer border {{getPairBorder('fct', starterB, starterA)}}"
+               tooltip="{{getCombinationSignalTooltip(starterB, starterA)[2]}}"
+               [hideDelay]="0"
+               [class.text-yellow-400]="isFinalFCTCombination(starterB, starterA)"
+               (click)="toggleBet('fct', starterB, starterA)"
+          >
+            <div>
+              {{
+                isShowOdds('fct', starterB, starterA, true)
+                  ? (getStarterFCTOdds(starterA, starterB)[1] | number: '1.0-1')
+                  : '-'
+              }}
+            </div>
+            <div class="text-sm {{getSignalColor(getCombinationSignals(starterB, starterA)[2])}}">
+              {{
+                getCombinationSignals(starterB, starterA)[2].length > 0
+                  ? getCombinationSignals(starterB, starterA)[2].length
+                  : ''
+              }}
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
 
-<!--  <div *ngIf="maxRace !== 0"-->
-<!--       class="my-5 flex flex-row justify-center items-center noselect"-->
-<!--  >-->
-<!--    <div *ngIf="maxRace !== activeRace">-->
-<!--      <div *ngFor="let c of rangeControls.slice(3, 4)"-->
-<!--           class="mx-8 flex flex-row justify-evenly items-center text-center"-->
-<!--      >-->
-<!--        <div class="flex flex-col gap-y-1">-->
-<!--          <div class="{{oddsButtonStyle}}"-->
-<!--               (click)="adjustOdds(c.pool, c.step, true, false)"-->
-<!--          >-->
-<!--            <i class="fa fa-minus"></i>-->
-<!--          </div>-->
-<!--          <div class="text-2xl">-->
-<!--            {{ c.minOdds }}-->
-<!--          </div>-->
-<!--          <div class="{{oddsButtonStyle}}"-->
-<!--               (click)="adjustOdds(c.pool, c.step, true, true)"-->
-<!--          >-->
-<!--            <i class="fa fa-plus"></i>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="mx-3 text-2xl">-->
-<!--          &#8828;-->
-<!--        </div>-->
-<!--        <div class="flex flex-col gap-y-1">-->
-<!--          <div class="{{oddsButtonStyle}} text-yellow-400">-->
-<!--            {{ getSelectedBetCount(c.pool) }}-->
-<!--          </div>-->
-<!--          <div class="text-2xl">-->
-<!--            {{ c.pool }}-->
-<!--          </div>-->
-<!--          <div class="{{oddsButtonStyle}}"-->
-<!--               (click)="copyBets(c.pool)"-->
-<!--          >-->
-<!--            <i class="fa fa-copy"></i>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="mx-3 text-2xl">-->
-<!--          &#8828;-->
-<!--        </div>-->
-<!--        <div class="flex flex-col gap-y-1">-->
-<!--          <div class="{{oddsButtonStyle}}"-->
-<!--               (click)="adjustOdds(c.pool, c.step, false, false)"-->
-<!--          >-->
-<!--            <i class="fa fa-minus"></i>-->
-<!--          </div>-->
-<!--          <div class="text-2xl">-->
-<!--            {{ c.maxOdds }}-->
-<!--          </div>-->
-<!--          <div class="{{oddsButtonStyle}}"-->
-<!--               (click)="adjustOdds(c.pool, c.step, false, true)"-->
-<!--          >-->
-<!--            <i class="fa fa-plus"></i>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="mx-8 grid grid-cols-4 py-4 gap-4 text-center">-->
-<!--      <div *ngFor="let betType of multiBankerBetTypes"-->
-<!--           class="w-24 {{controlButtonStyle}}"-->
-<!--           (click)="copyMultiBankerBets(betType)"-->
-<!--      >-->
-<!--        <i class="fa fa-copy"></i>-->
-<!--        <span class="ml-2">{{ betType }}</span>-->
-<!--      </div>-->
-<!--      <div class="w-24 {{controlButtonStyle}}"-->
-<!--           (click)="resetSelections()"-->
-<!--      >-->
-<!--        Reset S.-->
-<!--      </div>-->
-<!--      <div *ngFor="let betType of multiBankerBetTypes.slice(1)"-->
-<!--           class="text-2xl text-yellow-400"-->
-<!--      >-->
-<!--        {{ getMultiBankerBets(betType).length }}-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="mx-8 grid grid-cols-3 py-4 gap-4 text-center">-->
-<!--      <div class="text-lg">-->
-<!--        As Bankers-->
-<!--      </div>-->
-<!--      <div *ngFor="let betType of copyAsBankersBetTypes"-->
-<!--           class="w-24 {{controlButtonStyle}}"-->
-<!--           (click)="copyAsBankerBets(betType)"-->
-<!--      >-->
-<!--        <i class="fa fa-copy"></i>-->
-<!--        <span class="ml-2">{{ betType }}</span>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
+  <div *ngIf="maxRace !== 0"
+       class="my-4 flex flex-row justify-center items-center"
+  >
+    <div *ngIf="maxRace !== activeRace">
+      <div *ngFor="let c of rangeControls.slice(3, 4)"
+           class="mx-8 flex flex-row justify-evenly items-center text-center"
+      >
+        <div class="flex flex-col gap-y-1">
+          <div class="{{oddsButtonStyle}}"
+               (click)="adjustOdds(c.pool, c.step, true, false)"
+          >
+            <i class="fa fa-minus"></i>
+          </div>
+          <div class="text-2xl">
+            {{ c.minOdds }}
+          </div>
+          <div class="{{oddsButtonStyle}}"
+               (click)="adjustOdds(c.pool, c.step, true, true)"
+          >
+            <i class="fa fa-plus"></i>
+          </div>
+        </div>
+        <div class="mx-3 text-2xl">
+          &#8828;
+        </div>
+        <div class="flex flex-col gap-y-1">
+          <div class="{{oddsButtonStyle}} text-yellow-400">
+            {{ getSelectedBetCount(c.pool) }}
+          </div>
+          <div class="text-2xl">
+            {{ c.pool }}
+          </div>
+          <div class="{{oddsButtonStyle}}"
+               (click)="copyBets(c.pool)"
+          >
+            <i class="fa fa-copy"></i>
+          </div>
+        </div>
+        <div class="mx-3 text-2xl">
+          &#8828;
+        </div>
+        <div class="flex flex-col gap-y-1">
+          <div class="{{oddsButtonStyle}}"
+               (click)="adjustOdds(c.pool, c.step, false, false)"
+          >
+            <i class="fa fa-minus"></i>
+          </div>
+          <div class="text-2xl">
+            {{ c.maxOdds }}
+          </div>
+          <div class="{{oddsButtonStyle}}"
+               (click)="adjustOdds(c.pool, c.step, false, true)"
+          >
+            <i class="fa fa-plus"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mx-8 grid grid-cols-4 py-4 gap-4 text-center">
+      <div *ngFor="let betType of multiBankerBetTypes"
+           class="w-24 {{controlButtonStyle}}"
+           (click)="copyMultiBankerBets(betType)"
+      >
+        <i class="fa fa-copy"></i>
+        <span class="ml-2">{{ betType }}</span>
+      </div>
+      <div class="w-24 {{controlButtonStyle}}"
+           (click)="resetSelections()"
+      >
+        Reset S.
+      </div>
+      <div *ngFor="let betType of multiBankerBetTypes.slice(1)"
+           class="text-2xl text-yellow-400"
+      >
+        {{ getMultiBankerBets(betType).length }}
+      </div>
+    </div>
+    <div class="mx-8 grid grid-cols-3 py-4 gap-4 text-center">
+      <div class="text-lg">
+        As Bankers
+      </div>
+      <div *ngFor="let betType of copyAsBankersBetTypes"
+           class="w-24 {{controlButtonStyle}}"
+           (click)="copyAsBankerBets(betType)"
+      >
+        <i class="fa fa-copy"></i>
+        <span class="ml-2">{{ betType }}</span>
+      </div>
+    </div>
+  </div>
 
-<!--  <table *ngIf="!(maxRace === 0 || maxRace === activeRace)"-->
-<!--         class="mx-auto table-fixed text-center border-collapse border border-gray-700 noselect"-->
-<!--         (mouseenter)="onDoubleTable = true;"-->
-<!--         (mouseleave)="hoveredJockey = ''; onDoubleTable = false;"-->
-<!--  >-->
-<!--    <tr class="font-bold">-->
-<!--      <td class="w-40 border border-gray-700">-->
-<!--        <div>1<sup>st</sup></div>-->
-<!--        <div>2<sup>nd</sup></div>-->
-<!--      </td>-->
-<!--      <td *ngFor="let starterA of getStarters(this.activeRacecard)"-->
-<!--          class="w-20 border border-gray-700 {{getPlacingColor(starterA.jockey, activeRacecard)}}"-->
-<!--          [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"-->
-<!--          [class.cursor-pointer]="!isFavorite(starterA, this.activeRacecard)"-->
-<!--          [class.cursor-not-allowed]="isFavorite(starterA, this.activeRacecard)"-->
-<!--          (click)="toggleTrash(starterA)"-->
-<!--          (mouseenter)="hoveredJockey = starterA.jockey"-->
-<!--      >-->
-<!--        <div>-->
-<!--          {{ starterA.jockey }}-->
-<!--        </div>-->
-<!--        <div class="{{getTrainerColor(starterA)}}">-->
-<!--          {{ starterA.trainer }}-->
-<!--        </div>-->
-<!--        <div class="flex flex-row justify-evenly">-->
-<!--          <div>-->
-<!--            {{ starterA.order }}-->
-<!--          </div>-->
-<!--          <div *ngIf="isTrash(starterA)"-->
-<!--               class="text-gray-500"-->
-<!--          >-->
-<!--            <i class="fa fa-trash"></i>-->
-<!--          </div>-->
-<!--          <div *ngIf="isFavorite(starterA, this.activeRacecard)"-->
-<!--               class="text-yellow-400"-->
-<!--          >-->
-<!--            <i class="fa fa-star"></i>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="{{getPlacingColor(starterA.jockey, activeRacecard) || 'text-red-600'}}">-->
-<!--          {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).win }}-->
-<!--        </div>-->
-<!--        <div class="{{getDBLBankerSignalCount(starterA, true) > 0 ? 'text-yellow-400' : 'invisible'}}">-->
-<!--          {{ getDBLBankerSignalCount(starterA, true) }}-->
-<!--        </div>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--    <tr *ngFor="let starterB of getStarters(this.activeNextRacecard); let indexB = index"-->
-<!--        class="hover:bg-gray-800"-->
-<!--    >-->
-<!--      <td class="py-1 border border-gray-700 font-bold {{getPlacingColor(starterB.jockey, activeNextRacecard)}}">-->
-<!--        <div class="grid grid-cols-3"-->
-<!--             [class.cursor-pointer]="!isFavorite(starterB, this.activeNextRacecard)"-->
-<!--             [class.cursor-not-allowed]="isFavorite(starterB, this.activeNextRacecard)"-->
-<!--             (click)="toggleTrash(starterB, true)"-->
-<!--        >-->
-<!--          <div>-->
-<!--            {{ starterB.jockey }}-->
-<!--          </div>-->
-<!--          <div>-->
-<!--            {{ starterB.trainer }}-->
-<!--          </div>-->
-<!--          <div class="flex flex-row justify-evenly">-->
-<!--            <div>-->
-<!--              {{ starterB.order }}-->
-<!--            </div>-->
-<!--            <div *ngIf="getDBLBankerSignalCount(starterB, false) > 0"-->
-<!--                 class="text-yellow-400"-->
-<!--            >-->
-<!--              {{ getDBLBankerSignalCount(starterB, false) }}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="col-span-2">-->
-<!--            {{ getHorseNameCH(starterB.horse) }}-->
-<!--            <span *ngIf="isTrash(starterB, true)"-->
-<!--                  class="text-gray-500"-->
-<!--            >-->
-<!--            <i class="fa fa-trash"></i>-->
-<!--          </span>-->
-<!--            <span *ngIf="isFavorite(starterB, this.activeNextRacecard)"-->
-<!--                  class="text-yellow-400"-->
-<!--            >-->
-<!--            <i class="fa fa-star"></i>-->
-<!--          </span>-->
-<!--          </div>-->
-<!--          <div class="{{ getPlacingColor(starterB.jockey, activeNextRacecard) || 'text-red-600' }}">-->
-<!--            {{ getStarterWinPlaceOdds(starterB, this.activeNextRacecard).win }}-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </td>-->
-<!--      <td *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"-->
-<!--          class="border border-gray-700 {{getDBLCellBackground(indexA, indexB)}}"-->
-<!--          [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"-->
-<!--          [class.bg-gray-600]="isBothFavorite(starterA, starterB, true)"-->
-<!--          (mouseenter)="hoveredJockey = starterA.jockey"-->
-<!--      >-->
-<!--        <div class="flex flex-col w-3/4 mx-auto cursor-pointer border {{getPairBorder('dbl', starterA, starterB)}}"-->
-<!--             tooltip="{{getCombinationSignalTooltip(starterA, starterB)[3]}}"-->
-<!--             [hideDelay]="0"-->
-<!--             (click)="toggleBet('dbl', starterA, starterB)"-->
-<!--        >-->
-<!--          <div class="text-lg {{getDoubleOddsColor(starterA, starterB)}}"-->
-<!--               [class.italic]="starterA.draw === starterB.draw"-->
-<!--               [class.underline]="starterA.draw === starterB.draw"-->
-<!--          >-->
-<!--            {{ isShowOdds('dbl', starterA, starterB) ? getStarterDBLOdds(starterA, starterB) : '-' }}-->
-<!--          </div>-->
-<!--          <div class="{{getSignalColor(getCombinationSignals(starterA, starterB)[3])}}">-->
-<!--            {{-->
-<!--              getCombinationSignals(starterA, starterB)[3].length > 0-->
-<!--                ? getCombinationSignals(starterA, starterB)[3].length-->
-<!--                : ''-->
-<!--            }}-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--  </table>-->
-<!--</div>-->
+  <table *ngIf="!(maxRace === 0 || maxRace === activeRace)"
+         class="mx-auto table-fixed text-center border-collapse border border-gray-700"
+         (mouseenter)="onDoubleTable = true;"
+         (mouseleave)="hoveredJockey = ''; onDoubleTable = false;"
+  >
+    <tr class="font-bold">
+      <td class="w-40 border border-gray-700">
+        <div>1<sup>st</sup></div>
+        <div>2<sup>nd</sup></div>
+      </td>
+      <td *ngFor="let starterA of getStarters(this.activeRacecard)"
+          class="w-20 border border-gray-700 {{toPlacingColor(starterA?.placing)}}"
+          [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"
+          [class.cursor-pointer]="!isFavorite(starterA, this.activeRacecard)"
+          [class.cursor-not-allowed]="isFavorite(starterA, this.activeRacecard)"
+          (click)="toggleTrash(starterA)"
+          (mouseenter)="hoveredJockey = starterA.jockey"
+      >
+        <div>
+          {{ starterA.jockey }}
+        </div>
+        <div class="{{getTrainerColor(starterA)}}">
+          {{ starterA.trainer }}
+        </div>
+        <div class="flex flex-row justify-evenly">
+          <div>
+            {{ starterA.order }}
+          </div>
+          <div *ngIf="isTrash(starterA)"
+               class="text-gray-500"
+          >
+            <i class="fa fa-trash"></i>
+          </div>
+          <div *ngIf="isFavorite(starterA, this.activeRacecard)"
+               class="text-yellow-400"
+          >
+            <i class="fa fa-star"></i>
+          </div>
+        </div>
+        <div class="{{toPlacingColor(starterA?.placing) || 'text-red-600'}}">
+          {{ getStarterWinPlaceOdds(starterA, this.activeRacecard).win | number: '1.0-1' }}
+        </div>
+        <div class="{{getDBLBankerSignalCount(starterA, true) > 0 ? 'text-yellow-400' : 'invisible'}}">
+          {{ getDBLBankerSignalCount(starterA, true) }}
+        </div>
+      </td>
+    </tr>
+    <tr *ngFor="let starterB of getStarters(this.activeNextRacecard); let indexB = index"
+        class="hover:bg-gray-800"
+    >
+      <td class="py-1 border border-gray-700 font-bold {{toPlacingColor(starterB?.placing)}}">
+        <div class="grid grid-cols-3"
+             [class.cursor-pointer]="!isFavorite(starterB, this.activeNextRacecard)"
+             [class.cursor-not-allowed]="isFavorite(starterB, this.activeNextRacecard)"
+             (click)="toggleTrash(starterB, true)"
+        >
+          <div>
+            {{ starterB.jockey }}
+          </div>
+          <div>
+            {{ starterB.trainer }}
+          </div>
+          <div class="flex flex-row justify-evenly">
+            <div>
+              {{ starterB.order }}
+            </div>
+            <div *ngIf="getDBLBankerSignalCount(starterB, false) > 0"
+                 class="text-yellow-400"
+            >
+              {{ getDBLBankerSignalCount(starterB, false) }}
+            </div>
+          </div>
+          <div class="col-span-2">
+            {{ getHorseNameCH(starterB.horse) }}
+            <span *ngIf="isTrash(starterB, true)"
+                  class="text-gray-500"
+            >
+              <i class="fa fa-trash"></i>
+            </span>
+            <span *ngIf="isFavorite(starterB, this.activeNextRacecard)"
+                  class="text-yellow-400"
+            >
+              <i class="fa fa-star"></i>
+            </span>
+          </div>
+          <div class="{{ toPlacingColor(starterB?.placing) || 'text-red-600' }}">
+            {{ getStarterWinPlaceOdds(starterB, this.activeNextRacecard).win | number: '1.0-1' }}
+          </div>
+        </div>
+      </td>
+      <td *ngFor="let starterA of getStarters(this.activeRacecard); let indexA = index"
+          class="border border-gray-700 {{getDBLCellBackground(indexA, indexB)}}"
+          [class.bg-gray-600]="isBothFavorite(starterA, starterB, true)"
+          [class.bg-gray-800]="!isBothFavorite(starterA, starterB, true) && onDoubleTable && hoveredJockey === starterA.jockey"
+          (mouseenter)="hoveredJockey = starterA.jockey"
+      >
+        <div class="flex flex-col w-3/4 mx-auto cursor-pointer border {{getPairBorder('dbl', starterA, starterB)}}"
+             tooltip="{{getCombinationSignalTooltip(starterA, starterB)[3]}}"
+             [hideDelay]="0"
+             (click)="toggleBet('dbl', starterA, starterB)"
+        >
+          <div class="text-lg {{getDoubleOddsColor(starterA, starterB)}}"
+               [class.italic]="starterA.draw === starterB.draw"
+               [class.underline]="starterA.draw === starterB.draw"
+          >
+            {{
+              isShowOdds('dbl', starterA, starterB)
+                ? (getStarterDBLOdds(starterA, starterB) | number: '1.0-1')
+                : '-'
+            }}
+          </div>
+          <div *ngIf="getCombinationSignals(starterA, starterB)[3].length > 0"
+               class="{{getSignalColor(getCombinationSignals(starterA, starterB)[3])}}"
+          >
+            {{ getCombinationSignals(starterA, starterB)[3].length }}
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
