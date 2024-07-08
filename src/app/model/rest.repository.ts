@@ -182,6 +182,9 @@ export class RestRepository {
   fetchRecentCollaborations = () =>
     this.source.getRecentCollaborations().subscribe(data => this.collaborations = data)
 
+  fetchMeetingCollaborations = (meeting: string = 'latest') =>
+    this.source.getMeetingCollaborations(meeting).subscribe(data => this.collaborations = data)
+
   fetchDrawInheritances = () =>
     this.source.getDrawInheritances().subscribe(data => this.drawInheritances = data)
 

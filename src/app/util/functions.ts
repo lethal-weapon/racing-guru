@@ -50,9 +50,6 @@ export const getHorseProfileUrl = (brand: string): string => {
     `.replace(/\s/g, '');
 }
 
-export const getCurrentMeeting = (racecards: Racecard[]): string =>
-  racecards.find(r => r.race === 1)?.meeting || '---'
-
 export const getMaxRace = (racecards: Racecard[]): number =>
   racecards.map(r => r.race).pop() || 0
 
@@ -125,21 +122,18 @@ export const getPlacing = (jockey: string, racecard: Racecard): number => {
 export const toPlacingColor = (placing: number | undefined): string =>
   (placing && placing >= 1 && placing <= 4) ? COLORS[placing - 1] : ''
 
-export const getPlacingColor = (jockey: string, racecard: Racecard): string => {
-  const placing = getPlacing(jockey, racecard);
-  return placing > 0 ? COLORS[placing - 1] : '';
-}
+export const getOddsIntensityColor = (odds: number): string =>
+  ODDS_INTENSITIES.find(oi => odds >= oi.lower && odds <= oi.upper)?.color || ''
 
-export const getOddsIntensityColor = (odds: number): string => {
-  return ODDS_INTENSITIES.find(oi => odds >= oi.lower && odds <= oi.upper)?.color || '';
-}
-
-export const getPlacingBorderBackground = (jockey: string, racecard: Racecard): string =>
-  [
+export const getPlacingBorderBackground = (starter: Starter): string => {
+  let placing = starter?.placing || 0;
+  if (!(placing >= 1 && placing <= 4)) placing = 0;
+  return [
     'border border-gray-700',
     'bg-red-800', 'bg-green-800',
     'bg-blue-800', 'bg-purple-800',
-  ][getPlacing(jockey, racecard)]
+  ][placing];
+}
 
 export const getRaceBadgeStyle = (activeRace: number, renderRace: number): string =>
   activeRace === renderRace
