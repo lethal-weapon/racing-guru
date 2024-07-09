@@ -14,10 +14,12 @@ export interface PlayerSummary {
   fourths: number,
   engagements: number,
   earnings: number,
+  meeting: string,
   starters: EarningStarter[]
 }
 
 export interface EarningStarter {
+  meeting: string,
   race: number,
   order: number,
   draw: number,

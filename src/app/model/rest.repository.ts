@@ -166,8 +166,14 @@ export class RestRepository {
       successCallback();
     })
 
-  fetchMeetings = () =>
-    this.source.getMeetings().subscribe(data => this.meetings = data)
+  fetchMeetings = (
+    size: number = 8,
+    callback: () => any = () => console.log(``)
+  ) =>
+    this.source.getMeetings(size).subscribe(data => {
+      this.meetings = data;
+      callback();
+    })
 
   fetchLatestMeeting = () =>
     this.source.getLatestMeeting().subscribe(data => {
@@ -182,8 +188,14 @@ export class RestRepository {
   fetchRecentCollaborations = () =>
     this.source.getRecentCollaborations().subscribe(data => this.collaborations = data)
 
-  fetchMeetingCollaborations = (meeting: string = 'latest') =>
-    this.source.getMeetingCollaborations(meeting).subscribe(data => this.collaborations = data)
+  fetchMeetingCollaborations = (
+    meeting: string = 'latest',
+    callback: () => any = () => console.log(``)
+  ) =>
+    this.source.getMeetingCollaborations(meeting).subscribe(data => {
+      this.collaborations = data;
+      callback();
+    })
 
   fetchDrawInheritances = () =>
     this.source.getDrawInheritances().subscribe(data => this.drawInheritances = data)

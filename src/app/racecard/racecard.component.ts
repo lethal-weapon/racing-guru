@@ -7,7 +7,8 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {DEFAULT_HORSE, Horse, PastStarter} from '../model/horse.model';
 import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
-import {Collaboration, CollaborationStarter, DEFAULT_COLLABORATION} from '../model/collaboration.model';
+import {EarningStarter, Meeting} from '../model/meeting.model';
+import {Collaboration, CollaborationStarter} from '../model/collaboration.model';
 import {ONE_DAY_MILL, ONE_MILLION, PAYOUT_RATE, SENIOR_HORSE_AGE} from '../util/numbers';
 import {
   getHorseProfileUrl,
@@ -26,6 +27,8 @@ import {
 export class RacecardComponent implements OnInit {
   pick: Pick = DEFAULT_PICK;
   racecards: Racecard[] = [];
+  meetings: Meeting[] = [];
+  collaborations: Collaboration[] = [];
 
   activeRace: number = 1;
   isEditMode: boolean = false;
@@ -64,6 +67,20 @@ export class RacecardComponent implements OnInit {
         if (oldCard.dividend != newCard.dividend) oldCard.dividend = newCard.dividend;
       }
     });
+
+    socket.addMeetingCallback((newMeeting: Meeting) => {
+      const index = this.meetings.findIndex(m => m.meeting === newMeeting.meeting);
+      if (index === -1) this.meetings.unshift(newMeeting);
+      else this.meetings.splice(index, 1, newMeeting);
+    });
+
+    socket.addCollaborationCallback((newCollaboration: Collaboration) => {
+      const index = this.collaborations.findIndex(c =>
+        c.jockey === newCollaboration.jockey && c.trainer === newCollaboration.trainer
+      );
+      if (index === -1) this.collaborations.push(newCollaboration);
+      else this.collaborations.splice(index, 1, newCollaboration);
+    });
   }
 
   ngOnInit(): void {
@@ -75,8 +92,15 @@ export class RacecardComponent implements OnInit {
       this.racecards = this.repo.findRacecards();
     });
 
+    this.repo.fetchMeetings(8, () => {
+      this.meetings = this.repo.findMeetings();
+    });
+
+    this.repo.fetchMeetingCollaborations('latest', () => {
+      this.collaborations = this.repo.findCollaborations();
+    });
+
     this.repo.fetchMeetingHorses();
-    this.repo.fetchMeetingCollaborations();
   }
 
   formatVenue = (venue: string): string =>
@@ -171,10 +195,25 @@ export class RacecardComponent implements OnInit {
     this.repo.findHorses()
       .find(s => s.code === starter.horse) || DEFAULT_HORSE
 
-  getCollaboration = (starter: Starter): Collaboration =>
-    this.repo.findCollaborations()
-      .find(c => c.jockey === starter.jockey && c.trainer === starter.trainer)
-    || DEFAULT_COLLABORATION;
+  getCollaborationStats = (starter: Starter): number[] => {
+    const partnerships = (
+      this.collaborations
+        .filter(c => c.jockey === starter.jockey && c.trainer === starter.trainer)
+        .pop()
+        ?.starters || []
+    )
+      .filter(s => !s.scratched)
+      .filter(s => {
+        if (s.meeting !== this.racecards[0].meeting) return true;
+        return s.meeting === this.racecards[0].meeting && s.race < this.activeRace;
+      });
+
+    const placingCount = Array(4).fill(1)
+      .map((_, index) => 1 + index)
+      .map(placing => partnerships.filter(p => (p?.placing || 0) === placing).length);
+
+    return placingCount.concat(partnerships.length);
+  }
 
   getHorseStatistics = (starter: Starter): string => {
     const h = this.getHorse(starter);
@@ -186,7 +225,7 @@ export class RacecardComponent implements OnInit {
 
   getPastCollaborationStarters = (current: Starter): CollaborationStarter[] =>
     (
-      this.repo.findCollaborations()
+      this.collaborations
         .filter(c => c.jockey === current.jockey && c.trainer === current.trainer)
         .pop()
         ?.starters || []
@@ -220,9 +259,24 @@ export class RacecardComponent implements OnInit {
       }));
     }
 
-  getPlayerSections = (starter: Starter): string[] => {
-    return ['', ''];
-  }
+  getPlayerStarters = (player: string): EarningStarter[] =>
+    this.meetings
+      .filter(m => m.players.some(p => p.player === player))
+      .flatMap(m => m.players.map(p => {
+        p.meeting = m.meeting;
+        return p;
+      }))
+      .filter(ps => ps.player === player)
+      .flatMap(ps => ps.starters.map(s => {
+        s.meeting = ps.meeting;
+        return s;
+      }))
+      .filter(s => {
+        if (s.meeting !== this.racecards[0].meeting) return true;
+        return s.meeting === this.racecards[0].meeting && s.race < this.activeRace;
+      })
+      .sort((s1, s2) => s2.meeting.localeCompare(s1.meeting) || s2.race - s1.race)
+      .slice(0, 20)
 
   isPublicUnderEstimated = (starter: Starter): boolean => {
     const investments = this.getActiveStarterWQPInvestments(starter);
@@ -264,7 +318,8 @@ export class RacecardComponent implements OnInit {
   get isLoading(): boolean {
     return this.pick.races.length === 0
       || this.racecards.length === 0
-      || this.repo.findHorses().length === 0
-      || this.repo.findCollaborations().length === 0;
+      || this.meetings.length === 0
+      || this.collaborations.length === 0
+      || this.repo.findHorses().length === 0;
   }
 }

@@ -241,7 +241,7 @@
         >
           <div *ngFor="let ps of getPastCollaborationStarters(starter)"
                class="{{(ps?.placing || 0 >= 1) && (ps?.placing || 0 <= 4) ? COLORS[ps.placing -1] : ''}}"
-               [class.line-through]="!ps?.placing || ps?.placing === 0"
+               [class.line-through]="ps.scratched || !ps?.placing || ps?.placing === 0"
           >
             {{ (ps?.winOdds || 0) > 0 ? (ps?.winOdds | number: '1.0-1') : '' }}
             {{ ps.horseNameCH }}
@@ -253,42 +253,33 @@
     <div class="px-4 my-1 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
 
     <div class="px-2 my-1 flex flex-row">
-      <div *ngFor="let sec of getPlayerSections(starter); let index = index"
+      <div *ngFor="let player of [starter.jockey, starter.trainer]; let index = index"
            class="w-2/5 px-2 {{index === 0 ? 'order-first' : 'order-last'}}"
       >
-        <!--        <div class="text-center text-xl font-mono">-->
-        <!--          {{ sec.player }}-->
-        <!--        </div>-->
-        <!--        <div class="flex flex-row justify-center gap-x-6 text-lg font-mono">-->
-        <!--          <div class="text-red-600">{{ sec.wins }}W</div>-->
-        <!--          <div class="text-green-600">{{ sec.seconds }}Q</div>-->
-        <!--          <div class="text-blue-600">{{ sec.thirds }}P</div>-->
-        <!--          <div class="text-purple-600">{{ sec.fourths }}F</div>-->
-        <!--        </div>-->
-        <!--        <div class="grid grid-cols-4 text-sm">-->
-        <!--          <div *ngFor="let ps of sec.starters"-->
-        <!--               [class.line-through]="ps.placing === 0"-->
-        <!--               [class.text-red-600]="ps.placing === 1"-->
-        <!--               [class.text-green-600]="ps.placing === 2"-->
-        <!--               [class.text-blue-600]="ps.placing === 3"-->
-        <!--               [class.text-purple-600]="ps.placing === 4"-->
-        <!--          >-->
-        <!--            {{ ps.winOdds === 0 ? '' : ps.winOdds }}-->
-        <!--            {{ ps.horse }}-->
-        <!--            {{ ps.partner }}-->
-        <!--          </div>-->
-        <!--        </div>-->
+        <div class="text-center text-xl font-mono">
+          {{ player }}
+        </div>
+        <div class="grid grid-cols-4 text-sm">
+          <div *ngFor="let ps of getPlayerStarters(player)"
+               class="{{(ps?.placing || 0 >= 1) && (ps?.placing || 0 <= 4) ? COLORS[ps.placing -1] : ''}}"
+               [class.line-through]="ps.scratched || !ps?.placing || ps?.placing === 0"
+          >
+            {{ (ps?.winOdds || 0) > 0 ? (ps?.winOdds | number: '1.0-1') : '' }}
+            {{ ps.horseNameCH }}
+            {{ ps.partner }}
+          </div>
+        </div>
       </div>
       <div class="w-1/5 px-1 font-mono">
         <div class="text-center text-xl">
           J/T
         </div>
         <div class="flex flex-row justify-center gap-x-5 text-lg">
-          <div class="text-red-600">{{ getCollaboration(starter).wins }}W</div>
-          <div class="text-green-600">{{ getCollaboration(starter).seconds }}Q</div>
-          <div class="text-blue-600">{{ getCollaboration(starter).thirds }}P</div>
-          <div class="text-purple-600">{{ getCollaboration(starter).fourths }}F</div>
-          <div class="text-yellow-400">{{ getCollaboration(starter).total }}X</div>
+          <div *ngFor="let stat of getCollaborationStats(starter); let index = index"
+               class="{{ index < 4 ? PLACING_MAPS[index].color : 'X' }}"
+          >
+            {{ stat }}{{ index < 4 ? PLACING_MAPS[index].placing : 'X' }}
+          </div>
         </div>
         <div class="px-2 my-1 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
       </div>

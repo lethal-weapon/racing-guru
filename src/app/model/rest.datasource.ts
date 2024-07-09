@@ -76,8 +76,8 @@ export class RestDataSource {
   deleteSyndicate = (syndicate: Syndicate): Observable<any> =>
     this.http.delete(`${this.baseUrl}/syndicates/${syndicate.id}`)
 
-  getMeetings = (): Observable<Meeting[]> =>
-    this.http.get<Meeting[]>(`${this.baseUrl}/meetings`)
+  getMeetings = (size: number): Observable<Meeting[]> =>
+    this.http.get<Meeting[]>(`${this.baseUrl}/meetings?size=${size}`)
 
   getLatestMeeting = (): Observable<Meeting> =>
     this.http.get<Meeting>(`${this.baseUrl}/meetings/latest`)

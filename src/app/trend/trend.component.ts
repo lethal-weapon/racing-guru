@@ -24,7 +24,7 @@ export class TrendComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchMeetings();
+    this.repo.fetchMeetings(24);
     this.repo.fetchReminders();
     this.repo.fetchActivePlayers();
     this.repo.fetchDrawInheritances();
