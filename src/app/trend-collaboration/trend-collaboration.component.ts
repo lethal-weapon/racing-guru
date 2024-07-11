@@ -5,7 +5,11 @@ import {Player} from '../model/player.model';
 import {Meeting} from '../model/meeting.model';
 import {SEASONS} from '../util/strings';
 import {toPlacingColor} from '../util/functions';
-import {Collaboration, CollaborationStarter, DEFAULT_COLLABORATION} from '../model/collaboration.model';
+import {
+  Collaboration,
+  CollaborationStarter,
+  DEFAULT_COLLABORATION
+} from '../model/collaboration.model';
 
 @Component({
   selector: 'app-trend-collaboration',
@@ -22,6 +26,7 @@ export class TrendCollaborationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchRecentCollaborations();
   }
 
   setActivePlayer = (clicked: string) =>

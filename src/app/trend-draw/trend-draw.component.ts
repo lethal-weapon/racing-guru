@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {Meeting} from '../model/meeting.model';
 import {DrawInheritance, DrawPlacingPerformance} from '../model/draw.model';
 import {COLORS, PLACING_MAPS, SEASONS} from '../util/strings';
-import {MAX_RACE_PER_MEETING} from '../util/numbers';
+import {MAX_RACE_PER_MEETING, ONE_MINUTE} from '../util/numbers';
 import {formatMeeting, isBoundaryMeeting} from '../util/functions';
 
 interface DrawPerformance {
@@ -16,7 +16,9 @@ interface DrawPerformance {
   selector: 'app-trend-draw',
   templateUrl: './trend-draw.component.html'
 })
-export class TrendDrawComponent implements OnInit {
+export class TrendDrawComponent implements OnInit, OnDestroy {
+
+  loopIntervalId: any;
 
   protected readonly COLORS = COLORS;
   protected readonly PLACING_MAPS = PLACING_MAPS;
@@ -28,6 +30,15 @@ export class TrendDrawComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.repo.fetchDrawInheritances();
+
+    this.loopIntervalId = setInterval(() => {
+      this.repo.fetchLatestDrawInheritances();
+    }, ONE_MINUTE);
+  }
+
+  ngOnDestroy(): void {
+    if (this.loopIntervalId) clearInterval(this.loopIntervalId);
   }
 
   getDrawPlacingPerformance = (meeting: string, race: number): DrawPlacingPerformance[] =>

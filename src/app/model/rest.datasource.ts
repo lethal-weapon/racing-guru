@@ -58,8 +58,8 @@ export class RestDataSource {
   getReports = (): Observable<Report[]> =>
     this.http.get<Report[]>(`${this.baseUrl}/reports`)
 
-  getReminders = (): Observable<Reminder[]> =>
-    this.http.get<Reminder[]>(`${this.baseUrl}/reminders`)
+  getReminders = (size: number): Observable<Reminder[]> =>
+    this.http.get<Reminder[]>(`${this.baseUrl}/reminders?size=${size}`)
 
   saveInterview = (interviews: Interview[]): Observable<Racecard[]> =>
     this.http.post<Racecard[]>(`${this.baseUrl}/racecards/interviews`, interviews)
@@ -92,10 +92,10 @@ export class RestDataSource {
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations/by-meeting?meeting=${meeting}`)
 
   getDrawInheritances = (): Observable<DrawInheritance[]> =>
-    this.http.get<DrawInheritance[]>(`${this.baseUrl}/racecards/draw-inheritance`)
+    this.http.get<DrawInheritance[]>(`${this.baseUrl}/draws/inheritance`)
 
   getLatestDrawInheritances = (): Observable<DrawInheritance[]> =>
-    this.http.get<DrawInheritance[]>(`${this.baseUrl}/racecards/draw-inheritance/latest`)
+    this.http.get<DrawInheritance[]>(`${this.baseUrl}/draws/inheritance/latest`)
 
   getSyndicateSnapshots = (): Observable<SyndicateSnapshot[]> =>
     this.http.get<SyndicateSnapshot[]>(`${this.baseUrl}/syndicates/snapshots`)

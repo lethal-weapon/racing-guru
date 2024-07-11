@@ -3,10 +3,20 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting} from '../model/meeting.model';
 import {DEFAULT_PLAYER_WINNER, PlayerWinner} from '../model/reminder.model';
-import {DEFAULT_SYNDICATE_SNAPSHOT, StarterSnapshot, SyndicateSnapshot} from '../model/syndicate.model';
 import {COLORS} from '../util/strings';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
-import {formatMeeting, isBoundaryMeeting, toPlacingColor} from '../util/functions';
+import {
+  DEFAULT_SYNDICATE_SNAPSHOT,
+  MeetingSyndicate,
+  StarterSnapshot,
+  SyndicateSnapshot
+} from '../model/syndicate.model';
+import {
+  formatMeeting,
+  getOddsIntensityColor,
+  isBoundaryMeeting,
+  toPlacingColor
+} from '../util/functions';
 
 const MEETING_WINDOW_SIZE = 7;
 const SYNDICATE_KIND_SINGLE = 'SINGLE';
@@ -50,6 +60,7 @@ export class TrendEveryoneComponent implements OnInit {
   protected readonly formatMeeting = formatMeeting;
   protected readonly toPlacingColor = toPlacingColor;
   protected readonly isBoundaryMeeting = isBoundaryMeeting;
+  protected readonly getOddsIntensityColor = getOddsIntensityColor;
 
   constructor(private repo: RestRepository) {
   }
@@ -83,32 +94,6 @@ export class TrendEveryoneComponent implements OnInit {
         else this.meetingIndex = maxIndex;
         break;
     }
-  }
-
-  getSyndicatePerformanceHitColor = (hit: string): string => {
-    if (hit.startsWith('W')) return COLORS[0];
-    if (hit.startsWith('Q')) return COLORS[1];
-    if (hit.startsWith('T')) return COLORS[2];
-    if (hit.startsWith('F')) return COLORS[3];
-    return '';
-  }
-
-  getSyndicatePerformanceHits = (meeting: string, race: number): string[] => {
-    const performance = this.repo
-      .findSyndicateSnapshots()
-      .find(ss => ss.meeting === meeting)
-      ?.performances
-      .find(p => p.race === race);
-
-    if (performance) {
-      return [
-        performance?.single || '',
-        performance?.multiple || '',
-        performance?.sole || ''
-      ];
-    }
-
-    return ['', '', ''];
   }
 
   getSyndicateStarters = (kind: string, race: number): StarterSnapshot[] => {
@@ -156,6 +141,10 @@ export class TrendEveryoneComponent implements OnInit {
         return 0;
     }
   }
+
+  filterSyndicateStarterByRace =
+    (syndicate: MeetingSyndicate, race: number): StarterSnapshot[] =>
+      syndicate.starters.filter(s => s.race === race)
 
   getWinner = (player: string): PlayerWinner => {
     const reminder = this.activeMeeting.length > 0
@@ -208,6 +197,18 @@ export class TrendEveryoneComponent implements OnInit {
 
   isBoundaryPlayer = (player: string): boolean =>
     this.repo.findPlayers().find(p => p.code === player)?.boundary || false
+
+  get activeMultipleKindSyndicates(): MeetingSyndicate[] {
+    return this.activeSyndicateSnapshot.syndicates
+      .filter(s => s.starterCount > 1)
+      .sort((s1, s2) =>
+        (s2.starterCount - s1.starterCount)
+        ||
+        (s2.syndicateActiveHorses - s1.syndicateActiveHorses)
+        ||
+        (s2.syndicateMembers - s1.syndicateMembers)
+      );
+  }
 
   get activePersonViewByHorse(): HorseView[] {
     let view: HorseView[] = [];
@@ -317,6 +318,12 @@ export class TrendEveryoneComponent implements OnInit {
 
   get playerTypes(): string[] {
     return ['Trainers', 'Jockeys', 'Syndicates'];
+  }
+
+  get maxRaceOnActiveMeeting(): number {
+    return this.activeSyndicateSnapshot.performances
+      .map(p => p.race)
+      .sort((r1, r2) => r2 - r1)[0];
   }
 
   get activeSyndicateSnapshot(): SyndicateSnapshot {

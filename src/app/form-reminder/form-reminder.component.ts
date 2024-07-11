@@ -34,7 +34,7 @@ export class FormReminderComponent implements OnInit {
 
   ngOnInit(): void {
     this.repo.fetchReports();
-    this.repo.fetchReminders();
+    this.repo.fetchReminders(999);
     this.repo.fetchRacecards('latest', () => {
       this.activeMeeting = this.repo.findRacecards()
         .map(r => r.meeting)

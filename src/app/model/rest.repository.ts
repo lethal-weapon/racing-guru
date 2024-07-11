@@ -116,8 +116,8 @@ export class RestRepository {
   fetchReports = () =>
     this.source.getReports().subscribe(data => this.reports = data)
 
-  fetchReminders = () =>
-    this.source.getReminders().subscribe(data => this.reminders = data)
+  fetchReminders = (size: number = 8) =>
+    this.source.getReminders(size).subscribe(data => this.reminders = data)
 
   saveInterview = (
     interviews: Interview[],

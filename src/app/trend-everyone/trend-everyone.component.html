@@ -276,14 +276,14 @@
 </table>
 
 <table *ngIf="activePlayerType == playerTypes[2]"
-       class="mx-auto table-fixed border-collapse font-mono"
+       class="mx-auto border-collapse font-mono"
 >
   <thead class="text-xl">
-    <th class="w-24 border border-gray-600 py-1">
+    <th class="border border-gray-600 py-1">
       <i class="fa fa-calendar"></i>
     </th>
-    <th *counter="let race of MAX_RACE_PER_MEETING"
-        class="w-32 border border-gray-600"
+    <th *counter="let race of maxRaceOnActiveMeeting"
+        class="border border-gray-600"
     >
       {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
     </th>
@@ -316,85 +316,39 @@
       </td>
     </tr>
 
-    <tr *ngFor="let m of meetings">
-      <td class="h-10 border border-gray-700 text-xl py-1 cursor-pointer"
-          [class.font-bold]="activeMeeting === m.meeting"
-          [class.text-yellow-400]="activeMeeting === m.meeting"
-          [class.border-b-yellow-400]="isBoundaryMeeting(meetings, m.meeting)"
-          (click)="activeMeeting = m.meeting"
-      >
-        {{ formatMeeting(m.meeting) }}
+    <tr *ngFor="let syn of activeMultipleKindSyndicates"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700">
+        {{ syn.syndicateMembers }}M/{{ syn.syndicateActiveHorses }}H
       </td>
       <td *counter="let race of MAX_RACE_PER_MEETING"
-          class="h-10 border border-gray-700 py-1"
-          [class.border-b-yellow-400]="isBoundaryMeeting(meetings, m.meeting)"
+          [class.bg-gray-700]="filterSyndicateStarterByRace(syn, race).length > 1"
+          class="border border-gray-700 px-0.5"
       >
-        <div class="grid grid-cols-3">
-          <div *ngFor="let hit of getSyndicatePerformanceHits(m.meeting, race)"
-               class="{{getSyndicatePerformanceHitColor(hit)}}"
-          >
-            {{ hit }}
+        <div *ngFor="let s of filterSyndicateStarterByRace(syn, race)"
+             class="{{toPlacingColor(s?.placing)}} leading-5"
+             [class.line-through]="s.scratched"
+        >
+          <div class="flex flex-row justify-evenly">
+            <div>
+              {{ s.order }}
+            </div>
+            <div>
+              {{ s.horseNameCH }}
+            </div>
+            <div *ngIf="s?.winOdds"
+                 class="{{toPlacingColor(s?.placing).length === 0 ? getOddsIntensityColor(s?.winOdds || 0) : '' }}"
+            >
+              {{ s.winOdds | number: '1.0-1' }}
+            </div>
+          </div>
+          <div class="flex flex-row justify-around">
+            <div>{{ s.jockey }}</div>
+            <div>{{ s.trainer }}</div>
           </div>
         </div>
       </td>
     </tr>
   </tbody>
 </table>
-
-<!--  <table class="mx-auto table-fixed border-collapse border border-gray-700 text-center">-->
-<!--    <thead>-->
-<!--    <th class="w-28 border border-gray-600">-->
-<!--      Syndicate-->
-<!--    </th>-->
-<!--    <th *counter="let race of maxRace"-->
-<!--        class="w-36 border border-gray-600"-->
-<!--    >-->
-<!--      {{ race }}-->
-<!--    </th>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--    <tr *ngFor="let syn of syndicates"-->
-<!--        class="hover:bg-gray-800"-->
-<!--    >-->
-<!--      <td class="border border-gray-700">-->
-<!--        <div class="grid grid-cols-5">-->
-<!--          <div class="col-span-2">-->
-<!--            #{{ syn.id }}-->
-<!--          </div>-->
-<!--          <div class="col-span-3">-->
-<!--            ({{ syn.members.length }}, {{ getSyndicateServiceHorseCount(syn.horses) }})-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </td>-->
-<!--      <td *counter="let race of maxRace"-->
-<!--          class="border border-gray-700"-->
-<!--          [class.bg-gray-700]="getSyndicateStarters(syn, race).length > 1"-->
-<!--      >-->
-<!--        <div *ngFor="let h of getSyndicateStarters(syn, race)"-->
-<!--             class="{{getPlacingColorByHorse(h, race)}} leading-5"-->
-<!--        >-->
-<!--          <div>-->
-<!--            {{ getHorseDetail(h, race).order }}-->
-<!--            {{ getHorseDetail(h, race).name }}-->
-<!--            <span *ngIf="getHorseDetail(h, race).odds > 0"-->
-<!--                  class="{{ getPlacingColorByHorse(h, race).length === 0-->
-<!--                          ? getOddsIntensityColor(getHorseDetail(h, race).odds)-->
-<!--                          : ''-->
-<!--                       }}"-->
-<!--            >-->
-<!--              {{ getHorseDetail(h, race).odds }}-->
-<!--            </span>-->
-<!--          </div>-->
-<!--          <div class="flex flex-row justify-around">-->
-<!--            <div>-->
-<!--              {{ getHorseDetail(h, race).jockey }}-->
-<!--            </div>-->
-<!--            <div>-->
-<!--              {{ getHorseDetail(h, race).trainer }}-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--    </tbody>-->
-<!--  </table>-->

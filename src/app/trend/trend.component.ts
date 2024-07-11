@@ -25,15 +25,12 @@ export class TrendComponent implements OnInit {
 
   ngOnInit(): void {
     this.repo.fetchMeetings(24);
-    this.repo.fetchReminders();
+    this.repo.fetchReminders(24);
     this.repo.fetchActivePlayers();
-    this.repo.fetchDrawInheritances();
     this.repo.fetchSyndicateSnapshots();
-    this.repo.fetchRecentCollaborations();
 
     setInterval(() => {
       this.repo.fetchLatestMeeting();
-      this.repo.fetchLatestDrawInheritances();
       this.repo.fetchLatestSyndicateSnapshot();
     }, ONE_MINUTE);
   }
@@ -53,8 +50,6 @@ export class TrendComponent implements OnInit {
     return this.repo.findPlayers().length === 0
       || this.repo.findMeetings().length === 0
       || this.repo.findReminders().length === 0
-      || this.repo.findCollaborations().length === 0
-      || this.repo.findDrawInheritances().length === 0
       || this.repo.findSyndicateSnapshots().length === 0;
   }
 }
