@@ -1,4 +1,4 @@
-<div class="mb-6 mx-24 text-xl flex flex-row justify-between text-center">
+<div class="mb-6 mx-12 text-xl flex flex-row justify-between text-center">
   <div *ngFor="let section of subsections; let index = index"
        class="w-full flex flex-row justify-between bg-gray-800 rounded-full"
   >
@@ -52,14 +52,14 @@
   </div>
 </div>
 
-<table *ngIf="activeGroup === BY_MEETING"
+<table *ngIf="activeRange === BY_MEETING && activeView === BY_SUMMARY"
        class="mx-auto border-collapse border border-gray-600 text-center"
 >
   <thead class="text-lg">
     <th class="border border-gray-600 py-1.5 px-6">
       #
     </th>
-    <th *ngFor="let field of meetingViewFields; let index = index"
+    <th *ngFor="let field of meetingSummaryViewFields; let index = index"
         class="border border-gray-600 py-1.5"
         [class.px-6]="[1,4].includes(index)"
         [class.px-8]="![1,4].includes(index)"
@@ -122,7 +122,7 @@
   </tbody>
 </table>
 
-<div *ngIf="activeGroup === BY_MONTH"
+<div *ngIf="activeRange === BY_MONTH && activeView === BY_SUMMARY"
      class="mx-24 grid grid-cols-4 gap-x-6 gap-y-3 text-center text-lg"
 >
   <div *ngFor="let ms of monthlySummaries"
@@ -166,3 +166,64 @@
     </div>
   </div>
 </div>
+
+<table *ngIf="activeRange === BY_MEETING && activeView === BY_POOL"
+       class="mx-auto border-collapse border border-gray-600 text-center"
+>
+  <thead class="text-lg">
+    <th class="border border-gray-600 py-1.5 px-6">
+      #
+    </th>
+    <th class="border border-gray-600 border-r-yellow-400 py-1.5 px-8">
+      Meeting
+    </th>
+    <th *ngFor="let field of meetingPoolViewFields; let last = last"
+        colspan="2"
+        class="border border-gray-600 px-2 py-1.5"
+        [class.border-r-yellow-400]="!last"
+    >
+      {{ field }}
+    </th>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="border border-gray-700 py-1"></td>
+      <td class="border border-gray-700 border-r-yellow-400 py-1"></td>
+      <ng-container *ngFor="let _ of meetingPoolViewFields; let last = last">
+        <td *counter="let col of 2"
+            class="border border-gray-700 px-2 py-1"
+            [class.border-r-yellow-400]="!last && col === 2"
+        >
+          {{ col === 1 ? 'Debit' : 'Credit' }}
+        </td>
+      </ng-container>
+    </tr>
+    <tr *ngFor="let bet of bets; let index = index"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700 py-1 font-mono">
+        {{ bets.length - index }}
+      </td>
+      <td class="border border-gray-700 border-r-yellow-400 py-1 font-mono">
+        {{ bet.meeting }}
+      </td>
+      <ng-container *ngFor="let pool of meetingPoolViewFields; let last = last">
+        <td *counter="let col of 2"
+            class="border border-gray-700 px-2 py-1"
+            [class.border-r-yellow-400]="!last && col === 2"
+        >
+          <div *ngIf="col === 1 && getValueByMeetingPool(bet, pool, true) > 0"
+               class="text-red-600"
+          >
+            -{{ getValueByMeetingPool(bet, pool, true) | currency:'USD':'symbol':'1.0-0' }}
+          </div>
+          <div *ngIf="col === 2 && getValueByMeetingPool(bet, pool, false) > 0"
+               class="text-green-600"
+          >
+            +{{ getValueByMeetingPool(bet, pool, false) | currency:'USD':'symbol':'1.0-0' }}
+          </div>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+</table>

@@ -16,17 +16,22 @@ interface MonthlySummary {
 
 const BY_MONTH = 'By Month';
 const BY_MEETING = 'By Meeting';
+const BY_SUMMARY = 'By Summary';
+const BY_POOL = 'By Pool';
 
 @Component({
   selector: 'app-form-bet',
   templateUrl: './form-bet.component.html'
 })
 export class FormBetComponent implements OnInit {
-  activeGroup: string = this.subsections[1][0];
   activeSeason: string = SEASONS[0].label;
+  activeRange: string = this.subsections[1][0];
+  activeView: string = this.subsections[2][1];
 
   protected readonly BY_MONTH = BY_MONTH;
   protected readonly BY_MEETING = BY_MEETING;
+  protected readonly BY_SUMMARY = BY_SUMMARY;
+  protected readonly BY_POOL = BY_POOL;
 
   constructor(private repo: RestRepository) {
   }
@@ -37,7 +42,8 @@ export class FormBetComponent implements OnInit {
 
   setActiveItem = (sectionIndex: number, item: string) => {
     if (sectionIndex == 0) this.activeSeason = item;
-    else this.activeGroup = item;
+    if (sectionIndex == 1) this.activeRange = item;
+    if (sectionIndex == 2) this.activeView = item;
   }
 
   countBetlinesOnMeeting = (bet: Bet): number[] =>
@@ -51,11 +57,9 @@ export class FormBetComponent implements OnInit {
 
   getMeetingROIColor = (bet: Bet): string => {
     const roi = this.getReturnOnInvestment(bet);
-    return roi < 0
-      ? 'text-red-600'
-      : roi >= 1
-        ? 'text-yellow-400'
-        : 'text-green-600';
+    if (roi < 0) return 'text-red-600';
+    if (roi >= 1) return 'text-yellow-400';
+    return 'text-green-600';
   }
 
   getProfitRacesOnMeeting = (bet: Bet): number[] =>
@@ -71,8 +75,83 @@ export class FormBetComponent implements OnInit {
           .reduce((prev, curr) => prev + curr, 0)
       )
 
+  getValueByMeetingPool = (bet: Bet, pool: string, isDebit: boolean): number => {
+    let betlines = [...bet.betlines];
+
+    switch (pool) {
+      case 'WIN & PLA': {
+        betlines = betlines.filter(b =>
+          ['W:', 'P:'].some(p => b.command.toUpperCase().startsWith(p))
+          ||
+          ['WIN', 'PLA', 'PLACE'].some(p => b.command.toUpperCase().includes(p))
+        );
+        break;
+      }
+      case 'QQP': {
+        betlines = betlines.filter(b =>
+          ['Q:', 'QP:', 'QQP:'].some(p => b.command.toUpperCase().startsWith(p))
+          ||
+          ['QIN', 'QPL'].some(p => b.command.toUpperCase().includes(p))
+        );
+        break;
+      }
+      case 'TRI & F-F': {
+        betlines = betlines.filter(b =>
+          ['TRI', 'FF'].some(p => b.command.toUpperCase().includes(p))
+        );
+        break;
+      }
+      case 'FCT': {
+        betlines = betlines.filter(b =>
+          ['FS', 'FM', 'FB', 'FBM', 'FMB'].some(p => b.command.toUpperCase().includes(p))
+        );
+        break;
+      }
+      case 'TCE': {
+        betlines = betlines.filter(b =>
+          ['TS', 'TM', 'TB', 'TBM', 'TMB'].some(p => b.command.toUpperCase().includes(p))
+        );
+        break;
+      }
+      case 'QTT': {
+        betlines = betlines.filter(b =>
+          ['QS', 'QM', 'QB', 'QBM', 'QMB'].some(p => b.command.toUpperCase().includes(p))
+        );
+        break;
+      }
+      case 'Others': {
+        betlines = betlines.filter(b =>
+          !(
+            ['W:', 'P:'].some(p => b.command.toUpperCase().startsWith(p))
+            ||
+            ['WIN', 'PLA', 'PLACE'].some(p => b.command.toUpperCase().includes(p))
+            ||
+            ['Q:', 'QP:', 'QQP:'].some(p => b.command.toUpperCase().startsWith(p))
+            ||
+            ['QIN', 'QPL'].some(p => b.command.toUpperCase().includes(p))
+            ||
+            ['TRI', 'FF'].some(p => b.command.toUpperCase().includes(p))
+            ||
+            ['FS', 'FM', 'FB', 'FBM', 'FMB'].some(p => b.command.toUpperCase().includes(p))
+            ||
+            ['TS', 'TM', 'TB', 'TBM', 'TMB'].some(p => b.command.toUpperCase().includes(p))
+            ||
+            ['QS', 'QM', 'QB', 'QBM', 'QMB'].some(p => b.command.toUpperCase().includes(p))
+          )
+        );
+        break;
+      }
+      default:
+        break;
+    }
+
+    return betlines
+      .map(b => isDebit ? b.debit : b.credit)
+      .reduce((prev, curr) => prev + curr, 0);
+  }
+
   getSectionStyle = (section: string): string =>
-    [this.activeGroup, this.activeSeason].includes(section)
+    [this.activeSeason, this.activeRange, this.activeView].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
 
@@ -129,7 +208,13 @@ export class FormBetComponent implements OnInit {
     };
   }
 
-  get meetingViewFields(): string[] {
+  get meetingPoolViewFields(): string[] {
+    return [
+      'WIN & PLA', 'QQP', 'TRI & F-F', 'FCT', 'TCE', 'QTT', 'Others'
+    ];
+  }
+
+  get meetingSummaryViewFields(): string[] {
     return [
       'Meeting', 'Venue', 'Profit Race #', 'Betlines',
       'Debit', 'Credit', 'P / L', 'ROI'
@@ -140,6 +225,7 @@ export class FormBetComponent implements OnInit {
     return [
       SEASONS.map(s => s.label),
       [BY_MEETING, BY_MONTH],
+      [BY_SUMMARY, BY_POOL],
     ];
   }
 
