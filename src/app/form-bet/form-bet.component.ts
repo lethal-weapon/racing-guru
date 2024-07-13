@@ -1,8 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {Bet} from '../model/bet.model';
+import {Bet, Betline} from '../model/bet.model';
 import {SEASONS} from '../util/strings';
+
+interface MonthlyPoolSummary {
+  pool: string,
+  debit: number,
+  credit: number,
+  roi: number
+  betlines: number[],
+}
 
 interface MonthlySummary {
   year: string,
@@ -11,7 +19,8 @@ interface MonthlySummary {
   debit: number,
   credit: number,
   roi: number,
-  betlines: number[]
+  betlines: number[],
+  pools: MonthlyPoolSummary[]
 }
 
 const BY_MONTH = 'By Month';
@@ -25,7 +34,7 @@ const BY_POOL = 'By Pool';
 })
 export class FormBetComponent implements OnInit {
   activeSeason: string = SEASONS[0].label;
-  activeRange: string = this.subsections[1][0];
+  activeRange: string = this.subsections[1][1];
   activeView: string = this.subsections[2][1];
 
   protected readonly BY_MONTH = BY_MONTH;
@@ -75,52 +84,38 @@ export class FormBetComponent implements OnInit {
           .reduce((prev, curr) => prev + curr, 0)
       )
 
-  getValueByMeetingPool = (bet: Bet, pool: string, isDebit: boolean): number => {
-    let betlines = [...bet.betlines];
-
+  filterBetlineByMeetingPool = (bet: Bet, pool: string): Betline[] => {
     switch (pool) {
-      case 'WIN & PLA': {
-        betlines = betlines.filter(b =>
+      case 'WIN & PLA':
+        return bet.betlines.filter(b =>
           ['W:', 'P:'].some(p => b.command.toUpperCase().startsWith(p))
           ||
           ['WIN', 'PLA', 'PLACE'].some(p => b.command.toUpperCase().includes(p))
         );
-        break;
-      }
-      case 'QQP': {
-        betlines = betlines.filter(b =>
+      case 'QQP':
+        return bet.betlines.filter(b =>
           ['Q:', 'QP:', 'QQP:'].some(p => b.command.toUpperCase().startsWith(p))
           ||
           ['QIN', 'QPL'].some(p => b.command.toUpperCase().includes(p))
         );
-        break;
-      }
-      case 'TRI & F-F': {
-        betlines = betlines.filter(b =>
+      case 'TRI & F-F':
+        return bet.betlines.filter(b =>
           ['TRI', 'FF'].some(p => b.command.toUpperCase().includes(p))
         );
-        break;
-      }
-      case 'FCT': {
-        betlines = betlines.filter(b =>
+      case 'FCT':
+        return bet.betlines.filter(b =>
           ['FS', 'FM', 'FB', 'FBM', 'FMB'].some(p => b.command.toUpperCase().includes(p))
         );
-        break;
-      }
-      case 'TCE': {
-        betlines = betlines.filter(b =>
+      case 'TCE':
+        return bet.betlines.filter(b =>
           ['TS', 'TM', 'TB', 'TBM', 'TMB'].some(p => b.command.toUpperCase().includes(p))
         );
-        break;
-      }
-      case 'QTT': {
-        betlines = betlines.filter(b =>
+      case 'QTT':
+        return bet.betlines.filter(b =>
           ['QS', 'QM', 'QB', 'QBM', 'QMB'].some(p => b.command.toUpperCase().includes(p))
         );
-        break;
-      }
-      case 'Others': {
-        betlines = betlines.filter(b =>
+      case 'Others':
+        return bet.betlines.filter(b =>
           !(
             ['W:', 'P:'].some(p => b.command.toUpperCase().startsWith(p))
             ||
@@ -139,16 +134,15 @@ export class FormBetComponent implements OnInit {
             ['QS', 'QM', 'QB', 'QBM', 'QMB'].some(p => b.command.toUpperCase().includes(p))
           )
         );
-        break;
-      }
       default:
-        break;
+        return [...bet.betlines];
     }
-
-    return betlines
-      .map(b => isDebit ? b.debit : b.credit)
-      .reduce((prev, curr) => prev + curr, 0);
   }
+
+  getValueByMeetingPool = (bet: Bet, pool: string, isDebit: boolean): number =>
+    this.filterBetlineByMeetingPool(bet, pool)
+      .map(b => isDebit ? b.debit : b.credit)
+      .reduce((prev, curr) => prev + curr, 0)
 
   getSectionStyle = (section: string): string =>
     [this.activeSeason, this.activeRange, this.activeView].includes(section)
@@ -165,6 +159,29 @@ export class FormBetComponent implements OnInit {
           const monthDebit = monthBets.map(r => r.debit).reduce((prev, curr) => prev + curr, 0);
           const monthCredit = monthBets.map(r => r.credit).reduce((prev, curr) => prev + curr, 0);
           const monthBetlines = monthBets.flatMap(r => r.betlines);
+          const monthPools = this.meetingPoolViewFields.map(p => {
+            const monthDebitByPool = monthBets
+              .map(b => this.getValueByMeetingPool(b, p, true))
+              .reduce((prev, curr) => prev + curr, 0);
+
+            const monthCreditByPool = monthBets
+              .map(b => this.getValueByMeetingPool(b, p, false))
+              .reduce((prev, curr) => prev + curr, 0);
+
+            const monthBetlinesByPool = monthBets
+              .flatMap(b => this.filterBetlineByMeetingPool(b, p));
+
+            return {
+              pool: p,
+              debit: monthDebitByPool,
+              credit: monthCreditByPool,
+              roi: parseFloat((monthCreditByPool / monthDebitByPool - 1).toFixed(3)),
+              betlines: [
+                monthBetlinesByPool.filter(b => b.credit > b.debit).length,
+                monthBetlinesByPool.length
+              ],
+            }
+          });
 
           return {
             year: m.slice(0, 4).replace('20', '\''),
@@ -176,7 +193,8 @@ export class FormBetComponent implements OnInit {
             betlines: [
               monthBetlines.filter(b => b.credit > b.debit).length,
               monthBetlines.length
-            ]
+            ],
+            pools: monthPools
           }
         }
       );
@@ -216,8 +234,8 @@ export class FormBetComponent implements OnInit {
 
   get meetingSummaryViewFields(): string[] {
     return [
-      'Meeting', 'Venue', 'Profit Race #', 'Betlines',
-      'Debit', 'Credit', 'P / L', 'ROI'
+      'Meeting', 'Venue', 'Profit Race #',
+      'Betlines', 'Debit', 'Credit', 'P / L', 'ROI'
     ];
   }
 

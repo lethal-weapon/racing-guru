@@ -122,51 +122,6 @@
   </tbody>
 </table>
 
-<div *ngIf="activeRange === BY_MONTH && activeView === BY_SUMMARY"
-     class="mx-24 grid grid-cols-4 gap-x-6 gap-y-3 text-center text-lg"
->
-  <div *ngFor="let ms of monthlySummaries"
-       class="px-4 pt-2 pb-2.5 rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
-  >
-    <div class="text-xl text-blue-600">
-      {{ ms.month }} {{ ms.year }}
-    </div>
-    <div class="px-4 grid grid-cols-2 gap-x-8 gap-y-1">
-      <div class="text-left">Meetings</div>
-      <div class="text-right">{{ ms.meetings }}</div>
-      <div class="text-left">Betlines</div>
-      <div class="text-right">
-        <span class="text-green-600">
-          {{ ms.betlines[0] | number }}
-        </span>
-        <span class="mx-1">/</span>
-        <span>
-          {{ ms.betlines[1] | number }}
-        </span>
-      </div>
-      <div class="text-left">Debit</div>
-      <div class="text-red-600 text-right">
-        -{{ ms.debit | currency:'USD':'symbol':'1.0-0' }}
-      </div>
-      <div class="text-left">Credit</div>
-      <div class="text-green-600 text-right">
-        +{{ ms.credit | currency:'USD':'symbol':'1.0-0' }}
-      </div>
-      <div class="text-left">P / L</div>
-      <div class="text-right"
-           [class.text-red-600]="ms.credit < ms.debit"
-           [class.text-green-600]="ms.credit > ms.debit"
-      >
-        {{ (ms.credit - ms.debit) | currency:'USD':'symbol':'1.0-0' }}
-      </div>
-      <div class="text-left">ROI</div>
-      <div class="text-right {{ms.roi > 0 ? 'text-green-600' : 'text-red-600'}}">
-        {{ ms.roi | percent:'1.1-2' }}
-      </div>
-    </div>
-  </div>
-</div>
-
 <table *ngIf="activeRange === BY_MEETING && activeView === BY_POOL"
        class="mx-auto border-collapse border border-gray-600 text-center"
 >
@@ -227,3 +182,138 @@
     </tr>
   </tbody>
 </table>
+
+<div *ngIf="activeRange === BY_MONTH"
+     class="mx-24 flex flex-col gap-y-4 text-center text-lg"
+>
+  <div *ngFor="let ms of monthlySummaries"
+       class="grid grid-cols-12 gap-x-4"
+  >
+    <div class="col-span-3 px-4 pt-2 pb-2.5 rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
+      <div class="text-xl text-blue-600">
+        {{ ms.month }} {{ ms.year }}
+      </div>
+      <div class="px-4 grid grid-cols-2 gap-x-8 gap-y-1">
+        <div class="text-left">Meetings</div>
+        <div class="text-right">{{ ms.meetings }}</div>
+        <div class="text-left">Betlines</div>
+        <div class="text-right">
+          <span class="text-green-600">
+            {{ ms.betlines[0] | number }}
+          </span>
+          <span class="mx-1">/</span>
+          <span>
+            {{ ms.betlines[1] | number }}
+          </span>
+        </div>
+        <div class="text-left">Debit</div>
+        <div class="text-red-600 text-right">
+          -{{ ms.debit | currency:'USD':'symbol':'1.0-0' }}
+        </div>
+        <div class="text-left">Credit</div>
+        <div class="text-green-600 text-right">
+          +{{ ms.credit | currency:'USD':'symbol':'1.0-0' }}
+        </div>
+        <div class="text-left">P / L</div>
+        <div class="text-right"
+             [class.text-red-600]="ms.credit < ms.debit"
+             [class.text-green-600]="ms.credit > ms.debit"
+        >
+          {{ (ms.credit - ms.debit) | currency:'USD':'symbol':'1.0-0' }}
+        </div>
+        <div class="text-left">ROI</div>
+        <div class="text-right {{ms.roi > 0 ? 'text-green-600' : 'text-red-600'}}">
+          {{ ms.roi | percent:'1.1-2' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-span-9 place-content-center shadow-md transition shadow-gray-600 hover:shadow-gray-400">
+      <table class="mx-auto">
+        <tr>
+          <td></td>
+          <td *ngFor="let field of meetingPoolViewFields; let last = last"
+              class="px-3 text-blue-600"
+          >
+            {{ field }}
+          </td>
+        </tr>
+        <tr>
+          <td class="px-3">
+            Betlines
+          </td>
+          <td *ngFor="let ps of ms.pools"
+              class="px-3"
+          >
+            <span *ngIf="ps.betlines[0] > 0" class="text-green-600">
+              {{ ps.betlines[0] | number }}
+            </span>
+            <span *ngIf="ps.betlines[0] > 0" class="mx-1">
+              /
+            </span>
+            <span>
+              {{ ps.betlines[1] | number }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="px-3">
+            Debit
+          </td>
+          <td *ngFor="let ps of ms.pools"
+              class="px-3 text-red-600 text-center"
+          >
+            <div>
+              -{{ ps.debit | currency:'USD':'symbol':'1.0-0' }}
+            </div>
+            <div>
+              ({{ (ps.debit / ms.debit) | percent:'1.1-1'}})
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="px-3">
+            Credit
+          </td>
+          <td *ngFor="let ps of ms.pools"
+              class="px-3 text-green-600"
+          >
+            <div *ngIf="ps.credit === 0">
+              X
+            </div>
+            <div *ngIf="ps.credit > 0">
+              +{{ ps.credit | currency:'USD':'symbol':'1.0-0' }}
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="px-3">
+            P / L
+          </td>
+          <td *ngFor="let ps of ms.pools"
+              class="px-3"
+              [class.text-red-600]="ps.credit < ps.debit"
+              [class.text-green-600]="ps.credit > ps.debit"
+          >
+            {{ (ps.credit - ps.debit) | currency:'USD':'symbol':'1.0-0' }}
+          </td>
+        </tr>
+        <tr>
+          <td class="px-3">
+            ROI
+          </td>
+          <td *ngFor="let ps of ms.pools"
+              class="px-3 {{ps.roi > 0 ? 'text-green-600' : 'text-red-600'}}"
+          >
+            <div *ngIf="ps.roi === -1">
+              X
+            </div>
+            <div *ngIf="ps.roi !== -1">
+              {{ ps.roi | percent:'1.1-2' }}
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
