@@ -45,8 +45,11 @@ export class MeetingComponent implements OnInit {
   racecards: Racecard[] = [];
 
   remainingTime: string = '---';
-  activeTrainer: string = '';
   activeDraw: number = 0;
+
+  activeTrainer: string = '';
+  activeTrainerIntervalId: any;
+  activeTrainerAnimationOn: boolean = false;
 
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly RATING_GRADES = RATING_GRADES;
@@ -100,8 +103,25 @@ export class MeetingComponent implements OnInit {
   setActiveDraw = (clicked: number) =>
     this.activeDraw = this.activeDraw === clicked ? 0 : clicked
 
-  setActiveTrainer = (clicked: string) =>
-    this.activeTrainer = this.activeTrainer === clicked ? '' : clicked
+  toggleActiveTrainer = (clicked: string) => {
+    if (this.activeTrainer === clicked) {
+      if (this.activeTrainerIntervalId) {
+        clearInterval(this.activeTrainerIntervalId);
+        this.activeTrainerIntervalId = null;
+      }
+      this.activeTrainer = '';
+      this.activeTrainerAnimationOn = false;
+
+    } else {
+      this.activeTrainer = clicked;
+      this.activeTrainerAnimationOn = true;
+      if (!this.activeTrainerIntervalId) {
+        this.activeTrainerIntervalId = setInterval(() => {
+          this.activeTrainerAnimationOn = !this.activeTrainerAnimationOn;
+        }, 500);
+      }
+    }
+  }
 
   tick = () => {
     if (!this.next) {
@@ -476,12 +496,28 @@ export class MeetingComponent implements OnInit {
       )
       .reduce((prev, curr) => prev + curr, 0)
 
+  getOutsiderChallengerInvestment = (personType: string): number => {
+    const odds = this.racecards.find(r => r.race === 1)?.odds;
+    if (!odds?.jkc || !odds?.tnc) return 0;
+    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+      ?.filter(o => o.outsider)
+      .map(o => this.getChallengerInvestment(o.challenger))
+      .reduce((prev, curr) => prev + curr, 0);
+  }
+
   getChallengeOdds = (personType: string, order: number): ChallengeOdds => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return DEFAULT_CHALLENGE_ODDS;
     return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
       ?.filter(o => !o.outsider)
       ?.find(o => o.order === order) || DEFAULT_CHALLENGE_ODDS;
+  }
+
+  getOutsiderChallengeOdds = (personType: string): ChallengeOdds => {
+    const odds = this.racecards.find(r => r.race === 1)?.odds;
+    if (!odds?.jkc || !odds?.tnc) return DEFAULT_CHALLENGE_ODDS;
+    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+      ?.find(o => o.outsider) || DEFAULT_CHALLENGE_ODDS;
   }
 
   get dividendPools(): DividendPool[] {

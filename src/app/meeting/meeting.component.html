@@ -83,6 +83,7 @@
             [class.border-b-red-900]="race.race === lastRace"
             [class.border-b-gray-900]="hideBottomBorder(jockey, race)"
             [class.border-r-gray-900]="hideRightBorder(jockey, race)"
+            [class.bg-gray-700]="activeTrainer === getTrainer(jockey, race) && activeTrainerAnimationOn"
         >
           <div *ngIf="rideThisRace(jockey, race)"
                class="flex flex-col"
@@ -125,7 +126,7 @@
                    [class.underline]="emphasiseTrainer(jockey, race)"
                    [class.font-bold]="activeTrainer === getTrainer(jockey, race)"
                    [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race)"
-                   (click)="setActiveTrainer(getTrainer(jockey, race))"
+                   (click)="toggleActiveTrainer(getTrainer(jockey, race))"
               >
                 {{ getTrainer(jockey, race) }}
               </div>
@@ -162,6 +163,9 @@
       >
         {{ order }}
       </th>
+      <th class="w-28 border border-gray-600 border-b-red-900">
+        X
+      </th>
     </thead>
     <tbody>
       <tr *ngFor="let personType of ['Jockey', 'Jockey', 'Jockey', 'Trainer', 'Trainer', 'Trainer']; let index = index"
@@ -193,6 +197,19 @@
             <span *ngIf="getChallengerInvestment(getChallengeOdds(personType, order).challenger) > 0">
               {{ getChallengerInvestment(getChallengeOdds(personType, order).challenger) | percent }}
             </span>
+          </div>
+        </td>
+        <td class="border border-gray-700"
+            [class.border-b-red-900]="index == 2"
+        >
+          <div *ngIf="index % 3 === 0">
+            Others
+          </div>
+          <div *ngIf="index % 3 === 1">
+            {{ formatChallengeOdds(getOutsiderChallengeOdds(personType).odds) }}
+          </div>
+          <div *ngIf="index % 3 === 2">
+            {{ getOutsiderChallengerInvestment(personType) | percent }}
           </div>
         </td>
       </tr>

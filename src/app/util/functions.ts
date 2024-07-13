@@ -70,7 +70,7 @@ export const getStarters = (racecard: Racecard): Starter[] => {
 }
 
 export const getTrainer = (jockey: string, racecard: Racecard): string =>
-  getStarter(jockey, racecard).trainer;
+  getStarter(jockey, racecard)?.trainer || '?';
 
 export const getWinPlaceOdds = (jockey: string, racecard: Racecard): WinPlaceOdds => {
   const order = getStarter(jockey, racecard)?.order || 0;
