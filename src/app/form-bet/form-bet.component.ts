@@ -254,4 +254,8 @@ export class FormBetComponent implements OnInit {
       : this.repo.findBets()
         .filter(r => r.meeting >= season.opening && r.meeting <= season.finale);
   }
+
+  get isLoading(): boolean {
+    return this.repo.findBets().length === 0;
+  }
 }
