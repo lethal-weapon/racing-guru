@@ -182,11 +182,10 @@ export class RestRepository {
       else this.meetings.splice(index, 1, data);
     })
 
-  fetchCollaborations = () =>
-    this.source.getCollaborations().subscribe(data => this.collaborations = data)
-
-  fetchRecentCollaborations = () =>
-    this.source.getRecentCollaborations().subscribe(data => this.collaborations = data)
+  fetchRecentCollaborations = (meetingSize: number = 16) =>
+    this.source
+      .getRecentCollaborations(meetingSize)
+      .subscribe(data => this.collaborations = data)
 
   fetchMeetingCollaborations = (
     meeting: string = 'latest',

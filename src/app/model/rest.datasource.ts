@@ -82,11 +82,8 @@ export class RestDataSource {
   getLatestMeeting = (): Observable<Meeting> =>
     this.http.get<Meeting>(`${this.baseUrl}/meetings/latest`)
 
-  getCollaborations = (): Observable<Collaboration[]> =>
-    this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations`)
-
-  getRecentCollaborations = (): Observable<Collaboration[]> =>
-    this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations/recent`)
+  getRecentCollaborations = (meetingSize: number): Observable<Collaboration[]> =>
+    this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations/recent?meetingSize=${meetingSize}`)
 
   getMeetingCollaborations = (meeting: string): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations/by-meeting?meeting=${meeting}`)
