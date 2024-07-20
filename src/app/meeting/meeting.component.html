@@ -46,7 +46,7 @@
       </th>
       <th *ngFor="let jockey of jockeys"
           class="w-20 border border-gray-600"
-          [class.border-r-red-900]="isBoundaryJockey(jockey)"
+          [class.border-r-red-900]="isBoundaryPlayer(jockey, true)"
           [class.border-b-red-900]="nextRace === 1"
       >
         <div [class.text-yellow-400]="getMeetingEarning(jockey) >= EARNING_THRESHOLD">
@@ -79,7 +79,7 @@
         </td>
         <td *ngFor="let jockey of jockeys"
             class="border border-gray-700 hover:bg-gray-800 text-sm {{toPlacingColor(getStarter(jockey, race)?.placing)}}"
-            [class.border-r-red-900]="isBoundaryJockey(jockey)"
+            [class.border-r-red-900]="isBoundaryPlayer(jockey, true)"
             [class.border-b-red-900]="race.race === lastRace"
             [class.border-b-gray-900]="hideBottomBorder(jockey, race)"
             [class.border-r-gray-900]="hideRightBorder(jockey, race)"
@@ -218,43 +218,50 @@
     </tbody>
   </table>
 
-  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
+  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-500 text-center">
     <thead>
-      <th class="w-20 border border-gray-600">
-        Trainer
-      </th>
-      <th *counter="let race of maxRace"
-          class="w-36 border border-gray-600"
+      <th *ngFor="let trainer of trainers"
+          class="w-20 border border-gray-600 border-b-red-900"
+          [class.border-r-red-900]="isBoundaryPlayer(trainer, false)"
       >
-        {{ race }}
+        <div [class.text-yellow-400]="getMeetingEarning(trainer) >= EARNING_THRESHOLD">
+          {{ getMeetingEarning(trainer) === 0 ? '-' : getMeetingEarning(trainer) }}
+        </div>
+        <div>
+          {{ trainer }}
+        </div>
       </th>
     </thead>
     <tbody>
-      <tr *ngFor="let grade of RATING_GRADES; let index = index"
-          class="hover:bg-gray-800"
-      >
-        <td class="border border-gray-700 text-2xl">
-          {{ grade }}
-        </td>
-        <td *counter="let race of maxRace"
+      <tr>
+        <td *ngFor="let _ of RATING_GRADES; let index = index; let last = last"
             class="border border-gray-700"
+            [class.border-r-red-900]="!last"
+            [colSpan]="getTrainerGroup(index).length"
         >
-          <div *ngFor="let starter of getStartersByTrainerGroup(race, index)"
-               class="{{toPlacingColor(starter.placing)}} text-sm"
-          >
-            {{ starter.order }}
-            <span class="text-xs">
-              {{ getHorseDetail(starter.horse, race).name }}
-              {{ starter.trainer }}
-            </span>
-            <span *ngIf="getHorseDetail(starter.horse, race).odds > 0"
-                  class="{{ toPlacingColor(starter.placing).length === 0
-                           ? getOddsIntensityColor(getHorseDetail(starter.horse, race).odds)
-                           : ''
-                        }}"
-            >
-              {{ getHorseDetail(starter.horse, race).odds | number: '1.0-1' }}
-            </span>
+          <div class="flex flex-row flex-wrap justify-center p-2 gap-x-2 gap-y-1">
+            <ng-container *counter="let race of maxRace">
+              <div *ngFor="let starter of getStartersByTrainerGroup(race, index)"
+                   class="{{toPlacingColor(starter.placing)}} text-sm px-1.5 py-0.5 rounded-full border border-gray-600"
+                   [class.line-through]="starter.scratched"
+              >
+                <span>
+                  {{ race }}/{{ starter.order }}
+                </span>
+                <span class="text-xs">
+                  {{ getHorseDetail(starter.horse, race).name }}
+                  {{ starter.trainer }}
+                </span>
+                <span *ngIf="getHorseDetail(starter.horse, race).odds > 0"
+                      class="{{ toPlacingColor(starter.placing).length === 0
+                               ? getOddsIntensityColor(getHorseDetail(starter.horse, race).odds)
+                               : ''
+                             }}"
+                >
+                  {{ getHorseDetail(starter.horse, race).odds | number: '1.0-1' }}
+                </span>
+              </div>
+            </ng-container>
           </div>
         </td>
       </tr>

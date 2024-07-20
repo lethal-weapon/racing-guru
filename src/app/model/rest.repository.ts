@@ -175,11 +175,13 @@ export class RestRepository {
       callback();
     })
 
-  fetchLatestMeeting = () =>
+  fetchLatestMeeting = (callback: () => any = () => console.log(``)) =>
     this.source.getLatestMeeting().subscribe(data => {
       const index = this.meetings.findIndex(m => m.meeting === data.meeting);
       if (index === -1) this.meetings.unshift(data);
       else this.meetings.splice(index, 1, data);
+
+      callback();
     })
 
   fetchRecentCollaborations = (meetingSize: number = 16) =>

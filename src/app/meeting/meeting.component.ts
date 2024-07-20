@@ -6,6 +6,7 @@ import {DEFAULT_PICK, Pick} from '../model/pick.model';
 import {Player} from '../model/player.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
+import {DEFAULT_MEETING, Meeting} from '../model/meeting.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
 import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
@@ -13,7 +14,6 @@ import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   getHorseProfileUrl,
   getOddsIntensityColor,
-  getPlacing,
   getStarter,
   getStarterWinPlaceOdds,
   getTrainer,
@@ -41,6 +41,7 @@ interface HorseDetail {
 })
 export class MeetingComponent implements OnInit {
   pick: Pick = DEFAULT_PICK;
+  meeting: Meeting = DEFAULT_MEETING;
   racecards: Racecard[] = [];
 
   activeDraw: number = 0;
@@ -68,6 +69,12 @@ export class MeetingComponent implements OnInit {
       if (this.pick != newPick) this.pick = newPick;
     });
 
+    socket.addMeetingCallback((newMeeting: Meeting) => {
+      if (this.meeting.meeting === newMeeting.meeting) {
+        this.meeting = newMeeting;
+      }
+    });
+
     socket.addRacecardCallback((newCard: Racecard) => {
       const oldCard = this.racecards
         .find(r => r.meeting === newCard.meeting && r.race === newCard.race);
@@ -87,6 +94,10 @@ export class MeetingComponent implements OnInit {
   ngOnInit(): void {
     this.repo.fetchPick(() => {
       this.pick = this.repo.findPick();
+    });
+
+    this.repo.fetchLatestMeeting(() => {
+      this.meeting = this.repo.findMeetings()[0];
     });
 
     this.repo.fetchRacecards('latest', () => {
@@ -169,29 +180,8 @@ export class MeetingComponent implements OnInit {
     this.repo.savePick(newPick);
   }
 
-  getMeetingEarning = (jockey: string): number =>
-    parseFloat(this.racecards
-      .filter(r => getPlacing(jockey, r) > 0)
-      .map(r => this.getRaceEarning(jockey, r))
-      .reduce((prev, curr) => prev + curr, 0)
-      .toFixed(1)
-    )
-
-  getRaceEarning = (jockey: string, racecard: Racecard): number => {
-    const placing = getPlacing(jockey, racecard);
-    const odds = this.getWinPlaceOdds(jockey, racecard);
-    const order = odds.order;
-
-    if ([1, 2, 3].includes(placing)) {
-      const win = racecard.dividend?.win?.filter(w => w.order === order).pop();
-      const pla = racecard.dividend?.place?.filter(p => p.order === order).pop();
-      if (placing === 1) return win?.odds || 0;
-      if (placing === 2) return (pla?.odds || 0) + (odds.win / 10);
-      return pla?.odds || (odds.win / 10);
-    }
-
-    return placing === 4 ? odds.win / 10 : 0;
-  }
+  getMeetingEarning = (player: string): number =>
+    this.meeting.players.find(p => p.player === player)?.earnings || 0
 
   isPersonalFavorite = (starter: Starter, race: number): boolean =>
     this.pick.races
@@ -252,7 +242,7 @@ export class MeetingComponent implements OnInit {
   hideRightBorder = (jockey: string, racecard: Racecard): boolean =>
     !(
       jockey === this.jockeys.pop()
-      || this.isBoundaryJockey(jockey)
+      || this.isBoundaryPlayer(jockey, true)
       || this.rideThisRace(jockey, racecard)
       || this.rideThisRace(this.jockeys[this.jockeys.indexOf(jockey) + 1], racecard)
     )
@@ -288,24 +278,29 @@ export class MeetingComponent implements OnInit {
       )
     )
 
-  isBoundaryJockey = (jockey: string): boolean => {
-    let specials = []
-    for (const j of this.boundaryJockeys) {
-      if (this.jockeys.includes(j)) {
-        if (this.jockeys.indexOf(j) !== this.jockeys.length - 1) {
-          specials.push(j);
+  isBoundaryPlayer = (player: string, jockey: boolean): boolean => {
+    let specials = [];
+    let players = jockey ? this.jockeys : this.trainers;
+    let allPlayers = jockey ? this.allJockeys : this.allTrainers;
+    let boundaryPlayers = jockey ? this.boundaryJockeys : this.boundaryTrainers;
+
+    for (const p of boundaryPlayers) {
+      if (players.includes(p)) {
+        if (players.indexOf(p) !== players.length - 1) {
+          specials.push(p);
         }
       } else {
-        let priorIndex = this.allJockeys.indexOf(j);
-        let priorJockey = j;
-        while (!this.jockeys.includes(priorJockey) && priorIndex > 0) {
+        let priorIndex = allPlayers.indexOf(p);
+        let priorPlayer = p;
+        while (!players.includes(priorPlayer) && priorIndex > 0) {
           priorIndex -= 1;
-          priorJockey = this.allJockeys[priorIndex];
+          priorPlayer = allPlayers[priorIndex];
         }
-        specials.push(priorJockey);
+        specials.push(priorPlayer);
       }
     }
-    return specials.includes(jockey);
+
+    return specials.includes(player);
   }
 
   formatChallengeOdds = (odds: number): string => {
@@ -469,7 +464,7 @@ export class MeetingComponent implements OnInit {
     trainer: this.starters.find(s => s.horse === horse)?.trainer || '?'
   })
 
-  getStartersByTrainerGroup = (race: number, groupIndex: number): Starter[] => {
+  getTrainerGroup = (groupIndex: number): string[] => {
     let startIndex = 0;
     if (groupIndex > 0) {
       startIndex = 1 + this.allTrainers
@@ -480,9 +475,12 @@ export class MeetingComponent implements OnInit {
       ? this.allTrainers.findIndex(p => p === this.boundaryTrainers[groupIndex])
       : this.allTrainers.length - 1;
 
+    return this.allTrainers.filter((_, i) => i >= startIndex && i <= endIndex);
+  }
+
+  getStartersByTrainerGroup = (race: number, groupIndex: number): Starter[] => {
     // @ts-ignore
-    return this.allTrainers
-      .filter((_, i) => i >= startIndex && i <= endIndex)
+    return this.getTrainerGroup(groupIndex)
       .filter(t => this.racecards
         .find(r => r.race === race)
         ?.starters
@@ -691,6 +689,7 @@ export class MeetingComponent implements OnInit {
 
   get isLoading(): boolean {
     return this.pick.races.length === 0
+      || this.meeting.players.length === 0
       || this.racecards.length === 0
       || this.repo.findPlayers().length === 0
       || this.repo.findHorses().length === 0;

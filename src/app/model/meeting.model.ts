@@ -31,3 +31,11 @@ export interface EarningStarter {
   horseNameCH: string,
   scratched: boolean
 }
+
+export const DEFAULT_MEETING: Meeting = {
+  meeting: '',
+  venue: '',
+  races: 0,
+  turnover: 0,
+  players: []
+}
