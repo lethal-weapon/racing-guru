@@ -23,7 +23,7 @@ export interface Season {
 }
 
 export const BOUNDARY_POOLS = [
-  'F-F', 'QTT', 'PLA-3', 'QPL-3'
+  'F-F', 'QTT', 'PLA-3', 'QPL-3', 'TBL-2', '6UP-2', 'D-T', 'TT-2'
 ];
 
 export const RATING_GRADES = [

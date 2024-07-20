@@ -261,8 +261,6 @@
     </tbody>
   </table>
 
-<!--  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>-->
-
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
       <th class="w-16 border border-gray-600">
@@ -271,7 +269,7 @@
       <th class="w-36 border border-gray-600 border-r-red-900">
         Top 4
       </th>
-      <th *ngFor="let pool of dividendPools"
+      <th *ngFor="let pool of singleRacePools"
           class="w-20 border border-gray-600"
           [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
       >
@@ -279,26 +277,61 @@
       </th>
     </thead>
     <tbody>
-      <tr *counter="let race of getMaxRace(this.racecards)"
+      <tr *counter="let race of maxRace"
           class="hover:bg-gray-800"
       >
-        <td class="border border-gray-700">
+        <td class="border border-gray-700"
+            [class.border-b-red-900]="race === maxRace"
+        >
           {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
         </td>
-        <td class="px-1 border border-gray-700 border-r-red-900">
+        <td class="px-1 border border-gray-700 border-r-red-900"
+            [class.border-b-red-900]="race === maxRace"
+        >
           <div class="grid grid-cols-4">
             <div *ngFor="let order of getDividendTop4(race)">
               {{ order }}
             </div>
           </div>
         </td>
-        <td *ngFor="let pool of dividendPools"
+        <td *ngFor="let pool of singleRacePools"
             class="border border-gray-700"
+            [class.border-b-red-900]="race === maxRace"
             [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
             [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
         >
           <span *ngIf="getDividendOdds(race, pool.name) > 0">
             {{ getDividendOdds(race, pool.name) }}
+          </span>
+        </td>
+      </tr>
+
+      <tr>
+        <th class="border border-gray-700"></th>
+        <th class="border border-gray-700 border-r-red-900">
+          Cross Race
+        </th>
+        <th *ngFor="let pool of crossRacePools"
+            class="border border-gray-700"
+            [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
+        >
+          {{ pool.name }}
+        </th>
+      </tr>
+      <tr *ngFor="let race of crossRacePoolDividendNumbers"
+          class="hover:bg-gray-800"
+      >
+        <td class="border border-gray-700">
+          {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
+        </td>
+        <td class="border border-gray-700 border-r-red-900"></td>
+        <td *ngFor="let pool of crossRacePools"
+            class="border border-gray-700"
+            [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
+            [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
+        >
+          <span *ngIf="getDividendOdds(race, pool.name) > 0">
+            {{ getDividendOdds(race, pool.name) | number }}
           </span>
         </td>
       </tr>

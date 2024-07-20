@@ -12,7 +12,6 @@ import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   getHorseProfileUrl,
-  getMaxRace,
   getOddsIntensityColor,
   getPlacing,
   getStarter,
@@ -55,7 +54,6 @@ export class MeetingComponent implements OnInit {
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly toPlacingColor = toPlacingColor;
-  protected readonly getMaxRace = getMaxRace;
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;
   protected readonly getWinPlaceOdds = getWinPlaceOdds;
@@ -416,6 +414,23 @@ export class MeetingComponent implements OnInit {
         case 'DBL-2':
           return (d?.doubles || DEFAULT_COMBINATIONS)[1].odds
 
+        case 'TBL-1':
+          return Math.floor((d?.treble || DEFAULT_COMBINATIONS)[0].odds)
+        case 'TBL-2':
+          return Math.floor((d?.treble || DEFAULT_COMBINATIONS)[1].odds)
+
+        case '6UP-1':
+          return Math.floor((d?.sixUp || DEFAULT_COMBINATIONS)[0].odds)
+        case '6UP-2':
+          return Math.floor((d?.sixUp || DEFAULT_COMBINATIONS)[1].odds)
+
+        case 'D-T':
+          return Math.floor((d?.doubleTrio || DEFAULT_COMBINATIONS)[0].odds)
+        case 'TT-1':
+          return Math.floor((d?.tripleTrio || DEFAULT_COMBINATIONS)[0].odds)
+        case 'TT-2':
+          return Math.floor((d?.tripleTrio || DEFAULT_COMBINATIONS)[1].odds)
+
         default:
           return 0
       }
@@ -531,7 +546,7 @@ export class MeetingComponent implements OnInit {
       .includes(this.getChallengeOdds(personType, order).points);
   }
 
-  get dividendPools(): DividendPool[] {
+  get singleRacePools(): DividendPool[] {
     return [
       {name: 'WIN', threshold: 8},
       {name: 'QIN', threshold: 40},
@@ -549,6 +564,33 @@ export class MeetingComponent implements OnInit {
       {name: 'DBL-1', threshold: 50},
       {name: 'DBL-2', threshold: 20},
     ];
+  }
+
+  get crossRacePools(): DividendPool[] {
+    return [
+      {name: 'TBL-1', threshold: 100},
+      {name: 'TBL-2', threshold: 40},
+      {name: '6UP-1', threshold: 300},
+      {name: '6UP-2', threshold: 3000},
+      {name: 'D-T', threshold: 3000},
+      {name: 'TT-1', threshold: 10000},
+      {name: 'TT-2', threshold: 1000},
+    ];
+  }
+
+  get crossRacePoolDividendNumbers(): number[] {
+    return this.racecards
+      .filter(r =>
+        r?.dividend?.treble
+        ||
+        r?.dividend?.sixUp
+        ||
+        r?.dividend?.doubleTrio
+        ||
+        r?.dividend?.tripleTrio
+      )
+      .map(r => r.race)
+      .sort((r1, r2) => r1 - r2);
   }
 
   get pools(): Array<{ pool: string, amount: string }> {
