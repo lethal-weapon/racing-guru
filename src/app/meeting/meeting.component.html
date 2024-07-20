@@ -116,14 +116,14 @@
               </div>
             </div>
             <div class="flex flex-row justify-evenly">
-              <div *ngIf="isTrainerLastRace(jockey, race)"
+              <div *ngIf="isTrainerFinalRace(jockey, race)"
                    class="text-yellow-400"
               >
                 &#952;
               </div>
               <div class="cursor-pointer"
-                   [class.italic]="emphasiseTrainer(jockey, race)"
-                   [class.underline]="emphasiseTrainer(jockey, race)"
+                   [class.italic]="isTrainerHasNoStarterNextRace(jockey, race)"
+                   [class.underline]="isTrainerHasNoStarterNextRace(jockey, race)"
                    [class.font-bold]="activeTrainer === getTrainer(jockey, race)"
                    [class.text-yellow-400]="activeTrainer === getTrainer(jockey, race)"
                    (click)="toggleActiveTrainer(getTrainer(jockey, race))"
@@ -139,7 +139,7 @@
             <div class="flex flex-row justify-around"
                  [class.font-bold]="race.race == nextRace"
             >
-              <div [class.text-red-600]="(race.race == nextRace) || (isComingFavoured(jockey, race))">
+              <div [class.text-red-600]="(race.race == nextRace) || (isUpcomingRacePublicFavorite(jockey, race))">
                 {{ getWinPlaceOdds(jockey, race).win == 0 ? '-' : getWinPlaceOdds(jockey, race).win | number: '1.0-1' }}
               </div>
               <div [class.text-blue-600]="race.race == nextRace">
@@ -182,7 +182,9 @@
             class="border border-gray-700"
             [class.border-b-red-900]="index == 2"
         >
-          <div *ngIf="index % 3 === 0">
+          <div *ngIf="index % 3 === 0"
+               [class.text-yellow-400]="isTopChallengePoint(personType, order)"
+          >
             {{ getChallengeOdds(personType, order).challenger }}
             <span *ngIf="getChallengeOdds(personType, order).challenger.length > 0">
               <span *ngIf="getChallengeOdds(personType, order).points > 0">
@@ -259,7 +261,7 @@
     </tbody>
   </table>
 
-  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+<!--  <div class="my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>-->
 
   <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
@@ -285,8 +287,8 @@
         </td>
         <td class="px-1 border border-gray-700 border-r-red-900">
           <div class="grid grid-cols-4">
-            <div *ngFor="let s of getDividendTop4(race)">
-              {{ s }}
+            <div *ngFor="let order of getDividendTop4(race)">
+              {{ order }}
             </div>
           </div>
         </td>
@@ -295,7 +297,9 @@
             [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
             [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
         >
-          {{ getDividendOdds(race, pool.name) > 0 ? getDividendOdds(race, pool.name) : '' }}
+          <span *ngIf="getDividendOdds(race, pool.name) > 0">
+            {{ getDividendOdds(race, pool.name) }}
+          </span>
         </td>
       </tr>
     </tbody>

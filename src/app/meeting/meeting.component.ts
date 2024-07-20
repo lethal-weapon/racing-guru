@@ -8,8 +8,8 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
-import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
+import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   getHorseProfileUrl,
   getMaxRace,
@@ -44,16 +44,16 @@ export class MeetingComponent implements OnInit {
   pick: Pick = DEFAULT_PICK;
   racecards: Racecard[] = [];
 
-  remainingTime: string = '---';
   activeDraw: number = 0;
+  remainingTime: string = '---';
 
   activeTrainer: string = '';
   activeTrainerIntervalId: any;
   activeTrainerAnimationOn: boolean = false;
 
-  protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly RATING_GRADES = RATING_GRADES;
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
+  protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly toPlacingColor = toPlacingColor;
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarter = getStarter;
@@ -103,6 +103,35 @@ export class MeetingComponent implements OnInit {
   setActiveDraw = (clicked: number) =>
     this.activeDraw = this.activeDraw === clicked ? 0 : clicked
 
+  tick = () => {
+    if (!this.next) {
+      this.remainingTime = `---`;
+      return;
+    }
+
+    const raceTime = new Date(this.next.time).getTime();
+    const currTime = new Date().getTime();
+    const diff = Math.floor((raceTime - currTime) / 1000);
+
+    if (diff <= 600) this.remainingTime = `${diff} sec`;
+    else if (diff <= 5_400) this.remainingTime = `${Math.floor(diff / 60)} min`;
+    else if (diff <= 36_000) this.remainingTime = `${(diff / 3600).toFixed(1)} hrs`;
+    else this.remainingTime = `${Math.floor(diff / 3600)} hrs`;
+
+    let audioName = '';
+    if (diff >= 899 && diff <= 901) audioName = '15-min-horse';
+    else if (diff >= 599 && diff <= 601) audioName = '10-min-door';
+    else if (diff >= 299 && diff <= 301) audioName = '5-min-rooster';
+    else if (diff >= 179 && diff <= 181) audioName = '3-min-instrument';
+    else if (diff >= 59 && diff <= 61) audioName = '1-min-alarm';
+
+    if (audioName.length > 0) {
+      let audio = new Audio(`../../assets/audio/${audioName}.wav`);
+      audio.load();
+      audio.play();
+    }
+  }
+
   toggleActiveTrainer = (clicked: string) => {
     if (this.activeTrainer === clicked) {
       if (this.activeTrainerIntervalId) {
@@ -123,35 +152,6 @@ export class MeetingComponent implements OnInit {
     }
   }
 
-  tick = () => {
-    if (!this.next) {
-      this.remainingTime = `---`;
-      return;
-    }
-
-    const raceTime = new Date(this.next.time).getTime();
-    const currTime = new Date().getTime();
-    const diff = Math.floor((raceTime - currTime) / 1000);
-
-    if (diff <= 600) this.remainingTime = `${diff} sec`
-    else if (diff <= 5_400) this.remainingTime = `${Math.floor(diff / 60)} min`
-    else if (diff <= 36_000) this.remainingTime = `${(diff / 3600).toFixed(1)} hrs`
-    else this.remainingTime = `${Math.floor(diff / 3600)} hrs`
-
-    let audioName = '';
-    if (diff >= 899 && diff <= 901) audioName = '15-min-horse'
-    else if (diff >= 599 && diff <= 601) audioName = '10-min-door'
-    else if (diff >= 299 && diff <= 301) audioName = '5-min-rooster'
-    else if (diff >= 179 && diff <= 181) audioName = '3-min-instrument'
-    else if (diff >= 59 && diff <= 61) audioName = '1-min-alarm'
-
-    if (audioName.length > 0) {
-      let audio = new Audio(`../../assets/audio/${audioName}.wav`);
-      audio.load();
-      audio.play();
-    }
-  }
-
   toggleFavorite = (starter: Starter, racecard: Racecard) => {
     if (this.pick.meeting !== this.racecards[0].meeting) return;
 
@@ -169,30 +169,6 @@ export class MeetingComponent implements OnInit {
 
     newRacePick.favorites = newFavorites;
     this.repo.savePick(newPick);
-  }
-
-  isPersonalFavorite = (starter: Starter, race: number): boolean => {
-    return this.pick.races
-      .filter(r => r.race === race)
-      .some(r => r.favorites.includes(starter.order));
-  }
-
-  isComingFavoured = (jockey: string, racecard: Racecard): boolean => {
-    if (racecard.race < this.nextRace) return false;
-    return this.isPublicFavorite(jockey, racecard);
-  }
-
-  isPublicFavorite = (jockey: string, racecard: Racecard): boolean => {
-    if (!racecard.odds) return false;
-
-    const order = getStarter(jockey, racecard).order;
-    const favouredOrder = racecard.odds.winPlace
-      .map(o => o)
-      .sort((o1, o2) => o1.win - o2.win)
-      .shift()
-      ?.order;
-
-    return order === favouredOrder;
   }
 
   getMeetingEarning = (jockey: string): number =>
@@ -219,27 +195,50 @@ export class MeetingComponent implements OnInit {
     return placing === 4 ? odds.win / 10 : 0;
   }
 
-  isTrainerLastRace = (jockey: string, racecard: Racecard): boolean => {
+  isPersonalFavorite = (starter: Starter, race: number): boolean =>
+    this.pick.races
+      .filter(r => r.race === race)
+      .some(r => r.favorites.includes(starter.order))
+
+  isUpcomingRacePublicFavorite = (jockey: string, racecard: Racecard): boolean => {
+    if (racecard.race < this.nextRace) return false;
+    return this.isPublicFavorite(jockey, racecard);
+  }
+
+  isPublicFavorite = (jockey: string, racecard: Racecard): boolean => {
+    if (!racecard.odds) return false;
+
+    const order = getStarter(jockey, racecard).order;
+    const favouredOrder = racecard.odds.winPlace
+      .map(o => o)
+      .sort((o1, o2) => o1.win - o2.win)
+      .shift()
+      ?.order;
+
+    return order === favouredOrder;
+  }
+
+  isTrainerFinalRace = (jockey: string, racecard: Racecard): boolean => {
     if (racecard.race === this.maxRace) return false;
 
     const trainer = getTrainer(jockey, racecard);
-    return racecard === this.racecards
+    return racecard.race === this.racecards
       .filter(r => r.starters.map(s => s.trainer).includes(trainer))
+      .map(r => r.race)
+      .sort((r1, r2) => r1 - r2)
       .pop();
   }
 
-  emphasiseTrainer = (jockey: string, racecard: Racecard): boolean => {
+  isTrainerHasNoStarterNextRace = (jockey: string, racecard: Racecard): boolean => {
     if (racecard.race >= this.maxRace - 1) return false;
-    if (this.isTrainerLastRace(jockey, racecard)) return false;
+    if (this.isTrainerFinalRace(jockey, racecard)) return false;
 
     const next = racecard.race + 1;
     const trainer = getTrainer(jockey, racecard);
 
-    // @ts-ignore
     return !this.racecards
-      .filter(r => r.race === next)
-      .pop()
-      .starters
+      .find(r => r.race === next)
+      ?.starters
       .map(s => s.trainer)
       .includes(trainer);
   }
@@ -406,11 +405,11 @@ export class MeetingComponent implements OnInit {
           return (d?.place || DEFAULT_SINGULARS)[2].odds
 
         case 'QPL-1':
-          return (d?.quinellaPlace || DEFAULT_COMBINATIONS)[0].odds
+          return parseFloat((d?.quinellaPlace || DEFAULT_COMBINATIONS)[0].odds.toFixed(1))
         case 'QPL-2':
-          return (d?.quinellaPlace || DEFAULT_COMBINATIONS)[1].odds
+          return parseFloat((d?.quinellaPlace || DEFAULT_COMBINATIONS)[1].odds.toFixed(1))
         case 'QPL-3':
-          return (d?.quinellaPlace || DEFAULT_COMBINATIONS)[2].odds
+          return parseFloat((d?.quinellaPlace || DEFAULT_COMBINATIONS)[2].odds.toFixed(1))
 
         case 'DBL-1':
           return Math.floor((d?.doubles || DEFAULT_COMBINATIONS)[0].odds)
@@ -520,6 +519,18 @@ export class MeetingComponent implements OnInit {
       ?.find(o => o.outsider) || DEFAULT_CHALLENGE_ODDS;
   }
 
+  isTopChallengePoint = (personType: string, order: number): boolean => {
+    const odds = this.racecards.find(r => r.race === 1)?.odds;
+    if (!odds?.jkc || !odds?.tnc) return false;
+    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+      ?.filter(o => o.points > 0)
+      .map(o => o.points)
+      .filter((p, index, arr) => index === arr.indexOf(p))
+      .sort((p1, p2) => p2 - p1)
+      .slice(0, 3)
+      .includes(this.getChallengeOdds(personType, order).points);
+  }
+
   get dividendPools(): DividendPool[] {
     return [
       {name: 'WIN', threshold: 8},
@@ -535,7 +546,7 @@ export class MeetingComponent implements OnInit {
       {name: 'QPL-1', threshold: 15},
       {name: 'QPL-2', threshold: 15},
       {name: 'QPL-3', threshold: 15},
-      {name: 'DBL-1', threshold: 60},
+      {name: 'DBL-1', threshold: 50},
       {name: 'DBL-2', threshold: 20},
     ];
   }
@@ -551,7 +562,7 @@ export class MeetingComponent implements OnInit {
       {pool: 'QP', amount: toMillion(pool?.quinellaPlace || 0)},
       {pool: 'TCE', amount: toMillion(pool?.tierce || 0)},
       {pool: 'DBL', amount: toMillion(pool?.doubles || 0)},
-    ]
+    ];
   }
 
   get summary(): string[] {
