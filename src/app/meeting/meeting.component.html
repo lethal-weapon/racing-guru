@@ -242,15 +242,21 @@
           <div class="flex flex-row flex-wrap justify-center p-2 gap-x-2 gap-y-1">
             <ng-container *counter="let race of maxRace">
               <div *ngFor="let starter of getStartersByTrainerGroup(race, index)"
-                   class="{{toPlacingColor(starter.placing)}} text-sm px-1.5 py-0.5 rounded-full border border-gray-600"
+                   class="{{toPlacingColor(starter.placing)}} text-sm px-1.5 py-0.5
+                          rounded-full border border-gray-600 hover:border-yellow-400 hover:cursor-pointer"
                    [class.line-through]="starter.scratched"
+                   [class.text-yellow-400]="starter.scratched"
+                   [class.border-yellow-400]="activeTrainer === starter.trainer && activeTrainerAnimationOn"
+                   (click)="toggleActiveTrainer(starter.trainer)"
               >
                 <span>
                   {{ race }}/{{ starter.order }}
                 </span>
                 <span class="text-xs">
                   {{ getHorseDetail(starter.horse, race).name }}
-                  {{ starter.trainer }}
+                  <span [class.text-yellow-400]="activeTrainer === starter.trainer">
+                    {{ starter.trainer }}
+                  </span>
                 </span>
                 <span *ngIf="getHorseDetail(starter.horse, race).odds > 0"
                       class="{{ toPlacingColor(starter.placing).length === 0
