@@ -15,23 +15,36 @@
   </div>
 
   <table class="mx-auto table-fixed border-collapse border border-gray-700">
-    <thead class="text-xl">
-      <th class="p-4 w-20 border border-gray-700">
-        <div *ngIf="isEditMode"
-             class="text-yellow-400 cursor-pointer"
-             (click)="clickEditButton()"
-        >
-          <i class="fa fa-lg fa-save"></i>
-        </div>
-        <div *ngIf="!isEditMode"
-             class="cursor-pointer"
-             (click)="clickEditButton()"
-        >
-          <i class="fa fa-lg fa-edit"></i>
+    <thead>
+      <th class="px-2 py-4 w-32 border border-gray-700 text-2xl">
+        <div class="flex flex-row justify-around">
+          <div class="cursor-pointer hover:text-yellow-400"
+               tooltip="{{isEditMode ? 'Save Selection' : 'Edit Selection'}}"
+               [hideDelay]="0"
+               (click)="clickEditButton()"
+          >
+            <i *ngIf="isEditMode" class="fa fa-save"></i>
+            <i *ngIf="!isEditMode" class="fa fa-edit"></i>
+          </div>
+          <div class="cursor-pointer hover:text-yellow-400"
+               [class.invisible]="isEditMode"
+               tooltip="{{isEditMode ? '' : 'Reset Selection'}}"
+               [hideDelay]="0"
+               (click)="resetSelections()"
+          >
+            <i class="fa fa-trash"></i>
+          </div>
+          <div class="cursor-pointer hover:text-yellow-400"
+               tooltip="Reset Favorite"
+               [hideDelay]="0"
+               (click)="resetFavorites()"
+          >
+            <i class="fa fa-star-half-empty"></i>
+          </div>
         </div>
       </th>
       <th *ngFor="let starter of startersSortedByChance"
-          class="w-20 border border-gray-700"
+          class="w-20 border border-gray-700 text-xl"
       >
         <div class="flex flex-row justify-center">
           <div class="w-10 h-10 pt-1 rounded-full {{getPlacingBorderBackground(starter)}}">
@@ -42,7 +55,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let pm of PLACING_MAPS; let index = index">
-        <td class="p-2 border border-gray-700 text-2xl {{pm.color}}">
+        <td class="p-2 border border-gray-700 text-2xl font-mono {{pm.color}}">
           {{ pm.placing }}
         </td>
         <td *ngFor="let starter of startersSortedByChance"
@@ -61,7 +74,7 @@
       </tr>
       <tr>
         <td class="p-2 border border-gray-700 text-xl font-mono">
-          Model
+          Engine
         </td>
         <td *ngFor="let starter of startersSortedByChance"
             class="border border-gray-700 text-lg"
@@ -76,8 +89,8 @@
         <td *ngFor="let starter of startersSortedByChance"
             class="border border-gray-700 text-lg"
         >
-          <div *ngIf="getActiveStarterWQPInvestments(starter).length > 0">
-            {{ getActiveStarterWQPInvestments(starter)[0].percent }}
+          <div *ngIf="getStarterInvestments(starter).length > 0">
+            {{ getStarterInvestments(starter)[0].percent }}
           </div>
         </td>
       </tr>
@@ -91,23 +104,23 @@
           <span *ngIf="isPublicUnderEstimated(starter)">
             <i class="fa fa-diamond"></i>
           </span>
-          <span *ngIf="isModelUnderEstimated(starter)">
+          <span *ngIf="isEngineUnderEstimated(starter)">
             <i class="fa fa-warning"></i>
           </span>
         </td>
       </tr>
       <tr>
         <td class="p-2 border border-gray-700 text-xl font-mono">
-          Picks
+          Favorite
         </td>
         <td *ngFor="let starter of startersSortedByChance"
-            class="border border-gray-700 text-xl"
+            class="border border-gray-700 text-xl cursor-pointer"
             (click)="toggleFavorite(starter)"
         >
-          <span *ngIf="isFavorite(starter)" class="text-yellow-400 cursor-pointer">
+          <span *ngIf="isFavorite(starter)" class="text-yellow-400">
             <i class="fa fa-star"></i>
           </span>
-          <span *ngIf="!isFavorite(starter)" class="cursor-pointer">
+          <span *ngIf="!isFavorite(starter)">
             <i class="fa fa-star-o"></i>
           </span>
         </td>
@@ -165,7 +178,7 @@
           </span>
         </div>
         <div>
-          {{ getHorseStatistics(starter) }}
+          {{ getHorseStats(starter) }}
         </div>
       </div>
       <div class="w-20 text-red-600">
@@ -190,7 +203,7 @@
           <i class="fa fa-star-o"></i>
         </span>
       </div>
-      <div *ngFor="let inv of getActiveStarterWQPInvestments(starter); let index = index"
+      <div *ngFor="let inv of getStarterInvestments(starter); let index = index"
            class="w-20 {{COLORS[index]}}"
       >
         <div>
@@ -212,7 +225,7 @@
           Debut Runner
         </div>
         <div *ngIf="getPastHorseStarters(starter).length > 0"
-             class="grid grid-cols-4 gap-x-1.5 text-sm"
+             class="grid grid-cols-4 text-sm"
         >
           <div *ngFor="let ps of getPastHorseStarters(starter)"
                class="{{(ps?.placing || 0 >= 1) && (ps?.placing || 0 <= 4) ? COLORS[ps.placing -1] : ''}}"
@@ -236,17 +249,22 @@
         <div *ngIf="getPastCollaborationStarters(starter).length === 0"
              class="text-yellow-400 text-lg"
         >
-          1st collaboration this season
+          Debut Collaboration
         </div>
         <div *ngIf="getPastCollaborationStarters(starter).length > 0"
-             class="grid grid-cols-7 gap-x-2 text-sm"
+             class="grid grid-cols-5 text-sm"
         >
           <div *ngFor="let ps of getPastCollaborationStarters(starter)"
                class="{{(ps?.placing || 0 >= 1) && (ps?.placing || 0 <= 4) ? COLORS[ps.placing -1] : ''}}"
                [class.line-through]="ps.scratched || !ps?.placing || ps?.placing === 0"
           >
-            {{ (ps?.winOdds || 0) > 0 ? (ps?.winOdds | number: '1.0-1') : '' }}
-            {{ ps.horseNameCH }}
+            <span *ngIf="(ps?.winOdds || 0) > 0">
+              {{ ps?.winOdds | number: '1.0-1' }}
+            </span>
+            <span [class.text-yellow-400]="ps.placing > 4 && ps.horse === starter.horse">
+              {{ ps.horseNameCH }}
+            </span>
+            {{ formatMeeting(ps.meeting) }}
           </div>
         </div>
       </div>
@@ -262,7 +280,7 @@
           {{ player }}
         </div>
         <div class="grid grid-cols-4 text-sm">
-          <div *ngFor="let ps of getPlayerStarters(player)"
+          <div *ngFor="let ps of getEarningStarters(player)"
                class="{{(ps?.placing || 0 >= 1) && (ps?.placing || 0 <= 4) ? COLORS[ps.placing -1] : ''}}"
                [class.line-through]="ps.scratched || !ps?.placing || ps?.placing === 0"
           >
@@ -278,7 +296,7 @@
         </div>
         <div class="flex flex-row justify-center gap-x-5 text-lg">
           <div *ngFor="let stat of getCollaborationStats(starter); let index = index"
-               class="{{ index < 4 ? PLACING_MAPS[index].color : 'X' }}"
+               class="{{ index < 4 ? PLACING_MAPS[index].color : '' }}"
           >
             {{ stat }}{{ index < 4 ? PLACING_MAPS[index].placing : 'X' }}
           </div>

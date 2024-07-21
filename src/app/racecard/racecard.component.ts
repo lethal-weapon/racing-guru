@@ -145,6 +145,26 @@ export class RacecardComponent implements OnInit {
     }
   }
 
+  resetFavorites = () => {
+    let newPick: Pick = {...this.pick, races: [...this.pick.races]};
+    let newRacePick = newPick.races.find(r => r.race === this.activeRace);
+    if (!newRacePick) return;
+
+    newRacePick.favorites = [];
+    this.repo.savePick(newPick);
+  }
+
+  resetSelections = () => {
+    if (this.isEditMode) return;
+
+    let newPick: Pick = {...this.pick, races: [...this.pick.races]};
+    let newRacePick = newPick.races.find(r => r.race === this.activeRace);
+    if (!newRacePick) return;
+
+    newRacePick.selections = [];
+    this.repo.savePick(newPick);
+  }
+
   toggleFavorite = (starter: Starter) => {
     if (this.pick.meeting !== this.racecards[0].meeting) return;
 
@@ -173,6 +193,11 @@ export class RacecardComponent implements OnInit {
       this.editingSelections.push({order: starter.order, placing: placing});
   }
 
+  isFavorite = (starter: Starter): boolean =>
+    this.pick.races
+      .filter(r => r.race === this.activeRace)
+      .some(r => r.favorites.includes(starter.order))
+
   isSelection = (starter: Starter, placing: number): boolean =>
     (
       this.isEditMode
@@ -181,10 +206,27 @@ export class RacecardComponent implements OnInit {
     )
       .some(s => s.order === starter.order && s.placing === placing)
 
-  isFavorite = (starter: Starter): boolean =>
-    this.pick.races
-      .filter(r => r.race === this.activeRace)
-      .some(r => r.favorites.includes(starter.order));
+  isPublicUnderEstimated = (starter: Starter): boolean => {
+    const investments = this.getStarterInvestments(starter);
+    if (investments.length === 0) return false;
+
+    const engineChance = 100 * (starter?.chance || 0);
+    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
+    const tops = this.startersSortedByChance.map(s => s.order).slice(0, 6);
+
+    return tops.includes(starter.order) && (engineChance - publicChance >= 3);
+  }
+
+  isEngineUnderEstimated = (starter: Starter): boolean => {
+    const investments = this.getStarterInvestments(starter);
+    if (investments.length === 0) return false;
+
+    const engineChance = 100 * (starter?.chance || 0);
+    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
+    const bottoms = this.startersSortedByChance.map(s => s.order).slice(6);
+
+    return bottoms.includes(starter.order) && (publicChance - engineChance >= 3);
+  }
 
   getSelectionCellColor = (starter: Starter, placing: number): string => {
     if (this.isSelection(starter, placing)) return '';
@@ -192,19 +234,25 @@ export class RacecardComponent implements OnInit {
   }
 
   getHorse = (starter: Starter): Horse =>
-    this.repo.findHorses()
-      .find(s => s.code === starter.horse) || DEFAULT_HORSE
+    this.repo.findHorses().find(s => s.code === starter.horse) || DEFAULT_HORSE
+
+  getHorseStats = (starter: Starter): string => {
+    const h = this.getHorse(starter);
+    return `${h.total1st}-${h.total2nd}-${h.total3rd}/${h.totalRuns}`;
+  }
+
+  getPastHorseStarters = (starter: Starter): PastStarter[] =>
+    this.getHorse(starter).pastStarters.slice(0, 20)
 
   getCollaborationStats = (starter: Starter): number[] => {
     const partnerships = (
       this.collaborations
-        .filter(c => c.jockey === starter.jockey && c.trainer === starter.trainer)
-        .pop()
+        .find(c => c.jockey === starter.jockey && c.trainer === starter.trainer)
         ?.starters || []
     )
       .filter(s => !s.scratched)
       .filter(s => {
-        if (s.meeting !== this.racecards[0].meeting) return true;
+        if (s.meeting < this.racecards[0].meeting) return true;
         return s.meeting === this.racecards[0].meeting && s.race < this.activeRace;
       });
 
@@ -215,31 +263,41 @@ export class RacecardComponent implements OnInit {
     return placingCount.concat(partnerships.length);
   }
 
-  getHorseStatistics = (starter: Starter): string => {
-    const h = this.getHorse(starter);
-    return `${h.total1st}-${h.total2nd}-${h.total3rd}/${h.totalRuns}`;
-  }
-
-  getPastHorseStarters = (current: Starter): PastStarter[] =>
-    (this.repo.findHorses().find(s => s.code === current.horse)?.pastStarters || []).slice(0, 20)
-
-  getPastCollaborationStarters = (current: Starter): CollaborationStarter[] =>
+  getPastCollaborationStarters = (starter: Starter): CollaborationStarter[] =>
     (
       this.collaborations
-        .filter(c => c.jockey === current.jockey && c.trainer === current.trainer)
-        .pop()
+        .find(c => c.jockey === starter.jockey && c.trainer === starter.trainer)
         ?.starters || []
     )
       .filter(s => {
-        if (s.meeting !== this.racecards[0].meeting) return true;
+        if (s.meeting < this.racecards[0].meeting) return true;
         return s.meeting === this.racecards[0].meeting && s.race < this.activeRace;
       })
-      .sort((r1, r2) =>
-        r2.meeting.localeCompare(r1.meeting) || r2.race - r1.race
+      .sort((s1, s2) =>
+        s2.meeting.localeCompare(s1.meeting) || s2.race - s1.race
       )
-      .slice(0, 35)
+      .slice(0, 25)
 
-  getActiveStarterWQPInvestments =
+  getEarningStarters = (player: string): EarningStarter[] =>
+    this.meetings
+      .filter(m => m.players.some(p => p.player === player))
+      .flatMap(m => m.players.map(p => {
+        p.meeting = m.meeting;
+        return p;
+      }))
+      .filter(ps => ps.player === player)
+      .flatMap(ps => ps.starters.map(s => {
+        s.meeting = ps.meeting;
+        return s;
+      }))
+      .filter(s => {
+        if (s.meeting < this.racecards[0].meeting) return true;
+        return s.meeting === this.racecards[0].meeting && s.race < this.activeRace;
+      })
+      .sort((s1, s2) => s2.meeting.localeCompare(s1.meeting) || s2.race - s1.race)
+      .slice(0, 20)
+
+  getStarterInvestments =
     (starter: Starter): Array<{ percent: string, amount: string }> => {
 
       const pool = this.activeRacecard?.pool;
@@ -258,47 +316,6 @@ export class RacecardComponent implements OnInit {
         amount: `$${(o.amount * PAYOUT_RATE / o.odds / ONE_MILLION).toFixed(2)}M`
       }));
     }
-
-  getPlayerStarters = (player: string): EarningStarter[] =>
-    this.meetings
-      .filter(m => m.players.some(p => p.player === player))
-      .flatMap(m => m.players.map(p => {
-        p.meeting = m.meeting;
-        return p;
-      }))
-      .filter(ps => ps.player === player)
-      .flatMap(ps => ps.starters.map(s => {
-        s.meeting = ps.meeting;
-        return s;
-      }))
-      .filter(s => {
-        if (s.meeting !== this.racecards[0].meeting) return true;
-        return s.meeting === this.racecards[0].meeting && s.race < this.activeRace;
-      })
-      .sort((s1, s2) => s2.meeting.localeCompare(s1.meeting) || s2.race - s1.race)
-      .slice(0, 20)
-
-  isPublicUnderEstimated = (starter: Starter): boolean => {
-    const investments = this.getActiveStarterWQPInvestments(starter);
-    if (investments.length === 0) return false;
-
-    const modelChance = 100 * (starter?.chance || 0);
-    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
-    const tops = this.startersSortedByChance.map(s => s.order).slice(0, 6);
-
-    return tops.includes(starter.order) && (modelChance - publicChance >= 3);
-  }
-
-  isModelUnderEstimated = (starter: Starter): boolean => {
-    const investments = this.getActiveStarterWQPInvestments(starter);
-    if (investments.length === 0) return false;
-
-    const modelChance = 100 * (starter?.chance || 0);
-    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
-    const bottoms = this.startersSortedByChance.map(s => s.order).slice(6);
-
-    return bottoms.includes(starter.order) && (publicChance - modelChance >= 3);
-  }
 
   get startersSortedByChance(): Starter[] {
     return this.activeRacecard.starters

@@ -673,7 +673,7 @@ export class OddsComponent implements OnInit {
   isFavorite = (starter: Starter, racecard: Racecard): boolean =>
     this.pick.races
       .filter(r => r.race === racecard.race)
-      .some(r => r.favorites.includes(starter.order));
+      .some(r => r.favorites.includes(starter.order))
 
   getHorseNameCH = (horseCode: string): string =>
     this.repo.findHorses().find(h => h.code === horseCode)?.nameCH || horseCode
