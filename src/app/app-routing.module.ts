@@ -36,16 +36,16 @@ const routes: Routes = [
         component: TrendEveryoneComponent,
       },
       {
+        path: 'tops',
+        component: TrendTopsComponent,
+      },
+      {
         path: 'earning',
         component: TrendEarningComponent,
       },
       {
         path: 'collaboration',
         component: TrendCollaborationComponent,
-      },
-      {
-        path: 'tops',
-        component: TrendTopsComponent,
       },
       {
         path: 'draw',

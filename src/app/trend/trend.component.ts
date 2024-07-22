@@ -2,7 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 
 import {RestRepository} from '../model/rest.repository';
-import {ONE_MINUTE} from '../util/numbers';
+import {WebsocketService} from '../websocket.service';
+import {Meeting} from '../model/meeting.model';
+import {SyndicateSnapshot} from '../model/syndicate.model';
 
 @Component({
   selector: 'app-trend',
@@ -19,20 +21,23 @@ export class TrendComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private repo: RestRepository
+    private repo: RestRepository,
+    private socket: WebsocketService
   ) {
+    socket.addMeetingCallback((newMeeting: Meeting) => {
+      this.repo.updateMeetingFromSocket(newMeeting);
+    });
+
+    socket.addSyndicateSnapshotCallback((newSnapshot: SyndicateSnapshot) => {
+      this.repo.updateSyndicateSnapshotFromSocket(newSnapshot);
+    });
   }
 
   ngOnInit(): void {
-    this.repo.fetchMeetings(24);
-    this.repo.fetchReminders(24);
     this.repo.fetchActivePlayers();
-    this.repo.fetchSyndicateSnapshots();
-
-    setInterval(() => {
-      this.repo.fetchLatestMeeting();
-      this.repo.fetchLatestSyndicateSnapshot();
-    }, ONE_MINUTE);
+    this.repo.fetchMeetings(16);
+    this.repo.fetchReminders(16);
+    this.repo.fetchSyndicateSnapshots(16);
   }
 
   getSectionStyle = (link: string): string =>

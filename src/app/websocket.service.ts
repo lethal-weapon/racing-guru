@@ -8,6 +8,7 @@ import {Pick} from './model/pick.model';
 import {Racecard} from './model/racecard.model';
 import {Meeting} from './model/meeting.model';
 import {Collaboration} from './model/collaboration.model';
+import {SyndicateSnapshot} from './model/syndicate.model';
 
 @Injectable({providedIn: 'root'})
 export class WebsocketService {
@@ -31,6 +32,9 @@ export class WebsocketService {
   collaborationTopic = '/topic/collaboration';
   onCollaborationCallbacks: ((newCollaboration: Collaboration) => any)[] = [];
 
+  syndicateSnapshotTopic = '/topic/syndicateSnapshot';
+  onSyndicateSnapshotCallbacks: ((newSnapshot: SyndicateSnapshot) => any)[] = [];
+
   constructor() {
     this.connect();
   }
@@ -53,6 +57,9 @@ export class WebsocketService {
   addCollaborationCallback = (callback: (newCollaboration: Collaboration) => any) =>
     this.onCollaborationCallbacks.push(callback)
 
+  addSyndicateSnapshotCallback = (callback: (newSnapshot: SyndicateSnapshot) => any) =>
+    this.onSyndicateSnapshotCallbacks.push(callback)
+
   connect = () => {
     let socket = new SockJS(this.socketUrl);
     this.client = Stomp.over(socket);
@@ -63,6 +70,7 @@ export class WebsocketService {
         this.subscribeToRacecardTopic();
         this.subscribeToMeetingTopic();
         this.subscribeToCollaborationTopic();
+        this.subscribeToSyndicateSnapshotTopic();
       },
       (error: any) => {
         console.log('Websocket closed, will retry in 30 seconds');
@@ -102,6 +110,13 @@ export class WebsocketService {
     this.client.subscribe(this.collaborationTopic, (message: any) => {
       const newCollaboration = JSON.parse(message.body) as Collaboration;
       this.onCollaborationCallbacks.forEach(callback => callback(newCollaboration));
+    });
+  }
+
+  subscribeToSyndicateSnapshotTopic = () => {
+    this.client.subscribe(this.syndicateSnapshotTopic, (message: any) => {
+      const newSnapshot = JSON.parse(message.body) as SyndicateSnapshot;
+      this.onSyndicateSnapshotCallbacks.forEach(callback => callback(newSnapshot));
     });
   }
 }

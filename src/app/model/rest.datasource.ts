@@ -94,17 +94,11 @@ export class RestDataSource {
   getLatestDrawInheritances = (): Observable<DrawInheritance[]> =>
     this.http.get<DrawInheritance[]>(`${this.baseUrl}/draws/inheritance/latest`)
 
-  getSyndicateSnapshots = (): Observable<SyndicateSnapshot[]> =>
-    this.http.get<SyndicateSnapshot[]>(`${this.baseUrl}/syndicates/snapshots`)
+  getSyndicateSnapshots = (meetingSize: number): Observable<SyndicateSnapshot[]> =>
+    this.http.get<SyndicateSnapshot[]>(`${this.baseUrl}/syndicates/snapshots?meetingSize=${meetingSize}`)
 
-  getLatestSyndicateSnapshot = (): Observable<SyndicateSnapshot> =>
-    this.http.get<SyndicateSnapshot>(`${this.baseUrl}/syndicates/snapshot`)
-
-  getTrackworkSnapshots = (): Observable<TrackworkSnapshot[]> =>
-    this.http.get<TrackworkSnapshot[]>(`${this.baseUrl}/trackworks/snapshots`)
-
-  getLatestTrackworkSnapshot = (): Observable<TrackworkSnapshot> =>
-    this.http.get<TrackworkSnapshot>(`${this.baseUrl}/trackworks/snapshot`)
+  getTrackworkSnapshots = (meetingSize: number): Observable<TrackworkSnapshot[]> =>
+    this.http.get<TrackworkSnapshot[]>(`${this.baseUrl}/trackworks/snapshots?meetingSize=${meetingSize}`)
 
   getBlacklistConnections = (meeting: string): Observable<BlacklistConnection[]> =>
     this.http.get<BlacklistConnection[]>(`${this.baseUrl}/players/blacklist-connections?meeting=${meeting}`)

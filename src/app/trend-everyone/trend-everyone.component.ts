@@ -323,7 +323,8 @@ export class TrendEveryoneComponent implements OnInit {
   get maxRaceOnActiveMeeting(): number {
     return this.activeSyndicateSnapshot.performances
       .map(p => p.race)
-      .sort((r1, r2) => r2 - r1)[0];
+      .sort((r1, r2) => r1 - r2)
+      .pop() || MAX_RACE_PER_MEETING;
   }
 
   get activeSyndicateSnapshot(): SyndicateSnapshot {

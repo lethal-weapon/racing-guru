@@ -290,7 +290,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let kind of syndicateKinds; let last = last">
-      <td class="border border-gray-700"
+      <td class="p-2 border border-gray-700"
           [class.border-b-yellow-400]="last"
       >
         <div>{{ kind }}</div>
@@ -298,8 +298,8 @@
           {{ getSyndicateStarterCount(kind) }}
         </div>
       </td>
-      <td *counter="let race of MAX_RACE_PER_MEETING"
-          class="border border-gray-700 text-xs py-3"
+      <td *counter="let race of maxRaceOnActiveMeeting"
+          class="p-2 border border-gray-700 text-xs"
           [class.border-b-yellow-400]="last"
       >
         <div class="flex flex-col gap-y-2">
@@ -310,7 +310,9 @@
           >
             {{ starter.order }}
             {{ starter.horseNameCH }}
-            {{ starter?.winOdds || 0 > 0 ? '@' + (starter.winOdds | number: '1.0-1') : '' }}
+            <span *ngIf="(starter?.winOdds || 0) > 0">
+              {{ '@' + (starter.winOdds | number: '1.0-1') }}
+            </span>
           </div>
         </div>
       </td>
@@ -319,16 +321,17 @@
     <tr *ngFor="let syn of activeMultipleKindSyndicates"
         class="hover:bg-gray-800"
     >
-      <td class="border border-gray-700">
+      <td class="p-1 border border-gray-700">
         {{ syn.syndicateMembers }}M/{{ syn.syndicateActiveHorses }}H
       </td>
-      <td *counter="let race of MAX_RACE_PER_MEETING"
+      <td *counter="let race of maxRaceOnActiveMeeting"
           [class.bg-gray-700]="filterSyndicateStarterByRace(syn, race).length > 1"
-          class="border border-gray-700 px-0.5"
+          class="border border-gray-700 px-1"
       >
         <div *ngFor="let s of filterSyndicateStarterByRace(syn, race)"
              class="{{toPlacingColor(s?.placing)}} leading-5"
              [class.line-through]="s.scratched"
+             [class.text-yellow-400]="s.scratched"
         >
           <div class="flex flex-row justify-evenly">
             <div>

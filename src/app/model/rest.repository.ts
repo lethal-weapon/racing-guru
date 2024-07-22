@@ -184,6 +184,12 @@ export class RestRepository {
       callback();
     })
 
+  updateMeetingFromSocket = (newMeeting: Meeting) => {
+    const index = this.meetings.findIndex(m => m.meeting === newMeeting.meeting);
+    if (index === -1) this.meetings.unshift(newMeeting);
+    else this.meetings.splice(index, 1, newMeeting);
+  }
+
   fetchRecentCollaborations = (meetingSize: number = 16) =>
     this.source
       .getRecentCollaborations(meetingSize)
@@ -199,7 +205,9 @@ export class RestRepository {
     })
 
   fetchDrawInheritances = () =>
-    this.source.getDrawInheritances().subscribe(data => this.drawInheritances = data)
+    this.source
+      .getDrawInheritances()
+      .subscribe(data => this.drawInheritances = data)
 
   fetchLatestDrawInheritances = () =>
     this.source.getLatestDrawInheritances().subscribe(data => {
@@ -212,28 +220,26 @@ export class RestRepository {
       });
     })
 
-  fetchSyndicateSnapshots = () =>
-    this.source.getSyndicateSnapshots().subscribe(data => this.syndicateSnapshots = data)
+  fetchSyndicateSnapshots = (meetingSize: number = 8) =>
+    this.source
+      .getSyndicateSnapshots(meetingSize)
+      .subscribe(data => this.syndicateSnapshots = data)
 
-  fetchLatestSyndicateSnapshot = () =>
-    this.source.getLatestSyndicateSnapshot().subscribe(data => {
-      const index = this.syndicateSnapshots.findIndex(s => s.meeting === data.meeting);
-      if (index === -1) this.syndicateSnapshots.unshift(data);
-      else this.syndicateSnapshots.splice(index, 1, data);
-    })
+  updateSyndicateSnapshotFromSocket = (newSnapshot: SyndicateSnapshot) => {
+    const index = this.syndicateSnapshots.findIndex(s => s.meeting === newSnapshot.meeting);
+    if (index === -1) this.syndicateSnapshots.unshift(newSnapshot);
+    else this.syndicateSnapshots.splice(index, 1, newSnapshot);
+  }
 
-  fetchTrackworkSnapshots = () =>
-    this.source.getTrackworkSnapshots().subscribe(data => this.trackworkSnapshots = data)
-
-  fetchLatestTrackworkSnapshot = () =>
-    this.source.getLatestTrackworkSnapshot().subscribe(data => {
-      const index = this.trackworkSnapshots.findIndex(s => s.meeting === data.meeting);
-      if (index === -1) this.trackworkSnapshots.unshift(data);
-      else this.trackworkSnapshots.splice(index, 1, data);
-    })
+  fetchTrackworkSnapshots = (meetingSize: number = 8) =>
+    this.source
+      .getTrackworkSnapshots(meetingSize)
+      .subscribe(data => this.trackworkSnapshots = data)
 
   fetchBlacklistConnections = (meeting: string = 'latest') =>
-    this.source.getBlacklistConnections(meeting).subscribe(data => this.blacklistConnections = data)
+    this.source
+      .getBlacklistConnections(meeting)
+      .subscribe(data => this.blacklistConnections = data)
 
   fetchFactorHits = (factorCombinations: string[][], callback: () => any) =>
     this.source.getBacktestFactorHits(factorCombinations).subscribe(data => {
