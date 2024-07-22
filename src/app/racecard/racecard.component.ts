@@ -294,7 +294,9 @@ export class RacecardComponent implements OnInit {
         if (s.meeting < this.racecards[0].meeting) return true;
         return s.meeting === this.racecards[0].meeting && s.race < this.activeRace;
       })
-      .sort((s1, s2) => s2.meeting.localeCompare(s1.meeting) || s2.race - s1.race)
+      .sort((s1, s2) =>
+        s2.meeting.localeCompare(s1.meeting) || s2.race - s1.race
+      )
       .slice(0, 20)
 
   getStarterInvestments =
