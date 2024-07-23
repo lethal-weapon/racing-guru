@@ -209,11 +209,11 @@
       </td>
       <td *counter="let race of MAX_RACE_PER_MEETING"
           class="h-10 border border-gray-700 text-xs py-1"
-          [class.bg-gray-700]="getStarters(m, race).length > 1"
+          [class.bg-gray-700]="getActivePlayerStarters(m, race).length > 1"
           [class.border-b-yellow-400]="!last && isBoundaryMeeting(meetings, m.meeting)"
       >
         <div class="flex flex-col gap-y-1">
-          <div *ngFor="let starter of getStarters(m, race)"
+          <div *ngFor="let starter of getActivePlayerStarters(m, race)"
                class="{{toPlacingColor(starter.placing)}}"
                [class.line-through]="starter.scratched"
                [class.text-yellow-400]="starter.scratched"
@@ -238,14 +238,14 @@
     <th class="w-28 border border-gray-600 text-yellow-400">
       Horse
     </th>
-    <th *counter="let count of maxActivePersonHorseTop4Count"
+    <th *counter="let count of maxActivePlayerHorseTop4Count"
         class="w-28 border border-gray-600"
     >
       {{ count }}
     </th>
   </thead>
   <tbody>
-    <tr *ngFor="let hv of activePersonViewByHorse; let index = index"
+    <tr *ngFor="let hv of activePlayerViewByHorse; let index = index"
         class="hover:bg-gray-800"
     >
       <td class="border border-gray-700 py-0.5">

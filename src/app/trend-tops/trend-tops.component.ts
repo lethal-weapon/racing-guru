@@ -24,7 +24,7 @@ export class TrendTopsComponent implements OnInit {
   }
 
   setActivePlayer = (clicked: string) =>
-    this.activePlayer = this.activePlayer === clicked ? '' : clicked;
+    this.activePlayer = this.activePlayer === clicked ? '' : clicked
 
   getAverageTurnoverPerRace = (meeting: Meeting): number =>
     parseFloat((meeting.turnover / meeting.races).toFixed(1))

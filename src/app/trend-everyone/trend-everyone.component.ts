@@ -96,6 +96,10 @@ export class TrendEveryoneComponent implements OnInit {
     }
   }
 
+  filterSyndicateStarterByRace =
+    (syndicate: MeetingSyndicate, race: number): StarterSnapshot[] =>
+      syndicate.starters.filter(s => s.race === race)
+
   getSyndicateStarters = (kind: string, race: number): StarterSnapshot[] => {
     switch (kind) {
       case SYNDICATE_KIND_SINGLE:
@@ -142,10 +146,6 @@ export class TrendEveryoneComponent implements OnInit {
     }
   }
 
-  filterSyndicateStarterByRace =
-    (syndicate: MeetingSyndicate, race: number): StarterSnapshot[] =>
-      syndicate.starters.filter(s => s.race === race)
-
   getWinner = (player: string): PlayerWinner => {
     const reminder = this.activeMeeting.length > 0
       ? this.repo.findReminders().find(r => r.meeting === this.activeMeeting)
@@ -156,6 +156,12 @@ export class TrendEveryoneComponent implements OnInit {
     }
     return DEFAULT_PLAYER_WINNER;
   }
+
+  getActivePlayerStarters = (meeting: Meeting, race: number): EarningStarter[] =>
+    meeting.players
+      .find(p => p.player === this.activePlayer)
+      ?.starters
+      .filter(s => s.race === race) || []
 
   getCellValue = (player: string, meeting: string, key: string): string => {
     const meetings = this.meetings.filter(m => m.meeting == meeting);
@@ -172,13 +178,6 @@ export class TrendEveryoneComponent implements OnInit {
       return ['engagements', 'earnings'].includes(key) ? 'X' : '';
     }
     return value.toString();
-  }
-
-  getStarters = (meeting: Meeting, race: number): EarningStarter[] => {
-    return meeting.players
-      .find(p => p.player === this.activePlayer)
-      ?.starters
-      .filter(s => s.race === race) || [];
   }
 
   getSectionStyle = (section: string): string =>
@@ -210,7 +209,7 @@ export class TrendEveryoneComponent implements OnInit {
       );
   }
 
-  get activePersonViewByHorse(): HorseView[] {
+  get activePlayerViewByHorse(): HorseView[] {
     let view: HorseView[] = [];
 
     this.meetings
@@ -249,8 +248,8 @@ export class TrendEveryoneComponent implements OnInit {
     );
   }
 
-  get maxActivePersonHorseTop4Count(): number {
-    return this.activePersonViewByHorse
+  get maxActivePlayerHorseTop4Count(): number {
+    return this.activePlayerViewByHorse
       .map(v => v.starters.length)
       .sort((h1, h2) => h1 - h2)
       .pop() || 1;
@@ -272,7 +271,7 @@ export class TrendEveryoneComponent implements OnInit {
       {placing: 'F', key: 'fourths', color: 'text-purple-600', width: 'w-6'},
       {placing: 'E', key: 'engagements', color: '', width: 'w-8'},
       {placing: '$', key: 'earnings', color: '', width: 'w-12'},
-    ]
+    ];
   }
 
   get overviews(): MeetingOverview[] {
@@ -291,7 +290,7 @@ export class TrendEveryoneComponent implements OnInit {
 
         return {title: title, link: link, meeting: m.meeting}
       }
-    )
+    );
   }
 
   get windowMeetings(): Meeting[] {
