@@ -88,8 +88,8 @@ export class RestDataSource {
   getMeetingCollaborations = (meeting: string): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations/by-meeting?meeting=${meeting}`)
 
-  getDrawInheritances = (): Observable<DrawInheritance[]> =>
-    this.http.get<DrawInheritance[]>(`${this.baseUrl}/draws/inheritance`)
+  getDrawInheritances = (meetingSize: number): Observable<DrawInheritance[]> =>
+    this.http.get<DrawInheritance[]>(`${this.baseUrl}/draws/inheritance?meetingSize=${meetingSize}`)
 
   getLatestDrawInheritances = (): Observable<DrawInheritance[]> =>
     this.http.get<DrawInheritance[]>(`${this.baseUrl}/draws/inheritance/latest`)

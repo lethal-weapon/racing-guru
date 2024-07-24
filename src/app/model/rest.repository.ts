@@ -204,9 +204,9 @@ export class RestRepository {
       callback();
     })
 
-  fetchDrawInheritances = () =>
+  fetchDrawInheritances = (meetingSize: number = 8) =>
     this.source
-      .getDrawInheritances()
+      .getDrawInheritances(meetingSize)
       .subscribe(data => this.drawInheritances = data)
 
   fetchLatestDrawInheritances = () =>
