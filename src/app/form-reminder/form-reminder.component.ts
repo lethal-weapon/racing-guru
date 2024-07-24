@@ -33,12 +33,10 @@ export class FormReminderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchReports();
-    this.repo.fetchReminders(999);
+    this.repo.fetchReports(88);
+    this.repo.fetchReminders(88);
     this.repo.fetchRacecards('latest', () => {
-      this.activeMeeting = this.repo.findRacecards()
-        .map(r => r.meeting)
-        .pop() || '2023-09-10';
+      this.activeMeeting = this.repo.findRacecards()[0]?.meeting || '2023-09-10';
       this.initializeInterview();
     });
   }

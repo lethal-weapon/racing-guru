@@ -55,8 +55,8 @@ export class RestDataSource {
   savePlayerOrders = (players: Player[]): Observable<Player[]> =>
     this.http.post<Player[]>(`${this.baseUrl}/players/ordering`, players)
 
-  getReports = (): Observable<Report[]> =>
-    this.http.get<Report[]>(`${this.baseUrl}/reports`)
+  getReports = (size: number): Observable<Report[]> =>
+    this.http.get<Report[]>(`${this.baseUrl}/reports?size=${size}`)
 
   getReminders = (size: number): Observable<Reminder[]> =>
     this.http.get<Reminder[]>(`${this.baseUrl}/reminders?size=${size}`)

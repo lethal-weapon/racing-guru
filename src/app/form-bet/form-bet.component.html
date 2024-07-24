@@ -198,7 +198,7 @@
         <div class="text-xl text-blue-600">
           {{ ms.month }} {{ ms.year }}
         </div>
-        <div class="px-4 grid grid-cols-2 gap-x-8 gap-y-1">
+        <div class="px-4 grid grid-cols-2 gap-x-8 gap-y-1.5">
           <div class="text-left">Meetings</div>
           <div class="text-right">{{ ms.meetings }}</div>
           <div class="text-left">Betlines</div>
@@ -250,15 +250,20 @@
             <td *ngFor="let ps of ms.pools"
                 class="px-3"
             >
-              <span *ngIf="ps.betlines[0] > 0" class="text-green-600">
-                {{ ps.betlines[0] | number }}
-              </span>
-              <span *ngIf="ps.betlines[0] > 0" class="mx-1">
-                /
-              </span>
-              <span>
-                {{ ps.betlines[1] | number }}
-              </span>
+              <div *ngIf="ps.betlines[1] === 0">
+                -
+              </div>
+              <div *ngIf="ps.betlines[1] > 0">
+                <span *ngIf="ps.betlines[0] > 0" class="text-green-600">
+                  {{ ps.betlines[0] | number }}
+                </span>
+                <span *ngIf="ps.betlines[0] > 0" class="mx-1">
+                  /
+                </span>
+                <span>
+                  {{ ps.betlines[1] | number }}
+                </span>
+              </div>
             </td>
           </tr>
           <tr>
@@ -268,11 +273,16 @@
             <td *ngFor="let ps of ms.pools"
                 class="px-3 text-red-600 text-center"
             >
-              <div>
-                -{{ ps.debit | currency:'USD':'symbol':'1.0-0' }}
+              <div *ngIf="ps.debit === 0">
+                -
               </div>
-              <div>
-                ({{ (ps.debit / ms.debit) | percent:'1.1-1' }})
+              <div *ngIf="ps.debit > 0">
+                <div>
+                  -{{ ps.debit | currency:'USD':'symbol':'1.0-0' }}
+                </div>
+                <div>
+                  ({{ (ps.debit / ms.debit) | percent:'1.1-1' }})
+                </div>
               </div>
             </td>
           </tr>
@@ -284,10 +294,16 @@
                 class="px-3 text-green-600"
             >
               <div *ngIf="ps.credit === 0">
-                X
+                -
               </div>
               <div *ngIf="ps.credit > 0">
                 +{{ ps.credit | currency:'USD':'symbol':'1.0-0' }}
+              </div>
+              <div *ngIf="ps.credit === 0">
+                -
+              </div>
+              <div *ngIf="ps.credit > 0 && ms.credit > 0">
+                ({{ (ps.credit / ms.credit) | percent:'1.1-1' }})
               </div>
             </td>
           </tr>
@@ -300,7 +316,12 @@
                 [class.text-red-600]="ps.credit < ps.debit"
                 [class.text-green-600]="ps.credit > ps.debit"
             >
-              {{ (ps.credit - ps.debit) | currency:'USD':'symbol':'1.0-0' }}
+              <div *ngIf="ps.debit === 0">
+                -
+              </div>
+              <div *ngIf="ps.debit > 0">
+                {{ (ps.credit - ps.debit) | currency:'USD':'symbol':'1.0-0' }}
+              </div>
             </td>
           </tr>
           <tr>
@@ -310,8 +331,8 @@
             <td *ngFor="let ps of ms.pools"
                 class="px-3 {{ps.roi > 0 ? 'text-green-600' : 'text-red-600'}}"
             >
-              <div *ngIf="ps.roi === -1">
-                X
+              <div *ngIf="ps.roi === 0 || ps.roi === -1">
+                -
               </div>
               <div *ngIf="ps.roi !== -1">
                 {{ ps.roi | percent:'1.1-2' }}

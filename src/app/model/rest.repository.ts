@@ -113,8 +113,8 @@ export class RestRepository {
       error => errorCallback()
     )
 
-  fetchReports = () =>
-    this.source.getReports().subscribe(data => this.reports = data)
+  fetchReports = (size: number = 8) =>
+    this.source.getReports(size).subscribe(data => this.reports = data)
 
   fetchReminders = (size: number = 8) =>
     this.source.getReminders(size).subscribe(data => this.reminders = data)
