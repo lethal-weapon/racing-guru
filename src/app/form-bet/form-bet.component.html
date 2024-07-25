@@ -60,7 +60,7 @@
   <table *ngIf="activeRange === BY_MEETING && activeView === BY_SUMMARY"
          class="mx-auto border-collapse border border-gray-600 text-center"
   >
-    <thead class="text-lg">
+    <thead class="text-lg bg-gray-800">
       <th class="border border-gray-600 py-1.5 px-6">
         #
       </th>
@@ -130,7 +130,7 @@
   <table *ngIf="activeRange === BY_MEETING && activeView === BY_POOL"
          class="mx-auto border-collapse border border-gray-600 text-center"
   >
-    <thead class="text-lg">
+    <thead class="text-lg bg-gray-800">
       <th class="border border-gray-600 py-1.5 px-6">
         #
       </th>
@@ -267,11 +267,11 @@
             </td>
           </tr>
           <tr>
-            <td class="px-3">
+            <td class="px-3 py-1">
               Debit
             </td>
             <td *ngFor="let ps of ms.pools"
-                class="px-3 text-red-600 text-center"
+                class="px-3 py-1 text-red-600 text-center leading-5"
             >
               <div *ngIf="ps.debit === 0">
                 -
@@ -287,20 +287,17 @@
             </td>
           </tr>
           <tr>
-            <td class="px-3">
+            <td class="px-3 py-1">
               Credit
             </td>
             <td *ngFor="let ps of ms.pools"
-                class="px-3 text-green-600"
+                class="px-3 py-1 text-green-600 leading-5"
             >
               <div *ngIf="ps.credit === 0">
                 -
               </div>
               <div *ngIf="ps.credit > 0">
                 +{{ ps.credit | currency:'USD':'symbol':'1.0-0' }}
-              </div>
-              <div *ngIf="ps.credit === 0">
-                -
               </div>
               <div *ngIf="ps.credit > 0 && ms.credit > 0">
                 ({{ (ps.credit / ms.credit) | percent:'1.1-1' }})

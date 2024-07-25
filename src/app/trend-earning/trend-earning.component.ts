@@ -3,17 +3,8 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Meeting} from '../model/meeting.model';
 import {Player} from '../model/player.model';
+import {ChartLine} from '../model/chart.model';
 import {SEASONS} from '../util/strings';
-
-interface ChartLinePoint {
-  name: string,
-  value: number
-}
-
-interface ChartLine {
-  name: string,
-  series: ChartLinePoint[]
-}
 
 interface PlayerGroup {
   name: string,

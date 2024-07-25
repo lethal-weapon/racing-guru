@@ -51,6 +51,7 @@ export const COLORS = [
 ];
 
 export const SEASONS: Season[] = [
+  {label: '24/25', opening: '2024-09-08', finale: '2025-07-13'},
   {label: '23/24', opening: '2023-09-10', finale: '2024-07-14'},
   {label: '22/23', opening: '2022-09-11', finale: '2023-07-16'},
 ]
