@@ -23,32 +23,32 @@ export interface Season {
 }
 
 export const BOUNDARY_POOLS = [
-  'F-F', 'QTT', 'PLA-3', 'QPL-3', 'TBL-2', '6UP-2', 'D-T', 'TT-2'
-];
+  'F-F', 'QTT', 'PLA-3', 'QPL-3', 'TBL-2', '6UP-2', 'D-T', 'TT-2',
+]
 
 export const RATING_GRADES = [
   'A', 'B', 'C', 'D',
 ]
 
 export const COMMON_HORSE_ORIGINS = [
-  'AUS', 'NZ', 'IRE'
-];
+  'AUS', 'NZ', 'IRE',
+]
 
 export const LICENCES = [
   'Club', 'Freelance',
-];
+]
 
 export const NATIONALITIES = [
   'HK', 'AUS', 'NZ', 'SAF', 'MAU', 'BRZ', 'JPN',
-  'GB', 'FR', 'ITY', 'IRE', 'GER', 'DEN', 'BEL'
-];
+  'GB', 'FR', 'ITY', 'IRE', 'GER', 'DEN', 'BEL',
+]
 
 export const COLORS = [
   'text-red-600',
   'text-green-600',
   'text-blue-600',
   'text-purple-600',
-];
+]
 
 export const SEASONS: Season[] = [
   {label: '24/25', opening: '2024-09-08', finale: '2025-07-13'},
@@ -60,15 +60,15 @@ export const PLACING_MAPS: PlacingMap[] = [
   {placing: 'W', color: 'text-red-600'},
   {placing: 'Q', color: 'text-green-600'},
   {placing: 'P', color: 'text-blue-600'},
-  {placing: 'F', color: 'text-purple-600'}
-];
+  {placing: 'F', color: 'text-purple-600'},
+]
 
 export const ODDS_INTENSITIES: OddsIntensity[] = [
   {category: 'favorite', color: 'text-red-600', lower: 1.0, upper: 3.9},
   {category: 'superior', color: 'text-green-600', lower: 4.0, upper: 9.9},
   {category: 'inferior', color: 'text-blue-600', lower: 10.0, upper: 19.9},
   {category: 'unwanted', color: 'text-purple-600', lower: 20.0, upper: 999.0},
-];
+]
 
 export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
   {order: 1, factor: 'familiarity', abbreviation: 'FAM'},
@@ -83,4 +83,4 @@ export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
   {order: 10, factor: 'individualAbsorption', abbreviation: 'IA'},
   {order: 11, factor: 'horseOwner', abbreviation: 'HO'},
   {order: 12, factor: 'occasion', abbreviation: 'OCC'},
-];
+]

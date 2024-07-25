@@ -11,13 +11,13 @@ import {EarningStarter, Meeting} from '../model/meeting.model';
 import {Collaboration, CollaborationStarter} from '../model/collaboration.model';
 import {ONE_DAY_MILL, ONE_MILLION, PAYOUT_RATE, SENIOR_HORSE_AGE} from '../util/numbers';
 import {
-  getHorseProfileUrl,
   getMaxRace,
   getPlacingBorderBackground,
   getRaceBadgeStyle,
   getStarterQQPWinPlaceOdds,
   getStarters,
-  getStarterWinPlaceOdds
+  getStarterWinPlaceOdds,
+  toHorseProfileUrl
 } from '../util/functions';
 
 @Component({
@@ -41,7 +41,7 @@ export class RacecardComponent implements OnInit {
   protected readonly getMaxRace = getMaxRace;
   protected readonly getStarters = getStarters;
   protected readonly getRaceBadgeStyle = getRaceBadgeStyle;
-  protected readonly getHorseProfileUrl = getHorseProfileUrl;
+  protected readonly toHorseProfileUrl = toHorseProfileUrl;
   protected readonly getPlacingBorderBackground = getPlacingBorderBackground;
   protected readonly getStarterWinPlaceOdds = getStarterWinPlaceOdds;
 

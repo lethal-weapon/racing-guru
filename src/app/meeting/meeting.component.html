@@ -100,7 +100,7 @@
                 {{ getStarter(jockey, race).order }}
               </div>
               <div>
-                <a [href]="getHorseProfileUrl(getStarter(jockey, race).horse)"
+                <a [href]="toHorseProfileUrl(getStarter(jockey, race).horse)"
                    target="_blank"
                 >
                   {{ getStarter(jockey, race).horse[0] }}

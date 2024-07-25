@@ -1,8 +1,6 @@
 export const TWO_SECONDS = 2_000;
 export const THREE_SECONDS = 3_000;
 export const FIVE_SECONDS = 5_000;
-export const TEN_SECONDS = 10_000;
-export const TWENTY_SECONDS = 20_000;
 export const THIRTY_SECONDS = 30_000;
 export const ONE_MINUTE = 60_000;
 
@@ -32,5 +30,3 @@ export const QPL_ODDS_STEP = 3;
 export const QIN_ODDS_STEP = 5;
 export const FCT_ODDS_STEP = 10;
 export const DBL_ODDS_STEP = 10;
-
-export const QIN_FCT_DIFF_RATE = 0.2;

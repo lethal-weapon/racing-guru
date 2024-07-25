@@ -6,14 +6,17 @@ import {COLORS, ODDS_INTENSITIES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
 import {Meeting} from '../model/meeting.model';
 
-export const toMillion = (amount: number): string =>
-  (amount / ONE_MILLION).toFixed(2)
-
 export const formatOdds = (odds: number): string =>
   odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString()
 
 export const formatMeeting = (meeting: string): string =>
   meeting.replace(/^\d{4}-/g, '')
+
+export const toMillion = (amount: number): string =>
+  (amount / ONE_MILLION).toFixed(2)
+
+export const toHorseProfileUrl = (brand: string): string =>
+  `https://racing.hkjc.com/racing/information/English/Horse/Horse.aspx?HorseNo=${brand}`
 
 export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
   const spotTime = new Date(detectedAt);
@@ -43,13 +46,6 @@ export const isBoundaryMeeting = (meetings: Meeting[], meeting: string): boolean
     )
     .includes(meeting)
 
-export const getHorseProfileUrl = (brand: string): string => {
-  return `
-        https://racing.hkjc.com/racing/information/
-        English/Horse/Horse.aspx?HorseNo=${brand}
-    `.replace(/\s/g, '');
-}
-
 export const getMaxRace = (racecards: Racecard[]): number =>
   racecards.map(r => r.race).pop() || 0
 
@@ -58,6 +54,9 @@ export const getStarter = (jockey: string, racecard: Racecard): Starter => {
   return racecard.starters.find(s => s.jockey === jockey);
 }
 
+export const getTrainer = (jockey: string, racecard: Racecard): string =>
+  getStarter(jockey, racecard)?.trainer || '?';
+
 export const getStarters = (racecard: Racecard): Starter[] => {
   if (!racecard) return [];
 
@@ -65,12 +64,9 @@ export const getStarters = (racecard: Racecard): Starter[] => {
     const odds1 = getWinPlaceOdds(s1.jockey, racecard);
     const odds2 = getWinPlaceOdds(s2.jockey, racecard);
 
-    return (odds1.win - odds2.win) || (odds1.place - odds2.place);
+    return (odds1.win - odds2.win) || (odds1.place - odds2.place) || (s1.order - s2.order);
   });
 }
-
-export const getTrainer = (jockey: string, racecard: Racecard): string =>
-  getStarter(jockey, racecard)?.trainer || '?';
 
 export const getWinPlaceOdds = (jockey: string, racecard: Racecard): WinPlaceOdds => {
   const order = getStarter(jockey, racecard)?.order || 0;
@@ -103,21 +99,6 @@ export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard):
 
 export const getSignalColor = (signals: SingularSignal[] | CombinationSignal[]): string =>
   signals.length > 1 ? COLORS[0] : COLORS[1];
-
-export const getPlacing = (jockey: string, racecard: Racecard): number => {
-  const forecast = racecard?.dividend?.forecast;
-  const tierce = racecard?.dividend?.tierce;
-  const quartet = racecard?.dividend?.quartet;
-  if (!forecast) return 0;
-
-  let orders = forecast[0].orders;
-  if (tierce) orders = tierce[0].orders;
-  if (quartet) orders = quartet[0].orders;
-
-  const order = getStarter(jockey, racecard)?.order;
-  if (!orders.includes(order)) return 0;
-  return orders.indexOf(order) + 1;
-}
 
 export const toPlacingColor = (placing: number | undefined): string =>
   (placing && placing >= 1 && placing <= 4) ? COLORS[placing - 1] : ''

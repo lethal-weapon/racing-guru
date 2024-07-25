@@ -12,12 +12,12 @@ import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
 import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
-  getHorseProfileUrl,
   getOddsIntensityColor,
   getStarter,
   getStarterWinPlaceOdds,
   getTrainer,
   getWinPlaceOdds,
+  toHorseProfileUrl,
   toMillion,
   toPlacingColor
 } from '../util/functions';
@@ -58,7 +58,7 @@ export class MeetingComponent implements OnInit {
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;
   protected readonly getWinPlaceOdds = getWinPlaceOdds;
-  protected readonly getHorseProfileUrl = getHorseProfileUrl;
+  protected readonly toHorseProfileUrl = toHorseProfileUrl;
   protected readonly getOddsIntensityColor = getOddsIntensityColor;
 
   constructor(
