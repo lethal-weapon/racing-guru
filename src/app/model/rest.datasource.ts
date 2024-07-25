@@ -37,8 +37,8 @@ export class RestDataSource {
   getBets = (): Observable<Bet[]> =>
     this.http.get<Bet[]>(`${this.baseUrl}/bets`)
 
-  getHorses = (): Observable<Horse[]> =>
-    this.http.get<Horse[]>(`${this.baseUrl}/horses`)
+  getHorseWithoutStarters = (): Observable<Horse[]> =>
+    this.http.get<Horse[]>(`${this.baseUrl}/horses/without-starters`)
 
   getMeetingHorses = (): Observable<Horse[]> =>
     this.http.get<Horse[]>(`${this.baseUrl}/horses/latest`)

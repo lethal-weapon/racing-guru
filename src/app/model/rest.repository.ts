@@ -66,8 +66,8 @@ export class RestRepository {
   fetchBets = () =>
     this.source.getBets().subscribe(data => this.bets = data)
 
-  fetchHorses = () =>
-    this.source.getHorses().subscribe(data => this.horses = data)
+  fetchHorseWithoutStarters = () =>
+    this.source.getHorseWithoutStarters().subscribe(data => this.horses = data)
 
   fetchMeetingHorses = () =>
     this.source.getMeetingHorses().subscribe(data => this.horses = data)
