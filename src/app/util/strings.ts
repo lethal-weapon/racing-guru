@@ -10,12 +10,6 @@ export interface OddsIntensity {
   upper: number
 }
 
-export interface RatingFactorMap {
-  order: number,
-  factor: string,
-  abbreviation: string
-}
-
 export interface Season {
   label: string,
   opening: string,
@@ -68,19 +62,4 @@ export const ODDS_INTENSITIES: OddsIntensity[] = [
   {category: 'superior', color: 'text-green-600', lower: 4.0, upper: 9.9},
   {category: 'inferior', color: 'text-blue-600', lower: 10.0, upper: 19.9},
   {category: 'unwanted', color: 'text-purple-600', lower: 20.0, upper: 999.0},
-]
-
-export const RATING_FACTOR_MAPS: RatingFactorMap[] = [
-  {order: 1, factor: 'familiarity', abbreviation: 'FAM'},
-  {order: 2, factor: 'collaboration', abbreviation: 'COL'},
-  {order: 3, factor: 'individualContinuity', abbreviation: 'IC'},
-  {order: 4, factor: 'collaboratedContinuity', abbreviation: 'CC'},
-  {order: 5, factor: 'dueAcquisition', abbreviation: 'DA'},
-  {order: 6, factor: 'dueCollaboration', abbreviation: 'DC'},
-  {order: 7, factor: 'individualLookAhead', abbreviation: 'ILA'},
-  {order: 8, factor: 'collaboratedLookAhead', abbreviation: 'CLA'},
-  {order: 9, factor: 'horseAbsorption', abbreviation: 'HA'},
-  {order: 10, factor: 'individualAbsorption', abbreviation: 'IA'},
-  {order: 11, factor: 'horseOwner', abbreviation: 'HO'},
-  {order: 12, factor: 'occasion', abbreviation: 'OCC'},
 ]

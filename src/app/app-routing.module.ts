@@ -5,6 +5,8 @@ import {MeetingComponent} from './meeting/meeting.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
+import {BacktestExactComponent} from './backtest-exact/backtest-exact.component';
+import {BacktestGeneralComponent} from './backtest-general/backtest-general.component';
 import {TrendComponent} from './trend/trend.component';
 import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component';
 import {TrendEarningComponent} from './trend-earning/trend-earning.component';
@@ -22,7 +24,24 @@ const routes: Routes = [
   {path: 'meeting', component: MeetingComponent},
   {path: 'racecard', component: RacecardComponent},
   {path: 'odds', component: OddsComponent},
-  {path: 'backtest', component: BacktestComponent},
+  {
+    path: 'backtest',
+    component: BacktestComponent,
+    children: [
+      {
+        path: '',
+        component: BacktestGeneralComponent,
+      },
+      {
+        path: 'general',
+        component: BacktestGeneralComponent,
+      },
+      {
+        path: 'exact',
+        component: BacktestExactComponent,
+      },
+    ]
+  },
   {
     path: 'trend',
     component: TrendComponent,

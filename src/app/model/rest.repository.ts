@@ -15,7 +15,7 @@ import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {BlacklistConnection} from './connection.model';
-import {FactorHit} from './backtest.model';
+import {FactorHit, GeneralChanceFactor} from './backtest.model';
 
 @Injectable()
 export class RestRepository {
@@ -33,6 +33,8 @@ export class RestRepository {
   private syndicateSnapshots: SyndicateSnapshot[] = [];
   private trackworkSnapshots: TrackworkSnapshot[] = [];
   private blacklistConnections: BlacklistConnection[] = [];
+
+  private generalChanceFactors: GeneralChanceFactor[] = [];
   private factorHits: FactorHit[] = [];
 
   constructor(private source: RestDataSource) {
@@ -52,6 +54,7 @@ export class RestRepository {
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
   findBlacklistConnections = () => this.blacklistConnections
+  findGeneralChanceFactors = () => this.generalChanceFactors
   findFactorHits = () => this.factorHits
 
   fetchPick = (callback: () => any) =>
@@ -240,6 +243,12 @@ export class RestRepository {
     this.source
       .getBlacklistConnections(meeting)
       .subscribe(data => this.blacklistConnections = data)
+
+  fetchGeneralChanceFactors = (callback: () => any) =>
+    this.source.getGeneralChanceFactors().subscribe(data => {
+      this.generalChanceFactors = data;
+      callback();
+    })
 
   fetchFactorHits = (factorCombinations: string[][], callback: () => any) =>
     this.source.getBacktestFactorHits(factorCombinations).subscribe(data => {

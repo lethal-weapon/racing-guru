@@ -17,15 +17,19 @@ import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {BlacklistConnection} from './connection.model';
-import {FactorHit} from './backtest.model';
+import {FactorHit, GeneralChanceFactor} from './backtest.model';
 
 @Injectable()
 export class RestDataSource {
   baseUrl: string;
+  backtestBaseUrl: string;
 
   constructor(private http: HttpClient) {
     this.baseUrl =
       `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}`;
+
+    this.backtestBaseUrl =
+      `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.BACKTEST_SERVER_PORT}/backtest`;
   }
 
   getPick = (): Observable<Pick> =>
@@ -103,6 +107,9 @@ export class RestDataSource {
   getBlacklistConnections = (meeting: string): Observable<BlacklistConnection[]> =>
     this.http.get<BlacklistConnection[]>(`${this.baseUrl}/players/blacklist-connections?meeting=${meeting}`)
 
+  getGeneralChanceFactors = (): Observable<GeneralChanceFactor[]> =>
+    this.http.get<GeneralChanceFactor[]>(`${this.backtestBaseUrl}/general-chance-factors`)
+
   getBacktestFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
-    this.http.post<FactorHit[]>(`${this.baseUrl}/backtest`, factorCombinations)
+    this.http.post<FactorHit[]>(`${this.backtestBaseUrl}`, factorCombinations)
 }

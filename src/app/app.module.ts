@@ -21,6 +21,8 @@ import {MeetingComponent} from './meeting/meeting.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
+import {BacktestExactComponent} from './backtest-exact/backtest-exact.component';
+import {BacktestGeneralComponent} from './backtest-general/backtest-general.component';
 import {TrendComponent} from './trend/trend.component';
 import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component';
 import {TrendTopsComponent} from './trend-tops/trend-tops.component';
@@ -47,6 +49,8 @@ import {FormFixtureComponent} from './form-fixture/form-fixture.component';
     RacecardComponent,
     OddsComponent,
     BacktestComponent,
+    BacktestExactComponent,
+    BacktestGeneralComponent,
     TrendComponent,
     TrendEveryoneComponent,
     TrendEarningComponent,

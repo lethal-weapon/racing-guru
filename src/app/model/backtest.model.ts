@@ -1,3 +1,10 @@
+export interface GeneralChanceFactor {
+  order: number,
+  name: string,
+  description: string,
+  negative: boolean
+}
+
 export interface FactorHit {
   factors: string[],
   totalHits: number,
