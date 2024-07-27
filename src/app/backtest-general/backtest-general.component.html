@@ -3,7 +3,7 @@
     <div class="flex flex-row justify-center gap-x-3">
       <div *ngFor="let action of actions"
            class="px-2 pt-1.5 pb-2 text-lg rounded-lg hvr-grow-shadow cursor-pointer border border-gray-600 hover:border-yellow-400"
-           [class.opacity-25]="isLoading"
+           [class.opacity-25]="isLoading || (action === 'Run Tests' && factorCombinations.length === 0)"
            (click)="process(action)"
       >
         {{ action }}
@@ -37,31 +37,47 @@
         <i class="fa fa-plus"></i>
       </div>
     </div>
-    <div *ngFor="let m of generalFactors"
-         class="px-4 py-2 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getBadgeStyle(m.name)}}"
+    <div *ngFor="let factor of generalFactors"
+         class="px-4 py-2 text-lg rounded-full hvr-float-shadow cursor-pointer border {{getBadgeStyle(factor.name)}}"
+         (mouseenter)="hoveringFactor = factor"
     >
       <div class="grid grid-cols-12">
-        <div class="col-span-1">
-          {{ m.order }}
+        <div class="col-span-2">
+          {{ factor.order }}
+          <sup *ngIf="factor.negative">N</sup>
         </div>
-        <div class="col-span-10"
-             (click)="toggleFactor(m.name)"
+        <div class="col-span-8"
+             (click)="toggleFactor(factor.name)"
         >
-          {{ m.name }}
+          {{ factor.name }}
         </div>
-        <div class="col-span-1"
-             (click)="toggleFactor(m.name, true)"
+        <div class="col-span-2"
+             (click)="toggleFactor(factor.name, true)"
         >
-          <div *ngIf="bankerFactors.includes(m.name)">
+          <div *ngIf="bankerFactors.includes(factor.name)">
             <i class="fa fa-star"></i>
           </div>
-          <div *ngIf="!bankerFactors.includes(m.name)">
+          <div *ngIf="!bankerFactors.includes(factor.name)">
             <i class="fa fa-star-o"></i>
           </div>
         </div>
       </div>
     </div>
+    <div *ngIf="hoveringFactor"
+         class="px-2 flex flex-col gap-y-2 text-lg"
+    >
+      <div class="text-yellow-400 font-bold">
+        Factor #{{ hoveringFactor.order }}
+      </div>
+      <div class="text-left">
+        {{ hoveringFactor.description }}
+        <em *ngIf="hoveringFactor.negative">
+          This is a negative factor.
+        </em>
+      </div>
+    </div>
   </div>
+
   <div class="mx-auto">
     <div *ngIf="isLoading">
       <app-spinner></app-spinner>
