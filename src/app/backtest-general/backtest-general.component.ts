@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {powerSet} from '../util/functions';
-import {FactorHit, FactorHitPlacing, GeneralChanceFactor, MeetingYield, TesterYield} from '../model/backtest.model';
+import {Factor, FactorHit, FactorHitPlacing, MeetingYield, TesterYield} from '../model/backtest.model';
 
 @Component({
   selector: 'app-backtest-general',
@@ -13,7 +13,7 @@ export class BacktestGeneralComponent implements OnInit {
   isLoading = false;
   activeFactors: string[] = [];
   bankerFactors: string[] = [];
-  hoveringFactor: GeneralChanceFactor | undefined;
+  hoveringFactor: Factor | undefined;
   minFactorGroupSize = 1;
 
   activeFactorHitIndex = 0;
@@ -24,10 +24,10 @@ export class BacktestGeneralComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchGeneralChanceFactors(() => {
-      this.hoveringFactor = this.repo.findGeneralChanceFactors()[0];
-      this.activeFactors = [this.repo.findGeneralChanceFactors()[0].name];
-      this.bankerFactors = [this.repo.findGeneralChanceFactors()[0].name];
+    this.repo.fetchBacktestFactors(() => {
+      this.hoveringFactor = this.generalFactors[0];
+      this.activeFactors = [this.generalFactors[0].name];
+      this.bankerFactors = [this.generalFactors[0].name];
     });
   }
 
@@ -301,7 +301,7 @@ export class BacktestGeneralComponent implements OnInit {
     return ['Reset', 'Select All', 'Run Tests'];
   }
 
-  get generalFactors(): GeneralChanceFactor[] {
-    return this.repo.findGeneralChanceFactors();
+  get generalFactors(): Factor[] {
+    return this.repo.findFactors().filter(f => f.general);
   }
 }

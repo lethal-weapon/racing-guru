@@ -11,13 +11,14 @@ import {Player} from './player.model';
 import {Report} from './report.model';
 import {Reminder} from './reminder.model';
 import {Racecard} from './racecard.model';
+import {Recommendation} from './recommendation.model';
 import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {BlacklistConnection} from './connection.model';
-import {FactorHit, GeneralChanceFactor} from './backtest.model';
+import {FactorHit, Factor} from './backtest.model';
 
 @Injectable()
 export class RestDataSource {
@@ -71,6 +72,9 @@ export class RestDataSource {
   getRacecards = (meeting: string): Observable<Racecard[]> =>
     this.http.get<Racecard[]>(`${this.baseUrl}/racecards?meeting=${meeting}`)
 
+  getRecommendations = (size: number): Observable<Recommendation[]> =>
+    this.http.get<Recommendation[]>(`${this.baseUrl}/recommendations?size=${size}`)
+
   getSyndicates = (): Observable<Syndicate[]> =>
     this.http.get<Syndicate[]>(`${this.baseUrl}/syndicates`)
 
@@ -107,9 +111,9 @@ export class RestDataSource {
   getBlacklistConnections = (meeting: string): Observable<BlacklistConnection[]> =>
     this.http.get<BlacklistConnection[]>(`${this.baseUrl}/players/blacklist-connections?meeting=${meeting}`)
 
-  getGeneralChanceFactors = (): Observable<GeneralChanceFactor[]> =>
-    this.http.get<GeneralChanceFactor[]>(`${this.backtestBaseUrl}/general-chance-factors`)
+  getBacktestFactors = (): Observable<Factor[]> =>
+    this.http.get<Factor[]>(`${this.backtestBaseUrl}/factors`)
 
-  getBacktestFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
-    this.http.post<FactorHit[]>(`${this.backtestBaseUrl}`, factorCombinations)
+  getGeneralChanceFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
+    this.http.post<FactorHit[]>(`${this.backtestBaseUrl}/general-hits`, factorCombinations)
 }

@@ -6,6 +6,7 @@ import {environment as env} from '../environments/environment';
 import {THIRTY_SECONDS} from './util/numbers';
 import {Pick} from './model/pick.model';
 import {Racecard} from './model/racecard.model';
+import {Recommendation} from './model/recommendation.model';
 import {Meeting} from './model/meeting.model';
 import {Collaboration} from './model/collaboration.model';
 import {SyndicateSnapshot} from './model/syndicate.model';
@@ -25,6 +26,9 @@ export class WebsocketService {
 
   racecardTopic = '/topic/racecard';
   onRacecardCallbacks: ((newCard: Racecard) => any)[] = [];
+
+  recommendationTopic = '/topic/recommendation';
+  onRecommendationCallbacks: ((newRecommendation: Recommendation) => any)[] = [];
 
   meetingTopic = '/topic/meeting';
   onMeetingCallbacks: ((newMeeting: Meeting) => any)[] = [];
@@ -51,6 +55,9 @@ export class WebsocketService {
   addRacecardCallback = (callback: (newCard: Racecard) => any) =>
     this.onRacecardCallbacks.push(callback)
 
+  addRecommendationCallback = (callback: (newRecommendation: Recommendation) => any) =>
+    this.onRecommendationCallbacks.push(callback)
+
   addMeetingCallback = (callback: (newMeeting: Meeting) => any) =>
     this.onMeetingCallbacks.push(callback)
 
@@ -68,6 +75,7 @@ export class WebsocketService {
       (frame: any) => {
         this.subscribeToPickTopic();
         this.subscribeToRacecardTopic();
+        this.subscribeToRecommendationTopic();
         this.subscribeToMeetingTopic();
         this.subscribeToCollaborationTopic();
         this.subscribeToSyndicateSnapshotTopic();
@@ -96,6 +104,13 @@ export class WebsocketService {
     this.client.subscribe(this.racecardTopic, (message: any) => {
       const newCard = JSON.parse(message.body) as Racecard;
       this.onRacecardCallbacks.forEach(callback => callback(newCard));
+    });
+  }
+
+  subscribeToRecommendationTopic = () => {
+    this.client.subscribe(this.recommendationTopic, (message: any) => {
+      const newRecommendation = JSON.parse(message.body) as Recommendation;
+      this.onRecommendationCallbacks.forEach(callback => callback(newRecommendation));
     });
   }
 

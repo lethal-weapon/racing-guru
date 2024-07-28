@@ -1,7 +1,8 @@
-export interface GeneralChanceFactor {
+export interface Factor {
   order: number,
   name: string,
   description: string,
+  general: boolean,
   negative: boolean
 }
 

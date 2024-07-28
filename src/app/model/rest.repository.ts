@@ -9,13 +9,14 @@ import {Player} from './player.model';
 import {Report} from './report.model';
 import {Reminder} from './reminder.model';
 import {Racecard} from './racecard.model';
+import {Recommendation} from './recommendation.model';
 import {Syndicate, SyndicateSnapshot} from './syndicate.model';
 import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {BlacklistConnection} from './connection.model';
-import {FactorHit, GeneralChanceFactor} from './backtest.model';
+import {Factor, FactorHit} from './backtest.model';
 
 @Injectable()
 export class RestRepository {
@@ -26,6 +27,7 @@ export class RestRepository {
   private reports: Report[] = [];
   private reminders: Reminder[] = [];
   private racecards: Racecard[] = [];
+  private recommendations: Recommendation[] = [];
   private syndicates: Syndicate[] = [];
   private meetings: Meeting[] = [];
   private collaborations: Collaboration[] = [];
@@ -34,7 +36,7 @@ export class RestRepository {
   private trackworkSnapshots: TrackworkSnapshot[] = [];
   private blacklistConnections: BlacklistConnection[] = [];
 
-  private generalChanceFactors: GeneralChanceFactor[] = [];
+  private factors: Factor[] = [];
   private factorHits: FactorHit[] = [];
 
   constructor(private source: RestDataSource) {
@@ -47,6 +49,7 @@ export class RestRepository {
   findReports = () => this.reports
   findReminders = () => this.reminders
   findRacecards = () => this.racecards
+  findRecommendations = () => this.recommendations
   findSyndicates = () => this.syndicates
   findMeetings = () => this.meetings
   findCollaborations = () => this.collaborations
@@ -54,7 +57,8 @@ export class RestRepository {
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
   findBlacklistConnections = () => this.blacklistConnections
-  findGeneralChanceFactors = () => this.generalChanceFactors
+
+  findFactors = () => this.factors
   findFactorHits = () => this.factorHits
 
   fetchPick = (callback: () => any) =>
@@ -145,6 +149,9 @@ export class RestRepository {
       callback();
     })
   }
+
+  fetchRecommendations = (size: number = 8) =>
+    this.source.getRecommendations(size).subscribe(data => this.recommendations = data)
 
   fetchSyndicates = () =>
     this.source.getSyndicates().subscribe(data => this.syndicates = data)
@@ -244,15 +251,20 @@ export class RestRepository {
       .getBlacklistConnections(meeting)
       .subscribe(data => this.blacklistConnections = data)
 
-  fetchGeneralChanceFactors = (callback: () => any) =>
-    this.source.getGeneralChanceFactors().subscribe(data => {
-      this.generalChanceFactors = data;
+  fetchBacktestFactors = (callback: () => any) =>
+    this.source.getBacktestFactors().subscribe(data => {
+      this.factors = data;
       callback();
     })
 
-  fetchFactorHits = (factorCombinations: string[][], callback: () => any) =>
-    this.source.getBacktestFactorHits(factorCombinations).subscribe(data => {
-      this.factorHits = data;
-      callback();
-    })
+  fetchGeneralChanceFactorHits = (
+    factorCombinations: string[][],
+    callback: () => any
+  ) =>
+    this.source
+      .getGeneralChanceFactorHits(factorCombinations)
+      .subscribe(data => {
+        this.factorHits = data;
+        callback();
+      })
 }
