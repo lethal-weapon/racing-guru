@@ -2,7 +2,13 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {powerSet} from '../util/functions';
-import {Factor, FactorHit, FactorHitPlacing, MeetingYield, TesterYield} from '../model/backtest.model';
+import {
+  Factor,
+  FactorHit,
+  FactorHitPlacing,
+  MeetingYield,
+  TesterYield
+} from '../model/backtest.model';
 
 @Component({
   selector: 'app-backtest-general',
@@ -17,7 +23,6 @@ export class BacktestGeneralComponent implements OnInit {
   minFactorGroupSize = 1;
 
   activeFactorHitIndex = 0;
-  activeVersion = this.boundaryVersions[0];
   sortedAccuracyField = this.sortableAccuracyFields[0];
 
   constructor(private repo: RestRepository) {
@@ -52,8 +57,11 @@ export class BacktestGeneralComponent implements OnInit {
       }
       case 'Run Tests': {
         if (this.factorCombinations.length > 0) {
-          // this.isLoading = true;
-          // this.repo.fetchFactorHits(this.factorCombinations, () => this.isLoading = false);
+          this.isLoading = true;
+          this.repo.fetchGeneralChanceFactorHits(
+            this.factorCombinations,
+            () => this.isLoading = false
+          );
         }
         break;
       }
@@ -103,7 +111,7 @@ export class BacktestGeneralComponent implements OnInit {
   formatFactorCombination = (combination: string[]): string =>
     combination
       .map(c => this.generalFactors.find(rf => rf.name == c)?.order || 0)
-      .sort((fo1, fo2) => fo1 - fo2)
+      .sort((f1, f2) => f1 - f2)
       .map(fo => fo.toString())
       .join(', ')
 
@@ -116,18 +124,6 @@ export class BacktestGeneralComponent implements OnInit {
 
   getReturnOnInvestment = (tyield: TesterYield | MeetingYield): number =>
     parseFloat((tyield.credit / tyield.debit - 1).toFixed(2))
-
-  getProfitRacesOnMeeting = (myield: MeetingYield): number[] =>
-    myield.races.filter(r => r.credit > r.debit).map(r => r.race)
-
-  countBetlinesOnMeeting = (myield: MeetingYield): number[] => {
-    const betlines = myield.races
-      .map(r => r.betlines)
-      .reduce((prev, curr) => prev.concat(curr), []);
-
-    const positive = betlines.filter(b => b.credit > b.debit).length;
-    return [positive, betlines.length];
-  }
 
   countMeetings = (tyield: TesterYield): number[] => {
     const total = tyield.meetings.length;
@@ -163,15 +159,6 @@ export class BacktestGeneralComponent implements OnInit {
     ].map(e => e.length);
   }
 
-  getMeetingROIColor = (myield: MeetingYield): string => {
-    const roi = this.getReturnOnInvestment(myield);
-    return roi < 0
-      ? 'text-red-600'
-      : roi >= 3
-        ? 'text-yellow-400'
-        : 'text-green-600';
-  }
-
   getTesterROIColor = (tyield: TesterYield): string => {
     const roi = this.getReturnOnInvestment(tyield);
     if (roi < 0) return 'text-red-600';
@@ -184,14 +171,14 @@ export class BacktestGeneralComponent implements OnInit {
     return rank > -1 && rank < 5 ? 'text-yellow-400' : 'text-green-600';
   }
 
-  getFactorROIColor = (tYields: TesterYield[], isDefault: boolean): string => {
+  getFactorROIColor = (tYields: TesterYield[]): string => {
     if (tYields.length === 0) return '';
 
     const roi = this.getTesterAvgROI(tYields);
     if (roi < 0) return 'text-red-600';
 
     const rank = this.factorHits
-      .map(h => this.getTesterAvgROI(isDefault ? h.defaultYields : h.enhancedYields))
+      .map(h => this.getTesterAvgROI(h.yields))
       .sort((r1, r2) => r2 - r1)
       .indexOf(roi);
 
@@ -212,28 +199,10 @@ export class BacktestGeneralComponent implements OnInit {
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400`
 
-  get meetingYields(): MeetingYield[] {
-    return this.activeYields
-      .find(ty => ty.version === this.activeVersion)
-      ?.meetings || [];
-  }
-
   get activeYields(): TesterYield[] {
-    if (this.sortedAccuracyField === 'ROI - B') {
-      return this.factorHits
-        .map(fh =>
-          fh.enhancedYields.map(ey => {
-            ey.credit = Math.floor(ey.credit);
-            ey.version = this.formatFactorCombination(fh.factors);
-            return ey;
-          })
-        )
-        .reduce((prev, curr) => prev.concat(curr));
-    }
-
     if (this.activeFactorHitIndex >= this.factorHits.length) return [];
     return this.factorHits[this.activeFactorHitIndex]
-      .defaultYields
+      .yields
       .map(y => {
         y.credit = Math.floor(y.credit);
         return y;
@@ -242,15 +211,10 @@ export class BacktestGeneralComponent implements OnInit {
 
   get factorHits(): FactorHit[] {
     return this.repo.findFactorHits().sort((h1, h2) => {
-        if (this.sortedAccuracyField === 'ROIA') {
-          const avgROIa1 = this.getTesterAvgROI(h1.defaultYields)
-          const avgROIa2 = this.getTesterAvgROI(h2.defaultYields)
-          return (avgROIa2 - avgROIa1) || (h2.totalHits - h1.totalHits);
-        }
-        if (this.sortedAccuracyField === 'ROIB') {
-          const avgROIb1 = this.getTesterAvgROI(h1.enhancedYields)
-          const avgROIb2 = this.getTesterAvgROI(h2.enhancedYields)
-          return (avgROIb2 - avgROIb1) || (h2.totalHits - h1.totalHits);
+        if (this.sortedAccuracyField === 'ROI') {
+          const avgROI1 = this.getTesterAvgROI(h1.yields)
+          const avgROI2 = this.getTesterAvgROI(h2.yields)
+          return (avgROI2 - avgROI1) || (h2.totalHits - h1.totalHits);
         }
         return h2.totalHits - h1.totalHits;
       }
@@ -264,24 +228,6 @@ export class BacktestGeneralComponent implements OnInit {
       .sort((fc1, fc2) => fc1.length - fc2.length);
   }
 
-  get boundaryVersions(): string[] {
-    return [
-      'W-L1', 'Q-B1-L4', 'QP-B1-L4', 'FF-L6', 'FB-B1-L4', 'TBM-B1-L4', 'QBM-B1-L5',
-    ]
-  }
-
-  get meetingFields(): string[] {
-    const fields = this.profitabilityFields
-      .filter((_, index) => index > 0)
-      .map(f => f === 'Meetings' ? 'Meeting' : f);
-
-    return [
-      ...fields.slice(0, 1),
-      'Profit Race #',
-      ...fields.slice(1)
-    ];
-  }
-
   get profitabilityFields(): string[] {
     return [
       'Tester', 'Meetings', 'Races', 'Betlines',
@@ -290,11 +236,11 @@ export class BacktestGeneralComponent implements OnInit {
   }
 
   get sortableAccuracyFields(): string[] {
-    return this.accuracyFields.slice(this.accuracyFields.length - 3);
+    return this.accuracyFields.slice(this.accuracyFields.length - 2);
   }
 
   get accuracyFields(): string[] {
-    return ['Factors', 'WIN', 'QIN', 'TCE', 'QTT', 'Total', 'ROIA', 'ROIB'];
+    return ['Factors', '3W', '4Q', '5T', '6F', 'Total', 'ROI'];
   }
 
   get actions(): string[] {

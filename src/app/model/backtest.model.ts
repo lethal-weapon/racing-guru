@@ -10,8 +10,7 @@ export interface FactorHit {
   factors: string[],
   totalHits: number,
   hits: FactorHitPlacing[],
-  defaultYields: TesterYield[],
-  enhancedYields: TesterYield[]
+  yields: TesterYield[],
 }
 
 export interface FactorHitPlacing {
