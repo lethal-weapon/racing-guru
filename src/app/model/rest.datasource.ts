@@ -19,6 +19,7 @@ import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {BlacklistConnection} from './connection.model';
 import {FactorHit, Factor} from './backtest.model';
+import {Fixture} from './fixture.model';
 
 @Injectable()
 export class RestDataSource {
@@ -110,6 +111,9 @@ export class RestDataSource {
 
   getBlacklistConnections = (meeting: string): Observable<BlacklistConnection[]> =>
     this.http.get<BlacklistConnection[]>(`${this.baseUrl}/players/blacklist-connections?meeting=${meeting}`)
+
+  getFixtures = (): Observable<Fixture[]> =>
+    this.http.get<Fixture[]>(`${this.baseUrl}/fixtures`)
 
   getBacktestFactors = (): Observable<Factor[]> =>
     this.http.get<Factor[]>(`${this.backtestBaseUrl}/factors`)

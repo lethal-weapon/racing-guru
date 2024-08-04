@@ -17,6 +17,7 @@ import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {BlacklistConnection} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
+import {Fixture} from './fixture.model';
 
 @Injectable()
 export class RestRepository {
@@ -36,6 +37,7 @@ export class RestRepository {
   private trackworkSnapshots: TrackworkSnapshot[] = [];
   private blacklistConnections: BlacklistConnection[] = [];
 
+  private fixtures: Fixture[] = [];
   private factors: Factor[] = [];
   private factorHits: FactorHit[] = [];
 
@@ -58,6 +60,7 @@ export class RestRepository {
   findTrackworkSnapshots = () => this.trackworkSnapshots
   findBlacklistConnections = () => this.blacklistConnections
 
+  findFixtures = () => this.fixtures
   findFactors = () => this.factors
   findFactorHits = () => this.factorHits
 
@@ -250,6 +253,9 @@ export class RestRepository {
     this.source
       .getBlacklistConnections(meeting)
       .subscribe(data => this.blacklistConnections = data)
+
+  fetchFixtures = () =>
+    this.source.getFixtures().subscribe(data => this.fixtures = data)
 
   fetchBacktestFactors = (callback: () => any) =>
     this.source.getBacktestFactors().subscribe(data => {

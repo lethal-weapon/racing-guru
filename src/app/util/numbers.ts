@@ -14,6 +14,7 @@ export const FCT_PAYOUT_RATE = 0.805;
 export const TRI_PAYOUT_RATE = 0.77;
 export const REST_PAYOUT_RATE = 0.75;
 export const MAX_RACE_PER_MEETING = 11;
+export const PAYDAY_MEETING_INTERVAL = 22;
 export const SENIOR_HORSE_AGE = 7;
 
 export const DEFAULT_MIN_QPL_ODDS = 10;

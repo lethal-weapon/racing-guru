@@ -1,7 +1,48 @@
-<div class="my-8 text-4xl text-green-600 text-center">
-  Racing Fixture 23/24
-  <img src="assets/fixture-23-24.png"
-       alt="Racing Fixture 23/24"
-       class="block mx-auto pt-6 w-2/3"
-  />
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!isLoading"
+     class="mx-12 text-center"
+>
+  <div class="grid grid-cols-4 gap-2.5">
+    <div class="text-3xl place-content-center">
+      <div>
+        Season {{ fixture.season }}
+      </div>
+      <div>
+        {{ fixture.meetings.length }} Meetings
+      </div>
+    </div>
+    <div *ngFor="let ms of monthlySummaries"
+         class="px-6 pt-2 pb-2.5 font-mono shadow-md transition shadow-gray-600 hover:shadow-gray-400"
+    >
+      <div class="mb-1 text-xl text-blue-600">
+        {{ ms.month }}
+      </div>
+      <table class="border-collapse">
+        <tr *ngFor="let item of ms.meetings">
+          <td class="px-2 text-right text-green-600 {{getTableCellStyle(item.meeting)}}">
+            #{{ getSeasonOrder(item.meeting) }}
+          </td>
+          <td class="px-2 text-right {{getTableCellStyle(item.meeting)}}">
+            {{ item.day }}
+          </td>
+          <td class="px-2 {{getTableCellStyle(item.meeting)}}">
+            {{ item.venue }}
+          </td>
+          <td *ngIf="item.special"
+              class="px-2 text-left"
+          >
+            {{ item.description }}
+          </td>
+          <td *ngIf="!item.special && isPayday(item.meeting) "
+              class="px-2 text-left text-red-600"
+          >
+            PAYDAY!
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
 </div>
