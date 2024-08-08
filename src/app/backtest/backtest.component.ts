@@ -2,7 +2,13 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {powerSet} from '../util/functions';
-import {Factor, FactorHit, FactorHitPlacing, MeetingYield, TesterYield} from '../model/backtest.model';
+import {
+  Factor,
+  FactorHit,
+  FactorHitPlacing,
+  MeetingYield,
+  TesterYield
+} from '../model/backtest.model';
 
 @Component({
   selector: 'app-backtest',
@@ -53,10 +59,18 @@ export class BacktestComponent implements OnInit {
       case 'Run Tests': {
         if (this.factorCombinations.length > 0) {
           this.isLoading = true;
-          this.repo.fetchGeneralChanceFactorHits(
-            this.factorCombinations,
-            () => this.isLoading = false
-          );
+
+          if (this.isGeneralModeActive) {
+            this.repo.fetchGeneralChanceFactorHits(
+              this.factorCombinations,
+              () => this.isLoading = false
+            );
+          } else {
+            this.repo.fetchExactChanceFactorHits(
+              this.factorCombinations,
+              () => this.isLoading = false
+            );
+          }
         }
         break;
       }
@@ -240,12 +254,16 @@ export class BacktestComponent implements OnInit {
     return ['Reset', 'Select All', 'Run Tests'];
   }
 
+  get isGeneralModeActive(): boolean {
+    return this.activeMode === this.modes[0];
+  }
+
   get modes(): string[] {
     return ['General', 'Exact'];
   }
 
   get factors(): Factor[] {
     return this.repo.findFactors()
-      .filter(f => this.activeMode === this.modes[0] ? f.general : !f.general);
+      .filter(f => this.isGeneralModeActive ? f.general : !f.general);
   }
 }

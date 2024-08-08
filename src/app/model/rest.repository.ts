@@ -273,4 +273,15 @@ export class RestRepository {
         this.factorHits = data;
         callback();
       })
+
+  fetchExactChanceFactorHits = (
+    factorCombinations: string[][],
+    callback: () => any
+  ) =>
+    this.source
+      .getExactChanceFactorHits(factorCombinations)
+      .subscribe(data => {
+        this.factorHits = data;
+        callback();
+      })
 }

@@ -120,4 +120,7 @@ export class RestDataSource {
 
   getGeneralChanceFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
     this.http.post<FactorHit[]>(`${this.backtestBaseUrl}/general-hits`, factorCombinations)
+
+  getExactChanceFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
+    this.http.post<FactorHit[]>(`${this.backtestBaseUrl}/exact-hits`, factorCombinations)
 }
