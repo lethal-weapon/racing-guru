@@ -8,8 +8,7 @@ export interface Starter {
   trainer: string,
   scratched: boolean,
   interviewed: boolean,
-  interviewee: string,
-  chance: number,
+  interviewee: string
 }
 
 export interface StarterChange {

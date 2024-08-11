@@ -43,7 +43,7 @@
           </div>
         </div>
       </th>
-      <th *ngFor="let starter of startersSortedByChance"
+      <th *ngFor="let starter of startersSortedByRank"
           class="w-20 border border-gray-700 text-xl"
       >
         <div class="flex flex-row justify-center">
@@ -58,7 +58,7 @@
         <td class="p-2 border border-gray-700 text-2xl font-mono {{pm.color}}">
           {{ pm.placing }}
         </td>
-        <td *ngFor="let starter of startersSortedByChance"
+        <td *ngFor="let starter of startersSortedByRank"
             class="p-2 border border-gray-700"
         >
           <div class="{{getSelectionCellColor(starter, index + 1)}}"
@@ -74,19 +74,9 @@
       </tr>
       <tr>
         <td class="p-2 border border-gray-700 text-xl font-mono">
-          Engine
-        </td>
-        <td *ngFor="let starter of startersSortedByChance"
-            class="border border-gray-700 text-lg"
-        >
-          {{ starter.chance | percent:'1.1-1' }}
-        </td>
-      </tr>
-      <tr>
-        <td class="p-2 border border-gray-700 text-xl font-mono">
           Public
         </td>
-        <td *ngFor="let starter of startersSortedByChance"
+        <td *ngFor="let starter of startersSortedByRank"
             class="border border-gray-700 text-lg"
         >
           <div *ngIf="getStarterInvestments(starter).length > 0">
@@ -96,24 +86,9 @@
       </tr>
       <tr>
         <td class="p-2 border border-gray-700 text-xl font-mono">
-          Banker
-        </td>
-        <td *ngFor="let starter of startersSortedByChance"
-            class="border border-gray-700 text-lg text-yellow-400"
-        >
-          <span *ngIf="isPublicUnderEstimated(starter)">
-            <i class="fa fa-diamond"></i>
-          </span>
-          <span *ngIf="isEngineUnderEstimated(starter)">
-            <i class="fa fa-warning"></i>
-          </span>
-        </td>
-      </tr>
-      <tr>
-        <td class="p-2 border border-gray-700 text-xl font-mono">
           Favorite
         </td>
-        <td *ngFor="let starter of startersSortedByChance"
+        <td *ngFor="let starter of startersSortedByRank"
             class="border border-gray-700 text-xl cursor-pointer"
             (click)="toggleFavorite(starter)"
         >

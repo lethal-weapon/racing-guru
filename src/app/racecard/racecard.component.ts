@@ -9,6 +9,7 @@ import {DEFAULT_HORSE, Horse, PastStarter} from '../model/horse.model';
 import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
 import {EarningStarter, Meeting} from '../model/meeting.model';
 import {Collaboration, CollaborationStarter} from '../model/collaboration.model';
+import {DEFAULT_RECOMMENDATION, RaceRecommendation, Recommendation} from '../model/recommendation.model';
 import {ONE_DAY_MILL, ONE_MILLION, PAYOUT_RATE, SENIOR_HORSE_AGE} from '../util/numbers';
 import {
   getMaxRace,
@@ -26,6 +27,7 @@ import {
 })
 export class RacecardComponent implements OnInit {
   pick: Pick = DEFAULT_PICK;
+  recommendation: Recommendation = DEFAULT_RECOMMENDATION;
   racecards: Racecard[] = [];
   meetings: Meeting[] = [];
   collaborations: Collaboration[] = [];
@@ -51,6 +53,10 @@ export class RacecardComponent implements OnInit {
   ) {
     socket.addPickCallback((newPick: Pick) => {
       if (this.pick != newPick) this.pick = newPick;
+    });
+
+    socket.addRecommendationCallback((newRecommendation: Recommendation) => {
+      if (this.recommendation != newRecommendation) this.recommendation = newRecommendation;
     });
 
     socket.addRacecardCallback((newCard: Racecard) => {
@@ -90,6 +96,11 @@ export class RacecardComponent implements OnInit {
 
     this.repo.fetchRacecards('latest', () => {
       this.racecards = this.repo.findRacecards();
+    });
+
+    this.repo.fetchRecommendations(1, () => {
+      this.recommendation =
+        this.repo.findRecommendations()[0] || DEFAULT_RECOMMENDATION;
     });
 
     this.repo.fetchMeetings(8, () => {
@@ -206,28 +217,6 @@ export class RacecardComponent implements OnInit {
     )
       .some(s => s.order === starter.order && s.placing === placing)
 
-  isPublicUnderEstimated = (starter: Starter): boolean => {
-    const investments = this.getStarterInvestments(starter);
-    if (investments.length === 0) return false;
-
-    const engineChance = 100 * (starter?.chance || 0);
-    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
-    const tops = this.startersSortedByChance.map(s => s.order).slice(0, 6);
-
-    return tops.includes(starter.order) && (engineChance - publicChance >= 3);
-  }
-
-  isEngineUnderEstimated = (starter: Starter): boolean => {
-    const investments = this.getStarterInvestments(starter);
-    if (investments.length === 0) return false;
-
-    const engineChance = 100 * (starter?.chance || 0);
-    const publicChance = parseFloat(investments[0].percent.replace('%', ''));
-    const bottoms = this.startersSortedByChance.map(s => s.order).slice(6);
-
-    return bottoms.includes(starter.order) && (publicChance - engineChance >= 3);
-  }
-
   getSelectionCellColor = (starter: Starter, placing: number): string => {
     if (this.isSelection(starter, placing)) return '';
     return this.isEditMode ? 'opacity-25' : 'opacity-0';
@@ -319,14 +308,23 @@ export class RacecardComponent implements OnInit {
       }));
     }
 
-  get startersSortedByChance(): Starter[] {
+  get startersSortedByRank(): Starter[] {
     return this.activeRacecard.starters
       .filter(s => !s.scratched)
       .sort((s1, s2) =>
-        ((s2?.chance || 0) - (s1?.chance || 0))
+        (
+          (this.activeRaceRecommendation.starters.find(s => s.order === s1.order)?.rank || 0)
+          -
+          (this.activeRaceRecommendation.starters.find(s => s.order === s2.order)?.rank || 0)
+        )
         ||
         (s1.order - s2.order)
       );
+  }
+
+  get activeRaceRecommendation(): RaceRecommendation {
+    // @ts-ignore
+    return this.recommendation.races.find(r => r.race === this.activeRace);
   }
 
   get activeRacecard(): Racecard {
@@ -336,6 +334,7 @@ export class RacecardComponent implements OnInit {
 
   get isLoading(): boolean {
     return this.pick.races.length === 0
+      || this.recommendation.races.length === 0
       || this.racecards.length === 0
       || this.meetings.length === 0
       || this.collaborations.length === 0

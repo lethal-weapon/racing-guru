@@ -7,17 +7,29 @@ export interface Recommendation {
 export interface RaceRecommendation {
   race: number,
   postTime: string,
-  computedAt: string
-  starters: StarterChance[]
+  computedAt: string,
+  starters: StarterRank[],
+  bets: BetRecommendation[]
 }
 
-export interface StarterChance {
+export interface StarterRank {
   order: number,
-  chance: number,
-  placings: StarterPlacingChance[]
+  rank: number,
+  placings: StarterPlacingRank[]
 }
 
-export interface StarterPlacingChance {
+export interface StarterPlacingRank {
   placing: number,
-  chance: number
+  rank: number
+}
+
+export interface BetRecommendation {
+  betline: string,
+  combinations: number
+}
+
+export const DEFAULT_RECOMMENDATION: Recommendation = {
+  meeting: '',
+  venue: '',
+  races: []
 }

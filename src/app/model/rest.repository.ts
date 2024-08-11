@@ -153,8 +153,14 @@ export class RestRepository {
     })
   }
 
-  fetchRecommendations = (size: number = 8) =>
-    this.source.getRecommendations(size).subscribe(data => this.recommendations = data)
+  fetchRecommendations = (
+    size: number = 8,
+    callback: () => any = () => console.log(``)
+  ) =>
+    this.source.getRecommendations(size).subscribe(data => {
+      this.recommendations = data;
+      callback();
+    })
 
   fetchSyndicates = () =>
     this.source.getSyndicates().subscribe(data => this.syndicates = data)

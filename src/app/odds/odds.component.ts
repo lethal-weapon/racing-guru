@@ -41,7 +41,7 @@ interface OddsRange {
   minQIN: number,
   maxQIN: number,
   minFCT: number,
-  maxFCT: number
+  maxFCT: number,
   minDBL: number,
   maxDBL: number
 }
