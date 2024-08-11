@@ -17,8 +17,9 @@ import {
 export class BacktestComponent implements OnInit {
 
   isLoading = false;
-  activeMode: string = this.modes[0];
+  activeMode: string = this.modes[1];
   activeFactorHitIndex = 0;
+  activeVersion = '';
 
   activeFactors: string[] = [];
   bankerFactors: string[] = [];
@@ -134,6 +135,15 @@ export class BacktestComponent implements OnInit {
   getReturnOnInvestment = (tyield: TesterYield | MeetingYield): number =>
     parseFloat((tyield.credit / tyield.debit - 1).toFixed(2))
 
+  getProfitRacesOnMeeting = (myield: MeetingYield): number[] =>
+    myield.races.filter(r => r.credit > r.debit).map(r => r.race)
+
+  countBetlinesOnMeeting = (myield: MeetingYield): number[] => {
+    const betlines = myield.races.flatMap(r => r.betlines);
+    const positive = betlines.filter(b => b.credit > b.debit).length;
+    return [positive, betlines.length];
+  }
+
   countMeetings = (tyield: TesterYield): number[] => {
     const total = tyield.meetings.length;
     const positive = tyield.meetings
@@ -145,9 +155,7 @@ export class BacktestComponent implements OnInit {
   countRaces = (tmYield: TesterYield | MeetingYield): number[] => {
     const allRaces = 'races' in tmYield
       ? tmYield?.races
-      : tmYield.meetings
-        .map(m => m.races)
-        .reduce((prev, curr) => prev.concat(curr), []);
+      : tmYield.meetings.flatMap(m => m.races);
 
     const betRaces = allRaces.filter(r => r.debit > 0);
     const hitRaces = betRaces.filter(r => r.credit > 0);
@@ -157,15 +165,19 @@ export class BacktestComponent implements OnInit {
 
   countBetlines = (tyield: TesterYield): number[] => {
     const betlines = tyield.meetings
-      .map(m => m.races.filter(r => r.debit > 0))
-      .reduce((prev, curr) => prev.concat(curr), [])
-      .map(r => r.betlines)
-      .reduce((prev, curr) => prev.concat(curr), []);
+      .flatMap(m => m.races.filter(r => r.debit > 0))
+      .flatMap(r => r.betlines);
 
     return [
       betlines.filter(b => b.credit > b.debit),
       betlines
     ].map(e => e.length);
+  }
+
+  getMeetingROIColor = (myield: MeetingYield): string => {
+    const roi = this.getReturnOnInvestment(myield);
+    if (roi < 0) return 'text-red-600';
+    return roi >= 3 ? 'text-yellow-400' : 'text-green-600';
   }
 
   getTesterROIColor = (tyield: TesterYield): string => {
@@ -213,6 +225,16 @@ export class BacktestComponent implements OnInit {
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400`
 
+  get meetingYields(): MeetingYield[] {
+    return (
+      this.activeYields
+      .find(ty => ty.version === this.activeVersion)
+      ?.meetings || []
+    )
+      .map(m => m)
+      .sort((m1, m2) => m2.meeting.localeCompare(m1.meeting))
+  }
+
   get activeYields(): TesterYield[] {
     if (this.activeFactorHitIndex >= this.factorHits.length) return [];
     return this.factorHits[this.activeFactorHitIndex]
@@ -237,6 +259,13 @@ export class BacktestComponent implements OnInit {
       .filter(fc => this.bankerFactors.every(bf => fc.includes(bf)))
       .filter(fc => fc.length >= this.minFactorGroupSize)
       .sort((fc1, fc2) => fc1.length - fc2.length);
+  }
+
+  get meetingFields(): string[] {
+    return [
+      'Meeting', 'Profit Race #', 'Races', 'Betlines',
+      'Debits', 'Credits', 'P / L', 'ROI'
+    ];
   }
 
   get profitabilityFields(): string[] {
