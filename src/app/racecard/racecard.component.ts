@@ -217,10 +217,25 @@ export class RacecardComponent implements OnInit {
     )
       .some(s => s.order === starter.order && s.placing === placing)
 
-  getSelectionCellColor = (starter: Starter, placing: number): string => {
-    if (this.isSelection(starter, placing)) return '';
+  isTopPublicFavorite = (starter: Starter): boolean => {
+    if (!this.activeRacecard?.pool) return false;
+    return getStarters(this.activeRacecard)
+      .map(s => s.order)
+      .slice(0, 3)
+      .includes(starter.order);
+  }
+
+  getSelectionCheckColor = (starter: Starter, placing: number): string => {
+    if (this.isSelection(starter, placing)) return 'text-yellow-400';
     return this.isEditMode ? 'opacity-25' : 'opacity-0';
   }
+
+  getStarterPlacingRank = (starter: Starter, placing: number): number =>
+    this.activeRaceRecommendation.starters
+      .filter(s => s.order === starter.order)
+      .flatMap(s => s.placings)
+      .find(p => p.placing === placing)
+      ?.rank || 0
 
   getHorse = (starter: Starter): Horse =>
     this.repo.findHorses().find(s => s.code === starter.horse) || DEFAULT_HORSE
