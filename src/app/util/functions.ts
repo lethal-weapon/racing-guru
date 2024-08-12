@@ -18,6 +18,15 @@ export const toMillion = (amount: number): string =>
 export const toHorseProfileUrl = (brand: string): string =>
   `https://racing.hkjc.com/racing/information/English/Horse/Horse.aspx?HorseNo=${brand}`
 
+export const toOrdinalWithSuffix = (ordinal: number): string => {
+  let suffix = 'th';
+  if (ordinal % 10 === 1 && !ordinal.toString().endsWith('11')) suffix = 'st';
+  else if (ordinal % 10 === 2) suffix = 'nd';
+  else if (ordinal % 10 === 3) suffix = 'rd';
+
+  return `${ordinal}${suffix}`;
+}
+
 export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
   const spotTime = new Date(detectedAt);
   const diff = Math.floor((raceTime.getTime() - spotTime.getTime()) / 1000);

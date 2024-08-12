@@ -19,10 +19,11 @@ import {
   getWinPlaceOdds,
   toHorseProfileUrl,
   toMillion,
+  toOrdinalWithSuffix,
   toPlacingColor
 } from '../util/functions';
 
-interface DividendPool {
+interface PoolThreshold {
   name: string,
   threshold: number
 }
@@ -467,15 +468,15 @@ export class MeetingComponent implements OnInit {
   getTrainerGroup = (groupIndex: number): string[] => {
     let startIndex = 0;
     if (groupIndex > 0) {
-      startIndex = 1 + this.allTrainers
+      startIndex = 1 + this.trainers
         .findIndex(p => p === this.boundaryTrainers[groupIndex - 1]);
     }
 
     let endIndex = groupIndex < this.boundaryTrainers.length
-      ? this.allTrainers.findIndex(p => p === this.boundaryTrainers[groupIndex])
-      : this.allTrainers.length - 1;
+      ? this.trainers.findIndex(p => p === this.boundaryTrainers[groupIndex])
+      : this.trainers.length - 1;
 
-    return this.allTrainers.filter((_, i) => i >= startIndex && i <= endIndex);
+    return this.trainers.filter((_, i) => i >= startIndex && i <= endIndex);
   }
 
   getStartersByTrainerGroup = (race: number, groupIndex: number): Starter[] => {
@@ -544,7 +545,54 @@ export class MeetingComponent implements OnInit {
       .includes(this.getChallengeOdds(personType, order).points);
   }
 
-  get singleRacePools(): DividendPool[] {
+  getCrossRacePoolInvestmentCellContent =
+    (row: number, column: number): { pool: string, investment: number } => {
+
+      const doubleTrios = this.racecards
+        .filter(r => (r?.pool?.doubleTrio || 0) > 0)
+        .map(r => r.pool.doubleTrio);
+
+      const trebles = this.racecards
+        .filter(r => (r?.pool?.treble || 0) > 0)
+        .map(r => r.pool.treble);
+
+      const sixUps = this.racecards
+        .filter(r => (r?.pool?.sixUp || 0) > 0)
+        .map(r => r.pool.sixUp);
+
+      const tripleTrios = this.racecards
+        .filter(r => (r?.pool?.tripleTrio || 0) > 0)
+        .map(r => r.pool.tripleTrio);
+
+      const turnover = this.racecards
+        .filter(r => (r?.pool?.meetingTotal || 0) > 0)
+        .map(r => r.pool.meetingTotal)
+        .sort((t1, t2) => t2 - t1)
+        .shift() || 0;
+
+      if (column === 1) {
+        return {
+          pool: `${toOrdinalWithSuffix(row)} Double Trio`,
+          investment: doubleTrios.length > (row - 1) ? doubleTrios[row - 1] : 0,
+        };
+      }
+      if (column === 2) {
+        if (row === 1) return {pool: '1st Treble', investment: trebles.length > 0 ? trebles[0] : 0};
+        if (row === 2) return {pool: '2nd Treble', investment: trebles.length > 1 ? trebles[1] : 0};
+        if (row === 3) return {pool: 'Six Up', investment: sixUps.length > 0 ? sixUps[0] : 0};
+        if (row === 4) return {pool: 'Triple Trio', investment: tripleTrios.length > 0 ? tripleTrios[0] : 0};
+        if (row === 5) return {pool: 'Today Turnover', investment: turnover};
+      }
+      return {pool: '', investment: 0};
+    }
+
+  get singleRacePoolWithMultipleDividendCount(): number {
+    return this.singleRacePools
+      .filter(p => ['1', '2', '3'].some(n => p.name.includes(n)))
+      .length;
+  }
+
+  get singleRacePools(): PoolThreshold[] {
     return [
       {name: 'WIN', threshold: 8},
       {name: 'QIN', threshold: 40},
@@ -564,7 +612,7 @@ export class MeetingComponent implements OnInit {
     ];
   }
 
-  get crossRacePools(): DividendPool[] {
+  get crossRacePools(): PoolThreshold[] {
     return [
       {name: 'TBL-1', threshold: 100},
       {name: 'TBL-2', threshold: 40},
@@ -576,7 +624,7 @@ export class MeetingComponent implements OnInit {
     ];
   }
 
-  get crossRacePoolDividendNumbers(): number[] {
+  get crossRacePoolDividendRaces(): number[] {
     return this.racecards
       .filter(r =>
         r?.dividend?.treble
@@ -605,7 +653,7 @@ export class MeetingComponent implements OnInit {
     ];
   }
 
-  get summary(): string[] {
+  get summaryLines(): string[] {
     const racecard = this.racecards.find(r => r.race === 1);
     if (!racecard) return [];
 
