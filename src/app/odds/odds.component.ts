@@ -4,24 +4,25 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import {WebsocketService} from '../websocket.service';
 import {RestRepository} from '../model/rest.repository';
 import {DEFAULT_PICK, Pick, Selection} from '../model/pick.model';
+import {DEFAULT_RECOMMENDATION, RaceRecommendation, Recommendation} from '../model/recommendation.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {COLORS} from '../util/strings';
 import {
-  DEFAULT_MIN_QPL_ODDS,
-  DEFAULT_MIN_QIN_ODDS,
-  DEFAULT_MIN_FCT_ODDS,
-  DEFAULT_MIN_DBL_ODDS,
-  DEFAULT_MAX_QPL_ODDS,
-  DEFAULT_MAX_QIN_ODDS,
-  DEFAULT_MAX_FCT_ODDS,
-  DEFAULT_MAX_DBL_ODDS,
-  QPL_ODDS_STEP,
-  QIN_ODDS_STEP,
-  FCT_ODDS_STEP,
   DBL_ODDS_STEP,
+  DEFAULT_MAX_DBL_ODDS,
+  DEFAULT_MAX_FCT_ODDS,
+  DEFAULT_MAX_QIN_ODDS,
+  DEFAULT_MAX_QPL_ODDS,
+  DEFAULT_MIN_DBL_ODDS,
+  DEFAULT_MIN_FCT_ODDS,
+  DEFAULT_MIN_QIN_ODDS,
+  DEFAULT_MIN_QPL_ODDS,
+  FCT_ODDS_STEP,
   MAX_RACE_PER_MEETING,
+  QIN_ODDS_STEP,
+  QPL_ODDS_STEP,
 } from '../util/numbers';
 import {
   formatOdds,
@@ -84,6 +85,7 @@ const DEFAULT_BET: Bet = {
 })
 export class OddsComponent implements OnInit {
   pick: Pick = DEFAULT_PICK;
+  recommendation: Recommendation = DEFAULT_RECOMMENDATION;
   racecards: Racecard[] = [];
 
   activeRace: number = 1;
@@ -113,6 +115,10 @@ export class OddsComponent implements OnInit {
       if (this.trackModeOn) this.track();
     });
 
+    socket.addRecommendationCallback((newRecommendation: Recommendation) => {
+      if (this.recommendation != newRecommendation) this.recommendation = newRecommendation;
+    });
+
     socket.addRacecardCallback((newCard: Racecard) => {
       const oldCard = this.racecards
         .find(r => r.meeting === newCard.meeting && r.race === newCard.race);
@@ -138,6 +144,11 @@ export class OddsComponent implements OnInit {
 
     this.repo.fetchRacecards('latest', () => {
       this.racecards = this.repo.findRacecards();
+    });
+
+    this.repo.fetchRecommendations(1, () => {
+      this.recommendation =
+        this.repo.findRecommendations()[0] || DEFAULT_RECOMMENDATION;
     });
 
     this.repo.fetchMeetingHorses();
@@ -171,6 +182,15 @@ export class OddsComponent implements OnInit {
     this.repo.savePick(newPick);
   }
 
+  copyRecommendationBets = (isCopyAll: boolean, betline: string) => {
+    if (isCopyAll) {
+      const betlines = this.activeRecommendation.bets.map(b => b.betline).join(';');
+      this.clipboard.copy(betlines);
+    } else {
+      this.clipboard.copy(betline);
+    }
+  }
+
   copyBets = (pool: string = '') => {
     let bets = '';
     for (const [key, value] of Object.entries(this.activeBet)) {
@@ -185,39 +205,6 @@ export class OddsComponent implements OnInit {
       }
     }
     this.clipboard.copy(bets);
-  }
-
-  copyAsBankerBets = (betType: string) => {
-    const pairs = [...this.activeBet.qin, ...this.activeBet.qpl]
-      .map(p => p.sort((o1, o2) => o1 - o2))
-      .sort((p1, p2) => p1[0] - p2[0] || p1[1] - p2[1])
-      .map(p => `${p[0]},${p[1]}`)
-      .filter((p, i, a) => a.indexOf(p) === i);
-
-    let ff = pairs.map(p => `ff:${p}>`).join(`;`);
-    let tri = pairs.map(p => `tri:${p}>`).join(`;`);
-    let tbm = pairs.map(p => `tbm:${p}>`).join(`;`);
-    let qbm = pairs.map(p => `qbm:${p}>`).join(`;`);
-
-    switch (betType) {
-      case 'FF':
-        this.clipboard.copy(ff);
-        break
-      case 'TRI':
-        this.clipboard.copy(tri);
-        break
-      case 'TBM':
-        this.clipboard.copy(tbm);
-        break
-      case 'QBM':
-        this.clipboard.copy(qbm);
-        break
-      case 'ALL':
-        this.clipboard.copy([tri, tbm, ff, qbm].join(`;`));
-        break
-      default:
-        break
-    }
   }
 
   copyMultiBankerBets = (betType: string) => {
@@ -722,6 +709,22 @@ export class OddsComponent implements OnInit {
     return this.pick.races.find(r => r.race === this.activeRace)?.selections || [];
   }
 
+  get activeRecommendationCombinations(): number {
+    return this.activeRecommendation.bets
+      .map(b => b.combinations)
+      .reduce((prev, curr) => prev + curr, 0);
+  }
+
+  get activeRecommendationTime(): string {
+    const raceTime = new Date(this.activeRacecard.time);
+    return toRelativeTime(raceTime, this.activeRecommendation.computedAt);
+  }
+
+  get activeRecommendation(): RaceRecommendation {
+    // @ts-ignore
+    return this.recommendation.races.find(r => r.race === this.activeRace);
+  }
+
   get activeRacecard(): Racecard {
     // @ts-ignore
     return this.racecards.find(r => r.race === this.activeRace);
@@ -765,10 +768,6 @@ export class OddsComponent implements OnInit {
     ];
   }
 
-  get copyAsBankersBetTypes(): string[] {
-    return ['ALL', 'TRI', 'FF', 'TBM', 'QBM'];
-  }
-
   get multiBankerBetTypes(): string[] {
     return ['ALL', 'FMB', 'TMB', 'QMB'];
   }
@@ -785,6 +784,7 @@ export class OddsComponent implements OnInit {
 
   get isLoading(): boolean {
     return this.pick.races.length === 0
+      || this.recommendation.races.length === 0
       || this.racecards.length === 0
       || this.repo.findHorses().length === 0
       || this.repo.findBlacklistConnections().length === 0;

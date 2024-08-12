@@ -290,7 +290,7 @@
   >
     <div *ngIf="maxRace !== activeRace">
       <div *ngFor="let c of rangeControls.slice(3, 4)"
-           class="mx-8 flex flex-row justify-evenly items-center text-center"
+           class="mx-4 flex flex-row justify-evenly items-center text-center"
       >
         <div class="flex flex-col gap-y-1">
           <div class="{{oddsButtonStyle}}"
@@ -343,7 +343,7 @@
         </div>
       </div>
     </div>
-    <div class="mx-8 grid grid-cols-4 py-4 gap-4 text-center">
+    <div class="mx-4 grid grid-cols-4 py-4 gap-4 text-center">
       <div *ngFor="let betType of multiBankerBetTypes"
            class="w-24 {{controlButtonStyle}}"
            (click)="copyMultiBankerBets(betType)"
@@ -362,16 +362,48 @@
         {{ getMultiBankerBets(betType).length }}
       </div>
     </div>
-    <div class="mx-8 grid grid-cols-3 py-4 gap-4 text-center">
-      <div class="text-lg">
-        As Bankers
+    <div class="overflow-y-auto h-28 mx-4 px-4 pt-1 pb-1.5 rounded-xl border border-gray-600">
+      <div class="mb-2 flex flex-row justify-between gap-x-4">
+        <div>
+          Recommendation
+        </div>
+        <div>
+          {{ activeRecommendationTime }}
+        </div>
       </div>
-      <div *ngFor="let betType of copyAsBankersBetTypes"
-           class="w-24 {{controlButtonStyle}}"
-           (click)="copyAsBankerBets(betType)"
+      <div *ngIf="activeRecommendationCombinations === 0"
+           class="text-center text-lg font-bold text-red-600"
       >
-        <i class="fa fa-copy"></i>
-        <span class="ml-2">{{ betType }}</span>
+        SKIP THIS RACE!
+        <br>
+        TAKE A BREAK NOW!
+      </div>
+      <div *ngIf="activeRecommendationCombinations > 0"
+           class="text-left"
+      >
+        <div class="hover:text-yellow-400 cursor-pointer"
+             (click)="copyRecommendationBets(true, '')"
+        >
+          <i class="fa fa-copy"></i>
+          <span class="mx-2">
+            ({{ activeRecommendationCombinations }})
+          </span>
+          <span>
+            All Bets
+          </span>
+        </div>
+        <div *ngFor="let bet of activeRecommendation.bets"
+             class="hover:text-yellow-400 cursor-pointer"
+             (click)="copyRecommendationBets(false, bet.betline)"
+        >
+          <i class="fa fa-copy"></i>
+          <span class="mx-2">
+            ({{ bet.combinations }})
+          </span>
+          <span>
+            {{ bet.betline }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
