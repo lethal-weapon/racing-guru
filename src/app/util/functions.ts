@@ -6,6 +6,9 @@ import {COLORS, ODDS_INTENSITIES} from './strings';
 import {ONE_MILLION, PAYOUT_RATE} from './numbers';
 import {Meeting} from '../model/meeting.model';
 
+export const formatRace = (race: number): string =>
+  race === 10 ? 'X' : race === 11 ? 'E' : race.toString()
+
 export const formatOdds = (odds: number): string =>
   odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString()
 

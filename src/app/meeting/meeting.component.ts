@@ -12,6 +12,7 @@ import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
 import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
+  formatRace,
   getOddsIntensityColor,
   getStarter,
   getStarterWinPlaceOdds,
@@ -61,6 +62,7 @@ export class MeetingComponent implements OnInit {
   protected readonly getWinPlaceOdds = getWinPlaceOdds;
   protected readonly toHorseProfileUrl = toHorseProfileUrl;
   protected readonly getOddsIntensityColor = getOddsIntensityColor;
+  protected readonly formatRace = formatRace;
 
   constructor(
     private repo: RestRepository,
@@ -585,6 +587,13 @@ export class MeetingComponent implements OnInit {
       }
       return {pool: '', investment: 0};
     }
+
+  getCrossRacePoolDividendRaces = (row: number): number => {
+    if (this.crossRacePoolDividendRaces.length >= row) {
+      return this.crossRacePoolDividendRaces[row - 1];
+    }
+    return 1;
+  }
 
   get singleRacePoolWithMultipleDividendCount(): number {
     return this.singleRacePools

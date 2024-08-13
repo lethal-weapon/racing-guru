@@ -336,20 +336,20 @@
           Cross Race Pool Investment
         </th>
       </tr>
-      <tr *ngFor="let race of crossRacePoolDividendRaces; let index = index"
+      <tr *counter="let row of 5"
           class="hover:bg-gray-800"
       >
         <td class="border border-gray-700">
-          {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
+          {{ formatRace(getCrossRacePoolDividendRaces(row)) }}
         </td>
         <td class="border border-gray-700 border-r-red-900"></td>
         <td *ngFor="let pool of crossRacePools"
             class="border border-gray-700"
             [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
-            [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
+            [class.text-yellow-400]="getDividendOdds(getCrossRacePoolDividendRaces(row), pool.name) >= pool.threshold"
         >
-          <span *ngIf="getDividendOdds(race, pool.name) > 0">
-            {{ getDividendOdds(race, pool.name) | number }}
+          <span *ngIf="getDividendOdds(getCrossRacePoolDividendRaces(row), pool.name) > 0">
+            {{ getDividendOdds(getCrossRacePoolDividendRaces(row), pool.name) | number }}
           </span>
         </td>
         <td *counter="let column of 2"
@@ -359,11 +359,11 @@
         >
           <div class="grid grid-cols-2">
             <div class="text-left">
-              {{ getCrossRacePoolInvestmentCellContent(index + 1, column).pool }}
+              {{ getCrossRacePoolInvestmentCellContent(row, column).pool }}
             </div>
             <div class="text-right">
-              <span *ngIf="getCrossRacePoolInvestmentCellContent(index + 1, column).investment > 0">
-                {{ getCrossRacePoolInvestmentCellContent(index + 1, column).investment | currency:'USD':'symbol':'1.0-0' }}
+              <span *ngIf="getCrossRacePoolInvestmentCellContent(row, column).investment > 0">
+                {{ getCrossRacePoolInvestmentCellContent(row, column).investment | currency:'USD':'symbol':'1.0-0' }}
               </span>
             </div>
           </div>

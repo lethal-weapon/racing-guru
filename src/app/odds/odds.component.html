@@ -378,33 +378,37 @@
         <br>
         TAKE A BREAK NOW!
       </div>
-      <div *ngIf="activeRecommendationCombinations > 0"
-           class="text-left"
+      <table *ngIf="activeRecommendationCombinations > 0"
+             class="text-left"
       >
-        <div class="hover:text-yellow-400 cursor-pointer"
-             (click)="copyRecommendationBets(true, '')"
+        <tr class="hover:text-yellow-400 cursor-pointer"
+            (click)="copyRecommendationBets(true, '')"
         >
-          <i class="fa fa-copy"></i>
-          <span class="mx-2">
+          <td>
+            <i class="fa fa-copy"></i>
+          </td>
+          <td class="px-2">
             ({{ activeRecommendationCombinations }})
-          </span>
-          <span>
+          </td>
+          <td>
             All Bets
-          </span>
-        </div>
-        <div *ngFor="let bet of activeRecommendation.bets"
-             class="hover:text-yellow-400 cursor-pointer"
-             (click)="copyRecommendationBets(false, bet.betline)"
+          </td>
+        </tr>
+        <tr *ngFor="let bet of activeRecommendation.bets"
+            class="hover:text-yellow-400 cursor-pointer"
+            (click)="copyRecommendationBets(false, bet.betline)"
         >
-          <i class="fa fa-copy"></i>
-          <span class="mx-2">
+          <td>
+            <i class="fa fa-copy"></i>
+          </td>
+          <td class="px-2">
             ({{ bet.combinations }})
-          </span>
-          <span>
+          </td>
+          <td>
             {{ bet.betline }}
-          </span>
-        </div>
-      </div>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 
