@@ -1,85 +1,91 @@
-<div class="mx-6 grid grid-cols-5 items-center">
-  <div class="col-span-2 flex flex-row justify-center">
-    <div *ngFor="let control of trackingControls"
-         class="{{trackingControlStyle}}"
-         (click)="handleTrackingControls(control)"
-    >
-      {{ control }}
-    </div>
-  </div>
-  <div class="col-span-3 mx-8">
-    <div class="flex flex-row justify-between mb-1 text-xl">
-      <div>Season 23/24</div>
-      <div>{{ currentSeasonProgress }}</div>
-    </div>
-    <div class="w-full h-3 bg-gray-700 rounded-full">
-      <div class="h-3 bg-yellow-400 rounded-full"
-           [style.width]="currentSeasonProgress"
-      >
-      </div>
-    </div>
-  </div>
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
 </div>
 
-<div class="ml-4 mr-5 mt-4 grid grid-cols-2">
-  <div *ngFor="let pel of playerEarnings; let last = last"
-       class="w-full"
-  >
-    <div *ngFor="let pe of pel; let index = index"
-         class="mt-2 flex items-center border-dashed"
-         [class.flex-row]="!last"
-         [class.flex-row-reverse]="last"
-         [class.text-right]="last"
-         [class.pb-2]="(index+1) % 5 == 0 && index <= 15"
-         [class.border-b]="(index+1) % 5 == 0 && index <= 15"
-         [class.border-b-gray-400]="(index+1) % 5 == 0 && index <= 15"
-    >
-      <div [class.w-10]="!last"
-           [class.text-yellow-400]="index < 5"
+<div *ngIf="!isLoading">
+  <div class="mx-6 grid grid-cols-5 items-center">
+    <div class="col-span-2 flex flex-row justify-center">
+      <div *ngFor="let control of trackingControls"
+           class="{{trackingControlStyle}}"
+           (click)="handleTrackingControls(control)"
       >
-        #{{ index + 1 }}
+        {{ control }}
       </div>
-      <div class="w-20 text-center"
-           [class.ml-2.5]="last"
-      >
-        <div class="w-16 py-0.5 text-lg rounded-full cursor-pointer {{getTrackingPlayerStyle(pe.player)}}"
-             (click)="toggleTrackingPlayer(pe.player)"
+    </div>
+    <div class="col-span-3 mx-8">
+      <div class="flex flex-row justify-between mb-1 text-xl">
+        <div>Season {{ currentSeasonEarning.season }}</div>
+        <div>{{ currentSeasonProgress }}</div>
+      </div>
+      <div class="w-full h-3 bg-gray-700 rounded-full">
+        <div class="h-3 bg-yellow-400 rounded-full"
+             [style.width]="currentSeasonProgress"
         >
-          {{ pe.player }}
         </div>
       </div>
-      <div class="flex flex-col justify-evenly leading-4">
-        <div *ngFor="let seasonEarning of pe.earnings; let first = first"
-             class="flex items-center"
-             [class.flex-row]="!last"
-             [class.flex-row-reverse]="last"
+    </div>
+  </div>
+
+  <div class="ml-4 mr-5 mt-4 grid grid-cols-2">
+    <div *ngFor="let pel of playerEarnings; let last = last"
+         class="w-full"
+    >
+      <div *ngFor="let pe of pel; let index = index"
+           class="mt-2 flex items-center border-dashed"
+           [class.flex-row]="!last"
+           [class.flex-row-reverse]="last"
+           [class.text-right]="last"
+           [class.pb-2]="(index+1) % 5 == 0 && index <= 15"
+           [class.border-b]="(index+1) % 5 == 0 && index <= 15"
+           [class.border-b-gray-400]="(index+1) % 5 == 0 && index <= 15"
+      >
+        <div [class.w-10]="!last"
+             [class.text-yellow-400]="index < 5"
         >
-          <div class="h-1 border rounded-full"
-               [class.bg-sky-600]="first"
-               [class.border-sky-600]="first"
-               [class.bg-gray-700]="!first"
-               [class.border-gray-700]="!first"
-               [style.width]="(seasonEarning / 2.75) + 'px'"
+          #{{ index + 1 }}
+        </div>
+        <div class="w-20 text-center"
+             [class.ml-2.5]="last"
+        >
+          <div class="w-16 py-0.5 text-lg rounded-full cursor-pointer {{getTrackingPlayerStyle(pe.player)}}"
+               (click)="toggleTrackingPlayer(pe.player)"
           >
+            {{ pe.player }}
           </div>
-          <div class="mx-2"
-               [class.opacity-50]="!first"
+        </div>
+        <div class="flex flex-col justify-evenly leading-4">
+          <div *ngFor="let seasonEarning of pe.earnings; let first = first"
+               class="flex items-center"
+               [class.flex-row]="!last"
+               [class.flex-row-reverse]="last"
           >
-            <div *ngIf="seasonEarning < 10" class="text-yellow-400">
-              X
-            </div>
-            <div *ngIf="seasonEarning >= 10"
-                 class="flex"
-                 [class.flex-row]="!last"
-                 [class.flex-row-reverse]="last"
+            <div class="h-1 border rounded-full"
+                 [class.bg-sky-600]="first"
+                 [class.border-sky-600]="first"
+                 [class.bg-gray-700]="!first"
+                 [class.border-gray-700]="!first"
+                 [style.width]="(seasonEarning / 2.75) + 'px'"
             >
-              <div>
-                {{ seasonEarning }}
+            </div>
+            <div class="mx-2"
+                 [class.opacity-50]="!first"
+            >
+              <div *ngIf="seasonEarning < 10" class="text-yellow-400">
+                X
               </div>
-              <div *ngIf="first && pe.earnings[1] > 10"
-                   class="mx-2 text-green-600"
+              <div *ngIf="seasonEarning >= 10"
+                   class="flex"
+                   [class.flex-row]="!last"
+                   [class.flex-row-reverse]="last"
               >
-                ({{ (pe.earnings[0] / pe.earnings[1]) | percent }})
+                <div>
+                  {{ seasonEarning }}
+                </div>
+                <div *ngIf="first && pe.earnings[1] > 10"
+                     class="mx-2 text-green-600"
+                >
+                  ({{ (pe.earnings[0] / pe.earnings[1]) | percent }})
+                </div>
               </div>
             </div>
           </div>
@@ -87,36 +93,34 @@
       </div>
     </div>
   </div>
-</div>
 
-<div class="my-4 h-1.5 bg-gradient-to-r from-gray-900 via-gray-300 to-gray-900"></div>
-
-<div class="mx-4 flex flex-row justify-evenly">
-  <div *ngFor="let group of playerGroups"
-       class="{{trackingControlStyle}}"
-       [class.text-yellow-400]="activePlayerGroup.name === group.name"
-       (click)="setActivePlayerGroup(group)"
-  >
-    {{ group.name }}
+  <div class="my-4 h-1.5 bg-gradient-to-r from-gray-900 via-gray-300 to-gray-900"></div>
+  <div class="mx-4 flex flex-row justify-evenly">
+    <div *ngFor="let group of playerGroups"
+         class="{{trackingControlStyle}}"
+         [class.text-yellow-400]="activePlayerGroup.name === group.name"
+         (click)="clickPlayerGroup(group)"
+    >
+      {{ group.name }}
+    </div>
   </div>
-</div>
+  <div class="my-4 h-1.5 bg-gradient-to-r from-gray-900 via-gray-300 to-gray-900"></div>
 
-<div class="my-4 h-1.5 bg-gradient-to-r from-gray-900 via-gray-300 to-gray-900"></div>
-
-<div class="mx-4 flex justify-center bg-gray-200">
-  <ngx-charts-line-chart
-    [view]="[1300, 650]"
-    [results]="chartData"
-    [timeline]="true"
-    [animations]="true"
-    [roundDomains]="true"
-    [legendTitle]="'Player'"
-    [xAxis]="true"
-    [yAxis]="true"
-    [showXAxisLabel]="true"
-    [showYAxisLabel]="true"
-    [xAxisLabel]="'Meeting#'"
-    [yAxisLabel]="'Enhanced Earning'"
-  >
-  </ngx-charts-line-chart>
+  <div class="mx-4 flex justify-center bg-gray-200">
+    <ngx-charts-line-chart
+      [view]="[1300, 650]"
+      [results]="chartData"
+      [timeline]="true"
+      [animations]="true"
+      [roundDomains]="true"
+      [legendTitle]="'Player'"
+      [xAxis]="true"
+      [yAxis]="true"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="'Meeting#'"
+      [yAxisLabel]="'Enhanced Earning'"
+    >
+    </ngx-charts-line-chart>
+  </div>
 </div>

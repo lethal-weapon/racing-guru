@@ -20,6 +20,7 @@ import {TrackworkSnapshot} from './trackwork.model';
 import {BlacklistConnection} from './connection.model';
 import {FactorHit, Factor} from './backtest.model';
 import {Fixture} from './fixture.model';
+import {AccumulatedSeasonEarning} from './earning.model';
 
 @Injectable()
 export class RestDataSource {
@@ -90,6 +91,9 @@ export class RestDataSource {
 
   getLatestMeeting = (): Observable<Meeting> =>
     this.http.get<Meeting>(`${this.baseUrl}/meetings/latest`)
+
+  getAccumulatedSeasonEarnings = (): Observable<AccumulatedSeasonEarning[]> =>
+    this.http.get<AccumulatedSeasonEarning[]>(`${this.baseUrl}/meetings/accumulated-earnings`)
 
   getRecentCollaborations = (meetingSize: number): Observable<Collaboration[]> =>
     this.http.get<Collaboration[]>(`${this.baseUrl}/collaborations/recent?meetingSize=${meetingSize}`)

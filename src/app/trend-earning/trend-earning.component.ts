@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {Meeting} from '../model/meeting.model';
 import {Player} from '../model/player.model';
 import {ChartLine} from '../model/chart.model';
-import {SEASONS} from '../util/strings';
+import {
+  AccumulatedPlayerEarning,
+  AccumulatedSeasonEarning
+} from '../model/earning.model';
 
 interface PlayerGroup {
   name: string,
@@ -28,6 +30,8 @@ export class TrendEarningComponent implements OnInit {
 
   ngOnInit(): void {
     this.setActivePlayerGroup(this.playerGroups[0]);
+
+    this.repo.fetchAccumulatedSeasonEarnings(() => this.updateChart());
   }
 
   setActivePlayerGroup = (clicked: PlayerGroup) => {
@@ -39,7 +43,10 @@ export class TrendEarningComponent implements OnInit {
     this.trackingPlayers = players
       .filter((_, i) => i >= clicked.startIndex && i <= clicked.endIndex)
       .map(p => p.code);
+  }
 
+  clickPlayerGroup = (clicked: PlayerGroup) => {
+    this.setActivePlayerGroup(clicked);
     this.updateChart();
   }
 
@@ -54,13 +61,14 @@ export class TrendEarningComponent implements OnInit {
 
   updateChart = () => {
     this.chartData = this.trackingPlayers.map(player => {
-      let series = this.meetings
-        .map(m => m.meeting)
-        .filter(m => m >= SEASONS[0].opening)
-        .sort((m1, m2) => m1.localeCompare(m2))
-        .map((m, index) => ({
-          name: `${index + 1}`,
-          value: this.getPlayerEarningUpToMeeting(player, m)
+      const series = (
+        this.currentSeasonPlayerEarnings
+          .find(pe => pe.player === player)
+          ?.meetings || []
+      )
+        .map(m => ({
+          name: `${m.meetingOrdinal}`,
+          value: m.enhancedEarnings
         }));
 
       return {name: player, series: series};
@@ -69,8 +77,7 @@ export class TrendEarningComponent implements OnInit {
 
   handleTrackingControls = (control: string) => {
     const meetingsInRange = this.meetings
-      .map(m => m.meeting)
-      .filter(m => m >= SEASONS[0].opening)
+      .map(m => m)
       .sort((m1, m2) => m1.localeCompare(m2));
 
     const currIndex = meetingsInRange.indexOf(this.trackingMeeting);
@@ -78,7 +85,6 @@ export class TrendEarningComponent implements OnInit {
     switch (control) {
       case 'Reset': {
         this.trackingMeeting = '';
-        // this.trackingPlayers = [];
         break;
       }
       case 'Opening': {
@@ -120,17 +126,6 @@ export class TrendEarningComponent implements OnInit {
         break;
     }
   }
-
-  getPlayerEarningUpToMeeting = (player: string, meeting: string): number =>
-    this.meetings
-      .filter(m => m.meeting >= SEASONS[0].opening && m.meeting <= meeting)
-      .flatMap(m => m.players)
-      .filter(ps => ps.player === player)
-      .map(ps =>
-        ps.earnings -
-        ps.starters.filter(s => s?.winOdds && s?.placing > 4).length
-      )
-      .reduce((e1, e2) => e1 + e2, 0)
 
   getTrackingPlayerStyle = (player: string) =>
     this.trackingPlayers.includes(player)
@@ -184,21 +179,24 @@ export class TrendEarningComponent implements OnInit {
   get playerEarnings(): Array<Array<{ player: string, earnings: number[] }>> {
     return [this.trainers, this.jockeys].map(pl =>
       pl.map(p => {
-        const seasonEarnings = SEASONS
-          .map((s, index) =>
-            this.meetings
-              .filter(m => m.meeting >= s.opening && m.meeting <=
-                (
-                  (index == 0 && this.trackingMeeting.length > 0)
-                    ? this.trackingMeeting : s.finale
-                )
-              )
-              .flatMap(m => m.players)
-              .filter(ps => ps.player === p.code)
-              .map(ps => ps.earnings)
-              .reduce((prev, curr) => prev + curr, 0)
+        const seasonEarnings = [0, 1].map(i => {
+          const earning = (
+            this.repo
+              .findAccumulatedSeasonEarnings()[i]
+              .players
+              .find(ape => ape.player === p.code)
+              ?.meetings || []
           )
-          .map(e => Math.floor(e));
+            .filter(m =>
+              (i === 0 && this.trackingMeeting.length > 0)
+                ? m.upToMeeting <= this.trackingMeeting
+                : true
+            )
+            .pop()
+            ?.earnings || 0;
+
+          return Math.floor(earning);
+        });
 
         return {
           player: p.code,
@@ -214,16 +212,15 @@ export class TrendEarningComponent implements OnInit {
   }
 
   get currentSeasonProgress(): string {
-    const startMeeting = SEASONS[0].opening;
-    const endMeeting = this.trackingMeeting.length > 0
-      ? this.trackingMeeting
-      : SEASONS[0].finale;
-
-    const currentSeasonMeetings = this.meetings
-      .filter(m => m.meeting >= startMeeting && m.meeting <= endMeeting)
+    const count = this.meetings
+      .filter(m =>
+        this.trackingMeeting.length > 0
+          ? m <= this.trackingMeeting
+          : true
+      )
       .length;
 
-    return `${Math.ceil(100 * currentSeasonMeetings / 88)}%`;
+    return `${Math.ceil(100 * count / 88)}%`;
   }
 
   get trackingControls(): string[] {
@@ -235,6 +232,18 @@ export class TrendEarningComponent implements OnInit {
             border border-gray-600 hover:border-yellow-400`;
   }
 
+  get meetings(): string[] {
+    return this.currentSeasonPlayerEarnings[0].meetings.map(m => m.upToMeeting);
+  }
+
+  get currentSeasonPlayerEarnings(): AccumulatedPlayerEarning[] {
+    return this.currentSeasonEarning.players;
+  }
+
+  get currentSeasonEarning(): AccumulatedSeasonEarning {
+    return this.repo.findAccumulatedSeasonEarnings()[0];
+  }
+
   get trainers(): Player[] {
     return this.repo.findPlayers().filter(p => !p.jockey);
   }
@@ -243,7 +252,7 @@ export class TrendEarningComponent implements OnInit {
     return this.repo.findPlayers().filter(p => p.jockey);
   }
 
-  get meetings(): Meeting[] {
-    return this.repo.findMeetings();
+  get isLoading(): boolean {
+    return this.repo.findAccumulatedSeasonEarnings().length === 0;
   }
 }

@@ -18,6 +18,7 @@ import {TrackworkSnapshot} from './trackwork.model';
 import {BlacklistConnection} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
+import {AccumulatedSeasonEarning} from './earning.model';
 
 @Injectable()
 export class RestRepository {
@@ -36,6 +37,7 @@ export class RestRepository {
   private syndicateSnapshots: SyndicateSnapshot[] = [];
   private trackworkSnapshots: TrackworkSnapshot[] = [];
   private blacklistConnections: BlacklistConnection[] = [];
+  private accumulatedSeasonEarnings: AccumulatedSeasonEarning[] = [];
 
   private fixtures: Fixture[] = [];
   private factors: Factor[] = [];
@@ -59,6 +61,7 @@ export class RestRepository {
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
   findBlacklistConnections = () => this.blacklistConnections
+  findAccumulatedSeasonEarnings = () => this.accumulatedSeasonEarnings
 
   findFixtures = () => this.fixtures
   findFactors = () => this.factors
@@ -208,6 +211,12 @@ export class RestRepository {
     if (index === -1) this.meetings.unshift(newMeeting);
     else this.meetings.splice(index, 1, newMeeting);
   }
+
+  fetchAccumulatedSeasonEarnings = (callback: () => any) =>
+    this.source.getAccumulatedSeasonEarnings().subscribe(data => {
+      this.accumulatedSeasonEarnings = data;
+      callback();
+    })
 
   fetchRecentCollaborations = (meetingSize: number = 16) =>
     this.source
