@@ -3,7 +3,6 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Player} from '../model/player.model';
 import {Meeting} from '../model/meeting.model';
-import {SEASONS} from '../util/strings';
 import {toPlacingColor} from '../util/functions';
 import {
   Collaboration,
@@ -37,7 +36,6 @@ export class TrendCollaborationComponent implements OnInit {
 
   getCollaborationEarning = (partner: string): number =>
     this.meetings
-      .filter(m => m.meeting >= SEASONS[0].opening)
       .flatMap(m => m.players)
       .filter(ps => ps.player === this.activePlayer)
       .flatMap(ps => ps.starters)
@@ -183,5 +181,9 @@ export class TrendCollaborationComponent implements OnInit {
 
   get jockeys(): Player[] {
     return this.repo.findPlayers().filter(p => p.jockey);
+  }
+
+  get isLoading(): boolean {
+    return this.repo.findCollaborations().length === 0;
   }
 }

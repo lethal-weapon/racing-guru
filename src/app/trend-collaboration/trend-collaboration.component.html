@@ -1,115 +1,119 @@
-<table class="mx-auto table-fixed border-collapse"
-       (mouseleave)="setHoveredTrainer('')"
->
-  <thead>
-    <th class="w-16 h-7 border border-gray-600">
-      <i class="fa fa-handshake-o"></i>
-    </th>
-    <th *ngFor="let trainer of trainers"
-        class="w-20 h-7 border border-gray-600"
-        (mouseenter)="setHoveredTrainer(trainer.code)"
-        (click)="setActivePlayer(trainer.code)"
-        [class.border-r-red-900]="trainer.boundary"
-        [class.bg-gray-800]="hoveredTrainer === trainer.code"
-        [class.text-yellow-400]="activePlayer === trainer.code"
-        [class.cursor-pointer]="activePlayer !== trainer.code"
-    >
-      {{ trainer.code }}
-    </th>
-  </thead>
-  <tbody>
-    <tr *ngFor="let jockey of jockeys"
-        class="hover:bg-gray-800"
-    >
-      <td class="h-7 border border-gray-600 font-bold"
-          (click)="setActivePlayer(jockey.code)"
-          [class.border-b-red-900]="jockey.boundary"
-          [class.text-yellow-400]="activePlayer === jockey.code"
-          [class.cursor-pointer]="activePlayer !== jockey.code"
-      >
-        {{ jockey.code }}
-      </td>
-      <td *ngFor="let trainer of trainers"
-          class="h-7 border border-gray-700 text-sm"
-          (mouseenter)="setHoveredTrainer(trainer.code)"
-          [class.border-b-red-900]="jockey.boundary"
-          [class.border-r-red-900]="trainer.boundary"
-          [class.bg-gray-800]="hoveredTrainer === trainer.code"
-          tooltip="{{getDisplayTooltip(jockey, trainer)}}"
-          [hideDelay]="0"
-      >
-        <span *ngIf="getDisplay(jockey, trainer)[0].value > 0"
-              class="{{getDisplay(jockey, trainer)[0].style}}"
-        >
-          {{ getDisplay(jockey, trainer)[0].value }}
-        </span>
-        <span *ngIf="getDisplay(jockey, trainer)[0].value > 0">
-          /
-        </span>
-        <span *ngIf="getDisplay(jockey, trainer)[1].value > 0"
-              class="{{getDisplay(jockey, trainer)[1].style}}"
-        >
-          {{ getDisplay(jockey, trainer)[1].value }}
-        </span>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<div class="my-4 text-3xl text-yellow-400">
-  {{ activePlayerName }}
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
 </div>
 
-<table class="mx-auto table-fixed border-collapse">
-  <tr>
-    <th class="w-20 border border-gray-600">
-      <i class="fa fa-dollar"></i>
-    </th>
-    <th *ngFor="let partner of partners"
-        class="w-20 border border-gray-600"
-        [class.invisible]="getCollaborationEarning(partner) < 1"
-    >
-      {{ getCollaborationEarning(partner) | number: '1.0-0' }}
-    </th>
-  </tr>
-
-  <tr>
-    <th class="w-20 border border-gray-600">
-      <i class="fa fa-calendar"></i>
-    </th>
-    <th *ngFor="let partner of partners"
-        class="w-20 border border-gray-600 cursor-pointer"
-        (click)="setActivePlayer(partner)"
-    >
-      {{ partner }}
-    </th>
-  </tr>
-
-  <tr *counter="let row of maxPartnerRows">
-    <td class="border border-gray-700">
-      {{ row }}
-    </td>
-    <td *ngFor="let partner of partners"
-        [class.cursor-grab]="getStarter(partner, row)"
-        [class.border]="getStarter(partner, row)"
-        [class.border-gray-700]="getStarter(partner, row)"
-        tooltip="{{getStarterTooltip(getStarter(partner, row))}}"
-        [hideDelay]="0"
-    >
-      <div *ngIf="getStarter(partner, row)"
-           [class.line-through]="getStarter(partner, row)?.scratched"
+<div *ngIf="!isLoading">
+  <table class="mx-auto table-fixed border-collapse"
+         (mouseleave)="setHoveredTrainer('')"
+  >
+    <thead>
+      <th class="w-16 h-7 border border-gray-600">
+        <i class="fa fa-handshake-o"></i>
+      </th>
+      <th *ngFor="let trainer of trainers"
+          class="w-20 h-7 border border-gray-600"
+          (mouseenter)="setHoveredTrainer(trainer.code)"
+          (click)="setActivePlayer(trainer.code)"
+          [class.border-r-red-900]="trainer.boundary"
+          [class.bg-gray-800]="hoveredTrainer === trainer.code"
+          [class.text-yellow-400]="activePlayer === trainer.code"
+          [class.cursor-pointer]="activePlayer !== trainer.code"
       >
-        <span *ngIf="getStarter(partner, row)?.winOdds"
-              class="{{toPlacingColor(getStarter(partner, row)?.placing || 0)}} "
+        {{ trainer.code }}
+      </th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let jockey of jockeys"
+          class="hover:bg-gray-800"
+      >
+        <td class="h-7 border border-gray-600 font-bold"
+            (click)="setActivePlayer(jockey.code)"
+            [class.border-b-red-900]="jockey.boundary"
+            [class.text-yellow-400]="activePlayer === jockey.code"
+            [class.cursor-pointer]="activePlayer !== jockey.code"
         >
-          {{ getStarter(partner, row)?.winOdds | number: '1.0-1' }}
-        </span>
-        <span *ngIf="!getStarter(partner, row)?.winOdds"
-              class="text-yellow-400"
+          {{ jockey.code }}
+        </td>
+        <td *ngFor="let trainer of trainers"
+            class="h-7 border border-gray-700 text-sm"
+            (mouseenter)="setHoveredTrainer(trainer.code)"
+            [class.border-b-red-900]="jockey.boundary"
+            [class.border-r-red-900]="trainer.boundary"
+            [class.bg-gray-800]="hoveredTrainer === trainer.code"
+            tooltip="{{getDisplayTooltip(jockey, trainer)}}"
+            [hideDelay]="0"
         >
-          <i class="fa fa-question"></i>
-        </span>
-      </div>
-    </td>
-  </tr>
-</table>
+          <span *ngIf="getDisplay(jockey, trainer)[0].value > 0"
+                class="{{getDisplay(jockey, trainer)[0].style}}"
+          >
+            {{ getDisplay(jockey, trainer)[0].value }}
+          </span>
+          <span *ngIf="getDisplay(jockey, trainer)[0].value > 0">
+            /
+          </span>
+          <span *ngIf="getDisplay(jockey, trainer)[1].value > 0"
+                class="{{getDisplay(jockey, trainer)[1].style}}"
+          >
+            {{ getDisplay(jockey, trainer)[1].value }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="my-4 text-3xl text-yellow-400">
+    {{ activePlayerName }}
+  </div>
+
+  <table class="mx-auto table-fixed border-collapse">
+    <tr>
+      <th class="w-20 border border-gray-600">
+        <i class="fa fa-dollar"></i>
+      </th>
+      <th *ngFor="let partner of partners"
+          class="w-20 border border-gray-600"
+          [class.invisible]="getCollaborationEarning(partner) < 1"
+      >
+        {{ getCollaborationEarning(partner) | number: '1.0-0' }}
+      </th>
+    </tr>
+    <tr>
+      <th class="w-20 border border-gray-600">
+        <i class="fa fa-calendar"></i>
+      </th>
+      <th *ngFor="let partner of partners"
+          class="w-20 border border-gray-600 cursor-pointer"
+          (click)="setActivePlayer(partner)"
+      >
+        {{ partner }}
+      </th>
+    </tr>
+    <tr *counter="let row of maxPartnerRows">
+      <td class="border border-gray-700">
+        {{ row }}
+      </td>
+      <td *ngFor="let partner of partners"
+          [class.cursor-grab]="getStarter(partner, row)"
+          [class.border]="getStarter(partner, row)"
+          [class.border-gray-700]="getStarter(partner, row)"
+          tooltip="{{getStarterTooltip(getStarter(partner, row))}}"
+          [hideDelay]="0"
+      >
+        <div *ngIf="getStarter(partner, row)"
+             [class.line-through]="getStarter(partner, row)?.scratched"
+        >
+          <span *ngIf="getStarter(partner, row)?.winOdds"
+                class="{{toPlacingColor(getStarter(partner, row)?.placing || 0)}} "
+          >
+            {{ getStarter(partner, row)?.winOdds | number: '1.0-1' }}
+          </span>
+          <span *ngIf="!getStarter(partner, row)?.winOdds"
+                class="text-yellow-400"
+          >
+            <i class="fa fa-question"></i>
+          </span>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
