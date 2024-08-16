@@ -32,7 +32,7 @@ export const DEFAULT_PLAYER: Player = {
   nickname: 'John',
   nationality: 'HK',
   licence: 'Club',
-  careerWins: [{upToDate: '2023-09-01', wins: 0}],
+  careerWins: [{upToDate: '2024-09-01', wins: 0}],
   order: 0,
   jockey: true,
   active: true,

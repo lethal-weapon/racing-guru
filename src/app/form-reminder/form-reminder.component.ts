@@ -36,7 +36,7 @@ export class FormReminderComponent implements OnInit {
     this.repo.fetchReports(88);
     this.repo.fetchReminders(88);
     this.repo.fetchRacecards('latest', () => {
-      this.activeMeeting = this.repo.findRacecards()[0]?.meeting || '2023-09-10';
+      this.activeMeeting = this.repo.findRacecards()[0]?.meeting || SEASONS[0].opening;
       this.initializeInterview();
     });
   }
