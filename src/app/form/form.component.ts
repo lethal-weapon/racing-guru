@@ -10,8 +10,8 @@ export class FormComponent implements OnInit {
     {section: 'Reminders', link: 'reminder'},
     {section: 'Owners', link: 'owner'},
     {section: 'Players', link: 'player'},
+    {section: 'Connections', link: 'connection'},
     {section: 'Bets', link: 'bet'},
-    {section: 'Fixtures', link: 'fixture'},
   ]
 
   constructor(private router: Router) {

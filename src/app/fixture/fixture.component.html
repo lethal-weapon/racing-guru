@@ -3,17 +3,22 @@
 </div>
 
 <div *ngIf="!isLoading"
-     class="mx-12 text-center"
+     class="mx-12 mt-8 text-center"
 >
-  <div class="grid grid-cols-4 gap-2.5">
-    <div class="text-3xl place-content-center">
-      <div>
-        Season {{ fixture.season }}
-      </div>
-      <div>
-        {{ fixture.meetings.length }} Meetings
+  <div class="mb-6">
+    <div class="flex flex-row justify-between mb-2 text-3xl">
+      <div>Season {{ fixture.season }}</div>
+      <div>{{ currentSeasonProgress }}</div>
+    </div>
+    <div class="w-full h-3 bg-gray-700 rounded-full">
+      <div class="h-3 bg-yellow-400 rounded-full"
+           [style.width]="currentSeasonProgress"
+      >
       </div>
     </div>
+  </div>
+
+  <div class="grid grid-cols-4 gap-2.5">
     <div *ngFor="let ms of monthlySummaries"
          class="px-4 pt-2 pb-2.5 font-mono shadow-md transition shadow-gray-600 hover:shadow-gray-400"
     >

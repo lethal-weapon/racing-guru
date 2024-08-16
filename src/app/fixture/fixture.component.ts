@@ -19,10 +19,10 @@ interface MonthlySummary {
 }
 
 @Component({
-  selector: 'app-form-fixture',
-  templateUrl: './form-fixture.component.html'
+  selector: 'app-fixture',
+  templateUrl: './fixture.component.html'
 })
-export class FormFixtureComponent implements OnInit {
+export class FixtureComponent implements OnInit {
 
   constructor(private repo: RestRepository) {
   }
@@ -46,7 +46,7 @@ export class FormFixtureComponent implements OnInit {
   getTableCellStyle = (meeting: string): string =>
     this.isUpcomingMeeting(meeting)
       ? `border-2 border-gray-900 border-b-yellow-400`
-      : ``;
+      : ``
 
   getSeasonOrder = (meeting: string): number =>
     1 + this.fixture.meetings
@@ -91,6 +91,15 @@ export class FormFixtureComponent implements OnInit {
           meetings: monthItems
         };
       });
+  }
+
+  get currentSeasonProgress(): string {
+    const completed = this.fixture.meetings
+      .map(m => m.meeting)
+      .filter(m => new Date(m) <= new Date())
+      .length;
+
+    return `${Math.ceil(100 * completed / this.fixture.meetings.length)}%`;
   }
 
   get fixture(): Fixture {

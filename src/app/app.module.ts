@@ -21,6 +21,7 @@ import {MeetingComponent} from './meeting/meeting.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
+import {FixtureComponent} from './fixture/fixture.component';
 import {TrendComponent} from './trend/trend.component';
 import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component';
 import {TrendTopsComponent} from './trend-tops/trend-tops.component';
@@ -31,8 +32,8 @@ import {FormComponent} from './form/form.component';
 import {FormReminderComponent} from './form-reminder/form-reminder.component';
 import {FormOwnerComponent} from './form-owner/form-owner.component';
 import {FormPlayerComponent} from './form-player/form-player.component';
+import {FormConnectionComponent} from './form-connection/form-connection.component';
 import {FormBetComponent} from './form-bet/form-bet.component';
-import {FormFixtureComponent} from './form-fixture/form-fixture.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import {FormFixtureComponent} from './form-fixture/form-fixture.component';
     RacecardComponent,
     OddsComponent,
     BacktestComponent,
+    FixtureComponent,
     TrendComponent,
     TrendEveryoneComponent,
     TrendEarningComponent,
@@ -57,8 +59,8 @@ import {FormFixtureComponent} from './form-fixture/form-fixture.component';
     FormReminderComponent,
     FormOwnerComponent,
     FormPlayerComponent,
+    FormConnectionComponent,
     FormBetComponent,
-    FormFixtureComponent,
   ],
   imports: [
     BrowserModule,

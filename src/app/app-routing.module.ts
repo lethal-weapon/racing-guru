@@ -5,6 +5,7 @@ import {MeetingComponent} from './meeting/meeting.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
+import {FixtureComponent} from './fixture/fixture.component';
 import {TrendComponent} from './trend/trend.component';
 import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component';
 import {TrendEarningComponent} from './trend-earning/trend-earning.component';
@@ -15,14 +16,15 @@ import {FormComponent} from './form/form.component';
 import {FormReminderComponent} from './form-reminder/form-reminder.component';
 import {FormOwnerComponent} from './form-owner/form-owner.component';
 import {FormPlayerComponent} from './form-player/form-player.component';
+import {FormConnectionComponent} from './form-connection/form-connection.component';
 import {FormBetComponent} from './form-bet/form-bet.component';
-import {FormFixtureComponent} from './form-fixture/form-fixture.component';
 
 const routes: Routes = [
   {path: 'meeting', component: MeetingComponent},
   {path: 'racecard', component: RacecardComponent},
   {path: 'odds', component: OddsComponent},
   {path: 'backtest', component: BacktestComponent},
+  {path: 'fixture', component: FixtureComponent},
   {
     path: 'trend',
     component: TrendComponent,
@@ -74,12 +76,12 @@ const routes: Routes = [
         component: FormPlayerComponent,
       },
       {
-        path: 'bet',
-        component: FormBetComponent,
+        path: 'connection',
+        component: FormConnectionComponent,
       },
       {
-        path: 'fixture',
-        component: FormFixtureComponent,
+        path: 'bet',
+        component: FormBetComponent,
       },
     ]
   },
