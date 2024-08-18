@@ -17,8 +17,8 @@ import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
-import {BlacklistConnection} from './connection.model';
-import {FactorHit, Factor} from './backtest.model';
+import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './connection.model';
+import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
 
@@ -112,6 +112,12 @@ export class RestDataSource {
 
   getTrackworkSnapshots = (meetingSize: number): Observable<TrackworkSnapshot[]> =>
     this.http.get<TrackworkSnapshot[]>(`${this.baseUrl}/trackworks/snapshots?meetingSize=${meetingSize}`)
+
+  getPlayerConnections = (): Observable<PlayerConnection[]> =>
+    this.http.get<PlayerConnection[]>(`${this.baseUrl}/players/connections`)
+
+  savePlayerConnection = (request: PlayerConnectionRequest): Observable<PlayerConnection> =>
+    this.http.post<PlayerConnection>(`${this.baseUrl}/players/connections`, request)
 
   getBlacklistConnections = (meeting: string): Observable<BlacklistConnection[]> =>
     this.http.get<BlacklistConnection[]>(`${this.baseUrl}/players/blacklist-connections?meeting=${meeting}`)

@@ -15,7 +15,7 @@ import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
-import {BlacklistConnection} from './connection.model';
+import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
@@ -36,6 +36,7 @@ export class RestRepository {
   private drawInheritances: DrawInheritance[] = [];
   private syndicateSnapshots: SyndicateSnapshot[] = [];
   private trackworkSnapshots: TrackworkSnapshot[] = [];
+  private playerConnections: PlayerConnection[] = [];
   private blacklistConnections: BlacklistConnection[] = [];
   private accumulatedSeasonEarnings: AccumulatedSeasonEarning[] = [];
 
@@ -60,6 +61,7 @@ export class RestRepository {
   findDrawInheritances = () => this.drawInheritances
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
+  findPlayerConnections = () => this.playerConnections
   findBlacklistConnections = () => this.blacklistConnections
   findAccumulatedSeasonEarnings = () => this.accumulatedSeasonEarnings
 
@@ -263,6 +265,25 @@ export class RestRepository {
     this.source
       .getTrackworkSnapshots(meetingSize)
       .subscribe(data => this.trackworkSnapshots = data)
+
+  fetchPlayerConnections = () =>
+    this.source
+      .getPlayerConnections()
+      .subscribe(data => this.playerConnections = data)
+
+  savePlayerConnection = (request: PlayerConnectionRequest) =>
+    this.source
+      .savePlayerConnection(request)
+      .subscribe(data => {
+        const index = this.playerConnections.findIndex(c =>
+          (c.playerA === data.playerA && c.playerB === data.playerB)
+          ||
+          (c.playerB === data.playerA && c.playerA === data.playerB)
+        );
+
+        if (index === -1) this.playerConnections.push(data);
+        else this.playerConnections.splice(index, 1, data);
+      })
 
   fetchBlacklistConnections = (meeting: string = 'latest') =>
     this.source
