@@ -140,7 +140,8 @@ export class TrendCollaborationComponent implements OnInit {
           .pop()
           ?.starters.length || 0
       })
-      .sort((n1, n2) => n1 - n2).pop() || 3;
+      .sort((n1, n2) => n1 - n2)
+      .pop() || 3;
   }
 
   get topWinnerCounts(): number[] {

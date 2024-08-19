@@ -8,8 +8,8 @@ interface MonthlyPoolSummary {
   pool: string,
   debit: number,
   credit: number,
-  roi: number
-  betlines: number[],
+  roi: number,
+  betlines: number[]
 }
 
 interface MonthlySummary {
@@ -155,49 +155,48 @@ export class FormBetComponent implements OnInit {
       .filter((m, index, arr) => index === arr.indexOf(m))
       .sort((m1, m2) => m2.localeCompare(m1))
       .map(m => {
-          const monthBets = this.bets.filter(r => r.meeting.startsWith(m));
-          const monthDebit = monthBets.map(r => r.debit).reduce((prev, curr) => prev + curr, 0);
-          const monthCredit = monthBets.map(r => r.credit).reduce((prev, curr) => prev + curr, 0);
-          const monthBetlines = monthBets.flatMap(r => r.betlines);
-          const monthPools = this.meetingPoolViewFields.map(p => {
-            const monthDebitByPool = monthBets
-              .map(b => this.getValueByMeetingPool(b, p, true))
-              .reduce((prev, curr) => prev + curr, 0);
+        const monthBets = this.bets.filter(r => r.meeting.startsWith(m));
+        const monthDebit = monthBets.map(r => r.debit).reduce((prev, curr) => prev + curr, 0);
+        const monthCredit = monthBets.map(r => r.credit).reduce((prev, curr) => prev + curr, 0);
+        const monthBetlines = monthBets.flatMap(r => r.betlines);
+        const monthPools = this.meetingPoolViewFields.map(p => {
+          const monthDebitByPool = monthBets
+            .map(b => this.getValueByMeetingPool(b, p, true))
+            .reduce((prev, curr) => prev + curr, 0);
 
-            const monthCreditByPool = monthBets
-              .map(b => this.getValueByMeetingPool(b, p, false))
-              .reduce((prev, curr) => prev + curr, 0);
+          const monthCreditByPool = monthBets
+            .map(b => this.getValueByMeetingPool(b, p, false))
+            .reduce((prev, curr) => prev + curr, 0);
 
-            const monthBetlinesByPool = monthBets
-              .flatMap(b => this.filterBetlineByMeetingPool(b, p));
-
-            return {
-              pool: p,
-              debit: monthDebitByPool,
-              credit: monthCreditByPool,
-              roi: parseFloat((monthCreditByPool / monthDebitByPool - 1).toFixed(3)),
-              betlines: [
-                monthBetlinesByPool.filter(b => b.credit > b.debit).length,
-                monthBetlinesByPool.length
-              ],
-            }
-          });
+          const monthBetlinesByPool = monthBets
+            .flatMap(b => this.filterBetlineByMeetingPool(b, p));
 
           return {
-            year: m.slice(0, 4).replace('20', '\''),
-            month: new Date(monthBets[0].meeting).toLocaleString('en-US', {month: 'short'}),
-            meetings: monthBets.length,
-            debit: monthDebit,
-            credit: monthCredit,
-            roi: parseFloat((monthCredit / monthDebit - 1).toFixed(3)),
+            pool: p,
+            debit: monthDebitByPool,
+            credit: monthCreditByPool,
+            roi: parseFloat((monthCreditByPool / monthDebitByPool - 1).toFixed(3)),
             betlines: [
-              monthBetlines.filter(b => b.credit > b.debit).length,
-              monthBetlines.length
+              monthBetlinesByPool.filter(b => b.credit > b.debit).length,
+              monthBetlinesByPool.length
             ],
-            pools: monthPools
           }
+        });
+
+        return {
+          year: m.slice(0, 4).replace('20', '\''),
+          month: new Date(monthBets[0].meeting).toLocaleString('en-US', {month: 'short'}),
+          meetings: monthBets.length,
+          debit: monthDebit,
+          credit: monthCredit,
+          roi: parseFloat((monthCredit / monthDebit - 1).toFixed(3)),
+          betlines: [
+            monthBetlines.filter(b => b.credit > b.debit).length,
+            monthBetlines.length
+          ],
+          pools: monthPools
         }
-      );
+      });
   }
 
   get seasonBetlines(): number[] {

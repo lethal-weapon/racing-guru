@@ -25,22 +25,22 @@ export interface StarterSnapshot {
   horseNameCH: string,
   jockey: string,
   trainer: string,
-  scratched: boolean,
+  scratched: boolean
 }
 
 export interface MeetingSyndicate {
-  syndicateId: string
+  syndicateId: string,
   syndicateMembers: number,
   syndicateActiveHorses: number,
   starterCount: number,
-  starters: StarterSnapshot[],
+  starters: StarterSnapshot[]
 }
 
 export interface OwnerPerformance {
   race: number,
   single: string,
   multiple: string,
-  sole: string,
+  sole: string
 }
 
 export const DEFAULT_SYNDICATE_SNAPSHOT: SyndicateSnapshot = {

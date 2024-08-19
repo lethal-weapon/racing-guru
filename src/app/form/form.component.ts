@@ -25,7 +25,7 @@ export class FormComponent implements OnInit {
     ||
     (this.currentUrl.endsWith('/form') && link === 'reminder')
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
-      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
+      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
 
   get currentUrl(): string {
     return this.router.url;

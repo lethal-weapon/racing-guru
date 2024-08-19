@@ -138,7 +138,7 @@ export class RestRepository {
     interviews: Interview[],
     successCallback: () => any,
     errorCallback: () => any
-  ) => {
+  ) =>
     this.source.saveInterview(interviews).subscribe(
       data => {
         this.racecards = data;
@@ -146,17 +146,15 @@ export class RestRepository {
       },
       error => errorCallback()
     )
-  }
 
   fetchRacecards = (
     meeting: string = 'latest',
     callback: () => any = () => console.log(``)
-  ) => {
+  ) =>
     this.source.getRacecards(meeting).subscribe(data => {
       this.racecards = data;
       callback();
     })
-  }
 
   fetchRecommendations = (
     size: number = 8,
@@ -173,13 +171,12 @@ export class RestRepository {
   saveSyndicate = (
     syndicate: Syndicate,
     successCallback: (saved: Syndicate) => any
-  ) => {
+  ) =>
     this.source.saveSyndicate(syndicate).subscribe(data => {
       this.syndicates = this.syndicates.filter(s => s.id !== data.id);
       this.syndicates.push(data);
       successCallback(data);
     })
-  }
 
   deleteSyndicate = (
     syndicate: Syndicate,

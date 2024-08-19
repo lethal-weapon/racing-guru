@@ -16,7 +16,7 @@ interface PlayerGroup {
 
 @Component({
   selector: 'app-trend-earning',
-  templateUrl: './trend-earning.component.html',
+  templateUrl: './trend-earning.component.html'
 })
 export class TrendEarningComponent implements OnInit {
 
@@ -130,7 +130,7 @@ export class TrendEarningComponent implements OnInit {
   getTrackingPlayerStyle = (player: string) =>
     this.trackingPlayers.includes(player)
       ? `border border-gray-900 bg-gradient-to-r from-sky-800 to-indigo-800`
-      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
+      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
 
   get playerGroups(): PlayerGroup[] {
     const trainerCodes = this.trainers.map(t => t.code);

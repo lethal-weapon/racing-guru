@@ -38,7 +38,7 @@ export class FormConnectionComponent implements OnInit {
       playerB: otherPlayer,
       relation: relationship,
       active: !this.isRelationshipExist(otherPlayer, relationship)
-    })
+    });
   }
 
   getRelationshipStyle = (otherPlayer: string, relationship: string): string =>

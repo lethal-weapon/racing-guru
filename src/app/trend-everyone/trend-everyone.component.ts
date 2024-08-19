@@ -39,7 +39,7 @@ interface TablePlacing {
 interface HorseView {
   horse: string,
   horseNameCH: string,
-  starters: EarningStarter[],
+  starters: EarningStarter[]
 }
 
 @Component({
@@ -183,7 +183,7 @@ export class TrendEveryoneComponent implements OnInit {
   getSectionStyle = (section: string): string =>
     [this.activePlayerType, this.activePlayerView].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
-      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
+      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
 
   isOnMostRecentRacecard = (code: string): boolean => {
     if (this.meetings.length < 1) return false;
@@ -276,21 +276,20 @@ export class TrendEveryoneComponent implements OnInit {
 
   get overviews(): MeetingOverview[] {
     return this.windowMeetings.map(m => {
-        const title = `
+      const title = `
           ${this.formatMeeting(m.meeting)}
           ${m.races}R $${m.turnover}
         `.trim();
 
-        const date = m.meeting.replace(/-/g, '/');
+      const date = m.meeting.replace(/-/g, '/');
 
-        const link = `
+      const link = `
           https://racing.hkjc.com/racing/information/
           English/Racing/ResultsAll.aspx?RaceDate=${date}
         `.replace(/\s/g, '');
 
-        return {title: title, link: link, meeting: m.meeting}
-      }
-    );
+      return {title: title, link: link, meeting: m.meeting}
+    });
   }
 
   get windowMeetings(): Meeting[] {
