@@ -115,6 +115,9 @@ export class MeetingComponent implements OnInit {
   setActiveDraw = (clicked: number) =>
     this.activeDraw = this.activeDraw === clicked ? 0 : clicked
 
+  getMeetingEarning = (player: string): number =>
+    this.meeting.players.find(p => p.player === player)?.earnings || 0
+
   tick = () => {
     if (!this.next) {
       this.remainingTime = `---`;
@@ -183,9 +186,6 @@ export class MeetingComponent implements OnInit {
     this.repo.savePick(newPick);
   }
 
-  getMeetingEarning = (player: string): number =>
-    this.meeting.players.find(p => p.player === player)?.earnings || 0
-
   isPersonalFavorite = (starter: Starter, race: number): boolean =>
     this.pick.races
       .filter(r => r.race === race)
@@ -251,7 +251,7 @@ export class MeetingComponent implements OnInit {
     )
 
   rideThisRace = (jockey: string, racecard: Racecard): boolean =>
-    racecard.starters.map(s => s.jockey).includes(jockey);
+    racecard.starters.map(s => s.jockey).includes(jockey)
 
   rideNextRace = (jockey: string, racecard: Racecard): boolean => {
     if (racecard.race >= this.maxRace) return false;
@@ -308,7 +308,7 @@ export class MeetingComponent implements OnInit {
 
   formatChallengeOdds = (odds: number): string => {
     if (odds < 1) return '';
-    else if (odds > 99) return '99+'
+    else if (odds > 99) return '99+';
     else return `${odds}`;
   }
 
@@ -321,7 +321,7 @@ export class MeetingComponent implements OnInit {
       .replace('GRIFFIN RACE', 'GF')
       .replace('GRIFFIN', 'GF')
       .trim();
-    return `${clean[0]}${clean.slice(-1)}`
+    return `${clean[0]}${clean.slice(-1)}`;
   }
 
   getStarterTooltip = (jockey: string, racecard: Racecard): string => {
@@ -484,11 +484,12 @@ export class MeetingComponent implements OnInit {
   getStartersByTrainerGroup = (race: number, groupIndex: number): Starter[] => {
     // @ts-ignore
     return this.getTrainerGroup(groupIndex)
-      .filter(t => this.racecards
-        .find(r => r.race === race)
-        ?.starters
-        .map(s => s.trainer)
-        .includes(t)
+      .filter(t =>
+        this.racecards
+          .find(r => r.race === race)
+          ?.starters
+          .map(s => s.trainer)
+          .includes(t)
       )
       .map(t =>
         this.racecards
