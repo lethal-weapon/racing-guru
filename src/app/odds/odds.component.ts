@@ -22,7 +22,7 @@ import {
   FCT_ODDS_STEP,
   MAX_RACE_PER_MEETING,
   QIN_ODDS_STEP,
-  QPL_ODDS_STEP,
+  QPL_ODDS_STEP
 } from '../util/numbers';
 import {
   formatOdds,
@@ -472,7 +472,7 @@ export class OddsComponent implements OnInit {
   isFCTOddsWithinRange = (starterA: Starter, starterB: Starter): boolean[] =>
     this
       .getStarterFCTOdds(starterA, starterB)
-      .map(o => o >= this.activeRange.minFCT && o <= this.activeRange.maxFCT);
+      .map(o => o >= this.activeRange.minFCT && o <= this.activeRange.maxFCT)
 
   isDBLOddsWithinRange = (starterA: Starter, starterB: Starter): boolean => {
     const dbl = this.getStarterDBLOdds(starterA, starterB);
@@ -526,7 +526,7 @@ export class OddsComponent implements OnInit {
           isFirstLeg ? leg : banker
         )[3].length
       )
-      .reduce((prev, curr) => prev + curr, 0);
+      .reduce((prev, curr) => prev + curr, 0)
 
   getSingularSignals = (starter: Starter): SingularSignal[][] => {
     const signal = this.activeRacecard?.signal;
@@ -585,12 +585,14 @@ export class OddsComponent implements OnInit {
 
   getSingularSignalTooltip = (starter: Starter): string =>
     this.toSignalTooltip(
-      this.getSingularSignals(starter)
+      this
+        .getSingularSignals(starter)
         .reduce((prev, curr) => prev.concat(curr), [])
     )
 
   getCombinationSignalTooltip = (starterA: Starter, starterB: Starter): string[] =>
-    this.getCombinationSignals(starterA, starterB)
+    this
+      .getCombinationSignals(starterA, starterB)
       .map(css => this.toSignalTooltip(css))
 
   getStarterQQPOdds = (starterA: Starter, starterB: Starter): number[] => {
@@ -676,8 +678,7 @@ export class OddsComponent implements OnInit {
 
   get maxMeetingStarterOrder(): number {
     return this.racecards
-      .map(r => r.starters)
-      .reduce((prev, curr) => prev.concat(curr), [])
+      .flatMap(r => r.starters)
       .map(s => s.order)
       .sort((o1, o2) => o1 - o2)
       .pop() || 14;
