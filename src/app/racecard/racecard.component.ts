@@ -82,7 +82,9 @@ export class RacecardComponent implements OnInit {
 
     socket.addCollaborationCallback((newCollaboration: Collaboration) => {
       const index = this.collaborations.findIndex(c =>
-        c.jockey === newCollaboration.jockey && c.trainer === newCollaboration.trainer
+        c.jockey === newCollaboration.jockey
+        &&
+        c.trainer === newCollaboration.trainer
       );
       if (index === -1) this.collaborations.push(newCollaboration);
       else this.collaborations.splice(index, 1, newCollaboration);
@@ -143,6 +145,7 @@ export class RacecardComponent implements OnInit {
       this.isEditMode = true;
       const selections = this.pick.races
         .find(r => r.race === this.activeRace)?.selections || [];
+
       this.editingSelections = [...selections];
 
     } else {
