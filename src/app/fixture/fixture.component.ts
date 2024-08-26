@@ -95,8 +95,7 @@ export class FixtureComponent implements OnInit {
 
   get currentSeasonProgress(): string {
     const completed = this.fixture.meetings
-      .map(m => m.meeting)
-      .filter(m => new Date(m) <= new Date())
+      .filter(m => new Date(m.meeting) <= new Date())
       .length;
 
     return `${Math.ceil(100 * completed / this.fixture.meetings.length)}%`;

@@ -12,6 +12,7 @@ import {
   SyndicateSnapshot
 } from '../model/syndicate.model';
 import {
+  formatRace,
   formatMeeting,
   getOddsIntensityColor,
   isBoundaryMeeting,
@@ -57,6 +58,7 @@ export class TrendEveryoneComponent implements OnInit {
   protected readonly COLORS = COLORS;
   protected readonly MEETING_WINDOW_SIZE = MEETING_WINDOW_SIZE;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
+  protected readonly formatRace = formatRace;
   protected readonly formatMeeting = formatMeeting;
   protected readonly toPlacingColor = toPlacingColor;
   protected readonly isBoundaryMeeting = isBoundaryMeeting;

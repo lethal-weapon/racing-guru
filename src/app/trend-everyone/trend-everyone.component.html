@@ -195,7 +195,7 @@
     <th *counter="let race of MAX_RACE_PER_MEETING"
         class="w-32 border border-gray-600"
     >
-      {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
+      {{ formatRace(race) }}
     </th>
   </thead>
   <tbody>
@@ -285,7 +285,7 @@
     <th *counter="let race of maxRaceOnActiveMeeting"
         class="border border-gray-600"
     >
-      {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
+      {{ formatRace(race) }}
     </th>
   </thead>
   <tbody>

@@ -44,6 +44,13 @@ export const COLORS = [
   'text-purple-600',
 ]
 
+export const BG_COLORS = [
+  'bg-red-600',
+  'bg-green-600',
+  'bg-blue-600',
+  'bg-purple-600',
+]
+
 export const SEASONS: Season[] = [
   {label: '24/25', opening: '2024-09-08', finale: '2025-07-16'},
   {label: '23/24', opening: '2023-09-10', finale: '2024-07-14'},

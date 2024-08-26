@@ -296,7 +296,7 @@
         <td class="border border-gray-700"
             [class.border-b-red-900]="race === maxRace"
         >
-          {{ race === 10 ? 'X' : race === 11 ? 'E' : race }}
+          {{ formatRace(race) }}
         </td>
         <td class="px-1 border border-gray-700 border-r-red-900"
             [class.border-b-red-900]="race === maxRace"
