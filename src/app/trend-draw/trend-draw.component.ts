@@ -16,7 +16,6 @@ export class TrendDrawComponent implements OnInit, OnDestroy {
   loopIntervalId: any;
 
   protected readonly COLORS = COLORS;
-  protected readonly BG_COLORS = BG_COLORS;
   protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
   protected readonly formatRace = formatRace;
@@ -38,7 +37,12 @@ export class TrendDrawComponent implements OnInit, OnDestroy {
     if (this.loopIntervalId) clearInterval(this.loopIntervalId);
   }
 
-  isMultipleInheritance = (mostRecentRace: number): boolean => {
+  isInherited = (meeting: string, race: number, placing: number): boolean =>
+    this.drawInheritances
+      .filter(d => d.meeting === meeting && d.race === race)
+      .some(d => d.draws.some(dd => dd.inherit && dd.placing === placing))
+
+  isMultipleInheritanceByMostRecentRace = (mostRecentRace: number): boolean => {
     if (this.sortedInheritances.length < mostRecentRace) return false;
     return this.sortedInheritances[mostRecentRace - 1].inheritance > 1;
   }
@@ -55,13 +59,42 @@ export class TrendDrawComponent implements OnInit, OnDestroy {
     return matched ? BG_COLORS[placing - 1] : 'bg-gray-700';
   }
 
+  getDraw = (meeting: string, race: number, placing: number): number => {
+    const drawInheritance = this.drawInheritances
+      .find(d => d.meeting === meeting && d.race === race);
+
+    if (!drawInheritance) return 0;
+    return drawInheritance.draws.find(d => d.placing === placing)?.draw || 0;
+  }
+
+  getDrawOdds = (meeting: string, race: number, placing: number): number => {
+    const draw = this.getDraw(meeting, race, placing);
+    return (this.meetings.find(m => m.meeting === meeting)?.players || [])
+      .flatMap(ps => ps.starters)
+      .filter(s => s.race === race && s.draw === draw)
+      .shift()?.winOdds || 0;
+  }
+
+  getDrawPlacingCount = (meeting: string, placing: number): number =>
+    this.drawInheritances
+      .filter(d => d.meeting === meeting)
+      .flatMap(d => d.draws)
+      .filter(d => d.inherit && d.placing === placing)
+      .length
+
+  getRacesOnMeeting = (meeting: string): number[] =>
+    this.drawInheritances
+      .filter(d => d.meeting === meeting)
+      .map(d => d.race)
+      .sort((r1, r2) => r2 - r1)
+
   getDrawPlacingPerformance = (meeting: string, race: number): DrawPlacingPerformance[] =>
     this.getDrawPerformance(meeting, race)?.draws || []
 
   getDrawPerformance = (meeting: string, race: number): DrawInheritance | undefined =>
-    this.drawInheritances.find(d => d.meeting === meeting && d.race === race);
+    this.drawInheritances.find(d => d.meeting === meeting && d.race === race)
 
-  get maxMostRecentRaces(): number {
+  get maxMostRecentRace(): number {
     return 88;
   }
 
@@ -81,5 +114,10 @@ export class TrendDrawComponent implements OnInit, OnDestroy {
 
   get meetings(): Meeting[] {
     return this.repo.findMeetings();
+  }
+
+  get isLoading(): boolean {
+    return this.repo.findMeetings().length === 0
+      || this.repo.findDrawInheritances().length === 0;
   }
 }
