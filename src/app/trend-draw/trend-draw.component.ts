@@ -42,7 +42,7 @@ export class TrendDrawComponent implements OnInit, OnDestroy {
       .filter(d => d.meeting === meeting && d.race === race)
       .some(d => d.draws.some(dd => dd.inherit && dd.placing === placing))
 
-  isMultipleInheritanceByMostRecentRace = (mostRecentRace: number): boolean => {
+  isMultipleInheritance = (mostRecentRace: number): boolean => {
     if (this.sortedInheritances.length < mostRecentRace) return false;
     return this.sortedInheritances[mostRecentRace - 1].inheritance > 1;
   }
