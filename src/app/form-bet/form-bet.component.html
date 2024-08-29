@@ -42,7 +42,7 @@
       </span>
     </div>
     <div>
-      <span class="mr-2">P / L:</span>
+      <span class="mr-2">P & L:</span>
       <span [class.text-red-600]="seasonSummary.credit < seasonSummary.debit"
             [class.text-green-600]="seasonSummary.credit > seasonSummary.debit"
       >
@@ -219,7 +219,7 @@
           <div class="text-green-600 text-right">
             +{{ ms.credit | currency:'USD':'symbol':'1.0-0' }}
           </div>
-          <div class="text-left">P / L</div>
+          <div class="text-left">P & L</div>
           <div class="text-right"
                [class.text-red-600]="ms.credit < ms.debit"
                [class.text-green-600]="ms.credit > ms.debit"
@@ -306,7 +306,7 @@
           </tr>
           <tr>
             <td class="px-3">
-              P / L
+              P & L
             </td>
             <td *ngFor="let ps of ms.pools"
                 class="px-3"

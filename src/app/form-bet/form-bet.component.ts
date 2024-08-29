@@ -234,7 +234,7 @@ export class FormBetComponent implements OnInit {
   get meetingSummaryViewFields(): string[] {
     return [
       'Meeting', 'Venue', 'Profit Race #',
-      'Betlines', 'Debit', 'Credit', 'P / L', 'ROI'
+      'Betlines', 'Debit', 'Credit', 'P & L', 'ROI'
     ];
   }
 

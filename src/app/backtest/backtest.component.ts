@@ -264,14 +264,14 @@ export class BacktestComponent implements OnInit {
   get meetingFields(): string[] {
     return [
       'Meeting', 'Profit Race #', 'Races', 'Betlines',
-      'Debits', 'Credits', 'P / L', 'ROI'
+      'Debits', 'Credits', 'P & L', 'ROI'
     ];
   }
 
   get profitabilityFields(): string[] {
     return [
       'Tester', 'Meetings', 'Races', 'Betlines',
-      'Debits', 'Credits', 'P / L', 'ROI'
+      'Debits', 'Credits', 'P & L', 'ROI'
     ];
   }
 
