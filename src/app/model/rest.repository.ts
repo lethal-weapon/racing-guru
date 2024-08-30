@@ -258,10 +258,22 @@ export class RestRepository {
     else this.syndicateSnapshots.splice(index, 1, newSnapshot);
   }
 
-  fetchTrackworkSnapshots = (meetingSize: number = 8) =>
+  fetchTrackworkSnapshots = (
+    meetingSize: number = 8,
+    callback: () => any = () => console.log(``)
+  ) => {
     this.source
       .getTrackworkSnapshots(meetingSize)
-      .subscribe(data => this.trackworkSnapshots = data)
+      .subscribe(data => this.trackworkSnapshots = data);
+
+    callback();
+  }
+
+  updateTrackworkSnapshotFromSocket = (newSnapshot: TrackworkSnapshot) => {
+    const index = this.trackworkSnapshots.findIndex(s => s.meeting === newSnapshot.meeting);
+    if (index === -1) this.trackworkSnapshots.unshift(newSnapshot);
+    else this.trackworkSnapshots.splice(index, 1, newSnapshot);
+  }
 
   fetchPlayerConnections = () =>
     this.source

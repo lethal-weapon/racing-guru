@@ -1,0 +1,52 @@
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+  <div class="mx-12 my-4 flex flex-row justify-evenly">
+    <div *ngFor="let ts of trackworks"
+         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(ts.meeting)}}"
+         (click)="activeMeeting = ts.meeting"
+    >
+      {{ formatMeeting(ts.meeting) }}
+      {{ ts.venue }}
+    </div>
+  </div>
+
+  <div class="mx-8 grid grid-cols-4 gap-x-4 gap-y-2">
+    <div *counter="let race of maxRace"
+         class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
+    >
+      <div class="mb-2 text-yellow-400 text-lg">
+        Race #{{ race }}
+      </div>
+      <div *ngFor="let starter of getRaceStarter(race); let index = index"
+           class="grid grid-cols-12 {{toPlacingColor(starter?.placing)}}"
+           [class.opacity-50]="starter.scratched"
+           [class.line-through]="starter.scratched"
+      >
+        <div class="col-span-1">
+          <span *ngIf="starter.trainerFocus">
+            <i class="fa fa-chevron-right"></i>
+          </span>
+        </div>
+        <div class="col-span-1">
+          {{ starter.order }}
+        </div>
+        <div class="col-span-4">
+          {{ starter.horseNameCH }}
+        </div>
+        <div class="col-span-2">
+          {{ starter.trainer }}
+        </div>
+        <div class="col-span-2">
+          {{ starter.winOdds | number: '1.0-1' }}
+        </div>
+        <div class="col-span-2 {{getGradeBorderStyle(race, starter, index)}}">
+          {{ starter.intensity.toFixed(1) }}
+          {{ starter.grade }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

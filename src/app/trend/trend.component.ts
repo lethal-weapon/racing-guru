@@ -5,6 +5,7 @@ import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../websocket.service';
 import {Meeting} from '../model/meeting.model';
 import {SyndicateSnapshot} from '../model/syndicate.model';
+import {TrackworkSnapshot} from '../model/trackwork.model';
 
 @Component({
   selector: 'app-trend',
@@ -16,6 +17,7 @@ export class TrendComponent implements OnInit {
     {section: 'Board', link: 'tops'},
     {section: 'Earning', link: 'earning'},
     {section: 'Collaboration', link: 'collaboration'},
+    {section: 'Trackwork', link: 'trackwork'},
     {section: 'Draw', link: 'draw'},
   ]
 
@@ -30,6 +32,10 @@ export class TrendComponent implements OnInit {
 
     socket.addSyndicateSnapshotCallback((newSnapshot: SyndicateSnapshot) => {
       this.repo.updateSyndicateSnapshotFromSocket(newSnapshot);
+    });
+
+    socket.addTrackworkSnapshotCallback((newSnapshot: TrackworkSnapshot) => {
+      this.repo.updateTrackworkSnapshotFromSocket(newSnapshot);
     });
   }
 

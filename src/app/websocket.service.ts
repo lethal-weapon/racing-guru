@@ -10,6 +10,7 @@ import {Recommendation} from './model/recommendation.model';
 import {Meeting} from './model/meeting.model';
 import {Collaboration} from './model/collaboration.model';
 import {SyndicateSnapshot} from './model/syndicate.model';
+import {TrackworkSnapshot} from './model/trackwork.model';
 
 @Injectable({providedIn: 'root'})
 export class WebsocketService {
@@ -39,6 +40,9 @@ export class WebsocketService {
   syndicateSnapshotTopic = '/topic/syndicateSnapshot';
   onSyndicateSnapshotCallbacks: ((newSnapshot: SyndicateSnapshot) => any)[] = [];
 
+  trackworkSnapshotTopic = '/topic/trackworkSnapshot';
+  onTrackworkSnapshotCallbacks: ((newSnapshot: TrackworkSnapshot) => any)[] = [];
+
   constructor() {
     this.connect();
   }
@@ -67,6 +71,9 @@ export class WebsocketService {
   addSyndicateSnapshotCallback = (callback: (newSnapshot: SyndicateSnapshot) => any) =>
     this.onSyndicateSnapshotCallbacks.push(callback)
 
+  addTrackworkSnapshotCallback = (callback: (newSnapshot: TrackworkSnapshot) => any) =>
+    this.onTrackworkSnapshotCallbacks.push(callback)
+
   connect = () => {
     let socket = new SockJS(this.socketUrl);
     this.client = Stomp.over(socket);
@@ -79,6 +86,7 @@ export class WebsocketService {
         this.subscribeToMeetingTopic();
         this.subscribeToCollaborationTopic();
         this.subscribeToSyndicateSnapshotTopic();
+        this.subscribeToTrackworkSnapshotTopic();
       },
       (error: any) => {
         console.log('Websocket closed, will retry in 30 seconds');
@@ -132,6 +140,13 @@ export class WebsocketService {
     this.client.subscribe(this.syndicateSnapshotTopic, (message: any) => {
       const newSnapshot = JSON.parse(message.body) as SyndicateSnapshot;
       this.onSyndicateSnapshotCallbacks.forEach(callback => callback(newSnapshot));
+    });
+  }
+
+  subscribeToTrackworkSnapshotTopic = () => {
+    this.client.subscribe(this.trackworkSnapshotTopic, (message: any) => {
+      const newSnapshot = JSON.parse(message.body) as TrackworkSnapshot;
+      this.onTrackworkSnapshotCallbacks.forEach(callback => callback(newSnapshot));
     });
   }
 }
