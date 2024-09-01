@@ -1,0 +1,142 @@
+<div class="mx-12 text-center text-lg">
+
+  <div class="grid grid-cols-3 grid-rows-2 items-start gap-x-4 gap-y-8">
+    <div *ngFor="let section of sections"
+         class="pt-2 pb-2.5 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
+         [class.row-span-2]="section === SECTION_STATEMENT"
+    >
+      <div class="mb-2 text-xl font-bold">
+        {{ section.toUpperCase() }}
+      </div>
+      <div *ngIf="section === SECTION_INCOME"
+           class=""
+      >
+        <table class="mx-auto">
+          <tr>
+            <th></th>
+            <th>Cash Flow</th>
+            <th>Passive</th>
+          </tr>
+          <tr *ngFor="let income of incomes">
+            <td class="px-4 text-left">
+              {{ income.category }}
+            </td>
+            <td class="px-4 text-right text-green-600">
+              {{ income.amount | currency:'USD':'symbol':'1.0-0' }}
+            </td>
+            <td class="px-4">
+              <div *ngIf="income.passive">
+                <div class="w-3 h-3 rounded-full bg-green-600">
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div *ngIf="section === SECTION_EXPENSE"
+           class=""
+      >
+        <table class="mx-auto">
+          <tr>
+            <th></th>
+            <th>Cash Flow</th>
+          </tr>
+          <tr *ngFor="let expense of expenses">
+            <td class="px-6 text-left">
+              {{ expense.category }}
+            </td>
+            <td class="px-6 text-right text-red-600">
+              {{ expense.amount | currency:'USD':'symbol':'1.0-0' }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div *ngIf="section === SECTION_ASSET"
+           class=""
+      >
+        <table class="mx-auto">
+          <tr>
+            <th></th>
+            <th></th>
+            <th>Current</th>
+          </tr>
+          <tr *ngFor="let asset of assets">
+            <td class="px-6 text-left">
+              {{ asset.category }}
+            </td>
+            <td class="px-6 text-right">
+              {{ asset.amount | currency:'USD':'symbol':'1.0-0' }}
+            </td>
+            <td class="px-6">
+              <div *ngIf="asset.current">
+                <div class="w-3 h-3 rounded-full bg-green-600">
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div *ngIf="section === SECTION_LIABILITY"
+           class=""
+      >
+        <table class="mx-auto">
+          <tr>
+            <th></th>
+            <th></th>
+            <th>Months</th>
+            <th>APR</th>
+          </tr>
+          <tr *ngFor="let liability of liabilities">
+            <td class="px-4 text-left">
+              {{ liability.category }}
+            </td>
+            <td class="px-4 text-right">
+              {{ liability.amount | currency:'USD':'symbol':'1.0-0' }}
+            </td>
+            <td class="px-4">
+              {{ liability.periodInMonth }}
+            </td>
+            <td class="px-4">
+              {{ liability.annualizedInterestRate | percent }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div *ngIf="section === SECTION_STATEMENT"
+           class="row-span-2"
+      >
+        <div class="px-8 grid grid-cols-2">
+          <div class="text-left text-xl">
+            CASH:
+          </div>
+          <div class="text-right text-xl">
+            {{ cash | currency:'USD':'symbol':'1.0-0' }}
+          </div>
+          <div class="pt-8 text-left">
+            TOTAL INCOME:
+          </div>
+          <div class="pt-8 text-right text-green-600">
+            {{ totalIncome | currency:'USD':'symbol':'1.0-0' }}
+          </div>
+          <div class="pt-2 text-left">
+            TOTAL EXPENSES:
+          </div>
+          <div class="pt-2 text-right text-red-600">
+            {{ totalExpenses | currency:'USD':'symbol':'1.0-0' }}
+          </div>
+          <div class="col-span-2 my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+          <div class="text-left">
+            PAYDAY:
+          </div>
+          <div class="text-right text-red-600"
+               [class.text-green-600]="totalIncome >= totalExpenses"
+               [class.text-red-600]="totalIncome < totalExpenses"
+          >
+            {{ (totalIncome - totalExpenses) | currency:'USD':'symbol':'1.0-0' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

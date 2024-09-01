@@ -19,6 +19,9 @@ import {FormOwnerComponent} from './form-owner/form-owner.component';
 import {FormPlayerComponent} from './form-player/form-player.component';
 import {FormConnectionComponent} from './form-connection/form-connection.component';
 import {FormBetComponent} from './form-bet/form-bet.component';
+import {FinanceComponent} from './finance/finance.component';
+import {FinancePersonalComponent} from './finance-personal/finance-personal.component';
+import {FinanceAccountingComponent} from './finance-accounting/finance-accounting.component';
 
 const routes: Routes = [
   {path: 'meeting', component: MeetingComponent},
@@ -87,6 +90,24 @@ const routes: Routes = [
       {
         path: 'bet',
         component: FormBetComponent,
+      },
+    ]
+  },
+  {
+    path: 'finance',
+    component: FinanceComponent,
+    children: [
+      {
+        path: '',
+        component: FinancePersonalComponent,
+      },
+      {
+        path: 'personal',
+        component: FinancePersonalComponent,
+      },
+      {
+        path: 'accounting',
+        component: FinanceAccountingComponent,
       },
     ]
   },

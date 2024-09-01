@@ -35,6 +35,9 @@ import {FormOwnerComponent} from './form-owner/form-owner.component';
 import {FormPlayerComponent} from './form-player/form-player.component';
 import {FormConnectionComponent} from './form-connection/form-connection.component';
 import {FormBetComponent} from './form-bet/form-bet.component';
+import {FinanceComponent} from './finance/finance.component';
+import {FinancePersonalComponent} from './finance-personal/finance-personal.component';
+import {FinanceAccountingComponent} from './finance-accounting/finance-accounting.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +66,9 @@ import {FormBetComponent} from './form-bet/form-bet.component';
     FormPlayerComponent,
     FormConnectionComponent,
     FormBetComponent,
+    FinanceComponent,
+    FinancePersonalComponent,
+    FinanceAccountingComponent,
   ],
   imports: [
     BrowserModule,

@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit {
     {title: 'Form', link: '/form'},
     {title: 'Backtest', link: '/backtest'},
     {title: 'Fixture', link: '/fixture'},
+    {title: 'Finance', link: '/finance'},
   ]
 
   hour = 'HH';
