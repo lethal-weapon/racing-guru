@@ -1,6 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
+import {
+  DEFAULT_TRANSACTION,
+  EXPENSE_CATEGORIES,
+  INCOME_CATEGORIES,
+  Transaction,
+  TRANSACTION_METHODS,
+  TRANSACTION_TYPES
+} from '../model/transaction.model';
 
 const SECTION_INCOME = 'Income';
 const SECTION_EXPENSE = 'Expenses';
@@ -44,16 +52,28 @@ interface SalaryTaxRate {
 })
 export class FinancePersonalComponent implements OnInit {
 
+  editingTransaction: Transaction = {...DEFAULT_TRANSACTION};
+
   protected readonly SECTION_INCOME = SECTION_INCOME;
   protected readonly SECTION_EXPENSE = SECTION_EXPENSE;
   protected readonly SECTION_STATEMENT = SECTION_STATEMENT;
   protected readonly SECTION_ASSET = SECTION_ASSET;
   protected readonly SECTION_LIABILITY = SECTION_LIABILITY;
+  protected readonly TRANSACTION_TYPES = TRANSACTION_TYPES;
+  protected readonly TRANSACTION_METHODS = TRANSACTION_METHODS;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
+  }
+
+  newTransaction = () => {
+    this.editingTransaction = {...DEFAULT_TRANSACTION};
+    this.editingTransaction.id = '';
+  }
+
+  saveTransaction = () => {
   }
 
   computeSalaryTax = (annualTaxableIncome: number): number => {
@@ -160,6 +180,24 @@ export class FinancePersonalComponent implements OnInit {
       {range: 50_000, rate: 0.10},
       {range: 50_000, rate: 0.14},
     ]
+  }
+
+  get transactionLabel(): string {
+    return this.editingTransaction.id === ''
+      ? `* New Transaction *`
+      : `Transaction #${this.editingTransaction.id.slice(0, 7)}`;
+  }
+
+  get transactionFields(): string[] {
+    return [
+      'Date', 'Type', 'Category', 'Method', 'Amount', 'Remark',
+    ]
+  }
+
+  get categories(): string[] {
+    return this.editingTransaction.type === 'Income'
+      ? INCOME_CATEGORIES
+      : EXPENSE_CATEGORIES;
   }
 
   get sections(): string[] {

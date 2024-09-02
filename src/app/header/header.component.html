@@ -5,7 +5,7 @@
     </div>
     <div class="basis-10/12 flex flex-row">
       <div *ngFor="let page of pages"
-           class="px-4 text-2xl font-bold"
+           class="px-3 text-2xl font-bold"
       >
         <a [routerLink]="page.link"
            [class.hvr-push]="!currentUrl.includes(page.link)"
