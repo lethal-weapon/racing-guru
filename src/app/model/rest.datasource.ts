@@ -21,11 +21,13 @@ import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
+import {Transaction} from "./transaction.model";
 
 @Injectable()
 export class RestDataSource {
   baseUrl: string;
   backtestBaseUrl: string;
+  financeBaseUrl: string;
 
   constructor(private http: HttpClient) {
     this.baseUrl =
@@ -33,6 +35,9 @@ export class RestDataSource {
 
     this.backtestBaseUrl =
       `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.BACKTEST_SERVER_PORT}/backtest`;
+
+    this.financeBaseUrl =
+      `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.FINANCE_SERVER_PORT}`;
   }
 
   getPick = (): Observable<Pick> =>
@@ -133,4 +138,13 @@ export class RestDataSource {
 
   getExactChanceFactorHits = (factorCombinations: string[][]): Observable<FactorHit[]> =>
     this.http.post<FactorHit[]>(`${this.backtestBaseUrl}/exact-hits`, factorCombinations)
+
+  getTransactions = (): Observable<Transaction[]> =>
+    this.http.get<Transaction[]>(`${this.financeBaseUrl}/transactions`)
+
+  saveTransaction = (transaction: Transaction): Observable<Transaction> =>
+    this.http.post<Transaction>(`${this.financeBaseUrl}/transactions`, transaction)
+
+  deleteTransaction = (transaction: Transaction): Observable<any> =>
+    this.http.delete(`${this.financeBaseUrl}/transactions/${transaction.id}`)
 }

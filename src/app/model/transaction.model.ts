@@ -21,15 +21,15 @@ export const EXPENSE_CATEGORIES = [
   'Taxes',
   'MPF',
   'Food',
-  'Wear',
+  'Cloth',
   'Rent',
   'Utility',
   'Transport',
   'Telecom',
   'Internet',
   'HKJC Debit',
-  'Loan Payment',
   'Loan Interest',
+  'Loan Payment',
   'Non-essentials',
 ];
 export const TRANSACTION_TYPES = [
@@ -40,8 +40,9 @@ export const TRANSACTION_METHODS = [
   'VISA',
   'Octopus',
   'AlipayHK',
+  'FPS',
   'Cash',
-]
+];
 
 export const DEFAULT_TRANSACTION: Transaction = {
   id: '',

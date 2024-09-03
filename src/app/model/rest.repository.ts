@@ -19,6 +19,7 @@ import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
+import {Transaction} from "./transaction.model";
 
 @Injectable()
 export class RestRepository {
@@ -44,6 +45,8 @@ export class RestRepository {
   private factors: Factor[] = [];
   private factorHits: FactorHit[] = [];
 
+  private transactions: Transaction[] = [];
+
   constructor(private source: RestDataSource) {
   }
 
@@ -68,6 +71,8 @@ export class RestRepository {
   findFixtures = () => this.fixtures
   findFactors = () => this.factors
   findFactorHits = () => this.factorHits
+
+  findTransactions = () => this.transactions
 
   fetchPick = (callback: () => any) =>
     this.source.getPick().subscribe(data => {
@@ -329,4 +334,26 @@ export class RestRepository {
         this.factorHits = data;
         callback();
       })
+
+  fetchTransactions = () =>
+    this.source.getTransactions().subscribe(data => this.transactions = data)
+
+  saveTransaction = (
+    transaction: Transaction,
+    successCallback: (saved: Transaction) => any
+  ) =>
+    this.source.saveTransaction(transaction).subscribe(data => {
+      this.transactions = this.transactions.filter(s => s.id !== data.id);
+      this.transactions.push(data);
+      successCallback(data);
+    })
+
+  deleteTransaction = (
+    transaction: Transaction,
+    successCallback: () => any
+  ) =>
+    this.source.deleteTransaction(transaction).subscribe(data => {
+      this.transactions = this.transactions.filter(s => s.id !== transaction.id);
+      successCallback();
+    })
 }

@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
+import {computeSalaryTax} from '../util/tax';
+import {MOCKED_TRANSACTIONS} from './transaction.mock';
 import {
   DEFAULT_TRANSACTION,
   EXPENSE_CATEGORIES,
@@ -15,7 +17,6 @@ const SECTION_EXPENSE = 'Expenses';
 const SECTION_STATEMENT = 'Statement';
 const SECTION_ASSET = 'Assets';
 const SECTION_LIABILITY = 'Liabilities';
-const REMAINDER_SALARY_TAX_RATE = 0.17;
 
 interface IncomeItem {
   category: string,
@@ -41,16 +42,14 @@ interface LiabilityItem {
   annualizedInterestRate: number,
 }
 
-interface SalaryTaxRate {
-  range: number,
-  rate: number
-}
-
 @Component({
   selector: 'app-finance-personal',
   templateUrl: './finance-personal.component.html'
 })
 export class FinancePersonalComponent implements OnInit {
+
+  sortedField: string = this.transactionFields[0];
+  isSortAscending: boolean = false;
 
   editingTransaction: Transaction = {...DEFAULT_TRANSACTION};
 
@@ -66,36 +65,50 @@ export class FinancePersonalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // this.repo.fetchTransactions();
   }
 
-  newTransaction = () => {
+  addTransaction = () => {
     this.editingTransaction = {...DEFAULT_TRANSACTION};
     this.editingTransaction.id = '';
   }
 
   saveTransaction = () => {
+    if (this.editingTransaction.amount <= 0) return;
+    if (this.editingTransaction.remark.length < 1) return;
+
+    this.repo.saveTransaction(
+      this.editingTransaction,
+      (saved: Transaction) => this.editingTransaction = saved
+    );
   }
 
-  computeSalaryTax = (annualTaxableIncome: number): number => {
-    let tax = 0;
-    let loopIndex = 0;
-    let remainingIncome = annualTaxableIncome;
+  copyTransaction = (clicked: Transaction) => {
+    this.editingTransaction = {...clicked};
+    this.editingTransaction.id = '';
+  }
 
-    while (loopIndex < this.salaryTaxRates.length) {
-      if (remainingIncome <= 0) return tax;
+  editTransaction = (clicked: Transaction) => {
+    this.editingTransaction = {...clicked};
+  }
 
-      const currentRate = this.salaryTaxRates[loopIndex].rate;
-      const currentRange = this.salaryTaxRates[loopIndex].range;
-      tax += Math.min(remainingIncome, currentRange) * currentRate;
+  deleteTransaction = (clicked: Transaction) => {
+    if (clicked.id === '') return;
 
-      loopIndex += 1;
-      remainingIncome -= currentRange;
+    this.repo.deleteTransaction(
+      clicked,
+      () => {
+      }
+    );
+  }
+
+  toggleSortable = (field: string) => {
+    if (this.sortedField === field) {
+      this.isSortAscending = !this.isSortAscending;
+
+    } else {
+      this.sortedField = field;
     }
-
-    if (remainingIncome > 0) {
-      tax += remainingIncome * REMAINDER_SALARY_TAX_RATE;
-    }
-    return tax;
   }
 
   get cash(): number {
@@ -134,7 +147,7 @@ export class FinancePersonalComponent implements OnInit {
     const taxAllowance = basicAllowance + elderlySupport;
 
     let annualTaxableIncome = annualNetIncome - taxDeduction - taxAllowance;
-    let annualSalaryTax = this.computeSalaryTax(annualTaxableIncome);
+    let annualSalaryTax = computeSalaryTax(annualTaxableIncome);
 
     const monthlyLoanInterest = this.liabilities
       .map(l => l.amount * l.annualizedInterestRate / 12)
@@ -173,15 +186,6 @@ export class FinancePersonalComponent implements OnInit {
     ]
   }
 
-  get salaryTaxRates(): SalaryTaxRate[] {
-    return [
-      {range: 50_000, rate: 0.02},
-      {range: 50_000, rate: 0.06},
-      {range: 50_000, rate: 0.10},
-      {range: 50_000, rate: 0.14},
-    ]
-  }
-
   get transactionLabel(): string {
     return this.editingTransaction.id === ''
       ? `* New Transaction *`
@@ -208,5 +212,43 @@ export class FinancePersonalComponent implements OnInit {
       SECTION_ASSET,
       SECTION_LIABILITY,
     ];
+  }
+
+  get transactions(): Transaction[] {
+    const sorter = (t1: Transaction, t2: Transaction) => {
+      if (this.sortedField === 'Date') {
+        return this.isSortAscending
+          ? t1.date.localeCompare(t2.date)
+          : t2.date.localeCompare(t1.date)
+      }
+      if (this.sortedField === 'Type') {
+        return this.isSortAscending
+          ? t1.type.localeCompare(t2.type)
+          : t2.type.localeCompare(t1.type)
+      }
+      if (this.sortedField === 'Category') {
+        return this.isSortAscending
+          ? t1.category.localeCompare(t2.category)
+          : t2.category.localeCompare(t1.category)
+      }
+      if (this.sortedField === 'Amount') {
+        return this.isSortAscending
+          ? t1.amount - t2.amount
+          : t2.amount - t1.amount
+      }
+      if (this.sortedField === 'Remark') {
+        return this.isSortAscending
+          ? t1.remark.localeCompare(t2.remark)
+          : t2.remark.localeCompare(t1.remark)
+      }
+      return t2.date.localeCompare(t1.date);
+    }
+
+    // return this.repo.findTransactions();
+    return MOCKED_TRANSACTIONS.sort((t1, t2) => sorter(t1, t2));
+  }
+
+  get isLoading(): boolean {
+    return this.repo.findTransactions().length === 0;
   }
 }
