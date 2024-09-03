@@ -11,32 +11,41 @@ export class Transaction {
   }
 }
 
-export const INCOME_CATEGORIES = [
-  'Paycheck',
+export interface EXPENSE_GROUP {
+  group: string,
+  categories: string[],
+}
+
+export const INCOME_CATEGORIES: string[] = [
+  'Salary',
   'HKJC Credit',
   'Saving Interest',
   'Stock Dividend',
 ];
-export const EXPENSE_CATEGORIES = [
-  'Taxes',
-  'MPF',
-  'Food',
-  'Cloth',
-  'Rent',
-  'Utility',
-  'Transport',
-  'Telecom',
-  'Internet',
-  'HKJC Debit',
-  'Loan Interest',
-  'Loan Payment',
-  'Non-essentials',
+export const EXPENSE_GROUPS: EXPENSE_GROUP[] = [
+  {
+    group: 'Government',
+    categories: ['Taxes', 'MPF',],
+  },
+  {
+    group: 'Investment',
+    categories: ['HKJC Debit', 'Loan Interest', 'Loan Payment',],
+  },
+  {
+    group: 'Essentials',
+    categories: ['Food', 'Cloth', 'Rent', 'Utilities', 'Transport', 'Telecom', 'Internet',],
+  },
+  {
+    group: 'Non-essentials',
+    categories: ['Non-essentials',],
+  },
 ];
-export const TRANSACTION_TYPES = [
+export const EXPENSE_CATEGORIES: string[] = EXPENSE_GROUPS.flatMap(g => g.categories);
+export const TRANSACTION_TYPES: string[] = [
   'Income',
   'Expense'
 ];
-export const TRANSACTION_METHODS = [
+export const TRANSACTION_METHODS: string[] = [
   'VISA',
   'Octopus',
   'AlipayHK',
@@ -47,9 +56,9 @@ export const TRANSACTION_METHODS = [
 export const DEFAULT_TRANSACTION: Transaction = {
   id: '',
   date: new Date().toISOString().split('T')[0],
-  type: TRANSACTION_TYPES[1],
-  category: EXPENSE_CATEGORIES[2],
-  method: TRANSACTION_METHODS[0],
+  type: 'Expense',
+  category: 'Food',
+  method: 'VISA',
   amount: 99,
   remark: '',
 }

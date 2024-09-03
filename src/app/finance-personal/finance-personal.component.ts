@@ -6,6 +6,8 @@ import {MOCKED_TRANSACTIONS} from './transaction.mock';
 import {
   DEFAULT_TRANSACTION,
   EXPENSE_CATEGORIES,
+  EXPENSE_GROUP,
+  EXPENSE_GROUPS,
   INCOME_CATEGORIES,
   Transaction,
   TRANSACTION_METHODS,
@@ -26,7 +28,7 @@ interface IncomeItem {
 
 interface ExpenseItem {
   category: string,
-  amount: number
+  amount: number,
 }
 
 interface AssetItem {
@@ -58,6 +60,7 @@ export class FinancePersonalComponent implements OnInit {
   protected readonly SECTION_STATEMENT = SECTION_STATEMENT;
   protected readonly SECTION_ASSET = SECTION_ASSET;
   protected readonly SECTION_LIABILITY = SECTION_LIABILITY;
+  protected readonly EXPENSE_GROUPS = EXPENSE_GROUPS;
   protected readonly TRANSACTION_TYPES = TRANSACTION_TYPES;
   protected readonly TRANSACTION_METHODS = TRANSACTION_METHODS;
 
@@ -111,6 +114,11 @@ export class FinancePersonalComponent implements OnInit {
     }
   }
 
+  getExpenses = (group: EXPENSE_GROUP): ExpenseItem[] =>
+    this.expenses
+      .filter(e => group.categories.includes(e.category))
+      .sort((e1, e2) => e2.amount - e1.amount)
+
   get cash(): number {
     return 150_000;
   }
@@ -125,6 +133,14 @@ export class FinancePersonalComponent implements OnInit {
     return this.expenses
       .map(i => i.amount)
       .reduce((prev, curr) => prev + curr, 0);
+  }
+
+  get activeIncomes(): IncomeItem[] {
+    return this.incomes.filter(i => !i.passive);
+  }
+
+  get passiveIncomes(): IncomeItem[] {
+    return this.incomes.filter(i => i.passive);
   }
 
   get incomes(): IncomeItem[] {
@@ -157,9 +173,9 @@ export class FinancePersonalComponent implements OnInit {
       {category: 'Taxes', amount: annualSalaryTax / 12},
       {category: 'MPF', amount: monthlyMPF},
       {category: 'Food', amount: 2500},
-      {category: 'Wear', amount: 300},
+      {category: 'Cloth', amount: 300},
       {category: 'Rent', amount: monthlyRent},
-      {category: 'Utility', amount: 250},
+      {category: 'Utilities', amount: 250},
       {category: 'Transport', amount: 200},
       {category: 'Telecom', amount: 201},
       {category: 'Internet', amount: 276 + 8 + 68 + 78 + 128},
@@ -171,7 +187,7 @@ export class FinancePersonalComponent implements OnInit {
 
   get assets(): AssetItem[] {
     return [
-      {category: 'Landlord Deposit', amount: 28_000, current: false},
+      {category: 'Landlord Deposit', amount: 28_000, current: true},
     ]
   }
 
