@@ -143,11 +143,15 @@ export class FinancePersonalComponent implements OnInit {
     return this.incomes.filter(i => i.passive);
   }
 
+  get monthlyMPF(): number {
+    return this.incomes[0].amount * 0.05;
+  }
+
   get incomes(): IncomeItem[] {
     return [
       {category: 'Software Developer', amount: 25_895, passive: false},
       {category: 'HKJC Credit', amount: 22_500, passive: false},
-      {category: 'Saving Interest', amount: 25, passive: true},
+      {category: 'Credit Interest', amount: 45, passive: true},
     ]
   }
 
@@ -155,8 +159,7 @@ export class FinancePersonalComponent implements OnInit {
     const annualNetIncome = this.incomes[0].amount * 14;
 
     const monthlyRent = 14_000;
-    const monthlyMPF = this.incomes[0].amount * 0.05;
-    const taxDeduction = monthlyRent * 12 + Math.min(18_000, monthlyMPF * 12);
+    const taxDeduction = monthlyRent * 12 + Math.min(18_000, this.monthlyMPF * 12);
 
     const basicAllowance = 132_000;
     const elderlySupport = 50_000 + 25_000;
@@ -171,7 +174,6 @@ export class FinancePersonalComponent implements OnInit {
 
     return [
       {category: 'Taxes', amount: annualSalaryTax / 12},
-      {category: 'MPF', amount: monthlyMPF},
       {category: 'Food', amount: 2500},
       {category: 'Cloth', amount: 300},
       {category: 'Rent', amount: monthlyRent},
@@ -188,6 +190,8 @@ export class FinancePersonalComponent implements OnInit {
   get assets(): AssetItem[] {
     return [
       {category: 'Landlord Deposit', amount: 28_000, current: true},
+      {category: 'MPF (AIA)', amount: 44513, current: false},
+      {category: 'MPF (Manulife)', amount: 43336, current: false},
     ]
   }
 

@@ -19,13 +19,13 @@ export interface EXPENSE_GROUP {
 export const INCOME_CATEGORIES: string[] = [
   'Salary',
   'HKJC Credit',
-  'Saving Interest',
+  'Credit Interest',
   'Stock Dividend',
 ];
 export const EXPENSE_GROUPS: EXPENSE_GROUP[] = [
   {
     group: 'Government',
-    categories: ['Taxes', 'MPF',],
+    categories: ['Taxes',],
   },
   {
     group: 'Investment',
