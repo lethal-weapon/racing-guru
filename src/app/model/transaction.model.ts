@@ -25,7 +25,7 @@ export const INCOME_CATEGORIES: string[] = [
 export const EXPENSE_GROUPS: EXPENSE_GROUP[] = [
   {
     group: 'Government',
-    categories: ['Taxes',],
+    categories: ['Taxes', 'MPF'],
   },
   {
     group: 'Investment',

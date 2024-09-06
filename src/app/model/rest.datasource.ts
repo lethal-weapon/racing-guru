@@ -143,7 +143,9 @@ export class RestDataSource {
     this.http.get<Transaction[]>(`${this.financeBaseUrl}/transactions`)
 
   saveTransaction = (transaction: Transaction): Observable<Transaction> =>
-    this.http.post<Transaction>(`${this.financeBaseUrl}/transactions`, transaction)
+    transaction.id === ''
+      ? this.http.post<Transaction>(`${this.financeBaseUrl}/transactions`, transaction)
+      : this.http.put<Transaction>(`${this.financeBaseUrl}/transactions/${transaction.id}`, transaction)
 
   deleteTransaction = (transaction: Transaction): Observable<any> =>
     this.http.delete(`${this.financeBaseUrl}/transactions/${transaction.id}`)

@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {computeSalaryTax} from '../util/tax';
-import {MOCKED_TRANSACTIONS} from './transaction.mock';
 import {
   DEFAULT_TRANSACTION,
   EXPENSE_CATEGORIES,
@@ -68,7 +67,7 @@ export class FinancePersonalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.repo.fetchTransactions();
+    this.repo.fetchTransactions();
   }
 
   addTransaction = () => {
@@ -78,11 +77,12 @@ export class FinancePersonalComponent implements OnInit {
 
   saveTransaction = () => {
     if (this.editingTransaction.amount <= 0) return;
-    if (this.editingTransaction.remark.length < 1) return;
+    if (this.editingTransaction.remark.trim().length < 1) return;
 
+    this.editingTransaction.remark = this.editingTransaction.remark.trim();
     this.repo.saveTransaction(
       this.editingTransaction,
-      (saved: Transaction) => this.editingTransaction = saved
+      (saved: Transaction) => this.editingTransaction = {...saved}
     );
   }
 
@@ -143,10 +143,6 @@ export class FinancePersonalComponent implements OnInit {
     return this.incomes.filter(i => i.passive);
   }
 
-  get monthlyMPF(): number {
-    return this.incomes[0].amount * 0.05;
-  }
-
   get incomes(): IncomeItem[] {
     return [
       {category: 'Software Developer', amount: 25_895, passive: false},
@@ -159,14 +155,15 @@ export class FinancePersonalComponent implements OnInit {
     const annualNetIncome = this.incomes[0].amount * 14;
 
     const monthlyRent = 14_000;
-    const taxDeduction = monthlyRent * 12 + Math.min(18_000, this.monthlyMPF * 12);
+    const monthlyMPF = this.incomes[0].amount * 0.05;
+    const taxDeduction = monthlyRent * 12 + Math.min(18_000, monthlyMPF * 12);
 
     const basicAllowance = 132_000;
     const elderlySupport = 50_000 + 25_000;
     const taxAllowance = basicAllowance + elderlySupport;
 
-    let annualTaxableIncome = annualNetIncome - taxDeduction - taxAllowance;
-    let annualSalaryTax = computeSalaryTax(annualTaxableIncome);
+    let annualTaxableSalary = annualNetIncome - taxDeduction - taxAllowance;
+    let annualSalaryTax = computeSalaryTax(annualTaxableSalary);
 
     const monthlyLoanInterest = this.liabilities
       .map(l => l.amount * l.annualizedInterestRate / 12)
@@ -174,6 +171,7 @@ export class FinancePersonalComponent implements OnInit {
 
     return [
       {category: 'Taxes', amount: annualSalaryTax / 12},
+      {category: 'MPF', amount: monthlyMPF},
       {category: 'Food', amount: 2500},
       {category: 'Cloth', amount: 300},
       {category: 'Rent', amount: monthlyRent},
@@ -251,6 +249,11 @@ export class FinancePersonalComponent implements OnInit {
           ? t1.category.localeCompare(t2.category)
           : t2.category.localeCompare(t1.category)
       }
+      if (this.sortedField === 'Method') {
+        return this.isSortAscending
+          ? t1.method.localeCompare(t2.method)
+          : t2.method.localeCompare(t1.method)
+      }
       if (this.sortedField === 'Amount') {
         return this.isSortAscending
           ? t1.amount - t2.amount
@@ -264,8 +267,9 @@ export class FinancePersonalComponent implements OnInit {
       return t2.date.localeCompare(t1.date);
     }
 
-    // return this.repo.findTransactions();
-    return MOCKED_TRANSACTIONS.sort((t1, t2) => sorter(t1, t2));
+    return this.repo.findTransactions()
+      .map(t => t)
+      .sort((t1, t2) => sorter(t1, t2));
   }
 
   get isLoading(): boolean {

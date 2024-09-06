@@ -11,10 +11,10 @@ export const SALARY_TAX_RATES: SalaryTaxRate[] = [
   {range: 50_000, rate: 0.14},
 ]
 
-export const computeSalaryTax = (annualTaxableIncome: number): number => {
+export const computeSalaryTax = (annualTaxableSalary: number): number => {
   let tax = 0;
   let loopIndex = 0;
-  let remainingIncome = annualTaxableIncome;
+  let remainingIncome = annualTaxableSalary;
 
   while (loopIndex < SALARY_TAX_RATES.length) {
     if (remainingIncome <= 0) return tax;
