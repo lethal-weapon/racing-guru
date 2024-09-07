@@ -18,6 +18,7 @@ const SECTION_EXPENSE = 'Expenses';
 const SECTION_STATEMENT = 'Statement';
 const SECTION_ASSET = 'Assets';
 const SECTION_LIABILITY = 'Liabilities';
+const TRANSACTION_PAGE_SIZE = 10;
 
 interface IncomeItem {
   category: string,
@@ -49,9 +50,10 @@ interface LiabilityItem {
 })
 export class FinancePersonalComponent implements OnInit {
 
-  sortedField: string = this.transactionFields[0];
+  criteria: string = '';
+  transactionIndex: number = 0;
   isSortAscending: boolean = false;
-
+  sortedField: string = this.transactionFields[0];
   editingTransaction: Transaction = {...DEFAULT_TRANSACTION};
 
   protected readonly SECTION_INCOME = SECTION_INCOME;
@@ -82,7 +84,7 @@ export class FinancePersonalComponent implements OnInit {
     this.editingTransaction.remark = this.editingTransaction.remark.trim();
     this.repo.saveTransaction(
       this.editingTransaction,
-      (saved: Transaction) => this.editingTransaction = {...saved}
+      (saved: Transaction) => this.copyTransaction(saved)
     );
   }
 
@@ -103,6 +105,28 @@ export class FinancePersonalComponent implements OnInit {
       () => {
       }
     );
+  }
+
+  shiftTransactionPage = (length: number) => {
+    const ws = TRANSACTION_PAGE_SIZE;
+    const maxIndex = this.transactions.length - ws;
+
+    switch (length) {
+      case -999:
+        this.transactionIndex = 0;
+        break;
+      case 999:
+        this.transactionIndex = maxIndex;
+        break;
+      case -ws:
+        if (this.transactionIndex >= ws) this.transactionIndex -= ws;
+        else this.transactionIndex = 0;
+        break;
+      case ws:
+        if (this.transactionIndex < maxIndex - ws) this.transactionIndex += ws;
+        else this.transactionIndex = maxIndex;
+        break;
+    }
   }
 
   toggleSortable = (field: string) => {
@@ -232,6 +256,20 @@ export class FinancePersonalComponent implements OnInit {
     ];
   }
 
+  get paginationControls(): Array<{ control: string, length: number }> {
+    return [
+      {control: 'First', length: -999},
+      {control: 'Prev', length: -TRANSACTION_PAGE_SIZE},
+      {control: 'Next', length: TRANSACTION_PAGE_SIZE},
+      {control: 'Last', length: 999},
+    ];
+  }
+
+  get windowTransactions(): Transaction[] {
+    return this.transactions
+      .slice(this.transactionIndex, this.transactionIndex + TRANSACTION_PAGE_SIZE);
+  }
+
   get transactions(): Transaction[] {
     const sorter = (t1: Transaction, t2: Transaction) => {
       if (this.sortedField === 'Date') {
@@ -267,8 +305,14 @@ export class FinancePersonalComponent implements OnInit {
       return t2.date.localeCompare(t1.date);
     }
 
+    const criteria = this.criteria.trim().toUpperCase();
+
     return this.repo.findTransactions()
-      .map(t => t)
+      .filter(t => {
+        if (criteria.length < 1) return t;
+        return t.remark.toUpperCase().includes(criteria)
+          || t.amount.toString().includes(criteria);
+      })
       .sort((t1, t2) => sorter(t1, t2));
   }
 

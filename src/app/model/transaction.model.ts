@@ -17,6 +17,7 @@ export interface EXPENSE_GROUP {
 }
 
 export const INCOME_CATEGORIES: string[] = [
+  'P2P',
   'Salary',
   'HKJC Credit',
   'Credit Interest',
