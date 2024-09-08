@@ -574,10 +574,12 @@ export class MeetingComponent implements OnInit {
         .shift() || 0;
 
       if (column === 1) {
-        return {
-          pool: `${toOrdinalWithSuffix(row)} Double Trio`,
-          investment: doubleTrios.length > (row - 1) ? doubleTrios[row - 1] : 0,
-        };
+        if (row <= 5) {
+          return {
+            pool: `${toOrdinalWithSuffix(row)} Double Trio`,
+            investment: doubleTrios.length > (row - 1) ? doubleTrios[row - 1] : 0,
+          };
+        }
       }
       if (column === 2) {
         if (row === 1) return {pool: '1st Treble', investment: trebles.length > 0 ? trebles[0] : 0};
@@ -635,7 +637,7 @@ export class MeetingComponent implements OnInit {
   }
 
   get crossRacePoolDividendRaces(): number[] {
-    return this.racecards
+    let races = this.racecards
       .filter(r =>
         r?.dividend?.treble
         ||
@@ -647,6 +649,9 @@ export class MeetingComponent implements OnInit {
       )
       .map(r => r.race)
       .sort((r1, r2) => r1 - r2);
+
+    while (races.length < 5) races.push(1);
+    return races;
   }
 
   get pools(): Array<{ pool: string, amount: string }> {
