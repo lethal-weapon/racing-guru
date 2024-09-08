@@ -1,4 +1,10 @@
-<div class="mx-8 text-center text-lg">
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!isLoading"
+     class="mx-8 text-center text-lg"
+>
   <div class="grid grid-cols-3 grid-flow-row auto-rows-max items-start gap-4">
     <div *ngFor="let section of sections"
          class="pt-2 pb-2.5 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
