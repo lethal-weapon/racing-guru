@@ -291,6 +291,7 @@
         <div class="text-left mx-12">
           <input
             [(ngModel)]="criteria"
+            (ngModelChange)="transactionIndex = 0"
             type="text"
             placeholder="Remarks | Amount"
             maxlength="99"

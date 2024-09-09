@@ -33,7 +33,7 @@ const BY_POOL = 'By Pool';
   templateUrl: './form-bet.component.html'
 })
 export class FormBetComponent implements OnInit {
-  activeSeason: string = SEASONS[1].label;
+  activeSeason: string = SEASONS[0].label;
   activeRange: string = this.subsections[1][0];
   activeView: string = this.subsections[2][0];
 
