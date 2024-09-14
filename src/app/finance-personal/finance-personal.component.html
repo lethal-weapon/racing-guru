@@ -85,7 +85,7 @@
             <th></th>
             <th>Current</th>
           </tr>
-          <tr *ngFor="let asset of assets">
+          <tr *ngFor="let asset of statement.assets">
             <td class="px-6 text-left">
               {{ asset.category }}
             </td>
@@ -111,7 +111,7 @@
             <th>Months</th>
             <th>APR</th>
           </tr>
-          <tr *ngFor="let liability of liabilities">
+          <tr *ngFor="let liability of statement.liabilities">
             <td class="px-4 text-left">
               {{ liability.category }}
             </td>
@@ -119,7 +119,7 @@
               {{ liability.amount | currency:'USD':'symbol':'1.0-0' }}
             </td>
             <td class="px-4">
-              {{ liability.periodInMonth }}
+              {{ liability.months }}
             </td>
             <td class="px-4">
               {{ liability.annualizedInterestRate | percent }}
@@ -130,41 +130,49 @@
       <div *ngIf="section === SECTION_STATEMENT"
            class=""
       >
-        <div class="px-8 grid grid-cols-2">
-          <div class="text-left text-xl">
-            CASH:
+        <div class="px-4 grid grid-cols-2">
+          <div class="pt-4 text-left">
+            AVG. LAST MONTHS:
           </div>
-          <div class="text-right text-xl">
-            {{ cash | currency:'USD':'symbol':'1.0-0' }}
+          <div class="pt-4 flex justify-end">
+            <select
+              [(ngModel)]="viewingStatementLastMonths"
+              class="block w-20 text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                     border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+            >
+              <option *ngFor="let slmo of statementLastMonthsOptions" [ngValue]="slmo">
+                {{ slmo }}
+              </option>
+            </select>
           </div>
-          <div class="pt-8 text-left">
+          <div class="pt-4 text-left">
             TOTAL INCOME:
           </div>
-          <div class="pt-8 text-right text-green-600">
-            {{ totalIncome | currency:'USD':'symbol':'1.0-0' }}
+          <div class="pt-4 text-right text-green-600">
+            {{ statement.totalIncome | currency:'USD':'symbol':'1.0-0' }}
           </div>
           <div class="pt-2 text-left">
-            TOTAL EXPENSES:
+            TOTAL EXPENSE:
           </div>
           <div class="pt-2 text-right text-red-600">
-            {{ totalExpenses | currency:'USD':'symbol':'1.0-0' }}
+            {{ statement.totalExpense | currency:'USD':'symbol':'1.0-0' }}
           </div>
           <div class="col-span-2 my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
           <div class="text-left">
             PAYDAY:
           </div>
           <div class="text-right text-red-600"
-               [class.text-green-600]="totalIncome >= totalExpenses"
-               [class.text-red-600]="totalIncome < totalExpenses"
+               [class.text-green-600]="statement.totalIncome >= statement.totalExpense"
+               [class.text-red-600]="statement.totalIncome < statement.totalExpense"
           >
-            {{ (totalIncome - totalExpenses) | currency:'USD':'symbol':'1.0-0' }}
+            {{ statement.paydayAmount | currency:'USD':'symbol':'1.0-0' }}
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="my-6 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+  <div class="my-10 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
 
   <div class="flex flex-row gap-x-4 items-start">
     <div class="pt-3 pb-4 px-6 shadow-md transition shadow-gray-600">

@@ -21,7 +21,8 @@ import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
-import {Transaction} from "./transaction.model";
+import {Transaction} from './transaction.model';
+import {FinancialStatement} from './financial.model';
 
 @Injectable()
 export class RestDataSource {
@@ -149,4 +150,7 @@ export class RestDataSource {
 
   deleteTransaction = (transaction: Transaction): Observable<any> =>
     this.http.delete(`${this.financeBaseUrl}/transactions/${transaction.id}`)
+
+  getFinancialStatements = (): Observable<FinancialStatement[]> =>
+    this.http.get<FinancialStatement[]>(`${this.financeBaseUrl}/financial/statements`)
 }

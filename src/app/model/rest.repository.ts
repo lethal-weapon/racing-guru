@@ -19,7 +19,8 @@ import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
-import {Transaction} from "./transaction.model";
+import {Transaction} from './transaction.model';
+import {FinancialStatement} from './financial.model';
 
 @Injectable()
 export class RestRepository {
@@ -46,6 +47,7 @@ export class RestRepository {
   private factorHits: FactorHit[] = [];
 
   private transactions: Transaction[] = [];
+  private financialStatements: FinancialStatement[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -73,6 +75,7 @@ export class RestRepository {
   findFactorHits = () => this.factorHits
 
   findTransactions = () => this.transactions
+  findFinancialStatements = () => this.financialStatements
 
   fetchPick = (callback: () => any) =>
     this.source.getPick().subscribe(data => {
@@ -356,4 +359,8 @@ export class RestRepository {
       this.transactions = this.transactions.filter(s => s.id !== transaction.id);
       successCallback();
     })
+
+  fetchFinancialStatements = () =>
+    this.source.getFinancialStatements().subscribe(data => this.financialStatements = data)
+
 }

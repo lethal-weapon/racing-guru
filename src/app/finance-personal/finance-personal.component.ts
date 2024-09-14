@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {computeSalaryTax} from '../util/tax';
+import {ExpenseItem, FinancialStatement, IncomeItem} from '../model/financial.model';
 import {
   DEFAULT_TRANSACTION,
   EXPENSE_CATEGORIES,
@@ -13,6 +13,7 @@ import {
   TRANSACTION_TYPES
 } from '../model/transaction.model';
 
+const PROFESSION = 'Software Developer';
 const SECTION_INCOME = 'Income';
 const SECTION_EXPENSE = 'Expenses';
 const SECTION_STATEMENT = 'Statement';
@@ -20,35 +21,13 @@ const SECTION_ASSET = 'Assets';
 const SECTION_LIABILITY = 'Liabilities';
 const TRANSACTION_PAGE_SIZE = 10;
 
-interface IncomeItem {
-  category: string,
-  amount: number,
-  passive: boolean,
-}
-
-interface ExpenseItem {
-  category: string,
-  amount: number,
-}
-
-interface AssetItem {
-  category: string,
-  amount: number,
-  current: boolean,
-}
-
-interface LiabilityItem {
-  category: string,
-  amount: number,
-  periodInMonth: number,
-  annualizedInterestRate: number,
-}
-
 @Component({
   selector: 'app-finance-personal',
   templateUrl: './finance-personal.component.html'
 })
 export class FinancePersonalComponent implements OnInit {
+
+  viewingStatementLastMonths: number = 1;
 
   criteria: string = '';
   transactionIndex: number = 0;
@@ -70,6 +49,7 @@ export class FinancePersonalComponent implements OnInit {
 
   ngOnInit(): void {
     this.repo.fetchTransactions();
+    this.repo.fetchFinancialStatements();
   }
 
   addTransaction = () => {
@@ -139,93 +119,21 @@ export class FinancePersonalComponent implements OnInit {
   }
 
   getExpenses = (group: EXPENSE_GROUP): ExpenseItem[] =>
-    this.expenses
+    this.statement.expenses
       .filter(e => group.categories.includes(e.category))
       .sort((e1, e2) => e2.amount - e1.amount)
 
-  get cash(): number {
-    return 150_000;
-  }
-
-  get totalIncome(): number {
-    return this.incomes
-      .map(i => i.amount)
-      .reduce((prev, curr) => prev + curr, 0);
-  }
-
-  get totalExpenses(): number {
-    return this.expenses
-      .map(i => i.amount)
-      .reduce((prev, curr) => prev + curr, 0);
-  }
-
   get activeIncomes(): IncomeItem[] {
-    return this.incomes.filter(i => !i.passive);
+    return this.statement.incomes
+      .filter(i => !i.passive)
+      .map(i => ({
+        ...i,
+        category: i.category.replace('Salary', PROFESSION)
+      }));
   }
 
   get passiveIncomes(): IncomeItem[] {
-    return this.incomes.filter(i => i.passive);
-  }
-
-  get incomes(): IncomeItem[] {
-    return [
-      {category: 'Software Developer', amount: 25_895, passive: false},
-      {category: 'HKJC Credit', amount: 22_500, passive: false},
-      {category: 'Credit Interest', amount: 45, passive: true},
-    ]
-  }
-
-  get expenses(): ExpenseItem[] {
-    const annualNetIncome = this.incomes[0].amount * 14;
-
-    const monthlyRent = 14_000;
-    const monthlyMPF = this.incomes[0].amount * 0.05;
-    const taxDeduction = monthlyRent * 12 + Math.min(18_000, monthlyMPF * 12);
-
-    const basicAllowance = 132_000;
-    const elderlySupport = 50_000 + 25_000;
-    const taxAllowance = basicAllowance + elderlySupport;
-
-    let annualTaxableSalary = annualNetIncome - taxDeduction - taxAllowance;
-    let annualSalaryTax = computeSalaryTax(annualTaxableSalary);
-
-    const monthlyLoanInterest = this.liabilities
-      .map(l => l.amount * l.annualizedInterestRate / 12)
-      .reduce((prev, curr) => prev + curr, 0);
-
-    return [
-      {category: 'Taxes', amount: annualSalaryTax / 12},
-      {category: 'MPF', amount: monthlyMPF},
-      {category: 'Food', amount: 2500},
-      {category: 'Cloth', amount: 300},
-      {category: 'Rent', amount: monthlyRent},
-      {category: 'Utilities', amount: 250},
-      {category: 'Transport', amount: 200},
-      {category: 'Telecom', amount: 201},
-      {category: 'Internet', amount: 276 + 8 + 68 + 78 + 128},
-      {category: 'HKJC Debit', amount: 20_000},
-      {category: 'Loan Interest', amount: monthlyLoanInterest},
-      {category: 'Non-essentials', amount: 800},
-    ]
-  }
-
-  get assets(): AssetItem[] {
-    return [
-      {category: 'Landlord Deposit', amount: 28_000, current: true},
-      {category: 'MPF (AIA)', amount: 44513, current: false},
-      {category: 'MPF (Manulife)', amount: 43336, current: false},
-    ]
-  }
-
-  get liabilities(): LiabilityItem[] {
-    return [
-      {
-        category: 'Mom\'s Loan',
-        amount: 100_000,
-        periodInMonth: 10,
-        annualizedInterestRate: 0.06
-      },
-    ]
+    return this.statement.incomes.filter(i => i.passive);
   }
 
   get transactionLabel(): string {
@@ -316,7 +224,18 @@ export class FinancePersonalComponent implements OnInit {
       .sort((t1, t2) => sorter(t1, t2));
   }
 
+  get statementLastMonthsOptions(): number[] {
+    return this.repo.findFinancialStatements().map(s => s.lastMonths);
+  }
+
+  get statement(): FinancialStatement {
+    // @ts-ignore
+    return this.repo.findFinancialStatements()
+      .find(s => s.lastMonths === this.viewingStatementLastMonths);
+  }
+
   get isLoading(): boolean {
-    return this.repo.findTransactions().length === 0;
+    return this.repo.findTransactions().length === 0
+      || this.repo.findFinancialStatements().length === 0;
   }
 }
