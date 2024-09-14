@@ -148,20 +148,20 @@
           <div class="pt-4 text-left">
             TOTAL INCOME:
           </div>
-          <div class="pt-4 text-right text-green-600">
+          <div class="pt-4 text-right text-xl text-green-600">
             {{ statement.totalIncome | currency:'USD':'symbol':'1.0-0' }}
           </div>
           <div class="pt-2 text-left">
             TOTAL EXPENSE:
           </div>
-          <div class="pt-2 text-right text-red-600">
+          <div class="pt-2 text-right text-xl text-red-600">
             {{ statement.totalExpense | currency:'USD':'symbol':'1.0-0' }}
           </div>
           <div class="col-span-2 my-2 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
           <div class="text-left">
             PAYDAY:
           </div>
-          <div class="text-right text-red-600"
+          <div class="text-right text-xl"
                [class.text-green-600]="statement.totalIncome >= statement.totalExpense"
                [class.text-red-600]="statement.totalIncome < statement.totalExpense"
           >
