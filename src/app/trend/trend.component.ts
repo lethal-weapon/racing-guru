@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 
 import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../websocket.service';
+import {Racecard} from '../model/racecard.model';
 import {Meeting} from '../model/meeting.model';
 import {SyndicateSnapshot} from '../model/syndicate.model';
 import {TrackworkSnapshot} from '../model/trackwork.model';
@@ -26,6 +27,10 @@ export class TrendComponent implements OnInit {
     private repo: RestRepository,
     private socket: WebsocketService
   ) {
+    socket.addRacecardCallback((newCard: Racecard) => {
+      this.repo.updateRacecardFromSocket(newCard);
+    });
+
     socket.addMeetingCallback((newMeeting: Meeting) => {
       this.repo.updateMeetingFromSocket(newMeeting);
     });
@@ -44,6 +49,8 @@ export class TrendComponent implements OnInit {
     this.repo.fetchMeetings(16);
     this.repo.fetchReminders(16);
     this.repo.fetchSyndicateSnapshots(16);
+    this.repo.fetchRacecards('latest', () => {
+    });
   }
 
   getSectionStyle = (link: string): string =>
@@ -61,6 +68,7 @@ export class TrendComponent implements OnInit {
     return this.repo.findPlayers().length === 0
       || this.repo.findMeetings().length === 0
       || this.repo.findReminders().length === 0
-      || this.repo.findSyndicateSnapshots().length === 0;
+      || this.repo.findSyndicateSnapshots().length === 0
+      || this.repo.findRacecards().length === 0;
   }
 }

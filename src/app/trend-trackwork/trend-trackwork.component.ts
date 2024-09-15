@@ -2,15 +2,11 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {Player} from '../model/player.model';
+import {Racecard} from '../model/racecard.model';
 import {TrackworkSnapshot, TrackworkStarter} from '../model/trackwork.model';
-import {formatMeeting, toPlacingColor} from '../util/functions';
+import {formatMeeting, getWinPlaceOdds, toPlacingColor} from '../util/functions';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
-import {
-  ODDS_INTENSITIES,
-  OddsIntensity,
-  PLACING_MAPS,
-  RATING_GRADES
-} from '../util/strings';
+import {ODDS_INTENSITIES, OddsIntensity, PLACING_MAPS, RATING_GRADES} from '../util/strings';
 
 const BY_STATS = 'By Stats';
 
@@ -63,6 +59,19 @@ export class TrendTrackworkComponent implements OnInit {
       .filter(s => s.race === race)
       .sort((s1, s2) => (s2.intensity - s1.intensity) || (s1.order - s2.order))
 
+  getStarterWinOdds = (starter: TrackworkStarter): number => {
+    if ((starter?.winOdds || 0) > 0) return starter.winOdds;
+
+    if (this.activeTrackwork.meeting === this.racecards[0].meeting) {
+      const card = this.racecards.find(r => r.race === starter.race);
+      if (card) {
+        return getWinPlaceOdds(starter.jockey, card).win;
+      }
+    }
+
+    return 0;
+  }
+
   getTrainerGradeTop4Starters = (trainer: Player, grade: string): TrackworkStarter[] =>
     this.getTrainerTop4Starters(trainer).filter(s => s.grade === grade)
 
@@ -86,7 +95,7 @@ export class TrendTrackworkComponent implements OnInit {
     const sortedStarters = this.getRaceStarters(race);
     if (index === sortedStarters.length - 1) return '';
 
-    return sortedStarters[index + 1]?.grade === 'B'
+    return sortedStarters[index + 1]?.grade !== 'A'
       ? `border-2 border-gray-900 border-b-yellow-400`
       : ``;
   }
@@ -139,8 +148,13 @@ export class TrendTrackworkComponent implements OnInit {
     return this.repo.findPlayers().filter(p => !p.jockey);
   }
 
+  get racecards(): Racecard[] {
+    return this.repo.findRacecards();
+  }
+
   get isLoading(): boolean {
     return this.repo.findPlayers().length === 0
-      || this.repo.findTrackworkSnapshots().length < 2;
+      || this.repo.findTrackworkSnapshots().length < 2
+      || this.repo.findRacecards().length === 0;
   }
 }

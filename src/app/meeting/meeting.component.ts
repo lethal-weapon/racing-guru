@@ -574,7 +574,7 @@ export class MeetingComponent implements OnInit {
         .shift() || 0;
 
       if (column === 1) {
-        if (row <= 4 || this.maxRace >= 10) {
+        if (row <= 4 || (row === 5 && this.maxRace >= 10)) {
           return {
             pool: `${toOrdinalWithSuffix(row)} Double Trio`,
             investment: doubleTrios.length > (row - 1) ? doubleTrios[row - 1] : 0,

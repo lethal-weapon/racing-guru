@@ -164,6 +164,13 @@ export class RestRepository {
       callback();
     })
 
+  updateRacecardFromSocket = (newCard: Racecard) => {
+    const index = this.racecards
+      .findIndex(r => r.meeting === newCard.meeting && r.race === newCard.race);
+
+    if (index > 0) this.racecards.splice(index, 1, newCard);
+  }
+
   fetchRecommendations = (
     size: number = 8,
     callback: () => any = () => console.log(``)

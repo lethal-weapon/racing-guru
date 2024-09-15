@@ -12,12 +12,14 @@ import {
   SyndicateSnapshot
 } from '../model/syndicate.model';
 import {
-  formatRace,
   formatMeeting,
+  formatRace,
   getOddsIntensityColor,
+  getWinPlaceOdds,
   isBoundaryMeeting,
   toPlacingColor
 } from '../util/functions';
+import {Racecard} from "../model/racecard.model";
 
 const MEETING_WINDOW_SIZE = 7;
 const SYNDICATE_KIND_SINGLE = 'SINGLE';
@@ -146,6 +148,19 @@ export class TrendEveryoneComponent implements OnInit {
       default:
         return 0;
     }
+  }
+
+  getSyndicateStarterWinOdds = (starter: StarterSnapshot): number => {
+    if ((starter?.winOdds || 0) > 0) return starter.winOdds;
+
+    if (this.activeSyndicateSnapshot.meeting === this.racecards[0].meeting) {
+      const card = this.racecards.find(r => r.race === starter.race);
+      if (card) {
+        return getWinPlaceOdds(starter.jockey, card).win;
+      }
+    }
+
+    return 0;
   }
 
   getWinner = (player: string): PlayerWinner => {
@@ -343,5 +358,9 @@ export class TrendEveryoneComponent implements OnInit {
 
   get meetings(): Meeting[] {
     return this.repo.findMeetings();
+  }
+
+  get racecards(): Racecard[] {
+    return this.repo.findRacecards();
   }
 }
