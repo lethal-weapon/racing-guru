@@ -114,6 +114,7 @@ export class RacecardComponent implements OnInit {
     });
 
     this.repo.fetchMeetingHorses();
+    this.repo.fetchDrawInheritances(2);
   }
 
   formatVenue = (venue: string): string =>
@@ -226,6 +227,33 @@ export class RacecardComponent implements OnInit {
       .map(s => s.order)
       .slice(0, 3)
       .includes(starter.order);
+  }
+
+  isDrawInheritanceStarter = (starter: Starter): boolean => {
+    if (this.activeRace === 1) {
+      const sorted = this.repo.findDrawInheritances()
+        .filter(d => d.meeting < this.activeRacecard.meeting && d.race === 1)
+        .sort((d1, d2) => d2.meeting.localeCompare(d1.meeting));
+
+      if (sorted.length > 0) {
+        return (
+          sorted[0].draws
+            .find(d => d.draw === starter.draw && d.placing >= 1 && d.placing <= 4)
+            ?.draw || 0
+        ) > 0;
+      }
+    } else {
+
+      const priorCard = this.racecards.find(r => r.race === this.activeRace - 1);
+      if (priorCard) {
+        return (
+          priorCard.starters
+            .find(s => s.draw === starter.draw && s.placing >= 1 && s.placing <= 4)
+            ?.draw || 0
+        ) > 0;
+      }
+    }
+    return false;
   }
 
   getSelectionCheckColor = (starter: Starter, placing: number): string => {
@@ -356,6 +384,7 @@ export class RacecardComponent implements OnInit {
       || this.racecards.length === 0
       || this.meetings.length === 0
       || this.collaborations.length === 0
-      || this.repo.findHorses().length === 0;
+      || this.repo.findHorses().length === 0
+      || this.repo.findDrawInheritances().length === 0;
   }
 }

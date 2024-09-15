@@ -92,6 +92,21 @@
       </tr>
       <tr>
         <td class="p-2 border border-gray-700 text-xl font-mono">
+          DrawINH
+        </td>
+        <td *ngFor="let starter of startersSortedByRank"
+            class="border border-gray-700 text-lg"
+        >
+          <div *ngIf="isDrawInheritanceStarter(starter)"
+               class="flex justify-center"
+          >
+            <div class="w-4 h-4 rounded-full bg-gradient-to-r from-yellow-300 to-yellow-700">
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="p-2 border border-gray-700 text-xl font-mono">
           Favorite
         </td>
         <td *ngFor="let starter of startersSortedByRank"
