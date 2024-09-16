@@ -27,6 +27,7 @@ import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component'
 import {TrendTopsComponent} from './trend-tops/trend-tops.component';
 import {TrendEarningComponent} from './trend-earning/trend-earning.component';
 import {TrendCollaborationComponent} from './trend-collaboration/trend-collaboration.component';
+import {TrendRecommendationComponent} from './trend-recommendation/trend-recommendation.component';
 import {TrendTrackworkComponent} from './trend-trackwork/trend-trackwork.component';
 import {TrendDrawComponent} from './trend-draw/trend-draw.component';
 import {FormComponent} from './form/form.component';
@@ -58,6 +59,7 @@ import {FinanceAccountingComponent} from './finance-accounting/finance-accountin
     TrendEarningComponent,
     TrendTopsComponent,
     TrendCollaborationComponent,
+    TrendRecommendationComponent,
     TrendTrackworkComponent,
     TrendDrawComponent,
     FormComponent,

@@ -17,7 +17,8 @@ export class TrendComponent implements OnInit {
     {section: 'Everyone', link: 'everyone'},
     {section: 'Board', link: 'tops'},
     {section: 'Earning', link: 'earning'},
-    {section: 'Collaboration', link: 'collaboration'},
+    {section: 'C11N', link: 'collaboration'},
+    {section: 'R12N', link: 'recommendation'},
     {section: 'Trackwork', link: 'trackwork'},
     {section: 'Draw', link: 'draw'},
   ]

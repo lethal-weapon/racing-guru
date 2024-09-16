@@ -5,7 +5,7 @@
 </div>
 
 <div *ngIf="!isLoading" class="text-center">
-  <div class="mx-12 my-8 text-2xl bg-gray-800 rounded-full flex flex-row justify-between">
+  <div class="mx-10 my-8 text-2xl bg-gray-800 rounded-full flex flex-row justify-between">
     <div *ngFor="let page of pages"
          [routerLink]="page.link"
          class="w-full py-2.5 rounded-full {{getSectionStyle(page.link)}}"
