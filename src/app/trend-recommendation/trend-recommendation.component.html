@@ -4,30 +4,85 @@
 
 <div *ngIf="!isLoading" class="mx-12">
   <div class="my-4 flex flex-row justify-evenly">
+    <div *ngFor="let section of [BY_STATS]"
+         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(section)}}"
+         (click)="activeBadge = section"
+    >
+      {{ section }}
+    </div>
     <div *ngFor="let rec of recommendations"
          class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(rec.meeting)}}"
-         (click)="activeMeeting = rec.meeting"
+         (click)="activeBadge = rec.meeting"
     >
       {{ formatMeeting(rec.meeting) }}
       {{ rec.venue }}
     </div>
   </div>
 
-  <div *ngFor="let rr of activeRecommendation.races"
-       class="my-4 flex flex-row items-center gap-x-10"
-  >
-    <div class="w-28 text-xl italic">
-      Race #{{ rr.race }}
-    </div>
-    <div class="text-2xl px-10 py-2 rounded-full flex flex-row gap-x-8
-                shadow-md bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900
-                transition shadow-gray-800 hover:shadow-gray-600"
+  <div *ngIf="![BY_STATS].includes(activeBadge)">
+    <div *ngFor="let rr of activeRecommendation.races"
+         class="my-4 flex flex-row items-center gap-x-10"
     >
-      <div *ngFor="let starter of rr.starters"
-           class="w-10 h-10 pt-0.5 rounded-full {{getStarterBorderStyle(rr.race, starter)}}"
+      <div class="w-28 text-xl italic">
+        Race #{{ rr.race }}
+      </div>
+      <div class="text-2xl px-10 py-2 rounded-full flex flex-row gap-x-8
+                  shadow-md bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900
+                  transition shadow-gray-800 hover:shadow-gray-600"
       >
-        {{ starter.order }}
+        <div *ngFor="let starter of rr.starters"
+             class="w-10 h-10 pt-0.5 rounded-full {{getStarterBorderStyle(rr.race, starter)}}"
+        >
+          {{ starter.order }}
+        </div>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="activeBadge === BY_STATS"
+       class="mt-8"
+  >
+    <table class="mx-auto table-fixed border-collapse border border-gray-700">
+      <thead>
+        <th class="w-32 px-2 py-4 border border-gray-700 text-2xl">
+          Rank #
+        </th>
+        <th *ngFor="let rank of rankPositions"
+            class="w-28 border border-gray-700 text-2xl"
+        >
+          <span *ngIf="rank > 0">
+            {{ rank }}
+          </span>
+          <span *ngIf="rank < 0">
+            ({{ rank - (rank * 2) }})
+          </span>
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pm of PLACING_MAPS; let index = index">
+          <td class="p-2 border border-gray-700 text-2xl font-mono {{pm.color}}">
+            {{ pm.placing }}
+          </td>
+          <td *ngFor="let rank of rankPositions"
+              class="p-2 border border-gray-700 text-xl {{isTopRankPlacing(rank, index + 1) ? pm.color : ''}}"
+          >
+            <span *ngIf="getRankPlacingCount(rank, index + 1) > 0">
+              {{ getRankPlacingCount(rank, index + 1) }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="p-2 border border-gray-700 text-xl font-mono">
+            Total
+          </td>
+          <td *ngFor="let rank of rankPositions"
+              class="border border-gray-700 text-xl"
+              [class.text-yellow-400]="isTopTotalRankPlacing(rank)"
+          >
+            {{ getTotalRankPlacingCount(rank) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

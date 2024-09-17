@@ -122,7 +122,12 @@
               {{ liability.months }}
             </td>
             <td class="px-4">
-              {{ liability.annualizedInterestRate | percent }}
+              <span *ngIf="liability.annualizedInterestRate <= 0">
+                -
+              </span>
+              <span *ngIf="liability.annualizedInterestRate > 0">
+                {{ liability.annualizedInterestRate | percent }}
+              </span>
             </td>
           </tr>
         </table>

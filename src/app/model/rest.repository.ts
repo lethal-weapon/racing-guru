@@ -165,10 +165,18 @@ export class RestRepository {
     })
 
   updateRacecardFromSocket = (newCard: Racecard) => {
-    const index = this.racecards
-      .findIndex(r => r.meeting === newCard.meeting && r.race === newCard.race);
+    const oldCard = this.racecards
+      .find(r => r.meeting === newCard.meeting && r.race === newCard.race);
 
-    if (index > 0) this.racecards.splice(index, 1, newCard);
+    if (oldCard) {
+      if (oldCard.time != newCard.time) oldCard.time = newCard.time;
+      if (oldCard.starters != newCard.starters) oldCard.starters = newCard.starters;
+      if (oldCard.changes != newCard.changes) oldCard.changes = newCard.changes;
+      if (oldCard.pool != newCard.pool) oldCard.pool = newCard.pool;
+      if (oldCard.odds != newCard.odds) oldCard.odds = newCard.odds;
+      if (oldCard.signal != newCard.signal) oldCard.signal = newCard.signal;
+      if (oldCard.dividend != newCard.dividend) oldCard.dividend = newCard.dividend;
+    }
   }
 
   fetchRecommendations = (
@@ -179,6 +187,12 @@ export class RestRepository {
       this.recommendations = data;
       callback();
     })
+
+  updateRecommendationFromSocket = (newRecommendation: Recommendation) => {
+    const index = this.recommendations.findIndex(m => m.meeting === newRecommendation.meeting);
+    if (index === -1) this.recommendations.unshift(newRecommendation);
+    else this.recommendations.splice(index, 1, newRecommendation);
+  }
 
   fetchSyndicates = () =>
     this.source.getSyndicates().subscribe(data => this.syndicates = data)

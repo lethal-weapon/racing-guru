@@ -5,6 +5,7 @@ import {RestRepository} from '../model/rest.repository';
 import {WebsocketService} from '../websocket.service';
 import {Racecard} from '../model/racecard.model';
 import {Meeting} from '../model/meeting.model';
+import {Recommendation} from '../model/recommendation.model';
 import {SyndicateSnapshot} from '../model/syndicate.model';
 import {TrackworkSnapshot} from '../model/trackwork.model';
 
@@ -28,6 +29,10 @@ export class TrendComponent implements OnInit {
     private repo: RestRepository,
     private socket: WebsocketService
   ) {
+    socket.addRecommendationCallback((newRecommendation: Recommendation) => {
+      this.repo.updateRecommendationFromSocket(newRecommendation);
+    });
+
     socket.addRacecardCallback((newCard: Racecard) => {
       this.repo.updateRacecardFromSocket(newCard);
     });
