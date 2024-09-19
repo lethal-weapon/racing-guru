@@ -101,7 +101,7 @@ export class TrendRecommendationComponent implements OnInit {
       : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
 
   get rankPositions(): number[] {
-    return [1, 2, 3, 4, 5, -3, -2, -1];
+    return [1, 2, 3, 4, 5, 6, -4, -3, -2, -1];
   }
 
   get activeRecommendation(): Recommendation {

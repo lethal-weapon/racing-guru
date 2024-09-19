@@ -6,9 +6,8 @@ import {Racecard} from '../model/racecard.model';
 import {TrackworkSnapshot, TrackworkStarter} from '../model/trackwork.model';
 import {formatMeeting, getWinPlaceOdds, toPlacingColor} from '../util/functions';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
-import {ODDS_INTENSITIES, OddsIntensity, PLACING_MAPS, RATING_GRADES} from '../util/strings';
 
-const BY_STATS = 'By Stats';
+const BY_FOCUS = 'By Focus';
 
 @Component({
   selector: 'app-trend-trackwork',
@@ -16,12 +15,9 @@ const BY_STATS = 'By Stats';
 })
 export class TrendTrackworkComponent implements OnInit {
 
-  activeBadge: string = BY_STATS;
+  activeBadge: string = BY_FOCUS;
 
-  protected readonly BY_STATS = BY_STATS;
-  protected readonly PLACING_MAPS = PLACING_MAPS;
-  protected readonly RATING_GRADES = RATING_GRADES;
-  protected readonly ODDS_INTENSITIES = ODDS_INTENSITIES;
+  protected readonly BY_FOCUS = BY_FOCUS;
   protected readonly formatMeeting = formatMeeting;
   protected readonly toPlacingColor = toPlacingColor;
 
@@ -37,29 +33,20 @@ export class TrendTrackworkComponent implements OnInit {
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
 
-  getGradePlacingStartersInOddsRange = (
-    grade: string,
-    placing: number,
-    range: OddsIntensity
-  ): TrackworkStarter[] =>
-    this.getGradePlacingStarters(grade, placing)
-      .filter(s => s.winOdds >= range.lower && s.winOdds <= range.upper)
+  getTrainerFocusStarter =
+    (ts: TrackworkSnapshot, trainer: Player): TrackworkStarter | undefined => {
 
-  getGradePlacingStarters = (grade: string, placing: number): TrackworkStarter[] =>
-    this.getGradeStarters(grade).filter(s => s.placing === placing)
-
-  getGradeTop4Starters = (grade: string): TrackworkStarter[] =>
-    this.getGradeStarters(grade).filter(s => s.placing >= 1 && s.placing <= 4)
-
-  getGradeStarters = (grade: string): TrackworkStarter[] =>
-    this.starters.filter(s => s.grade === grade)
+      return ts.starters.find(s => s.trainerFocus && s.trainer === trainer.code)
+    }
 
   getRaceStarters = (race: number): TrackworkStarter[] =>
     this.activeTrackwork.starters
       .filter(s => s.race === race)
       .sort((s1, s2) => (s2.intensity - s1.intensity) || (s1.order - s2.order))
 
-  getStarterWinOdds = (starter: TrackworkStarter): number => {
+  getStarterWinOdds = (starter: TrackworkStarter | undefined): number => {
+    if (starter === undefined) return 0;
+
     if ((starter?.winOdds || 0) > 0) return starter.winOdds;
 
     if (this.activeTrackwork.meeting === this.racecards[0].meeting) {
@@ -71,18 +58,6 @@ export class TrendTrackworkComponent implements OnInit {
 
     return 0;
   }
-
-  getTrainerGradeTop4Starters = (trainer: Player, grade: string): TrackworkStarter[] =>
-    this.getTrainerTop4Starters(trainer).filter(s => s.grade === grade)
-
-  getTrainerTop4Starters = (trainer: Player): TrackworkStarter[] =>
-    this.getTrainerStarters(trainer).filter(s => s.placing >= 1 && s.placing <= 4)
-
-  getTrainerStarters = (trainer: Player): TrackworkStarter[] =>
-    this.starters.filter(s => s.trainer === trainer.code)
-
-  getTrainerGroupStarters = (trainers: Player[]): TrackworkStarter[] =>
-    this.starters.filter(s => trainers.map(t => t.code).includes(s.trainer))
 
   getGradeBorderStyle = (
     race: number,
@@ -107,12 +82,6 @@ export class TrendTrackworkComponent implements OnInit {
       .pop() || MAX_RACE_PER_MEETING;
   }
 
-  get starters(): TrackworkStarter[] {
-    return this.trackworks
-      .flatMap(ts => ts.starters)
-      .filter(s => !s.scratched && s?.placing)
-  }
-
   get activeTrackwork(): TrackworkSnapshot {
     const match = this.trackworks.find(ts => ts.meeting === this.activeBadge);
     return match ? match : this.trackworks[0];
@@ -120,28 +89,6 @@ export class TrendTrackworkComponent implements OnInit {
 
   get trackworks(): TrackworkSnapshot[] {
     return this.repo.findTrackworkSnapshots();
-  }
-
-  get trainerGroups(): Player[][] {
-    const boundaryTrainers = this.trainers.filter(t => t.boundary);
-    const group = this.trainers
-      .filter(t => t.boundary)
-      .map((bt, bti) => {
-        let startIndex = 0;
-        let endIndex = this.trainers.findIndex(p => p === bt);
-
-        if (bti > 0) {
-          startIndex = 1 + this.trainers.findIndex(p => p === boundaryTrainers[bti - 1]);
-        }
-
-        return this.trainers.slice(startIndex, endIndex + 1);
-      });
-
-    const lastStartIndex =
-      1 + this.trainers.findIndex(p => p === boundaryTrainers[boundaryTrainers.length - 1]);
-
-    group.push(this.trainers.slice(lastStartIndex));
-    return group;
   }
 
   get trainers(): Player[] {
