@@ -88,7 +88,7 @@ export class FormBetComponent implements OnInit {
     switch (pool) {
       case 'WIN & PLA':
         return bet.betlines.filter(b =>
-          ['W:', 'P:'].some(p => b.command.toUpperCase().startsWith(p))
+          ['W:', 'P:', 'WP:'].some(p => b.command.toUpperCase().startsWith(p))
           ||
           ['WIN', 'PLA', 'PLACE'].some(p => b.command.toUpperCase().includes(p))
         );
@@ -117,7 +117,7 @@ export class FormBetComponent implements OnInit {
       case 'Others':
         return bet.betlines.filter(b =>
           !(
-            ['W:', 'P:'].some(p => b.command.toUpperCase().startsWith(p))
+            ['W:', 'P:', 'WP:'].some(p => b.command.toUpperCase().startsWith(p))
             ||
             ['WIN', 'PLA', 'PLACE'].some(p => b.command.toUpperCase().includes(p))
             ||
