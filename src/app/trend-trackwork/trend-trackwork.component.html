@@ -2,8 +2,8 @@
   <app-spinner></app-spinner>
 </div>
 
-<div *ngIf="!isLoading" class="mx-8">
-  <div class="my-4 flex flex-row justify-evenly">
+<div *ngIf="!isLoading">
+  <div class="m-4 flex flex-row justify-evenly">
     <div *ngFor="let section of [BY_FOCUS]"
          class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(section)}}"
          (click)="activeBadge = section"
@@ -20,7 +20,7 @@
   </div>
 
   <div *ngIf="![BY_FOCUS].includes(activeBadge)"
-       class="grid grid-cols-4 gap-x-4 gap-y-2"
+       class="mx-4 grid grid-cols-4 gap-x-4 gap-y-2"
   >
     <div *counter="let race of maxRace"
          class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
@@ -47,8 +47,11 @@
         <div class="col-span-2">
           {{ starter.trainer }}
         </div>
-        <div class="col-span-2 "
-             [class.invisible]="getStarterWinOdds(starter) < 1"
+        <div [class.invisible]="getStarterWinOdds(starter) < 1"
+             class="col-span-2 {{ toPlacingColor(starter?.placing).length === 0
+                                    ? getOddsIntensityColor(getStarterWinOdds(starter))
+                                    : ''
+                               }}"
         >
           {{ getStarterWinOdds(starter) | number: '1.0-1' }}
         </div>
@@ -66,7 +69,7 @@
     <tr class="text-lg">
       <td class="w-20 border border-gray-700"></td>
       <td *ngFor="let ts of trackworks"
-          class="w-48 border border-gray-700"
+          class="w-64 border border-gray-700"
       >
         {{ formatMeeting(ts.meeting) }}
         &nbsp;
@@ -90,7 +93,12 @@
                     {{toPlacingColor(getTrainerFocusStarter(ts, trainer)?.placing)}}"
              [class.opacity-0]="!first && toPlacingColor(getTrainerFocusStarter(ts, trainer)?.placing).length < 1"
         >
-          <div [class.invisible]="getStarterWinOdds(getTrainerFocusStarter(ts, trainer)) < 1">
+          <div [class.invisible]="getStarterWinOdds(getTrainerFocusStarter(ts, trainer)) < 1"
+               class="{{ toPlacingColor(getTrainerFocusStarter(ts, trainer)?.placing).length === 0
+                               ? getOddsIntensityColor(getStarterWinOdds(getTrainerFocusStarter(ts, trainer)))
+                               : ''
+                      }}"
+          >
             {{ getStarterWinOdds(getTrainerFocusStarter(ts, trainer)) | number: '1.0-1' }}
           </div>
           <div class="text-xs">

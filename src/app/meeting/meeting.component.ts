@@ -56,13 +56,13 @@ export class MeetingComponent implements OnInit {
   protected readonly RATING_GRADES = RATING_GRADES;
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
+  protected readonly formatRace = formatRace;
   protected readonly toPlacingColor = toPlacingColor;
+  protected readonly toHorseProfileUrl = toHorseProfileUrl;
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;
   protected readonly getWinPlaceOdds = getWinPlaceOdds;
-  protected readonly toHorseProfileUrl = toHorseProfileUrl;
   protected readonly getOddsIntensityColor = getOddsIntensityColor;
-  protected readonly formatRace = formatRace;
 
   constructor(
     private repo: RestRepository,

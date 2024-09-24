@@ -4,8 +4,8 @@ import {RestRepository} from '../model/rest.repository';
 import {Player} from '../model/player.model';
 import {Racecard} from '../model/racecard.model';
 import {TrackworkSnapshot, TrackworkStarter} from '../model/trackwork.model';
-import {formatMeeting, getWinPlaceOdds, toPlacingColor} from '../util/functions';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
+import {formatMeeting, getOddsIntensityColor, getWinPlaceOdds, toPlacingColor} from '../util/functions';
 
 const BY_FOCUS = 'By Focus';
 
@@ -20,6 +20,7 @@ export class TrendTrackworkComponent implements OnInit {
   protected readonly BY_FOCUS = BY_FOCUS;
   protected readonly formatMeeting = formatMeeting;
   protected readonly toPlacingColor = toPlacingColor;
+  protected readonly getOddsIntensityColor = getOddsIntensityColor;
 
   constructor(private repo: RestRepository) {
   }
