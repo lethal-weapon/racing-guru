@@ -29,6 +29,44 @@ export class TrendRecommendationComponent implements OnInit {
     });
   }
 
+  isTopExactRankPlacing = (rank: number, placing: number): boolean =>
+    this.exactRankPositions
+      .map(rp => this.getExactRankPlacingCount(rp, placing))
+      .sort((c1, c2) => c2 - c1)
+      .slice(0, 3)
+      .includes(this.getExactRankPlacingCount(rank, placing))
+
+  isTopTotalExactRankPlacing = (rank: number): boolean =>
+    this.exactRankPositions
+      .map(rp => this.getTotalExactRankPlacingCount(rp))
+      .sort((c1, c2) => c2 - c1)
+      .slice(0, 3)
+      .includes(this.getTotalExactRankPlacingCount(rank))
+
+  getTotalExactRankPlacingCount = (rank: number): number =>
+    [1, 2, 3, 4]
+      .map(placing => this.getExactRankPlacingCount(rank, placing))
+      .reduce((prev, curr) => prev + curr, 0)
+
+  getExactRankPlacingCount = (rank: number, placing: number): number => {
+    let count = 0;
+
+    this.recommendations.forEach(rec => {
+      rec.races.forEach(r => {
+
+        if (r.starters.some(s =>
+          s.placings.some(sp => sp.rank === rank && sp.placing === placing)
+          &&
+          placing === this.getStarterPlacing(rec.meeting, r.race, s.order)
+        )) {
+          count += 1;
+        }
+      });
+    });
+
+    return count;
+  }
+
   isTopRankPlacing = (rank: number, placing: number): boolean =>
     this.rankPositions
       .map(rp => this.getRankPlacingCount(rp, placing))
@@ -99,6 +137,10 @@ export class TrendRecommendationComponent implements OnInit {
     this.activeBadge === render
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
+
+  get exactRankPositions(): number[] {
+    return [1, 2, 3, 4, 5, 6];
+  }
 
   get rankPositions(): number[] {
     return [1, 2, 3, 4, 5, 6, -4, -3, -2, -1];

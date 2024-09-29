@@ -52,7 +52,9 @@
       <div *ngFor="let race of getRacesOnMeeting(m.meeting)"
            class="grid grid-cols-5 text-lg"
       >
-        <div class="italic">
+        <div class="italic"
+             [class.text-yellow-600]="isMultipleInheritanceByMeetingRace(m.meeting, race)"
+        >
           #{{ race }}
         </div>
         <div *ngFor="let pm of PLACING_MAPS; let index = index"

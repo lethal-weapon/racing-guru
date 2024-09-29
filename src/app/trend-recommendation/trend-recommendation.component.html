@@ -84,5 +84,43 @@
         </tr>
       </tbody>
     </table>
+
+    <table class="mt-12 mx-auto table-fixed border-collapse border border-gray-700">
+      <thead>
+        <th class="w-48 px-2 py-4 border border-gray-700 text-2xl">
+          Exact Rank #
+        </th>
+        <th *ngFor="let rank of exactRankPositions"
+            class="w-28 border border-gray-700 text-2xl"
+        >
+          {{ rank }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pm of PLACING_MAPS; let index = index">
+          <td class="p-2 border border-gray-700 text-2xl font-mono {{pm.color}}">
+            {{ pm.placing }}
+          </td>
+          <td *ngFor="let rank of exactRankPositions"
+              class="p-2 border border-gray-700 text-xl {{isTopExactRankPlacing(rank, index + 1) ? pm.color : ''}}"
+          >
+            <span *ngIf="getExactRankPlacingCount(rank, index + 1) > 0">
+              {{ getExactRankPlacingCount(rank, index + 1) }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="p-2 border border-gray-700 text-xl font-mono">
+            Total
+          </td>
+          <td *ngFor="let rank of exactRankPositions"
+              class="border border-gray-700 text-xl"
+              [class.text-yellow-400]="isTopTotalExactRankPlacing(rank)"
+          >
+            {{ getTotalExactRankPlacingCount(rank) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
