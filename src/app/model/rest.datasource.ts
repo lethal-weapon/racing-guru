@@ -17,6 +17,7 @@ import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
+import {SignalSnapshot} from './signal.model';
 import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
@@ -118,6 +119,9 @@ export class RestDataSource {
 
   getTrackworkSnapshots = (meetingSize: number): Observable<TrackworkSnapshot[]> =>
     this.http.get<TrackworkSnapshot[]>(`${this.baseUrl}/trackworks/snapshots?meetingSize=${meetingSize}`)
+
+  getSignalSnapshots = (meetingSize: number): Observable<SignalSnapshot[]> =>
+    this.http.get<SignalSnapshot[]>(`${this.baseUrl}/racecards/signal-snapshots?meetingSize=${meetingSize}`)
 
   getPlayerConnections = (): Observable<PlayerConnection[]> =>
     this.http.get<PlayerConnection[]>(`${this.baseUrl}/players/connections`)

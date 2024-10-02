@@ -1,0 +1,80 @@
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+  <div class="m-4 flex flex-row justify-evenly">
+    <div *ngFor="let section of [BY_STATS]"
+         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(section)}}"
+         (click)="activeBadge = section"
+    >
+      {{ section }}
+    </div>
+    <div *ngFor="let ss of signalSnapshots"
+         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(ss.meeting)}}"
+         (click)="activeBadge = ss.meeting"
+    >
+      {{ formatMeeting(ss.meeting) }}
+      {{ ss.venue }}
+    </div>
+  </div>
+
+  <div *ngIf="![BY_STATS].includes(activeBadge)"
+       class="mx-4 grid grid-cols-4 gap-x-4 gap-y-2"
+  >
+    <div *counter="let race of maxRace"
+         class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
+    >
+      <div class="mb-2 text-yellow-400 text-lg">
+        Race #{{ race }}
+      </div>
+      <div class="grid grid-cols-12">
+        <div class="col-span-1"></div>
+        <div class="col-span-1"></div>
+        <div class="col-span-2"></div>
+        <div class="col-span-2"></div>
+        <div class="col-span-2"></div>
+        <div *ngFor="let pool of pools"
+             class="col-span-1"
+        >
+          {{ pool }}
+        </div>
+      </div>
+      <div *ngFor="let starter of getRaceStarters(race); let index = index"
+           class="grid grid-cols-12 {{toPlacingColor(starter?.placing)}}"
+           [class.opacity-50]="starter.scratched"
+           [class.line-through]="starter.scratched"
+      >
+        <div class="col-span-1">
+          <span *ngIf="isTop4WithNoWinPlaceSignalBeforePostTime(race, starter)">
+            <i class="fa fa-chevron-right"></i>
+          </span>
+        </div>
+        <div class="col-span-1">
+          {{ starter.order }}
+        </div>
+        <div class="col-span-2">
+          {{ starter.jockey }}
+        </div>
+        <div class="col-span-2">
+          {{ starter.trainer }}
+        </div>
+        <div class="col-span-2">
+          {{ starter?.winOdds | number: '1.0-1' }}
+        </div>
+        <div *ngFor="let pool of pools"
+             class="col-span-1"
+        >
+          <span *ngIf="getBeforePostTimeSignalCount(race, starter.order, pool) > 0">
+            {{ getBeforePostTimeSignalCount(race, starter.order, pool) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="activeBadge === BY_STATS"
+       class="mt-8"
+  >
+  </div>
+</div>

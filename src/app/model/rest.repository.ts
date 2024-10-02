@@ -15,6 +15,7 @@ import {Meeting} from './meeting.model';
 import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
+import {SignalSnapshot} from './signal.model';
 import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
@@ -38,6 +39,7 @@ export class RestRepository {
   private drawInheritances: DrawInheritance[] = [];
   private syndicateSnapshots: SyndicateSnapshot[] = [];
   private trackworkSnapshots: TrackworkSnapshot[] = [];
+  private signalSnapshots: SignalSnapshot[] = [];
   private playerConnections: PlayerConnection[] = [];
   private blacklistConnections: BlacklistConnection[] = [];
   private accumulatedSeasonEarnings: AccumulatedSeasonEarning[] = [];
@@ -66,6 +68,7 @@ export class RestRepository {
   findDrawInheritances = () => this.drawInheritances
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
+  findSignalSnapshots = () => this.signalSnapshots
   findPlayerConnections = () => this.playerConnections
   findBlacklistConnections = () => this.blacklistConnections
   findAccumulatedSeasonEarnings = () => this.accumulatedSeasonEarnings
@@ -302,6 +305,17 @@ export class RestRepository {
     const index = this.trackworkSnapshots.findIndex(s => s.meeting === newSnapshot.meeting);
     if (index === -1) this.trackworkSnapshots.unshift(newSnapshot);
     else this.trackworkSnapshots.splice(index, 1, newSnapshot);
+  }
+
+  fetchSignalSnapshots = (
+    meetingSize: number = 8,
+    callback: () => any = () => console.log(``)
+  ) => {
+    this.source
+      .getSignalSnapshots(meetingSize)
+      .subscribe(data => this.signalSnapshots = data);
+
+    callback();
   }
 
   fetchPlayerConnections = () =>

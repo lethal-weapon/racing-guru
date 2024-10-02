@@ -1,3 +1,5 @@
+import {Starter} from './starter.model';
+
 export interface Signal {
   win: SingularSignal[],
   place: SingularSignal[],
@@ -23,4 +25,17 @@ export interface CombinationSignal {
   currentOdds: number,
   previousOdds: number,
   detectedAt: string
+}
+
+export interface SignalSnapshot {
+  meeting: string,
+  venue: string,
+  races: RaceSignalSnapshot[]
+}
+
+export interface RaceSignalSnapshot {
+  race: number,
+  time: string,
+  signal: Signal,
+  starters: Starter[]
 }
