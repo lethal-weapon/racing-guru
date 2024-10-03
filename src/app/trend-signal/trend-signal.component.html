@@ -20,7 +20,7 @@
   </div>
 
   <div *ngIf="![BY_STATS].includes(activeBadge)"
-       class="mx-4 grid grid-cols-4 gap-x-4 gap-y-2"
+       class="mx-8 grid grid-cols-2 gap-x-6 gap-y-2"
   >
     <div *counter="let race of maxRace"
          class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
@@ -28,48 +28,68 @@
       <div class="mb-2 text-yellow-400 text-lg">
         Race #{{ race }}
       </div>
-      <div class="grid grid-cols-12">
-        <div class="col-span-1"></div>
-        <div class="col-span-1"></div>
-        <div class="col-span-2"></div>
-        <div class="col-span-2"></div>
-        <div class="col-span-2"></div>
-        <div *ngFor="let pool of pools"
-             class="col-span-1"
-        >
-          {{ pool }}
-        </div>
-      </div>
-      <div *ngFor="let starter of getRaceStarters(race); let index = index"
-           class="grid grid-cols-12 {{toPlacingColor(starter?.placing)}}"
-           [class.opacity-50]="starter.scratched"
-           [class.line-through]="starter.scratched"
-      >
-        <div class="col-span-1">
-          <span *ngIf="isTop4WithNoWinPlaceSignalBeforePostTime(race, starter)">
-            <i class="fa fa-chevron-right"></i>
-          </span>
-        </div>
-        <div class="col-span-1">
-          {{ starter.order }}
-        </div>
-        <div class="col-span-2">
-          {{ starter.jockey }}
-        </div>
-        <div class="col-span-2">
-          {{ starter.trainer }}
-        </div>
-        <div class="col-span-2">
-          {{ starter?.winOdds | number: '1.0-1' }}
-        </div>
-        <div *ngFor="let pool of pools"
-             class="col-span-1"
-        >
-          <span *ngIf="getBeforePostTimeSignalCount(race, starter.order, pool) > 0">
-            {{ getBeforePostTimeSignalCount(race, starter.order, pool) }}
-          </span>
-        </div>
-      </div>
+      <table class="mx-auto table-fixed border-collapse">
+        <thead>
+          <th *counter="let _ of 5" class="px-2"></th>
+          <th class="px-3 invisible">
+            X
+          </th>
+          <th *ngFor="let pool of pools"
+              class="px-1"
+          >
+            {{ pool }}
+          </th>
+          <th class="px-2">
+            Total
+          </th>
+          <th class="px-1"></th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let starter of getRaceStarters(race); let index = index"
+              class="{{toPlacingColor(starter?.placing)}}"
+              [class.opacity-50]="starter.scratched"
+              [class.line-through]="starter.scratched"
+          >
+            <td class="px-1">
+              <span *ngIf="isTop4WithNoWinPlaceSignalBeforePostTime(race, starter)">
+                <i class="fa fa-chevron-right"></i>
+              </span>
+            </td>
+            <td class="px-1">
+              {{ starter.order }}
+            </td>
+            <td class="px-1">
+              {{ starter.jockey }}
+            </td>
+            <td class="px-1">
+              {{ starter.trainer }}
+            </td>
+            <td class="px-1">
+              {{ starter?.winOdds | number: '1.0-1' }}
+            </td>
+            <td class="px-3 invisible">
+              X
+            </td>
+            <td *ngFor="let pool of pools"
+                class="px-1"
+            >
+              <span *ngIf="getBeforePostTimeSignalCount(race, starter.order, pool) > 0">
+                {{ getBeforePostTimeSignalCount(race, starter.order, pool) }}
+              </span>
+            </td>
+            <td class="px-2">
+              <span *ngIf="getTotalBeforePostTimeSignalCount(race, starter.order) > 0">
+                {{ getTotalBeforePostTimeSignalCount(race, starter.order) }}
+              </span>
+            </td>
+            <td class="px-1">
+              <span *ngIf="isTop4WithMostSignalBeforePostTime(race, starter)">
+                <i class="fa fa-chevron-left"></i>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 

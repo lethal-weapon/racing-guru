@@ -29,6 +29,21 @@ export class TrendSignalComponent implements OnInit {
     });
   }
 
+  isTop4WithMostSignalBeforePostTime =
+    (race: number, starter: Starter): boolean => {
+
+      const raceSnapshot = this.activeSnapshot.races.find(s => s.race === race);
+      if (!raceSnapshot) return false;
+
+      return raceSnapshot.starters
+        .map(s => this.getTotalBeforePostTimeSignalCount(race, s.order))
+        .filter((r, index, arr) => index === arr.indexOf(r))
+        .filter(c => c > 0)
+        .sort((c1, c2) => c2 - c1)
+        .slice(0, 4)
+        .includes(this.getTotalBeforePostTimeSignalCount(race, starter.order));
+    }
+
   isTop4WithNoWinPlaceSignalBeforePostTime =
     (race: number, starter: Starter): boolean => {
 
@@ -41,6 +56,11 @@ export class TrendSignalComponent implements OnInit {
       return true;
     }
 
+  getTotalBeforePostTimeSignalCount = (race: number, order: number): number =>
+    this.pools
+      .map(p => this.getBeforePostTimeSignalCount(race, order, p))
+      .reduce((prev, curr) => prev + curr, 0)
+
   getBeforePostTimeSignalCount =
     (race: number, order: number, pool: string): number => {
 
@@ -50,18 +70,32 @@ export class TrendSignalComponent implements OnInit {
       if (['W', 'P'].includes(pool)) {
         return (
           pool === 'W'
-            ? raceSnapshot.signal.win
-            : raceSnapshot.signal.place
+            ? raceSnapshot?.signal?.win || []
+            : raceSnapshot?.signal?.place || []
         )
           .filter(ss => ss.order === order && ss.detectedAt < raceSnapshot.time)
           .length;
       }
 
-      if (['Q', 'QP'].includes(pool)) {
+      if (['Q', 'QP', 'FCT'].includes(pool)) {
         return (
           pool === 'Q'
-            ? raceSnapshot.signal.quinella
-            : raceSnapshot.signal.quinellaPlace
+            ? raceSnapshot?.signal?.quinella || []
+            : (
+              pool === 'QP'
+                ? raceSnapshot?.signal?.quinellaPlace || []
+                : raceSnapshot?.signal?.forecast || []
+            )
+        )
+          .filter(ss => ss.orders.includes(order) && ss.detectedAt < raceSnapshot.time)
+          .length;
+      }
+
+      if (['TRI', 'FF'].includes(pool)) {
+        return (
+          pool === 'TRI'
+            ? raceSnapshot?.signal?.trio || []
+            : raceSnapshot?.signal?.firstFour || []
         )
           .filter(ss => ss.orders.includes(order) && ss.detectedAt < raceSnapshot.time)
           .length;
@@ -84,7 +118,7 @@ export class TrendSignalComponent implements OnInit {
       : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
 
   get pools(): string[] {
-    return ['W', 'P', 'Q', 'QP'];
+    return ['W', 'P', 'Q', 'QP', 'FCT', 'TRI', 'FF'];
   }
 
   get maxRace(): number {
