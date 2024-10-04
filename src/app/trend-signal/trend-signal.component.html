@@ -25,24 +25,30 @@
     <div *counter="let race of maxRace"
          class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
     >
-      <div class="mb-2 text-yellow-400 text-lg">
+      <div class="mb-2 text-yellow-500 text-lg">
         Race #{{ race }}
       </div>
       <table class="mx-auto table-fixed border-collapse">
         <thead>
-          <th *counter="let _ of 5" class="px-2"></th>
-          <th class="px-3 invisible">
+          <th class="w-8"></th>
+          <th class="w-12"></th>
+          <th class="w-12"></th>
+          <th class="w-10"></th>
+          <th class="w-6 invisible">
             X
           </th>
+          <th class="w-6 invisible">
+            Y
+          </th>
           <th *ngFor="let pool of pools"
-              class="px-1"
+              class="w-9 {{borderedPools.includes(pool) ? 'border border-gray-700' : ''}}"
           >
             {{ pool }}
           </th>
-          <th class="px-2">
+          <th class="w-12 border border-gray-700">
             Total
           </th>
-          <th class="px-1"></th>
+          <th class="w-6"></th>
         </thead>
         <tbody>
           <tr *ngFor="let starter of getRaceStarters(race); let index = index"
@@ -50,46 +56,74 @@
               [class.opacity-50]="starter.scratched"
               [class.line-through]="starter.scratched"
           >
-            <td class="px-1">
-              <span *ngIf="isTop4WithNoWinPlaceSignalBeforePostTime(race, starter)">
-                <i class="fa fa-chevron-right"></i>
-              </span>
-            </td>
-            <td class="px-1">
+            <td>
               {{ starter.order }}
             </td>
-            <td class="px-1">
+            <td>
               {{ starter.jockey }}
             </td>
-            <td class="px-1">
+            <td>
               {{ starter.trainer }}
             </td>
-            <td class="px-1">
-              {{ starter?.winOdds | number: '1.0-1' }}
+            <td [class.invisible]="getStarterWinOdds(race, starter) < 1"
+                class="{{ toPlacingColor(starter?.placing).length === 0
+                            ? getOddsIntensityColor(getStarterWinOdds(race, starter))
+                            : ''
+                       }}"
+            >
+              {{ getStarterWinOdds(race, starter) | number: '1.0-1' }}
             </td>
-            <td class="px-3 invisible">
-              X
+            <td class="invisible">
+            </td>
+            <td class="text-left"
+                [class.invisible]="!isTop4WithNoWinPlaceSignalBeforePostTime(race, starter)"
+            >
+              <i class="fa fa-chevron-right"></i>
             </td>
             <td *ngFor="let pool of pools"
-                class="px-1"
+                class="{{borderedPools.includes(pool) ? 'border border-gray-700' : ''}}"
+                [class.invisible]="getBeforePostTimeSignalCount(race, starter.order, pool) < 1"
             >
-              <span *ngIf="getBeforePostTimeSignalCount(race, starter.order, pool) > 0">
-                {{ getBeforePostTimeSignalCount(race, starter.order, pool) }}
-              </span>
+              {{ getBeforePostTimeSignalCount(race, starter.order, pool) }}
             </td>
-            <td class="px-2">
-              <span *ngIf="getTotalBeforePostTimeSignalCount(race, starter.order) > 0">
-                {{ getTotalBeforePostTimeSignalCount(race, starter.order) }}
-              </span>
+            <td class="border border-gray-700"
+                [class.invisible]="getTotalBeforePostTimeSignalCount(race, starter.order) < 1"
+            >
+              {{ getTotalBeforePostTimeSignalCount(race, starter.order) }}
             </td>
-            <td class="px-1">
-              <span *ngIf="isTop4WithMostSignalBeforePostTime(race, starter)">
-                <i class="fa fa-chevron-left"></i>
-              </span>
+            <td class="text-right"
+                [class.invisible]="!isTop4WithMostSignalBeforePostTime(race, starter)"
+            >
+              <i class="fa fa-chevron-left"></i>
             </td>
           </tr>
         </tbody>
       </table>
+
+      <div class="w-full px-4 my-2 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+
+      <div class="flex flex-row justify-evenly">
+        <table *counter="let count of 3"
+               class="mx-auto border-collapse"
+        >
+          <tr *ngFor="let ws of getWinningSignals(race, count)">
+            <td class="px-2 border border-gray-700">
+              {{ ws.pool }}
+            </td>
+            <td class="px-2 border border-gray-700">
+              {{ ws.combination }}
+            </td>
+            <td class="px-2 text-yellow-400 border border-gray-700">
+              <span *ngIf="ws.signalCount === 0">
+                -
+              </span>
+              <span *ngIf="ws.signalCount != 0">
+                {{ ws.signalCount }}
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
 
