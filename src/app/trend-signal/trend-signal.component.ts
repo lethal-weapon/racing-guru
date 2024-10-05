@@ -32,7 +32,7 @@ export class TrendSignalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchSignalSnapshots(4, () => {
+    this.repo.fetchSignalSnapshots(6, () => {
     });
   }
 

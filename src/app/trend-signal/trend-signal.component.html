@@ -20,12 +20,12 @@
   </div>
 
   <div *ngIf="![BY_STATS].includes(activeBadge)"
-       class="mx-8 grid grid-cols-2 gap-x-6 gap-y-2"
+       class="mx-12 grid grid-cols-2 gap-x-6 gap-y-2"
   >
     <div *counter="let race of maxRace"
          class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
     >
-      <div class="mb-2 text-yellow-500 text-lg">
+      <div class="mb-2 text-yellow-400 text-lg">
         Race #{{ race }}
       </div>
       <table class="mx-auto table-fixed border-collapse">
@@ -113,7 +113,7 @@
             <td class="px-2 border border-gray-700">
               {{ ws.combination }}
             </td>
-            <td class="px-2 text-yellow-400 border border-gray-700">
+            <td class="px-2 border border-gray-700 text-yellow-400">
               <span *ngIf="ws.signalCount === 0">
                 -
               </span>
