@@ -59,7 +59,7 @@ export class TrendSignalComponent implements OnInit {
       .length;
     const FCTcount = (raceSnapshot?.signal?.forecast || [])
       .filter(ss => ss.detectedAt < raceSnapshot.time)
-      .filter(ss => ss.orders === Qcomb)
+      .filter(ss => ss.orders[0] === Qcomb[0] && ss.orders[1] === Qcomb[1])
       .length;
 
     let signals = [
