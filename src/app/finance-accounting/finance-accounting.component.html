@@ -1,16 +1,63 @@
-<div class="mx-8 text-center text-lg">
-  <div class="grid grid-cols-2 grid-flow-row auto-rows-max items-start gap-6">
-    <div *ngFor="let group of accountGroups"
-         class="pt-2 pb-2.5 px-8 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
-    >
-      <div class="mb-2 text-xl font-bold text-blue-600">
-        {{ group.group.toUpperCase() }}
-      </div>
-      <div *ngFor="let account of group.accounts"
-           class="text-left"
-      >
-        {{ account.name }}
-      </div>
-    </div>
+<div class="m-8 text-lg flex justify-center">
+  <div class="relative overflow-x-auto shadow-md rounded-lg">
+    <table class="table-fixed text-left">
+      <thead class="text-gray-400 bg-gradient-to-br from-gray-700 via-gray-900 to-gray-700">
+        <tr>
+          <th class="px-3 py-2 w-80">
+            CHART OF ACCOUNTS
+          </th>
+          <th *counter="let count of TRANSACTION_PAGE_SIZE"
+              class="px-3 py-2 w-20 text-center"
+          >
+            #{{ count }}
+          </th>
+          <th class="px-3 py-2 w-28 text-center">
+            TOTAL
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let group of accountGroups; let lastGroup = last">
+          <tr class="bg-gray-800/50 hover:bg-gray-700/50">
+            <td class="px-3 font-bold border border-gray-800 border-r-gray-600">
+              <div class="flex justify-between">
+                <div class="text-blue-600">
+                  {{ group.group.toUpperCase() }}
+                </div>
+                <div class="">
+                  ({{ group.debit ? 'DR' : 'CR' }})
+                </div>
+              </div>
+            </td>
+            <td *counter="let count of TRANSACTION_PAGE_SIZE"
+                class="border border-gray-800"
+            >
+            </td>
+            <td class="border border-gray-800"></td>
+          </tr>
+
+          <tr *ngFor="let account of group.accounts; let last = last"
+              class="bg-gray-800/50 hover:bg-gray-700/50"
+          >
+            <td class="pl-8 border border-gray-800 border-r-gray-600"
+                [class.rounded-bl-lg]="last && lastGroup"
+                [class.border-b-gray-600]="last && !lastGroup"
+            >
+              {{ account.name }}
+            </td>
+            <td *counter="let count of TRANSACTION_PAGE_SIZE"
+                class="px-3 py-2 w-20 text-right border border-gray-800"
+                [class.border-b-gray-600]="last && !lastGroup"
+            >
+            </td>
+            <td class="px-3 py-2 w-28 text-right border border-gray-800"
+                [class.rounded-br-lg]="last && lastGroup"
+                [class.border-b-gray-600]="last && !lastGroup"
+            >
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
   </div>
 </div>

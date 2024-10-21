@@ -10,14 +10,19 @@ export interface ACCOUNT_ITEM {
 
 export interface ACCOUNT_GROUP {
   group: string,
+  debit: boolean,
   accounts: ACCOUNT_ITEM[],
 }
+
+const TRANSACTION_PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-finance-accounting',
   templateUrl: './finance-accounting.component.html'
 })
 export class FinanceAccountingComponent implements OnInit {
+
+  protected readonly TRANSACTION_PAGE_SIZE = TRANSACTION_PAGE_SIZE;
 
   constructor(private repo: RestRepository) {
   }
@@ -29,17 +34,27 @@ export class FinanceAccountingComponent implements OnInit {
     return [
       {
         group: 'Assets',
+        debit: true,
         accounts: [
           {name: 'Cash', current: true, description: ''},
           {name: 'Accounts Receivable', current: true, description: ''},
-          {name: 'Allowance for Doubtful Accounts', current: true, description: ''},
-          {name: 'Inventories', current: true, description: ''},
-          {name: 'Property, Plant & Equipment', current: false, description: ''},
-          {name: 'Accumulated Depreciation', current: false, description: ''},
+          {
+            name: 'Allowance for Doubtful Accounts',
+            current: true,
+            description: 'Contra Account Against Accounts Receivable'
+          },
+          {name: 'Inventory', current: true, description: ''},
+          {name: 'Capital Assets (PPE)', current: false, description: ''},
+          {
+            name: 'Accumulated Depreciation',
+            current: false,
+            description: 'Contra Account Against Capital Assets'
+          },
         ]
       },
       {
         group: 'Liabilities',
+        debit: false,
         accounts: [
           {name: 'Short-term Loan', current: true, description: ''},
           {name: 'Accounts Payable', current: true, description: ''},
@@ -50,10 +65,14 @@ export class FinanceAccountingComponent implements OnInit {
       },
       {
         group: 'Dividends',
-        accounts: []
+        debit: true,
+        accounts: [
+          {name: 'Dividend', current: true, description: ''},
+        ]
       },
       {
         group: 'Equalities',
+        debit: false,
         accounts: [
           {name: 'Capital Stock', current: true, description: ''},
           {name: 'Retained Earnings', current: true, description: ''},
@@ -61,9 +80,10 @@ export class FinanceAccountingComponent implements OnInit {
       },
       {
         group: 'Expenses',
+        debit: true,
         accounts: [
           {name: 'COGS', current: true, description: ''},
-          {name: 'Operating', current: true, description: ''},
+          {name: 'Operating Expense', current: true, description: ''},
           {name: 'Bad Debt Expense', current: true, description: ''},
           {name: 'Interest Expense', current: true, description: ''},
           {name: 'Depreciation', current: true, description: ''},
@@ -71,6 +91,7 @@ export class FinanceAccountingComponent implements OnInit {
       },
       {
         group: 'Revenues',
+        debit: false,
         accounts: [
           {name: 'Sales', current: true, description: ''},
         ]
