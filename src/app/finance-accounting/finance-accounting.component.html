@@ -1,63 +1,205 @@
-<div class="m-8 text-lg flex justify-center">
-  <div class="relative overflow-x-auto shadow-md rounded-lg">
-    <table class="table-fixed text-left">
-      <thead class="text-gray-400 bg-gradient-to-br from-gray-700 via-gray-900 to-gray-700">
-        <tr>
-          <th class="px-3 py-2 w-80">
-            CHART OF ACCOUNTS
-          </th>
-          <th *counter="let count of TRANSACTION_PAGE_SIZE"
-              class="px-3 py-2 w-20 text-center"
-          >
-            #{{ count }}
-          </th>
-          <th class="px-3 py-2 w-28 text-center">
-            TOTAL
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let group of accountGroups; let lastGroup = last">
-          <tr class="bg-gray-800/50 hover:bg-gray-700/50">
-            <td class="px-3 font-bold border border-gray-800 border-r-gray-600">
-              <div class="flex justify-between">
-                <div class="text-blue-600">
-                  {{ group.group.toUpperCase() }}
-                </div>
-                <div class="">
-                  ({{ group.debit ? 'DR' : 'CR' }})
-                </div>
-              </div>
-            </td>
-            <td *counter="let count of TRANSACTION_PAGE_SIZE"
-                class="border border-gray-800"
+<div *ngIf="!isLoading"
+     class="m-8 text-lg"
+>
+  <div class="flex justify-center">
+    <div class="relative overflow-x-auto shadow-md rounded-lg">
+      <table class="table-fixed text-left">
+        <thead class="text-gray-400 bg-gradient-to-br from-gray-700 via-gray-900 to-gray-700">
+          <tr>
+            <th class="px-3 py-2 w-80">
+              CHART OF ACCOUNTS
+            </th>
+            <th *ngFor="let _ of windowJournals; let index = index"
+                class="px-3 py-2 w-20 text-center"
             >
-            </td>
-            <td class="border border-gray-800"></td>
+              #{{ index + 1 }}
+            </th>
+            <th class="px-3 py-2 w-28 text-center">
+              TOTAL
+            </th>
           </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let group of ACCOUNT_GROUPS; let lastGroup = last">
+            <tr class="bg-gray-800/50 hover:bg-gray-700/50">
+              <td class="px-3 font-bold border border-gray-800 border-r-gray-600">
+                <div class="flex justify-between">
+                  <div class="text-blue-600">
+                    {{ group.group.toUpperCase() }}
+                  </div>
+                  <div class="">
+                    ({{ group.debit ? 'DR' : 'CR' }})
+                  </div>
+                </div>
+              </td>
+              <td *ngFor="let _ of windowJournals"
+                  class="border border-gray-800"
+              >
+              </td>
+              <td class="border border-gray-800">
+              </td>
+            </tr>
 
-          <tr *ngFor="let account of group.accounts; let last = last"
-              class="bg-gray-800/50 hover:bg-gray-700/50"
+            <tr *ngFor="let account of group.accounts; let last = last"
+                class="bg-gray-800/50 hover:bg-gray-700/50"
+            >
+              <td class="pl-8 border border-gray-800 border-r-gray-600"
+                  [class.rounded-bl-lg]="last && lastGroup"
+                  [class.border-b-gray-600]="last && !lastGroup"
+              >
+                {{ account.name }}
+              </td>
+              <td *ngFor="let journal of windowJournals"
+                  class="px-3 w-20 text-right border border-gray-800"
+                  [class.border-b-gray-600]="last && !lastGroup"
+              >
+                <span *ngIf="getEntryAmount(journal, account).amount !== 0"
+                      [class.text-red-600]="getEntryAmount(journal, account).debit"
+                      [class.text-green-600]="!getEntryAmount(journal, account).debit"
+                >
+                  {{ getEntryAmount(journal, account).amount }}
+                </span>
+              </td>
+              <td class="px-3 w-28 text-right border border-gray-800"
+                  [class.rounded-br-lg]="last && lastGroup"
+                  [class.border-b-gray-600]="last && !lastGroup"
+              >
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="my-8 h-1 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+
+  <div class="flex flex-row gap-x-4 items-start">
+    <div class="pt-3 pb-4 px-6 text-center shadow-md transition shadow-gray-600">
+      <div class="text-xl font-bold text-blue-600">
+        {{ journalLabel }}
+      </div>
+      <table class="mx-auto text-left">
+        <tr>
+          <td class="w-32 pt-3">Date</td>
+          <td class=""></td>
+          <td class="w-44 pt-3">
+            <input
+              [(ngModel)]="editingJournal.date"
+              required
+              type="date"
+              pattern="\d{4}-\d{2}-\d{2}"
+              class="block text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                     border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td class="w-32 pt-3">Description</td>
+          <td class="w-28 pt-3 text-center italic">To Record</td>
+          <td class="w-96 pt-3">
+            <input
+              [(ngModel)]="editingJournal.description"
+              type="text"
+              placeholder="..."
+              maxlength="250"
+              class="block w-full px-2 py-0.5 appearance-none bg-transparent
+                     border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+            />
+          </td>
+        </tr>
+      </table>
+      <table class="mt-4 mx-auto text-center">
+        <tr class="text-blue-600">
+          <td class="w-32">Group</td>
+          <td class="w-80">Account</td>
+          <td class="w-28">Debit</td>
+          <td class="w-28">Credit</td>
+          <td class="w-16"></td>
+        </tr>
+        <tr *ngFor="let entry of editingJournal.entries">
+          <td class="w-32 pt-3">
+            <select
+              [(ngModel)]="entry.accountGroup"
+              class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                     border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+            >
+              <option *ngFor="let ag of ACCOUNT_GROUPS"
+                      [ngValue]="ag.group"
+              >
+                {{ ag.group }}
+              </option>
+            </select>
+          </td>
+          <td class="w-80 pt-3">
+            <select
+              [(ngModel)]="entry.account"
+              class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
+                     border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+            >
+              <option *ngFor="let account of getAccountNames(entry.accountGroup)"
+                      [ngValue]="account"
+              >
+                {{ account }}
+              </option>
+            </select>
+          </td>
+          <td class="w-28 pt-3 text-red-600">
+            <input
+              [(ngModel)]="entry.debit"
+              required
+              type="number"
+              placeholder="0"
+              min="0"
+              max="999999999"
+              class="block w-full text-center py-0.5 bg-transparent
+                     border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+            />
+          </td>
+          <td class="w-28 pt-3 text-green-600">
+            <input
+              [(ngModel)]="entry.credit"
+              required
+              type="number"
+              placeholder="0"
+              min="0"
+              max="999999999"
+              class="block w-full text-center py-0.5 bg-transparent
+                     border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+            />
+          </td>
+          <td class="w-16 pt-3 cursor-pointer transition hover:text-red-600"
+              (click)="deleteEntry(entry)"
           >
-            <td class="pl-8 border border-gray-800 border-r-gray-600"
-                [class.rounded-bl-lg]="last && lastGroup"
-                [class.border-b-gray-600]="last && !lastGroup"
-            >
-              {{ account.name }}
-            </td>
-            <td *counter="let count of TRANSACTION_PAGE_SIZE"
-                class="px-3 py-2 w-20 text-right border border-gray-800"
-                [class.border-b-gray-600]="last && !lastGroup"
-            >
-            </td>
-            <td class="px-3 py-2 w-28 text-right border border-gray-800"
-                [class.rounded-br-lg]="last && lastGroup"
-                [class.border-b-gray-600]="last && !lastGroup"
-            >
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
+            <i class="fa fa-lg fa-trash"></i>
+          </td>
+        </tr>
+      </table>
+      <div class="mt-4 mx-8 flex flex-row justify-between items-center">
+        <div class="flex flex-row justify-center gap-x-12">
+          <div class="w-12 h-12 pl-0.5 pt-2.5 rounded-full cursor-pointer
+                      bg-gradient-to-br from-sky-500 to-indigo-700 hvr-wobble-skew"
+               (click)="addEntry()"
+          >
+            <i class="fa fa-lg fa-plus"></i>
+          </div>
+          <div class="w-12 h-12 pl-0.5 pt-2.5 rounded-full cursor-pointer
+                      bg-gradient-to-br from-sky-500 to-indigo-700 hvr-wobble-skew"
+               (click)="saveJournal()"
+          >
+            <i class="fa fa-lg fa-save"></i>
+          </div>
+        </div>
+        <div class="italic"
+             [class.text-red-600]="!journalMessage.includes('success')"
+             [class.text-green-600]="journalMessage.includes('success')"
+        >
+          {{ journalMessage }}
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-y-2">
+    </div>
   </div>
 </div>

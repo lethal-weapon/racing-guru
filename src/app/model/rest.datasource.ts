@@ -24,6 +24,7 @@ import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
 import {Transaction} from './transaction.model';
 import {FinancialStatement} from './financial.model';
+import {Journal} from './journal.model';
 
 @Injectable()
 export class RestDataSource {
@@ -157,4 +158,16 @@ export class RestDataSource {
 
   getFinancialStatements = (): Observable<FinancialStatement[]> =>
     this.http.get<FinancialStatement[]>(`${this.financeBaseUrl}/financial/statements`)
+
+  getJournals = (): Observable<Journal[]> =>
+    this.http.get<Journal[]>(`${this.financeBaseUrl}/journals`)
+
+  saveJournal = (journal: Journal): Observable<Journal> =>
+    journal.id === ''
+      ? this.http.post<Journal>(`${this.financeBaseUrl}/journals`, journal)
+      : this.http.put<Journal>(`${this.financeBaseUrl}/journals/${journal.id}`, journal)
+
+  deleteJournal = (journal: Journal): Observable<any> =>
+    this.http.delete(`${this.financeBaseUrl}/journals/${journal.id}`)
+
 }

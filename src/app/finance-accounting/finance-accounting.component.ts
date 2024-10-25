@@ -1,20 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
+import {ACCOUNT_GROUPS, ACCOUNT_ITEM, DEFAULT_JOURNAL, Entry, Journal} from '../model/journal.model';
 
-export interface ACCOUNT_ITEM {
-  name: string,
-  current: boolean,
-  description: string,
-}
-
-export interface ACCOUNT_GROUP {
-  group: string,
-  debit: boolean,
-  accounts: ACCOUNT_ITEM[],
-}
-
-const TRANSACTION_PAGE_SIZE = 10;
+const JOURNAL_PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-finance-accounting',
@@ -22,80 +11,133 @@ const TRANSACTION_PAGE_SIZE = 10;
 })
 export class FinanceAccountingComponent implements OnInit {
 
-  protected readonly TRANSACTION_PAGE_SIZE = TRANSACTION_PAGE_SIZE;
+  journalIndex: number = 0;
+  journalMessage: string = '';
+  editingJournal: Journal = {
+    ...DEFAULT_JOURNAL,
+    entries: [
+      {
+        accountGroup: ACCOUNT_GROUPS[0].group,
+        account: ACCOUNT_GROUPS[0].accounts[0].name,
+        debit: 0,
+        credit: 0,
+      },
+      {
+        accountGroup: ACCOUNT_GROUPS[1].group,
+        account: ACCOUNT_GROUPS[1].accounts[0].name,
+        debit: 0,
+        credit: 0,
+      },
+    ]
+  };
+
+  protected readonly ACCOUNT_GROUPS = ACCOUNT_GROUPS;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
+    this.repo.fetchJournals();
   }
 
-  get accountGroups(): ACCOUNT_GROUP[] {
-    return [
-      {
-        group: 'Assets',
-        debit: true,
-        accounts: [
-          {name: 'Cash', current: true, description: ''},
-          {name: 'Accounts Receivable', current: true, description: ''},
-          {
-            name: 'Allowance for Doubtful Accounts',
-            current: true,
-            description: 'Contra Account Against Accounts Receivable'
-          },
-          {name: 'Inventory', current: true, description: ''},
-          {name: 'Capital Assets (PPE)', current: false, description: ''},
-          {
-            name: 'Accumulated Depreciation',
-            current: false,
-            description: 'Contra Account Against Capital Assets'
-          },
-        ]
-      },
-      {
-        group: 'Liabilities',
-        debit: false,
-        accounts: [
-          {name: 'Short-term Loan', current: true, description: ''},
-          {name: 'Accounts Payable', current: true, description: ''},
-          {name: 'Unearned Revenue', current: true, description: ''},
-          {name: 'Long-term Loan', current: false, description: ''},
-          {name: 'Accrued Liabilities', current: false, description: ''},
-        ]
-      },
-      {
-        group: 'Dividends',
-        debit: true,
-        accounts: [
-          {name: 'Dividend', current: true, description: ''},
-        ]
-      },
-      {
-        group: 'Equalities',
-        debit: false,
-        accounts: [
-          {name: 'Capital Stock', current: true, description: ''},
-          {name: 'Retained Earnings', current: true, description: ''},
-        ]
-      },
-      {
-        group: 'Expenses',
-        debit: true,
-        accounts: [
-          {name: 'COGS', current: true, description: ''},
-          {name: 'Operating Expense', current: true, description: ''},
-          {name: 'Bad Debt Expense', current: true, description: ''},
-          {name: 'Interest Expense', current: true, description: ''},
-          {name: 'Depreciation', current: true, description: ''},
-        ]
-      },
-      {
-        group: 'Revenues',
-        debit: false,
-        accounts: [
-          {name: 'Sales', current: true, description: ''},
-        ]
-      },
-    ]
+  getEntryAmount = (journal: Journal, account: ACCOUNT_ITEM):
+    { debit: boolean, amount: number } => {
+
+    const entry = journal.entries.find(e => e.account === account.name);
+    if (entry) {
+      return {
+        debit: entry.debit > 0,
+        amount: entry.debit > 0 ? entry.debit : entry.credit,
+      }
+    }
+    return {debit: false, amount: 0};
+  }
+
+  addEntry = () =>
+    this.editingJournal.entries.push({
+      accountGroup: ACCOUNT_GROUPS[0].group,
+      account: ACCOUNT_GROUPS[0].accounts[0].name,
+      debit: 0,
+      credit: 0,
+    })
+
+  deleteEntry = (clicked: Entry) => {
+    if (this.editingJournal.entries.length >= 3) {
+      this.editingJournal.entries =
+        this.editingJournal.entries.filter(e => e !== clicked);
+    }
+  }
+
+  copyJournal = (clicked: Journal) => {
+    this.editingJournal = {
+      ...clicked,
+      id: '',
+      entries: [...clicked.entries]
+    };
+  }
+
+  saveJournal = () => {
+    if (this.editingJournal.description.trim().length < 1) {
+      this.journalMessage = 'Please enter a description.';
+      return;
+    }
+    if (this.editingJournal.entries.length < 2) {
+      this.journalMessage = 'Any journal should have at least 2 entries.';
+      return;
+    }
+    for (const entry of this.editingJournal.entries) {
+      if (
+        (entry.debit < 0 || entry.credit < 0)
+        ||
+        (entry.debit < 1 && entry.credit < 1)
+        ||
+        (entry.debit > 0 && entry.credit > 0)
+      ) {
+        this.journalMessage = 'You have invalid entry.';
+        return;
+      }
+    }
+    const totalDebit = this.editingJournal.entries
+      .map(e => e.debit)
+      .reduce((prev, curr) => prev + curr, 0);
+    const totalCredit = this.editingJournal.entries
+      .map(e => e.credit)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    if (totalDebit !== totalCredit) {
+      this.journalMessage = `Total Debit $${totalDebit} is not equal to Total Credit $${totalCredit}.`;
+      return;
+    }
+
+    this.editingJournal.description = this.editingJournal.description.trim();
+    this.repo.saveJournal(
+      this.editingJournal,
+      (saved: Journal) => {
+        this.copyJournal(saved);
+        this.journalMessage = 'Journal was saved successfully!';
+      }
+    );
+  }
+
+  getAccountNames = (group: string): string[] =>
+    (ACCOUNT_GROUPS.find(ag => ag.group === group)?.accounts || []).map(a => a.name)
+
+  get journalLabel(): string {
+    return this.editingJournal.id === ''
+      ? `* New Journal *`
+      : `Journal #${this.editingJournal.id.slice(0, 7)}`;
+  }
+
+  get windowJournals(): Journal[] {
+    return this.journals
+      .slice(this.journalIndex, this.journalIndex + JOURNAL_PAGE_SIZE);
+  }
+
+  get journals(): Journal[] {
+    return this.repo.findJournals();
+  }
+
+  get isLoading(): boolean {
+    return this.repo.findJournals().length === 0;
   }
 }

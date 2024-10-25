@@ -22,6 +22,7 @@ import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
 import {Transaction} from './transaction.model';
 import {FinancialStatement} from './financial.model';
+import {Journal} from './journal.model';
 
 @Injectable()
 export class RestRepository {
@@ -50,6 +51,7 @@ export class RestRepository {
 
   private transactions: Transaction[] = [];
   private financialStatements: FinancialStatement[] = [];
+  private journals: Journal[] = [];
 
   constructor(private source: RestDataSource) {
   }
@@ -79,6 +81,7 @@ export class RestRepository {
 
   findTransactions = () => this.transactions
   findFinancialStatements = () => this.financialStatements
+  findJournals = () => this.journals
 
   fetchPick = (callback: () => any) =>
     this.source.getPick().subscribe(data => {
@@ -398,4 +401,25 @@ export class RestRepository {
   fetchFinancialStatements = () =>
     this.source.getFinancialStatements().subscribe(data => this.financialStatements = data)
 
+  fetchJournals = () =>
+    this.source.getJournals().subscribe(data => this.journals = data)
+
+  saveJournal = (
+    journal: Journal,
+    successCallback: (saved: Journal) => any
+  ) =>
+    this.source.saveJournal(journal).subscribe(data => {
+      this.journals = this.journals.filter(s => s.id !== data.id);
+      this.journals.push(data);
+      successCallback(data);
+    })
+
+  deleteJournal = (
+    journal: Journal,
+    successCallback: () => any
+  ) =>
+    this.source.deleteJournal(journal).subscribe(data => {
+      this.journals = this.journals.filter(s => s.id !== journal.id);
+      successCallback();
+    })
 }
