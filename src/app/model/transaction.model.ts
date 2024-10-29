@@ -34,11 +34,11 @@ export const EXPENSE_GROUPS: EXPENSE_GROUP[] = [
   },
   {
     group: 'Essentials',
-    categories: ['Food', 'Cloth', 'Rent', 'Utilities', 'Transport', 'Telecom', 'Internet',],
+    categories: ['Food', 'Cloth', 'Rent', 'Utilities', 'Transport', 'Health', 'Telecom', 'Internet',],
   },
   {
     group: 'Non-essentials',
-    categories: ['Non-essentials',],
+    categories: ['Elderly Care', 'Non-essentials',],
   },
 ];
 export const EXPENSE_CATEGORIES: string[] = EXPENSE_GROUPS.flatMap(g => g.categories);
