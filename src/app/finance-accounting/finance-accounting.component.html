@@ -1,7 +1,7 @@
 <div *ngIf="!isLoading"
      class="m-8 text-lg"
 >
-  <div class="flex justify-center">
+  <div class="flex justify-center items-start gap-x-8">
     <div class="relative overflow-x-auto shadow-md rounded-lg">
       <table class="table-fixed text-left">
         <thead class="text-gray-400 bg-gradient-to-br from-gray-700 via-gray-900 to-gray-700">
@@ -14,7 +14,7 @@
             >
               #{{ index + 1 }}
             </th>
-            <th class="px-3 py-2 w-28 text-center">
+            <th class="px-3 py-2 w-24 text-center">
               TOTAL
             </th>
           </tr>
@@ -32,8 +32,10 @@
                   </div>
                 </div>
               </td>
-              <td *ngFor="let _ of windowJournals"
-                  class="border border-gray-800"
+              <td *ngFor="let wj of windowJournals; let lastColumn = last"
+                  [class.border-r-gray-600]="lastColumn"
+                  class="border border-gray-800
+                         {{wj.id === editingJournal.id || wj.id === hoveringJournalId ? 'bg-gray-700/50' : ''}}"
               >
               </td>
               <td class="border border-gray-800">
@@ -49,26 +51,116 @@
               >
                 {{ account.name }}
               </td>
-              <td *ngFor="let journal of windowJournals"
-                  class="px-3 w-20 text-right border border-gray-800"
+              <td *ngFor="let journal of windowJournals; let lastColumn = last"
                   [class.border-b-gray-600]="last && !lastGroup"
+                  [class.border-r-gray-600]="lastColumn"
+                  class="px-3 w-20 text-right border border-gray-800
+                         {{journal.id === editingJournal.id || journal.id === hoveringJournalId ? 'bg-gray-700/50' : ''}}"
               >
-                <span *ngIf="getEntryAmount(journal, account).amount !== 0"
-                      [class.text-red-600]="getEntryAmount(journal, account).debit"
-                      [class.text-green-600]="!getEntryAmount(journal, account).debit"
-                >
-                  {{ getEntryAmount(journal, account).amount }}
+                <span *ngIf="getEntryAmount(journal, account).amount !== 0">
+                  <span *ngIf="getEntryAmount(journal, account).debit"
+                        class="text-green-600"
+                  >
+                    {{ getEntryAmount(journal, account).amount | number }}
+                  </span>
+                  <span *ngIf="!getEntryAmount(journal, account).debit"
+                        class="text-red-600"
+                  >
+                    ({{ getEntryAmount(journal, account).amount | number }})
+                  </span>
                 </span>
               </td>
-              <td class="px-3 w-28 text-right border border-gray-800"
+              <td class="px-3 w-24 text-right border border-gray-800"
                   [class.rounded-br-lg]="last && lastGroup"
                   [class.border-b-gray-600]="last && !lastGroup"
               >
+                <span *ngIf="getAccountTotal(account) === 0">
+                  0
+                </span>
+                <span *ngIf="getAccountTotal(account) > 0"
+                      class="text-green-600"
+                >
+                  {{ getAccountTotal(account) | number }}
+                </span>
+                <span *ngIf="getAccountTotal(account) < 0"
+                      class="text-red-600"
+                >
+                  ({{ math.abs(getAccountTotal(account)) | number }})
+                </span>
               </td>
             </tr>
           </ng-container>
         </tbody>
       </table>
+    </div>
+
+    <div class="w-96 flex flex-col gap-y-4"
+         (mouseleave)="hoveringJournalId = ''"
+    >
+      <div class="flex flex-col gap-y-4 pt-3 pb-4 px-6 shadow-md transition shadow-gray-600">
+        <div class="flex flex-row justify-between items-center">
+          <div>
+            <span class="text-xl italic">
+              Journals:
+            </span>
+            <span class="text-2xl">
+              {{ journals.length | number }}
+            </span>
+          </div>
+          <div class="text-blue-600 font-bold">
+            <select
+              [(ngModel)]="viewingJournalPeriod"
+              class="block w-32 text-center text-xl py-0.5 appearance-none bg-transparent
+                     cursor-pointer border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
+            >
+              <option *ngFor="let vjp of viewingJournalPeriodOptions" [ngValue]="vjp">
+                {{ vjp }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="flex flex-row justify-center gap-x-3 items-center">
+          <div *ngFor="let control of paginationControls"
+               class="px-3 py-1 rounded-full border border-gray-600 hover:border-yellow-400 hvr-push cursor-pointer"
+               (click)="shiftJournalPage(control.length)"
+          >
+            {{ control.control }}
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <div class="text-left">
+            <input
+              [(ngModel)]="criteria"
+              (ngModelChange)="journalIndex = 0"
+              type="text"
+              placeholder="Description | Amount"
+              maxlength="99"
+              class="w-72 px-5 py-1 h-10 text-lg text-yellow-400
+                     border rounded-full border-gray-600 focus:border-yellow-400
+                     bg-transparent outline-none transition-all duration-300 ease-in-out"
+            />
+          </div>
+        </div>
+      </div>
+      <div *ngFor="let journal of windowJournals"
+           class="flex flex-col gap-y-2 pt-3 pb-4 px-6 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
+           (mouseenter)="hoveringJournalId = journal.id"
+      >
+        <div class="flex flex-row justify-between">
+          <div>
+            {{ journal.date }}
+          </div>
+          <div class="underline cursor-pointer transition hover:text-blue-600"
+               [class.text-blue-600]="editingJournal.id === journal.id"
+               (click)="editJournal(journal)"
+          >
+            #{{ journal.id.slice(0, 7) }}
+          </div>
+        </div>
+        <div>
+          {{ journal.description }}
+        </div>
+      </div>
     </div>
   </div>
 
@@ -121,6 +213,7 @@
           <td class="w-32 pt-3">
             <select
               [(ngModel)]="entry.accountGroup"
+              (ngModelChange)="updateEntryAccount(entry)"
               class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
                      border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
             >
@@ -144,7 +237,7 @@
               </option>
             </select>
           </td>
-          <td class="w-28 pt-3 text-red-600">
+          <td class="w-28 pt-3 text-green-600">
             <input
               [(ngModel)]="entry.debit"
               required
@@ -156,7 +249,7 @@
                      border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
             />
           </td>
-          <td class="w-28 pt-3 text-green-600">
+          <td class="w-28 pt-3 text-red-600">
             <input
               [(ngModel)]="entry.credit"
               required

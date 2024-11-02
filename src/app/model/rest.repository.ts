@@ -411,6 +411,7 @@ export class RestRepository {
     this.source.saveJournal(journal).subscribe(data => {
       this.journals = this.journals.filter(s => s.id !== data.id);
       this.journals.push(data);
+      this.journals.sort((j1, j2) => j2.date.localeCompare(j1.date));
       successCallback(data);
     })
 

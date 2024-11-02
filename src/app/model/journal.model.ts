@@ -86,9 +86,9 @@ export const ACCOUNT_GROUPS: ACCOUNT_GROUP[] = [
     debit: true,
     accounts: [
       {name: 'COGS', current: true, description: ''},
-      {name: 'Operating Expense', current: true, description: ''},
-      {name: 'Bad Debt Expense', current: true, description: ''},
-      {name: 'Interest Expense', current: true, description: ''},
+      {name: 'Operating', current: true, description: ''},
+      {name: 'Bad Debt', current: true, description: ''},
+      {name: 'Interest', current: true, description: ''},
       {name: 'Depreciation', current: true, description: ''},
     ]
   },
@@ -100,3 +100,21 @@ export const ACCOUNT_GROUPS: ACCOUNT_GROUP[] = [
     ]
   },
 ];
+
+export const createNewJournal = () => ({
+  ...DEFAULT_JOURNAL,
+  entries: [
+    {
+      accountGroup: ACCOUNT_GROUPS[0].group,
+      account: ACCOUNT_GROUPS[0].accounts[0].name,
+      debit: 0,
+      credit: 0,
+    },
+    {
+      accountGroup: ACCOUNT_GROUPS[1].group,
+      account: ACCOUNT_GROUPS[1].accounts[0].name,
+      debit: 0,
+      credit: 0,
+    },
+  ]
+})
