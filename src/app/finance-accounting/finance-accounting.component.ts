@@ -96,6 +96,19 @@ export class FinanceAccountingComponent implements OnInit {
     clicked.entries.forEach(e => this.editingJournal.entries.push({...e}));
   }
 
+  deleteJournal = () => {
+    const journalId = this.editingJournal.id;
+    if (journalId === '') return;
+
+    this.repo.deleteJournal(
+      this.editingJournal,
+      () => {
+        this.editingJournal = createNewJournal();
+        this.journalMessage = `Journal #${journalId.slice(0, 7)} was deleted successfully!`;
+      }
+    );
+  }
+
   isValidJournal = (): boolean => {
     if (this.editingJournal.description.trim().length < 1) {
       this.journalMessage = 'Please enter a description.';

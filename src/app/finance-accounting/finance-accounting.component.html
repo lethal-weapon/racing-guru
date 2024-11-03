@@ -269,7 +269,7 @@
         </tr>
       </table>
       <div class="mt-4 mx-8 flex flex-row justify-between items-center">
-        <div class="flex flex-row justify-center gap-x-12">
+        <div class="flex flex-row justify-center gap-x-8">
           <div class="w-12 h-12 pl-0.5 pt-2.5 rounded-full cursor-pointer
                       bg-gradient-to-br from-sky-500 to-indigo-700 hvr-wobble-skew"
                (click)="addEntry()"
@@ -281,6 +281,13 @@
                (click)="saveJournal()"
           >
             <i class="fa fa-lg fa-save"></i>
+          </div>
+          <div *ngIf="editingJournal.id.length > 0"
+               class="w-12 h-12 pl-0.5 pt-2.5 rounded-full cursor-pointer
+                      bg-gradient-to-br from-pink-500 to-rose-700 hvr-wobble-skew"
+               (click)="deleteJournal()"
+          >
+            <i class="fa fa-lg fa-trash"></i>
           </div>
         </div>
         <div class="italic"

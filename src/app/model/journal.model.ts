@@ -3,6 +3,8 @@ export class Journal {
     public id: string,
     public date: string,
     public description: string,
+    public deleted: boolean,
+    public deletedAt: string,
     public entries: Entry[],
   ) {
   }
@@ -12,6 +14,8 @@ export const DEFAULT_JOURNAL: Journal = {
   id: '',
   date: new Date().toISOString().split('T')[0],
   description: '',
+  deleted: false,
+  deletedAt: '',
   entries: [],
 }
 
