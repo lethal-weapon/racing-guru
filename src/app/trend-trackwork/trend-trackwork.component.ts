@@ -60,19 +60,10 @@ export class TrendTrackworkComponent implements OnInit {
     return 0;
   }
 
-  getGradeBorderStyle = (
-    race: number,
-    starter: TrackworkStarter,
-    index: number
-  ): string => {
-
-    if (starter.grade !== 'A') return '';
-
+  getBorderStyle = (race: number, index: number): string => {
     const sortedStarters = this.getRaceStarters(race);
-    if (index === sortedStarters.length - 1) return '';
-
-    return sortedStarters[index + 1]?.grade !== 'A'
-      ? `border-2 border-gray-900 border-b-yellow-400`
+    return (index === sortedStarters.length - 4)
+      ? `border border-gray-900 border-b-yellow-400`
       : ``;
   }
 

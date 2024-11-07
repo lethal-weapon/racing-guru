@@ -54,6 +54,26 @@ export class TrendDrawComponent implements OnInit, OnDestroy {
     return this.sortedInheritances[mostRecentRace - 1].inheritance > 1;
   }
 
+  getDrawInheritanceAverageEarning = (m: Meeting): number => {
+    const totalEarning = m.players
+      .map(p => {
+        p.meeting = m.meeting;
+        return p;
+      })
+      .flatMap(ps => ps.starters.map(s => {
+        s.meeting = ps.meeting;
+        return s;
+      }))
+      .filter(es => (es?.earning || 0) > 0)
+      .filter(es => this.isInherited(es.meeting, es.race, es.placing))
+      .map(es => es.earning / 2)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    const races = this.getRacesOnMeeting(m.meeting).length;
+
+    return parseFloat((totalEarning / (races === 0 ? 1 : races)).toFixed(1));
+  }
+
   getBackgroundColor = (mostRecentRace: number, placing: number): string => {
     if (this.sortedInheritances.length < mostRecentRace) return 'bg-gray-700';
 

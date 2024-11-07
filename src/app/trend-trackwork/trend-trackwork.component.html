@@ -29,7 +29,7 @@
         Race #{{ race }}
       </div>
       <div *ngFor="let starter of getRaceStarters(race); let index = index"
-           class="grid grid-cols-12 {{toPlacingColor(starter?.placing)}}"
+           class="grid grid-cols-12 {{toPlacingColor(starter?.placing)}} {{getBorderStyle(race, index)}}"
            [class.opacity-50]="starter.scratched"
            [class.line-through]="starter.scratched"
       >
@@ -55,7 +55,7 @@
         >
           {{ getStarterWinOdds(starter) | number: '1.0-1' }}
         </div>
-        <div class="col-span-2 {{getGradeBorderStyle(race, starter, index)}}">
+        <div class="col-span-2">
           {{ starter.intensity.toFixed(1) }}
           {{ starter.grade }}
         </div>

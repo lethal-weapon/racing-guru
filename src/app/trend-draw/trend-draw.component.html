@@ -34,7 +34,11 @@
          class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
     >
       <div class="text-yellow-400">
-        {{ m.meeting }} ({{ m.venue }})
+        {{ m.meeting }}
+        &nbsp;
+        ({{ m.venue }})
+        &nbsp;
+        ${{ getDrawInheritanceAverageEarning(m) }}/R
       </div>
       <div class="grid grid-cols-5">
         <div></div>
@@ -59,6 +63,8 @@
         </div>
         <div *ngFor="let pm of PLACING_MAPS; let index = index"
              class="{{ isInherited(m.meeting, race, index + 1) ? pm.color : 'opacity-50'}}"
+             [class.border]="isInherited(m.meeting, race, index + 1) && getDrawOdds(m.meeting, race, index + 1) >= 10"
+             [class.border-gray-600]="isInherited(m.meeting, race, index + 1) && getDrawOdds(m.meeting, race, index + 1) >= 10"
         >
           {{ getDrawOdds(m.meeting, race, index + 1) | number: '1.0-1' }}
         </div>
