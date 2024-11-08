@@ -71,6 +71,7 @@ export class FinancePersonalComponent implements OnInit {
   copyTransaction = (clicked: Transaction) => {
     this.editingTransaction = {...clicked};
     this.editingTransaction.id = '';
+    this.editingTransaction.date = new Date().toISOString().split('T')[0];
   }
 
   editTransaction = (clicked: Transaction) => {
@@ -86,6 +87,9 @@ export class FinancePersonalComponent implements OnInit {
       }
     );
   }
+
+  updateTransactionCategory = () =>
+    this.editingTransaction.category = this.categories[0]
 
   shiftTransactionPage = (length: number) => {
     const ws = TRANSACTION_PAGE_SIZE;

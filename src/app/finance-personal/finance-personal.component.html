@@ -208,6 +208,7 @@
             <td class="pt-3">
               <select
                 [(ngModel)]="editingTransaction.type"
+                (ngModelChange)="updateTransactionCategory()"
                 class="block w-full text-center py-0.5 appearance-none bg-transparent cursor-pointer
                        border-0 border-b-2 border-gray-600 focus:outline-none focus:ring-0"
               >
