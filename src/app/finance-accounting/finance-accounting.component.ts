@@ -78,6 +78,11 @@ export class FinanceAccountingComponent implements OnInit {
     }
   }
 
+  resetJournal = () => {
+    this.editingJournal = createNewJournal();
+    this.journalMessage = `Journal was reset.`;
+  }
+
   saveJournal = () => {
     if (!this.isValidJournal()) return;
 

@@ -27,7 +27,7 @@
                   <div class="text-blue-600">
                     {{ group.group.toUpperCase() }}
                   </div>
-                  <div class="">
+                  <div class="{{group.debit ? 'text-green-600' : 'text-red-600'}}">
                     ({{ group.debit ? 'DR' : 'CR' }})
                   </div>
                 </div>
@@ -57,36 +57,20 @@
                   class="px-3 w-20 text-right border border-gray-800
                          {{journal.id === editingJournal.id || journal.id === hoveringJournalId ? 'bg-gray-700/50' : ''}}"
               >
-                <span *ngIf="getEntryAmount(journal, account).amount !== 0">
-                  <span *ngIf="getEntryAmount(journal, account).debit"
-                        class="text-green-600"
-                  >
-                    {{ getEntryAmount(journal, account).amount | number }}
-                  </span>
-                  <span *ngIf="!getEntryAmount(journal, account).debit"
-                        class="text-red-600"
-                  >
-                    ({{ getEntryAmount(journal, account).amount | number }})
-                  </span>
+                <span *ngIf="getEntryAmount(journal, account).amount !== 0"
+                      [class.text-red-600]="!getEntryAmount(journal, account).debit"
+                      [class.text-green-600]="getEntryAmount(journal, account).debit"
+                >
+                  {{ getEntryAmount(journal, account).amount | number }}
                 </span>
               </td>
               <td class="px-3 w-24 text-right border border-gray-800"
                   [class.rounded-br-lg]="last && lastGroup"
                   [class.border-b-gray-600]="last && !lastGroup"
+                  [class.text-red-600]="getAccountTotal(account) < 0"
+                  [class.text-green-600]="getAccountTotal(account) > 0"
               >
-                <span *ngIf="getAccountTotal(account) === 0">
-                  0
-                </span>
-                <span *ngIf="getAccountTotal(account) > 0"
-                      class="text-green-600"
-                >
-                  {{ getAccountTotal(account) | number }}
-                </span>
-                <span *ngIf="getAccountTotal(account) < 0"
-                      class="text-red-600"
-                >
-                  ({{ math.abs(getAccountTotal(account)) | number }})
-                </span>
+                {{ math.abs(getAccountTotal(account)) | number }}
               </td>
             </tr>
           </ng-container>
@@ -268,8 +252,14 @@
           </td>
         </tr>
       </table>
-      <div class="mt-4 mx-8 flex flex-row justify-between items-center">
-        <div class="flex flex-row justify-center gap-x-8">
+      <div class="mt-4 mx-6 flex flex-row justify-between items-center">
+        <div class="flex flex-row justify-center gap-x-4">
+          <div class="w-12 h-12 pl-0.5 pt-2.5 rounded-full cursor-pointer
+                      bg-gradient-to-br from-sky-500 to-indigo-700 hvr-wobble-skew"
+               (click)="resetJournal()"
+          >
+            <i class="fa fa-lg fa-undo"></i>
+          </div>
           <div class="w-12 h-12 pl-0.5 pt-2.5 rounded-full cursor-pointer
                       bg-gradient-to-br from-sky-500 to-indigo-700 hvr-wobble-skew"
                (click)="addEntry()"
