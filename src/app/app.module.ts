@@ -40,6 +40,7 @@ import {FormBetComponent} from './form-bet/form-bet.component';
 import {FinanceComponent} from './finance/finance.component';
 import {FinancePersonalComponent} from './finance-personal/finance-personal.component';
 import {FinanceAccountingComponent} from './finance-accounting/finance-accounting.component';
+import {FinanceStatementComponent} from './finance-statement/finance-statement.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import {FinanceAccountingComponent} from './finance-accounting/finance-accountin
     FinanceComponent,
     FinancePersonalComponent,
     FinanceAccountingComponent,
+    FinanceStatementComponent,
   ],
   imports: [
     BrowserModule,

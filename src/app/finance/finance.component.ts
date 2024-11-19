@@ -9,7 +9,7 @@ export class FinanceComponent implements OnInit {
   pages: Array<{ section: string, link: string }> = [
     {section: 'Personal', link: 'personal'},
     {section: 'Accounting', link: 'accounting'},
-    // {section: 'Journal', link: 'journal'},
+    {section: 'Statement', link: 'statement'},
   ]
 
   constructor(private router: Router) {
