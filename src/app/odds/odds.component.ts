@@ -152,7 +152,7 @@ export class OddsComponent implements OnInit {
     });
 
     this.repo.fetchMeetingHorses();
-    this.repo.fetchBlacklistConnections();
+    this.repo.fetchTrackworkSnapshots(1);
 
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.bets.set(race, {...DEFAULT_BET});
@@ -424,18 +424,25 @@ export class OddsComponent implements OnInit {
     }
   }
 
-  isPeopleConnected = (starterA: Starter, starterB: Starter): boolean => {
-    const blacklist = this.repo.findBlacklistConnections().find(c =>
-      c.meeting === this.activeRacecard.meeting &&
-      c.race == this.activeRacecard.race
-    );
+  isInTrackworkBlacklist = (starterA: Starter, starterB: Starter): boolean => {
+    const snapshot = this.repo.findTrackworkSnapshots()
+      .find(ts => ts.meeting === this.activeRacecard.meeting);
 
-    if (!blacklist) return true;
+    if (!snapshot) return false;
 
-    return !blacklist.orders.some(c =>
-      (c[0] == starterA.order && c[1] == starterB.order)
-      ||
-      (c[0] == starterB.order && c[1] == starterA.order)
+    const trackworkOrders = snapshot.starters
+      .filter(s => s.race === this.activeRacecard.race)
+      .sort((s1, s2) => (s2.intensity - s1.intensity) || (s1.order - s2.order))
+      .map(s => s.order);
+
+    const top5 = trackworkOrders.slice(0, 5);
+    const bottom5 = trackworkOrders.slice(trackworkOrders.length - 5);
+    const middle = trackworkOrders.filter(o => !top5.includes(o) && !bottom5.includes(o));
+
+    return [top5, bottom5, middle].some(blacklistGroup =>
+      blacklistGroup.includes(starterA.order)
+      &&
+      blacklistGroup.includes(starterB.order)
     );
   }
 
@@ -788,6 +795,6 @@ export class OddsComponent implements OnInit {
       || this.recommendation.races.length === 0
       || this.racecards.length === 0
       || this.repo.findHorses().length === 0
-      || this.repo.findBlacklistConnections().length === 0;
+      || this.repo.findTrackworkSnapshots().length === 0;
   }
 }

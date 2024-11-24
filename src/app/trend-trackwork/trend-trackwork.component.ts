@@ -62,7 +62,7 @@ export class TrendTrackworkComponent implements OnInit {
 
   getBorderStyle = (race: number, index: number): string => {
     const sortedStarters = this.getRaceStarters(race);
-    return (index === sortedStarters.length - 4)
+    return (index === 4 || index === sortedStarters.length - 6)
       ? `border border-gray-900 border-b-yellow-400`
       : ``;
   }
