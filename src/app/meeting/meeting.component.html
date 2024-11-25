@@ -5,7 +5,7 @@
 </div>
 
 <div *ngIf="!isLoading">
-  <div class="mt-4 flex flex-row justify-evenly">
+  <div class="mt-4 mx-10 flex flex-row justify-between">
     <div *ngIf="summaryLines.length > 0"
          class="px-6 py-4 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
     >
@@ -13,21 +13,7 @@
       <br>
       {{ summaryLines[1] }}
     </div>
-    <div class="p-2 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
-      <table>
-        <tr *counter="let row of (pools.length / 4)">
-          <td *ngFor="let obj of pools.slice((row-1) * 4, (row-1) * 4 + 4)"
-              class="p-1"
-          >
-            <div class="flex flex-row justify-between hover:text-yellow-400">
-              <div class="px-2 font-bold">{{ obj.pool }}&#58;</div>
-              <div class="px-2">${{ obj.amount }}M</div>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div class="w-40 pt-2 text-center">
+    <div class="w-44 pt-2 text-center">
       <div class="text-2xl">
         NEXT RACE
       </div>
@@ -218,57 +204,38 @@
     </tbody>
   </table>
 
-  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-500 text-center">
+  <table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
     <thead>
-      <th *ngFor="let trainer of trainers"
-          class="w-20 border border-gray-600 border-b-red-900"
-          [class.border-r-red-900]="isBoundaryPlayer(trainer, false)"
+      <th class="w-16 border border-gray-600">
+        Race
+      </th>
+      <th class="w-20 border border-gray-600 border-r-red-900">
+        Starters
+      </th>
+      <th *ngFor="let pool of investmentPoolNames"
+          class="w-28 border border-gray-600"
+          [class.border-r-red-900]="BOUNDARY_INVESTMENT_POOLS.includes(pool)"
       >
-        <div [class.text-yellow-400]="getMeetingEarning(trainer) >= EARNING_THRESHOLD">
-          {{ getMeetingEarning(trainer) === 0 ? '-' : getMeetingEarning(trainer) }}
-        </div>
-        <div>
-          {{ trainer }}
-        </div>
+        {{ pool }}
       </th>
     </thead>
     <tbody>
-      <tr>
-        <td *ngFor="let _ of RATING_GRADES; let index = index; let last = last"
+      <tr *counter="let race of maxRace"
+          class="hover:bg-gray-800"
+      >
+        <td class="border border-gray-700">
+          {{ formatRace(race) }}
+        </td>
+        <td class="px-1 border border-gray-700 border-r-red-900">
+          {{ getStarterCount(race) }}
+        </td>
+        <td *ngFor="let pool of investmentPoolNames"
             class="border border-gray-700"
-            [class.border-r-red-900]="!last"
-            [colSpan]="getTrainerGroup(index).length"
+            [class.border-r-red-900]="BOUNDARY_INVESTMENT_POOLS.includes(pool)"
         >
-          <div class="flex flex-row flex-wrap justify-center p-2 gap-x-2 gap-y-1">
-            <ng-container *counter="let race of maxRace">
-              <div *ngFor="let starter of getStartersByTrainerGroup(race, index)"
-                   class="{{toPlacingColor(starter.placing)}} text-sm px-1.5 py-0.5
-                          rounded-full border border-gray-600 cursor-pointer hover:border-yellow-400"
-                   [class.line-through]="starter.scratched"
-                   [class.text-yellow-400]="starter.scratched"
-                   [class.border-yellow-400]="activeTrainer === starter.trainer && activeTrainerAnimationOn"
-                   (click)="toggleActiveTrainer(starter.trainer)"
-              >
-                <span>
-                  {{ race }}/{{ starter.order }}
-                </span>
-                <span class="text-xs">
-                  {{ getHorseDetail(starter.horse, race).name }}
-                  <span [class.text-yellow-400]="activeTrainer === starter.trainer">
-                    {{ starter.trainer }}
-                  </span>
-                </span>
-                <span *ngIf="getHorseDetail(starter.horse, race).odds > 0"
-                      class="{{ toPlacingColor(starter.placing).length === 0
-                               ? getOddsIntensityColor(getHorseDetail(starter.horse, race).odds)
-                               : ''
-                             }}"
-                >
-                  {{ getHorseDetail(starter.horse, race).odds | number: '1.0-1' }}
-                </span>
-              </div>
-            </ng-container>
-          </div>
+          <span *ngIf="getInvestmentPoolAmount(race, pool) !== '0.00'">
+            ${{ getInvestmentPoolAmount(race, pool) }}M
+          </span>
         </td>
       </tr>
     </tbody>
@@ -282,7 +249,7 @@
       <th class="w-36 border border-gray-600 border-r-red-900">
         Top 4
       </th>
-      <th *ngFor="let pool of singleRacePools"
+      <th *ngFor="let pool of dividendRacePools"
           class="w-20 border border-gray-600"
           [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
       >
@@ -307,7 +274,7 @@
             </div>
           </div>
         </td>
-        <td *ngFor="let pool of singleRacePools"
+        <td *ngFor="let pool of dividendRacePools"
             class="border border-gray-700"
             [class.border-b-red-900]="race === maxRace"
             [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
@@ -324,16 +291,16 @@
         <th class="border border-gray-700 border-r-red-900">
           Cross Race
         </th>
-        <th *ngFor="let pool of crossRacePools"
+        <th *ngFor="let pool of dividendCrossRacePools"
             class="border border-gray-700"
             [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
         >
           {{ pool.name }}
         </th>
         <th class="border border-gray-700"
-            [colSpan]="singleRacePoolWithMultipleDividendCount"
+            colspan="8"
         >
-          Cross Race Pool Investment
+          Today's Total Turnover
         </th>
       </tr>
       <tr *counter="let row of crossRacePoolDividendRaces.length"
@@ -343,7 +310,7 @@
           {{ formatRace(getCrossRacePoolDividendRaces(row)) }}
         </td>
         <td class="border border-gray-700 border-r-red-900"></td>
-        <td *ngFor="let pool of crossRacePools"
+        <td *ngFor="let pool of dividendCrossRacePools"
             class="border border-gray-700"
             [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
             [class.text-yellow-400]="getDividendOdds(getCrossRacePoolDividendRaces(row), pool.name) >= pool.threshold"
@@ -352,21 +319,12 @@
             {{ getDividendOdds(getCrossRacePoolDividendRaces(row), pool.name) | number }}
           </span>
         </td>
-        <td *counter="let column of 2"
-            class="border border-gray-700 px-6"
-            [class.border-r-red-900]="column === 1"
-            colspan="4"
+        <td *ngIf="row === 1"
+            class="border border-gray-700 border-l-red-900 text-3xl"
+            colspan="8"
+            [rowSpan]="crossRacePoolDividendRaces.length"
         >
-          <div class="grid grid-cols-2">
-            <div class="text-left">
-              {{ getCrossRacePoolInvestmentCellContent(row, column).pool }}
-            </div>
-            <div class="text-right">
-              <span *ngIf="getCrossRacePoolInvestmentCellContent(row, column).investment > 0">
-                {{ getCrossRacePoolInvestmentCellContent(row, column).investment | currency:'USD':'symbol':'1.0-0' }}
-              </span>
-            </div>
-          </div>
+          {{ todayTurnover | currency:'USD':'symbol':'1.0-0' }}
         </td>
       </tr>
     </tbody>

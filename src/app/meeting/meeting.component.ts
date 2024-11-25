@@ -9,18 +9,16 @@ import {Racecard} from '../model/racecard.model';
 import {DEFAULT_MEETING, Meeting} from '../model/meeting.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
-import {BOUNDARY_POOLS, RATING_GRADES} from '../util/strings';
+import {BOUNDARY_INVESTMENT_POOLS, BOUNDARY_POOLS} from '../util/strings';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   formatRace,
-  getOddsIntensityColor,
   getStarter,
   getStarterWinPlaceOdds,
   getTrainer,
   getWinPlaceOdds,
   toHorseProfileUrl,
   toMillion,
-  toOrdinalWithSuffix,
   toPlacingColor
 } from '../util/functions';
 
@@ -29,12 +27,10 @@ interface PoolThreshold {
   threshold: number
 }
 
-interface HorseDetail {
-  name: string,
-  order: number,
-  odds: number,
-  jockey: string,
-  trainer: string
+interface InvestmentPool {
+  race: number,
+  pool: string,
+  amount: string
 }
 
 @Component({
@@ -53,8 +49,8 @@ export class MeetingComponent implements OnInit {
   activeTrainerIntervalId: any;
   activeTrainerAnimationOn: boolean = false;
 
-  protected readonly RATING_GRADES = RATING_GRADES;
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
+  protected readonly BOUNDARY_INVESTMENT_POOLS = BOUNDARY_INVESTMENT_POOLS;
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly formatRace = formatRace;
   protected readonly toPlacingColor = toPlacingColor;
@@ -62,7 +58,6 @@ export class MeetingComponent implements OnInit {
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;
   protected readonly getWinPlaceOdds = getWinPlaceOdds;
-  protected readonly getOddsIntensityColor = getOddsIntensityColor;
 
   constructor(
     private repo: RestRepository,
@@ -324,6 +319,10 @@ export class MeetingComponent implements OnInit {
     return `${clean[0]}${clean.slice(-1)}`;
   }
 
+  getStarterCount = (race: number): number =>
+    (this.racecards.find(r => r.race === race)?.starters || [])
+      .filter(s => !s.scratched).length
+
   getStarterTooltip = (jockey: string, racecard: Racecard): string => {
     const starter = racecard.starters.find(s => s.jockey === jockey);
     if (!starter) return '';
@@ -338,6 +337,9 @@ export class MeetingComponent implements OnInit {
       </div>
     `;
   }
+
+  getInvestmentPoolAmount = (race: number, pool: string): string =>
+    this.investmentPools.find(i => i.race === race && i.pool === pool)?.amount || ''
 
   getRaceTooltip = (racecard: Racecard): string => {
     const name = racecard.name
@@ -455,52 +457,6 @@ export class MeetingComponent implements OnInit {
         .join('/'));
   }
 
-  getHorseDetail = (horse: string, race: number): HorseDetail => ({
-    name: this.repo.findHorses().find(h => h.code === horse)?.nameCH || '?',
-    order: this.starters.find(s => s.horse === horse)?.order || 0,
-    odds: getWinPlaceOdds(
-      this.starters.find(s => s.horse === horse)?.jockey || '',
-      // @ts-ignore
-      this.racecards.find(r => r.race === race)
-    ).win,
-    jockey: this.starters.find(s => s.horse === horse)?.jockey || '?',
-    trainer: this.starters.find(s => s.horse === horse)?.trainer || '?'
-  })
-
-  getTrainerGroup = (groupIndex: number): string[] => {
-    let startIndex = 0;
-    if (groupIndex > 0) {
-      startIndex = 1 + this.trainers
-        .findIndex(p => p === this.boundaryTrainers[groupIndex - 1]);
-    }
-
-    let endIndex = groupIndex < this.boundaryTrainers.length
-      ? this.trainers.findIndex(p => p === this.boundaryTrainers[groupIndex])
-      : this.trainers.length - 1;
-
-    return this.trainers.filter((_, i) => i >= startIndex && i <= endIndex);
-  }
-
-  getStartersByTrainerGroup = (race: number, groupIndex: number): Starter[] => {
-    // @ts-ignore
-    return this.getTrainerGroup(groupIndex)
-      .filter(t =>
-        this.racecards
-          .find(r => r.race === race)
-          ?.starters
-          .map(s => s.trainer)
-          .includes(t)
-      )
-      .map(t =>
-        this.racecards
-          .find(r => r.race === race)
-          ?.starters
-          .filter(s => s.trainer === t)
-          .sort((s1, s2) => s1.order - s2.order)
-      )
-      .flatMap(s => s);
-  }
-
   getChallengerInvestment = (challenger: string): number =>
     this.racecards
       .map(r => r.starters
@@ -548,49 +504,6 @@ export class MeetingComponent implements OnInit {
       .includes(this.getChallengeOdds(personType, order).points);
   }
 
-  getCrossRacePoolInvestmentCellContent =
-    (row: number, column: number): { pool: string, investment: number } => {
-
-      const doubleTrios = this.racecards
-        .filter(r => (r?.pool?.doubleTrio || 0) > 0)
-        .map(r => r.pool.doubleTrio);
-
-      const trebles = this.racecards
-        .filter(r => (r?.pool?.treble || 0) > 0)
-        .map(r => r.pool.treble);
-
-      const sixUps = this.racecards
-        .filter(r => (r?.pool?.sixUp || 0) > 0)
-        .map(r => r.pool.sixUp);
-
-      const tripleTrios = this.racecards
-        .filter(r => (r?.pool?.tripleTrio || 0) > 0)
-        .map(r => r.pool.tripleTrio);
-
-      const turnover = this.racecards
-        .filter(r => (r?.pool?.meetingTotal || 0) > 0)
-        .map(r => r.pool.meetingTotal)
-        .sort((t1, t2) => t2 - t1)
-        .shift() || 0;
-
-      if (column === 1) {
-        if (row <= 4 || (row === 5 && this.maxRace >= 10)) {
-          return {
-            pool: `${toOrdinalWithSuffix(row)} Double Trio`,
-            investment: doubleTrios.length > (row - 1) ? doubleTrios[row - 1] : 0,
-          };
-        }
-      }
-      if (column === 2) {
-        if (row === 1) return {pool: '1st Treble', investment: trebles.length > 0 ? trebles[0] : 0};
-        if (row === 2) return {pool: '2nd Treble', investment: trebles.length > 1 ? trebles[1] : 0};
-        if (row === 3) return {pool: 'Six Up', investment: sixUps.length > 0 ? sixUps[0] : 0};
-        if (row === 4) return {pool: 'Triple Trio', investment: tripleTrios.length > 0 ? tripleTrios[0] : 0};
-        if (row === 5) return {pool: 'Today Turnover', investment: turnover};
-      }
-      return {pool: '', investment: 0};
-    }
-
   getCrossRacePoolDividendRaces = (row: number): number => {
     if (this.crossRacePoolDividendRaces.length >= row) {
       return this.crossRacePoolDividendRaces[row - 1];
@@ -598,13 +511,15 @@ export class MeetingComponent implements OnInit {
     return 1;
   }
 
-  get singleRacePoolWithMultipleDividendCount(): number {
-    return this.singleRacePools
-      .filter(p => ['1', '2', '3'].some(n => p.name.includes(n)))
-      .length;
+  get todayTurnover(): number {
+    return this.racecards
+      .filter(r => (r?.pool?.meetingTotal || 0) > 0)
+      .map(r => r.pool.meetingTotal)
+      .sort((t1, t2) => t2 - t1)
+      .shift() || 0;
   }
 
-  get singleRacePools(): PoolThreshold[] {
+  get dividendRacePools(): PoolThreshold[] {
     return [
       {name: 'WIN', threshold: 8},
       {name: 'QIN', threshold: 40},
@@ -624,7 +539,7 @@ export class MeetingComponent implements OnInit {
     ];
   }
 
-  get crossRacePools(): PoolThreshold[] {
+  get dividendCrossRacePools(): PoolThreshold[] {
     return [
       {name: 'TBL-1', threshold: 100},
       {name: 'TBL-2', threshold: 40},
@@ -654,18 +569,31 @@ export class MeetingComponent implements OnInit {
     return races;
   }
 
-  get pools(): Array<{ pool: string, amount: string }> {
-    const pool = (this.next || this.racecards[this.racecards.length - 1])?.pool;
-    return [
-      {pool: 'W', amount: toMillion(pool?.win || 0)},
-      {pool: 'Q', amount: toMillion(pool?.quinella || 0)},
-      {pool: 'FCT', amount: toMillion(pool?.forecast || 0)},
-      {pool: 'FQ', amount: toMillion(pool?.quartet || 0)},
-      {pool: 'P', amount: toMillion(pool?.place || 0)},
-      {pool: 'QP', amount: toMillion(pool?.quinellaPlace || 0)},
-      {pool: 'TCE', amount: toMillion(pool?.tierce || 0)},
-      {pool: 'DBL', amount: toMillion(pool?.doubles || 0)},
-    ];
+  get investmentPoolNames(): string[] {
+    return this.investmentPools
+      .map(p => p.pool)
+      .filter((p, index, arr) => index === arr.indexOf(p));
+  }
+
+  get investmentPools(): InvestmentPool[] {
+    return this.racecards.flatMap(r => {
+      const pool = r?.pool;
+      return [
+        {race: r.race, pool: 'WIN', amount: toMillion(pool?.win || 0)},
+        {race: r.race, pool: 'PLA', amount: toMillion(pool?.place || 0)},
+        {race: r.race, pool: 'QIN', amount: toMillion(pool?.quinella || 0)},
+        {race: r.race, pool: 'QPL', amount: toMillion(pool?.quinellaPlace || 0)},
+        {race: r.race, pool: 'FCT', amount: toMillion(pool?.forecast || 0)},
+        {race: r.race, pool: 'TRI', amount: toMillion(pool?.trio || 0)},
+        {race: r.race, pool: 'TCE', amount: toMillion(pool?.tierce || 0)},
+        {race: r.race, pool: 'F-Q', amount: toMillion(pool?.quartet || 0)},
+        {race: r.race, pool: 'DBL', amount: toMillion(pool?.doubles || 0)},
+        {race: r.race, pool: 'TBL', amount: toMillion(pool?.treble || 0)},
+        {race: r.race, pool: '6UP', amount: toMillion(pool?.sixUp || 0)},
+        {race: r.race, pool: 'D-T', amount: toMillion(pool?.doubleTrio || 0)},
+        {race: r.race, pool: 'T-T', amount: toMillion(pool?.tripleTrio || 0)},
+      ];
+    });
   }
 
   get summaryLines(): string[] {
