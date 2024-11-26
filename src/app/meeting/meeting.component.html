@@ -5,13 +5,42 @@
 </div>
 
 <div *ngIf="!isLoading">
-  <div class="mt-4 mx-10 flex flex-row justify-between">
+  <div class="mt-4 mx-4 flex flex-row justify-evenly items-center">
     <div *ngIf="summaryLines.length > 0"
          class="px-6 py-4 text-xl rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
     >
       {{ summaryLines[0] }}
       <br>
       {{ summaryLines[1] }}
+    </div>
+    <div class="">
+      <table class="mx-auto table-fixed border-collapse border border-gray-700 text-center">
+        <thead>
+          <th class="w-12 border border-gray-600">
+            TCE
+          </th>
+          <th *ngFor="let starter of nextRaceStarters"
+              class="w-12 border border-gray-600"
+          >
+            {{ starter.order }}
+          </th>
+        </thead>
+        <tbody>
+          <tr *counter="let placing of 3"
+              class=""
+          >
+            <td class="border border-gray-700">
+              {{ PLACING_MAPS[placing - 1].placing }}
+            </td>
+            <td *ngFor="let starter of nextRaceStarters"
+                class="border border-gray-700 {{ placing === (starter?.placing || 0) ? toPlacingColor(starter?.placing) : ''}}"
+                [class.bg-gray-700]="isAbnormalTierceOdds(starter, placing)"
+            >
+              {{ getTierceInvestmentOdds(starter, placing) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div class="w-44 pt-2 text-center">
       <div class="text-2xl">
@@ -320,7 +349,7 @@
           </span>
         </td>
         <td *ngIf="row === 1"
-            class="border border-gray-700 border-l-red-900 text-3xl"
+            class="border border-gray-700 border-l-red-900 text-4xl"
             colspan="8"
             [rowSpan]="crossRacePoolDividendRaces.length"
         >
