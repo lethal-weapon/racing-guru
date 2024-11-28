@@ -9,12 +9,11 @@ import {Racecard} from '../model/racecard.model';
 import {DEFAULT_MEETING, Meeting} from '../model/meeting.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
-import {BOUNDARY_INVESTMENT_POOLS, BOUNDARY_POOLS, PLACING_MAPS} from '../util/strings';
-import {EARNING_THRESHOLD, PAYOUT_RATE, REST_PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
+import {BOUNDARY_INVESTMENT_POOLS, BOUNDARY_POOLS} from '../util/strings';
+import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   formatRace,
   getStarter,
-  getStarters,
   getStarterWinPlaceOdds,
   getTrainer,
   getWinPlaceOdds,
@@ -50,7 +49,6 @@ export class MeetingComponent implements OnInit {
   activeTrainerIntervalId: any;
   activeTrainerAnimationOn: boolean = false;
 
-  protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
   protected readonly BOUNDARY_INVESTMENT_POOLS = BOUNDARY_INVESTMENT_POOLS;
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
@@ -303,21 +301,6 @@ export class MeetingComponent implements OnInit {
     return specials.includes(player);
   }
 
-  isAbnormalTierceOdds = (starter: Starter, placing: number): boolean => {
-    const starterOdds = this.getTierceInvestmentOdds(starter, placing);
-    if (starterOdds === '') return false;
-
-    const priorStarterIndex = this.nextRaceStarters.indexOf(starter) - 1;
-    if (priorStarterIndex < 0) return false;
-
-    const priorStarterOdds = this.getTierceInvestmentOdds(
-      this.nextRaceStarters[priorStarterIndex], placing
-    );
-    if (priorStarterOdds === '') return false;
-
-    return parseInt(starterOdds) < parseInt(priorStarterOdds);
-  }
-
   formatChallengeOdds = (odds: number): string => {
     if (odds < 1) return '';
     else if (odds > 99) return '99+';
@@ -528,28 +511,6 @@ export class MeetingComponent implements OnInit {
     return 1;
   }
 
-  getTierceInvestmentOdds = (starter: Starter, placing: number): string => {
-    const investments = this.next
-      ? this.next?.odds?.tierce || []
-      : this.racecards[this.racecards.length - 1]?.odds?.tierce || [];
-
-    if (investments.length === 0) return '';
-
-    const totalInvestment = investments
-      .map(i => i.win + i.second + i.third)
-      .reduce((prev, curr) => prev + curr, 0);
-
-    const netPool = totalInvestment * REST_PAYOUT_RATE;
-    const starterInvestment = investments.find(i => i.order === starter.order);
-    if (!starterInvestment) return '';
-
-    const starterPlacingInvestment = placing === 1
-      ? starterInvestment.win
-      : (placing === 2 ? starterInvestment.second : starterInvestment.third);
-
-    return Math.floor(netPool / starterPlacingInvestment).toString();
-  }
-
   get todayTurnover(): number {
     return this.racecards
       .filter(r => (r?.pool?.meetingTotal || 0) > 0)
@@ -665,11 +626,6 @@ export class MeetingComponent implements OnInit {
       .map(o => o.order)
       .sort((o1, o2) => o1 - o2)
       .pop() || 0;
-  }
-
-  get nextRaceStarters(): Starter[] {
-    if (this.next) return getStarters(this.next);
-    return getStarters(this.racecards[this.racecards.length - 1]);
   }
 
   get starters(): Starter[] {

@@ -8,7 +8,7 @@ import {DEFAULT_RECOMMENDATION, RaceRecommendation, Recommendation} from '../mod
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
-import {COLORS} from '../util/strings';
+import {COLORS, PLACING_MAPS} from '../util/strings';
 import {
   DBL_ODDS_STEP,
   DEFAULT_MAX_DBL_ODDS,
@@ -22,7 +22,8 @@ import {
   FCT_ODDS_STEP,
   MAX_RACE_PER_MEETING,
   QIN_ODDS_STEP,
-  QPL_ODDS_STEP
+  QPL_ODDS_STEP,
+  REST_PAYOUT_RATE
 } from '../util/numbers';
 import {
   formatOdds,
@@ -97,6 +98,7 @@ export class OddsComponent implements OnInit {
   ranges: Map<number, OddsRange> = new Map();
   trashes: Map<number, number[]> = new Map();
 
+  protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly toPlacingColor = toPlacingColor;
   protected readonly getSignalColor = getSignalColor;
   protected readonly getMaxRace = getMaxRace;
@@ -112,7 +114,6 @@ export class OddsComponent implements OnInit {
   ) {
     socket.addPickCallback((newPick: Pick) => {
       if (this.pick != newPick) this.pick = newPick;
-      if (this.trackModeOn) this.track();
     });
 
     socket.addRecommendationCallback((newRecommendation: Recommendation) => {
@@ -307,6 +308,37 @@ export class OddsComponent implements OnInit {
   }
 
   track = () => {
+    if (this.trackworkOrderGroups.length !== 3) return;
+    const top5 = this.trackworkOrderGroups[0];
+    const bottom5 = this.trackworkOrderGroups[2];
+    let newQuinellaCombinations: number[][] = [];
+
+    for (let i = 0; i < this.activeRacecard.starters.length - 1; i++) {
+      const starterA = this.activeRacecard.starters[i];
+      if (this.isTrash(starterA)) continue;
+
+      for (let j = i + 1; j < this.activeRacecard.starters.length; j++) {
+        const starterB = this.activeRacecard.starters[j];
+        if (this.isTrash(starterB)) continue;
+
+        if (!this.isQQPOddsWithinRange(starterA, starterB)[0]) continue;
+
+        if (this.getCombinationSignals(starterA, starterB)[0].length > 0) continue;
+
+        if (
+          (top5.includes(starterA.order) && bottom5.includes(starterB.order))
+          ||
+          (top5.includes(starterB.order) && bottom5.includes(starterA.order))
+        ) {
+          newQuinellaCombinations.push([starterA.order, starterB.order]);
+        }
+      }
+    }
+
+    if (newQuinellaCombinations.length > 0) {
+      let newBets = {...this.activeBet, qin: newQuinellaCombinations};
+      this.bets.set(this.activeRace, newBets);
+    }
   }
 
   toggleBet = (pool: string, starterA: Starter, starterB: Starter) => {
@@ -424,27 +456,12 @@ export class OddsComponent implements OnInit {
     }
   }
 
-  isInTrackworkBlacklist = (starterA: Starter, starterB: Starter): boolean => {
-    const snapshot = this.repo.findTrackworkSnapshots()
-      .find(ts => ts.meeting === this.activeRacecard.meeting);
-
-    if (!snapshot) return false;
-
-    const trackworkOrders = snapshot.starters
-      .filter(s => s.race === this.activeRacecard.race)
-      .sort((s1, s2) => (s2.intensity - s1.intensity) || (s1.order - s2.order))
-      .map(s => s.order);
-
-    const top5 = trackworkOrders.slice(0, 5);
-    const bottom5 = trackworkOrders.slice(trackworkOrders.length - 5);
-    const middle = trackworkOrders.filter(o => !top5.includes(o) && !bottom5.includes(o));
-
-    return [top5, bottom5, middle].some(blacklistGroup =>
+  isInTrackworkBlacklist = (starterA: Starter, starterB: Starter): boolean =>
+    this.trackworkOrderGroups.some(blacklistGroup =>
       blacklistGroup.includes(starterA.order)
       &&
       blacklistGroup.includes(starterB.order)
-    );
-  }
+    )
 
   isFinalQQPCombination = (starterA: Starter, starterB: Starter): boolean[] => {
     const placingSum = [starterA, starterB]
@@ -484,6 +501,40 @@ export class OddsComponent implements OnInit {
   isDBLOddsWithinRange = (starterA: Starter, starterB: Starter): boolean => {
     const dbl = this.getStarterDBLOdds(starterA, starterB);
     return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
+  }
+
+  isAbnormalTierceOdds = (starter: Starter, placing: number): boolean => {
+    const starterOdds = this.getTierceOdds(starter, placing);
+    if (starterOdds === '') return false;
+
+    const starters = getStarters(this.activeRacecard);
+    const priorStarterIndex = starters.indexOf(starter) - 1;
+    if (priorStarterIndex < 0) return false;
+
+    const priorStarterOdds = this.getTierceOdds(starters[priorStarterIndex], placing);
+    if (priorStarterOdds === '') return false;
+
+    return parseInt(starterOdds) < parseInt(priorStarterOdds);
+  }
+
+  getTierceOdds = (starter: Starter, placing: number): string => {
+    const investments = this.activeRacecard?.odds?.tierce || [];
+    if (investments.length === 0) return '';
+
+    const totalInvestment = investments
+      .map(i => i.win + i.second + i.third)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    const netPool = totalInvestment * REST_PAYOUT_RATE;
+    const starterInvestment = investments.find(i => i.order === starter.order);
+    if (!starterInvestment) return '';
+
+    const starterPlacingInvestment = placing === 1
+      ? starterInvestment.win
+      : (placing === 2 ? starterInvestment.second : starterInvestment.third);
+
+    const odds = netPool / starterPlacingInvestment;
+    return odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString();
   }
 
   getDBLCellBackground = (currIndex: number, nextIndex: number): string => {
@@ -673,6 +724,24 @@ export class OddsComponent implements OnInit {
 
   getHorseNameCH = (horseCode: string): string =>
     this.repo.findHorses().find(h => h.code === horseCode)?.nameCH || horseCode
+
+  get trackworkOrderGroups(): number[][] {
+    const snapshot = this.repo.findTrackworkSnapshots()
+      .find(ts => ts.meeting === this.activeRacecard.meeting);
+
+    if (!snapshot) return [];
+
+    const trackworkOrders = snapshot.starters
+      .filter(s => s.race === this.activeRacecard.race)
+      .sort((s1, s2) => (s2.intensity - s1.intensity) || (s1.order - s2.order))
+      .map(s => s.order);
+
+    const top5 = trackworkOrders.slice(0, 5);
+    const bottom5 = trackworkOrders.slice(trackworkOrders.length - 5);
+    const middle = trackworkOrders.filter(o => !top5.includes(o) && !bottom5.includes(o));
+
+    return [top5, middle, bottom5];
+  }
 
   get trainersWithMoreThanOneStarter(): string[] {
     return this.activeRacecard?.starters
