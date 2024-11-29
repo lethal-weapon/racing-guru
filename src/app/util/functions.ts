@@ -3,7 +3,7 @@ import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {COLORS, ODDS_INTENSITIES} from './strings';
-import {ONE_MILLION, PAYOUT_RATE} from './numbers';
+import {FCT_PAYOUT_RATE, ONE_MILLION, PAYOUT_RATE, REST_PAYOUT_RATE, TRI_PAYOUT_RATE} from './numbers';
 import {Meeting} from '../model/meeting.model';
 
 export const formatRace = (race: number): string =>
@@ -107,6 +107,73 @@ export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard):
       .map(p => PAYOUT_RATE / p.odds)
       .reduce((prev, curr) => prev + curr, 0);
   });
+}
+
+export const getTrioFirstFourOdds = (starter: Starter, racecard: Racecard): number[] => {
+  const tri = racecard?.odds?.trio;
+  const ff = racecard?.odds?.firstFour;
+
+  return [tri, ff].map((combs, index) => {
+    if (!combs) return 1;
+
+    const payoutRate = index === 0 ? TRI_PAYOUT_RATE : REST_PAYOUT_RATE;
+
+    return payoutRate / combs
+      .filter(p => p.orders.includes(starter.order))
+      .map(p => payoutRate / p.odds)
+      .reduce((prev, curr) => prev + curr, 0);
+  });
+}
+
+export const getForecastPlacingOdds = (starter: Starter, placing: number, racecard: Racecard): number => {
+  const pairs = racecard?.odds?.forecast || [];
+  if (pairs.length === 0) return 1;
+
+  return FCT_PAYOUT_RATE / pairs
+    .filter(c =>
+      placing === 1
+        ? c.orders[0] === starter.order
+        : c.orders[1] === starter.order
+    )
+    .map(c => FCT_PAYOUT_RATE / c.odds)
+    .reduce((prev, curr) => prev + curr, 0);
+}
+
+export const getTiercePlacingOdds = (starter: Starter, placing: number, racecard: Racecard): number => {
+  const investments = racecard?.odds?.tierce || [];
+  if (investments.length === 0) return 1;
+
+  const totalInvestment = investments
+    .map(i => i.win + i.second + i.third)
+    .reduce((prev, curr) => prev + curr, 0);
+
+  const netPool = totalInvestment * REST_PAYOUT_RATE;
+  const starterInvestment = investments.find(i => i.order === starter.order);
+  if (!starterInvestment) return 1;
+
+  const starterPlacingInvestment = placing === 1
+    ? starterInvestment.win
+    : (placing === 2 ? starterInvestment.second : starterInvestment.third);
+
+  return netPool / starterPlacingInvestment;
+}
+
+export const getDoublePlacingOdds = (starter: Starter, placing: number, racecard: Racecard): number => {
+  // placing === 1 means 2nd leg of previous race
+  // placing === 2 means 1st leg of this race
+  if (!racecard) return 1;
+
+  const pairs = racecard?.odds?.doubles || [];
+  if (pairs.length === 0) return 1;
+
+  return PAYOUT_RATE / pairs
+    .filter(c =>
+      placing === 1
+        ? c.orders[1] === starter.order
+        : c.orders[0] === starter.order
+    )
+    .map(c => PAYOUT_RATE / c.odds)
+    .reduce((prev, curr) => prev + curr, 0);
 }
 
 export const getSignalColor = (signals: SingularSignal[] | CombinationSignal[]): string =>
