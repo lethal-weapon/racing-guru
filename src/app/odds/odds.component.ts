@@ -746,7 +746,7 @@ export class OddsComponent implements OnInit {
       {pool: 'TRI', placing: 1, label: '', edge: false},
       {pool: 'F-F', placing: 1, label: '', edge: true},
       {pool: 'DBL', placing: 1, label: 'U', edge: false},
-      {pool: 'DBL', placing: 2, label: 'D', edge: false},
+      {pool: 'DBL', placing: 2, label: 'D', edge: true},
     ];
   }
 

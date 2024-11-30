@@ -13,6 +13,8 @@ import {BOUNDARY_INVESTMENT_POOLS, BOUNDARY_POOLS} from '../util/strings';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   formatRace,
+  formatRaceTime,
+  formatRaceTimeWithoutSpace,
   getStarter,
   getStarterWinPlaceOdds,
   getTrainer,
@@ -53,6 +55,7 @@ export class MeetingComponent implements OnInit {
   protected readonly BOUNDARY_INVESTMENT_POOLS = BOUNDARY_INVESTMENT_POOLS;
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly formatRace = formatRace;
+  protected readonly formatRaceTimeWithoutSpace = formatRaceTimeWithoutSpace;
   protected readonly toPlacingColor = toPlacingColor;
   protected readonly toHorseProfileUrl = toHorseProfileUrl;
   protected readonly getStarter = getStarter;
@@ -127,6 +130,8 @@ export class MeetingComponent implements OnInit {
     else if (diff <= 5_400) this.remainingTime = `${Math.floor(diff / 60)} min`;
     else if (diff <= 36_000) this.remainingTime = `${(diff / 3600).toFixed(1)} hrs`;
     else this.remainingTime = `${Math.floor(diff / 3600)} hrs`;
+
+    if (diff < 0) this.remainingTime = this.remainingTime.replace('-', '+');
 
     let audioName = '';
     if (diff >= 899 && diff <= 901) audioName = '15-min-horse';
@@ -319,6 +324,26 @@ export class MeetingComponent implements OnInit {
     return `${clean[0]}${clean.slice(-1)}`;
   }
 
+  getRaceProgress = (card: Racecard): string => {
+    if (!this.next) return '100%';
+    if (this.next?.race < card.race) return '0%';
+    if (this.next?.race > card.race + 1) return '100%';
+
+    const currTime = new Date().getTime();
+    const raceTime = new Date(card.time).getTime();
+    const diff = Math.floor((raceTime - currTime) / 1000);
+    if (diff >= 0) return '0%';
+
+    const nextRaceTimeStr = this.racecards.find(r => r.race === card.race + 1)?.time || '';
+    if (!nextRaceTimeStr) return '0%';
+
+    const nextRaceTime = new Date(nextRaceTimeStr).getTime();
+    if (currTime >= nextRaceTime) return '100%';
+
+    const raceDiff = Math.floor((nextRaceTime - raceTime) / 1000);
+    return `${Math.ceil(100 * Math.abs(diff) / raceDiff)}%`;
+  }
+
   getStarterCount = (race: number): number =>
     (this.racecards.find(r => r.race === race)?.starters || [])
       .filter(s => !s.scratched).length
@@ -351,17 +376,11 @@ export class MeetingComponent implements OnInit {
       .replace(/\d{4}M/g, '')
       .trim();
 
-    const dt = new Date(racecard.time);
-    let time = `${dt.getHours()} : ${dt.getMinutes()}`;
-    if (dt.getMinutes() === 0) time += '0';
-    else if (dt.getMinutes() < 10) {
-      time = `${dt.getHours()} : 0${dt.getMinutes()}`;
-    }
-
     let track = racecard.track.toUpperCase();
     if (track !== 'TURF') track = 'AWT';
     const trackColor = track === 'TURF' ? 'text-green-600' : 'text-orange-400';
 
+    const time = formatRaceTime(racecard.time);
     const prize = `$${toMillion(racecard.prize)}M`;
 
     return `

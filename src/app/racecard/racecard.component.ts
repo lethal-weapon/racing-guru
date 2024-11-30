@@ -347,7 +347,7 @@ export class RacecardComponent implements OnInit {
         {odds: WP.win, amount: pool.win},
         {odds: QQP_WP[0], amount: pool.quinella},
         {odds: 3 * WP.place, amount: pool.place},
-        {odds: 3 * QQP_WP[1], amount: pool?.quinellaPlace || 0}
+        {odds: QQP_WP[1], amount: pool?.quinellaPlace || 0}
       ].map(o => ({
         percent: `${(100 * PAYOUT_RATE / o.odds).toFixed(1)}%`,
         amount: `$${(o.amount * PAYOUT_RATE / o.odds / ONE_MILLION).toFixed(2)}M`

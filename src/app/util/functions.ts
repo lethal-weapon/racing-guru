@@ -15,6 +15,20 @@ export const formatOdds = (odds: number): string =>
 export const formatMeeting = (meeting: string): string =>
   meeting.replace(/^\d{4}-/g, '')
 
+export const formatRaceTime = (raceTime: string): string => {
+  const dt = new Date(raceTime);
+  let time = `${dt.getHours()} : ${dt.getMinutes()}`;
+
+  if (dt.getMinutes() === 0) time += '0';
+  else if (dt.getMinutes() < 10) {
+    time = `${dt.getHours()} : 0${dt.getMinutes()}`;
+  }
+  return time;
+}
+
+export const formatRaceTimeWithoutSpace = (raceTime: string): string =>
+  formatRaceTime(raceTime).replace(/\s/g, '')
+
 export const toMillion = (amount: number): string =>
   (amount / ONE_MILLION).toFixed(2)
 
@@ -99,10 +113,11 @@ export const getStarterQQPWinPlaceOdds = (starter: Starter, racecard: Racecard):
   const qin = racecard?.odds?.quinella;
   const qpl = racecard?.odds?.quinellaPlace;
 
-  return [qin, qpl].map(pairs => {
+  return [qin, qpl].map((pairs, index) => {
     if (!pairs) return 1;
+    const factor = index === 0 ? 2 : 6;
 
-    return 2 * PAYOUT_RATE / pairs
+    return factor * PAYOUT_RATE / pairs
       .filter(p => p.orders.includes(starter.order))
       .map(p => PAYOUT_RATE / p.odds)
       .reduce((prev, curr) => prev + curr, 0);
@@ -116,9 +131,10 @@ export const getTrioFirstFourOdds = (starter: Starter, racecard: Racecard): numb
   return [tri, ff].map((combs, index) => {
     if (!combs) return 1;
 
+    const factor = index === 0 ? 3 : 4;
     const payoutRate = index === 0 ? TRI_PAYOUT_RATE : REST_PAYOUT_RATE;
 
-    return payoutRate / combs
+    return factor * payoutRate / combs
       .filter(p => p.orders.includes(starter.order))
       .map(p => payoutRate / p.odds)
       .reduce((prev, curr) => prev + curr, 0);
