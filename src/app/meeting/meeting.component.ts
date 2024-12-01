@@ -186,6 +186,9 @@ export class MeetingComponent implements OnInit {
     this.repo.savePick(newPick);
   }
 
+  isPastPostTime = (card: Racecard): boolean =>
+    (new Date().getTime()) > (new Date(card.time).getTime())
+
   isPersonalFavorite = (starter: Starter, race: number): boolean =>
     this.pick.races
       .filter(r => r.race === race)
