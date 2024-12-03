@@ -16,6 +16,7 @@ const BY_FOCUS = 'By Focus';
 export class TrendTrackworkComponent implements OnInit {
 
   activeBadge: string = BY_FOCUS;
+  meetingIndex: number = 0;
 
   protected readonly BY_FOCUS = BY_FOCUS;
   protected readonly formatMeeting = formatMeeting;
@@ -26,13 +27,34 @@ export class TrendTrackworkComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchTrackworkSnapshots(8);
+    this.repo.fetchTrackworkSnapshots(17);
   }
+
+  togglePage = () =>
+    this.meetingIndex = 8 - this.meetingIndex
 
   getBadgeStyle = (render: string): string =>
     this.activeBadge === render
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
+
+  getSpecialStyle = (ts: TrackworkSnapshot, trainer: Player): string => {
+    const starter = this.getTrainerFocusStarter(ts, trainer);
+    if (!starter) return '';
+
+    const sameRaceFocusStarterCount =
+      ts.starters.filter(s => s.trainerFocus && s.race === starter.race).length;
+
+    return sameRaceFocusStarterCount <= 2
+      ? 'border border-yellow-500'
+      : '';
+  }
+
+  getTrainerFocusTop4Count = (ts: TrackworkSnapshot): number =>
+    ts.starters
+      .filter(s => s.trainerFocus)
+      .filter(s => ((s?.placing || 0) >= 1) && ((s?.placing || 0) <= 4))
+      .length
 
   getTrainerFocusStarter =
     (ts: TrackworkSnapshot, trainer: Player): TrackworkStarter | undefined => {

@@ -3,7 +3,7 @@
 </div>
 
 <div *ngIf="!isLoading">
-  <div class="m-4 flex flex-row justify-evenly">
+  <div class="mx-8 my-3 grid grid-cols-9 gap-3">
     <div *ngFor="let section of [BY_FOCUS]"
          class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(section)}}"
          (click)="activeBadge = section"
@@ -67,13 +67,22 @@
          class="my-8 mx-auto table-fixed border-collapse"
   >
     <tr class="text-lg">
-      <td class="w-20 border border-gray-700"></td>
-      <td *ngFor="let ts of trackworks"
+      <td class="w-20 border border-gray-700 cursor-pointer"
+          [class.text-yellow-400]="meetingIndex === 8"
+          (click)="togglePage()"
+      >
+        <i class="fa fa-map-pin"></i>
+      </td>
+      <td *ngFor="let ts of trackworks.slice(meetingIndex, meetingIndex + 8)"
           class="w-64 border border-gray-700"
       >
         {{ formatMeeting(ts.meeting) }}
         &nbsp;
         {{ ts.venue }}
+        &nbsp;
+        <span class="text-yellow-400">
+          {{ getTrainerFocusTop4Count(ts) }}x
+        </span>
       </td>
     </tr>
     <tr *ngFor="let trainer of trainers"
@@ -84,14 +93,15 @@
       >
         {{ trainer.code }}
       </td>
-      <td *ngFor="let ts of trackworks; let first = first"
+      <td *ngFor="let ts of trackworks.slice(meetingIndex, meetingIndex + 8); let first = first"
           class="border border-gray-700 px-1 py-0.5"
           [class.border-b-gray-400]="trainer.boundary"
       >
         <div *ngIf="getTrainerFocusStarter(ts, trainer)"
              class="flex flex-row justify-center items-center gap-x-1 text-sm
-                    {{toPlacingColor(getTrainerFocusStarter(ts, trainer)?.placing)}}"
-             [class.opacity-0]="!first && toPlacingColor(getTrainerFocusStarter(ts, trainer)?.placing).length < 1"
+                    {{toPlacingColor(getTrainerFocusStarter(ts, trainer)?.placing)}}
+                    {{getSpecialStyle(ts, trainer)}}"
+             [class.opacity-0]="(meetingIndex > 0 || !first) && toPlacingColor(getTrainerFocusStarter(ts, trainer)?.placing).length < 1"
         >
           <div [class.invisible]="getStarterWinOdds(getTrainerFocusStarter(ts, trainer)) < 1"
                class="{{ toPlacingColor(getTrainerFocusStarter(ts, trainer)?.placing).length === 0
