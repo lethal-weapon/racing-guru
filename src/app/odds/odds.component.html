@@ -205,8 +205,6 @@
       </td>
       <td *ngFor="let starterB of getStarters(this.activeRacecard); let indexB = index"
           class="border border-gray-700"
-          [class.text-purple-600]="isInTrackworkBlacklist(starterA, starterB)"
-          [class.text-gray-300]="!isInTrackworkBlacklist(starterA, starterB)"
           [class.bg-gray-600]="isBothFavorite(starterA, starterB)"
           [class.bg-gray-800]="!isBothFavorite(starterA, starterB) && !onDoubleTable && hoveredJockey === starterB.jockey"
           [class.diagonal-line]="starterA.order === starterB.order"

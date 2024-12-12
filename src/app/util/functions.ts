@@ -3,7 +3,7 @@ import {Racecard} from '../model/racecard.model';
 import {WinPlaceOdds} from '../model/odds.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {COLORS, ODDS_INTENSITIES} from './strings';
-import {FCT_PAYOUT_RATE, ONE_MILLION, PAYOUT_RATE, REST_PAYOUT_RATE, TRI_PAYOUT_RATE} from './numbers';
+import {DBL_PAYOUT_RATE, FCT_PAYOUT_RATE, ONE_MILLION, PAYOUT_RATE, REST_PAYOUT_RATE, TRI_PAYOUT_RATE} from './numbers';
 import {Meeting} from '../model/meeting.model';
 
 export const formatRace = (race: number): string =>
@@ -182,13 +182,13 @@ export const getDoublePlacingOdds = (starter: Starter, placing: number, racecard
   const pairs = racecard?.odds?.doubles || [];
   if (pairs.length === 0) return 1;
 
-  return PAYOUT_RATE / pairs
+  return DBL_PAYOUT_RATE / pairs
     .filter(c =>
       placing === 1
         ? c.orders[1] === starter.order
         : c.orders[0] === starter.order
     )
-    .map(c => PAYOUT_RATE / c.odds)
+    .map(c => DBL_PAYOUT_RATE / c.odds)
     .reduce((prev, curr) => prev + curr, 0);
 }
 

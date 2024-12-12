@@ -155,7 +155,6 @@ export class OddsComponent implements OnInit {
     });
 
     this.repo.fetchMeetingHorses();
-    this.repo.fetchTrackworkSnapshots(1);
 
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.bets.set(race, {...DEFAULT_BET});
@@ -310,37 +309,6 @@ export class OddsComponent implements OnInit {
   }
 
   track = () => {
-    if (this.trackworkOrderGroups.length !== 3) return;
-    const top5 = this.trackworkOrderGroups[0];
-    const bottom5 = this.trackworkOrderGroups[2];
-    let newQuinellaCombinations: number[][] = [];
-
-    for (let i = 0; i < this.activeRacecard.starters.length - 1; i++) {
-      const starterA = this.activeRacecard.starters[i];
-      if (this.isTrash(starterA)) continue;
-
-      for (let j = i + 1; j < this.activeRacecard.starters.length; j++) {
-        const starterB = this.activeRacecard.starters[j];
-        if (this.isTrash(starterB)) continue;
-
-        if (!this.isQQPOddsWithinRange(starterA, starterB)[0]) continue;
-
-        if (this.getCombinationSignals(starterA, starterB)[0].length > 0) continue;
-
-        if (
-          (top5.includes(starterA.order) && bottom5.includes(starterB.order))
-          ||
-          (top5.includes(starterB.order) && bottom5.includes(starterA.order))
-        ) {
-          newQuinellaCombinations.push([starterA.order, starterB.order]);
-        }
-      }
-    }
-
-    if (newQuinellaCombinations.length > 0) {
-      let newBets = {...this.activeBet, qin: newQuinellaCombinations};
-      this.bets.set(this.activeRace, newBets);
-    }
   }
 
   toggleBet = (pool: string, starterA: Starter, starterB: Starter) => {
@@ -457,13 +425,6 @@ export class OddsComponent implements OnInit {
         && this.isFavorite(starterB, this.activeRacecard);
     }
   }
-
-  isInTrackworkBlacklist = (starterA: Starter, starterB: Starter): boolean =>
-    this.trackworkOrderGroups.some(blacklistGroup =>
-      blacklistGroup.includes(starterA.order)
-      &&
-      blacklistGroup.includes(starterB.order)
-    )
 
   isFinalQQPCombination = (starterA: Starter, starterB: Starter): boolean[] => {
     const placingSum = [starterA, starterB]
@@ -750,24 +711,6 @@ export class OddsComponent implements OnInit {
     ];
   }
 
-  get trackworkOrderGroups(): number[][] {
-    const snapshot = this.repo.findTrackworkSnapshots()
-      .find(ts => ts.meeting === this.activeRacecard.meeting);
-
-    if (!snapshot) return [];
-
-    const trackworkOrders = snapshot.starters
-      .filter(s => s.race === this.activeRacecard.race)
-      .sort((s1, s2) => (s2.intensity - s1.intensity) || (s1.order - s2.order))
-      .map(s => s.order);
-
-    const top5 = trackworkOrders.slice(0, 5);
-    const bottom5 = trackworkOrders.slice(trackworkOrders.length - 5);
-    const middle = trackworkOrders.filter(o => !top5.includes(o) && !bottom5.includes(o));
-
-    return [top5, middle, bottom5];
-  }
-
   get trainersWithMoreThanOneStarter(): string[] {
     return this.activeRacecard?.starters
         .filter(s => !s.scratched)
@@ -893,7 +836,6 @@ export class OddsComponent implements OnInit {
     return this.pick.races.length === 0
       || this.recommendation.races.length === 0
       || this.racecards.length === 0
-      || this.repo.findHorses().length === 0
-      || this.repo.findTrackworkSnapshots().length === 0;
+      || this.repo.findHorses().length === 0;
   }
 }
