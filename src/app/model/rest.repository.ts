@@ -16,6 +16,7 @@ import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {SignalSnapshot} from './signal.model';
+import {OddsSnapshot} from './oddsSnapshot.model';
 import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
@@ -41,6 +42,7 @@ export class RestRepository {
   private syndicateSnapshots: SyndicateSnapshot[] = [];
   private trackworkSnapshots: TrackworkSnapshot[] = [];
   private signalSnapshots: SignalSnapshot[] = [];
+  private oddsSnapshots: OddsSnapshot[] = [];
   private playerConnections: PlayerConnection[] = [];
   private blacklistConnections: BlacklistConnection[] = [];
   private accumulatedSeasonEarnings: AccumulatedSeasonEarning[] = [];
@@ -71,6 +73,7 @@ export class RestRepository {
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
   findSignalSnapshots = () => this.signalSnapshots
+  findOddsSnapshots = () => this.oddsSnapshots
   findPlayerConnections = () => this.playerConnections
   findBlacklistConnections = () => this.blacklistConnections
   findAccumulatedSeasonEarnings = () => this.accumulatedSeasonEarnings
@@ -320,6 +323,15 @@ export class RestRepository {
 
     callback();
   }
+
+  fetchOddsSnapshots = (
+    meeting: string = 'latest',
+    callback: () => any = () => console.log(``)
+  ) =>
+    this.source.getOddsSnapshots(meeting).subscribe(data => {
+      this.oddsSnapshots = data;
+      callback();
+    })
 
   fetchPlayerConnections = () =>
     this.source

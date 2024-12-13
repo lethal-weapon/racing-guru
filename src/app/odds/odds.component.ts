@@ -8,6 +8,7 @@ import {DEFAULT_RECOMMENDATION, RaceRecommendation, Recommendation} from '../mod
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
+import {OddsSnapshot, StarterCashflow} from '../model/oddsSnapshot.model';
 import {COLORS} from '../util/strings';
 import {
   DBL_ODDS_STEP,
@@ -91,6 +92,7 @@ export class OddsComponent implements OnInit {
   pick: Pick = DEFAULT_PICK;
   recommendation: Recommendation = DEFAULT_RECOMMENDATION;
   racecards: Racecard[] = [];
+  oddsSnapshots: OddsSnapshot[] = [];
 
   activeRace: number = 1;
   trackModeOn: boolean = false;
@@ -138,6 +140,19 @@ export class OddsComponent implements OnInit {
 
       if (this.trackModeOn) this.track();
     });
+
+    socket.addOddsSnapshotCallback((newSnapshot: OddsSnapshot) => {
+      const oldSnapshot = this.oddsSnapshots
+        .find(s => s.meeting === newSnapshot.meeting && s.race === newSnapshot.race);
+
+      if (oldSnapshot) {
+        if (oldSnapshot.time != newSnapshot.time) oldSnapshot.time = newSnapshot.time;
+        if (oldSnapshot.snapshots != newSnapshot.snapshots) oldSnapshot.snapshots = newSnapshot.snapshots;
+        if (oldSnapshot.cashflows != newSnapshot.cashflows) oldSnapshot.cashflows = newSnapshot.cashflows;
+      }
+
+      if (this.trackModeOn) this.track();
+    });
   }
 
   ngOnInit(): void {
@@ -145,13 +160,17 @@ export class OddsComponent implements OnInit {
       this.pick = this.repo.findPick();
     });
 
+    this.repo.fetchRecommendations(1, () => {
+      this.recommendation =
+        this.repo.findRecommendations()[0] || DEFAULT_RECOMMENDATION;
+    });
+
     this.repo.fetchRacecards('latest', () => {
       this.racecards = this.repo.findRacecards();
     });
 
-    this.repo.fetchRecommendations(1, () => {
-      this.recommendation =
-        this.repo.findRecommendations()[0] || DEFAULT_RECOMMENDATION;
+    this.repo.fetchOddsSnapshots('latest', () => {
+      this.oddsSnapshots = this.repo.findOddsSnapshots();
     });
 
     this.repo.fetchMeetingHorses();
@@ -770,6 +789,11 @@ export class OddsComponent implements OnInit {
     return this.recommendation.races.find(r => r.race === this.activeRace);
   }
 
+  get activeCashflows(): StarterCashflow[] {
+    // @ts-ignore
+    return this.oddsSnapshots.find(r => r.race === this.activeRace)?.cashflows || [];
+  }
+
   get activeRacecard(): Racecard {
     // @ts-ignore
     return this.racecards.find(r => r.race === this.activeRace);
@@ -836,6 +860,7 @@ export class OddsComponent implements OnInit {
     return this.pick.races.length === 0
       || this.recommendation.races.length === 0
       || this.racecards.length === 0
+      || this.oddsSnapshots.length === 0
       || this.repo.findHorses().length === 0;
   }
 }
