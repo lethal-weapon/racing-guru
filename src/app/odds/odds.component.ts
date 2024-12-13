@@ -22,21 +22,18 @@ import {
   DEFAULT_MIN_QPL_ODDS,
   FCT_ODDS_STEP,
   MAX_RACE_PER_MEETING,
+  ONE_MILLION,
   QIN_ODDS_STEP,
   QPL_ODDS_STEP
 } from '../util/numbers';
 import {
   formatOdds,
-  getDoublePlacingOdds,
-  getForecastPlacingOdds,
   getMaxRace,
   getRaceBadgeStyle,
   getSignalColor,
   getStarterQQPWinPlaceOdds,
   getStarters,
   getStarterWinPlaceOdds,
-  getTiercePlacingOdds,
-  getTrioFirstFourOdds,
   toPlacingColor,
   toRelativeTime
 } from '../util/functions';
@@ -485,47 +482,6 @@ export class OddsComponent implements OnInit {
     return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
   }
 
-  isAbnormalPoolOdds = (pool: string, starter: Starter, placing: number): boolean => {
-    let starterOdds = 1;
-    if (pool === 'QIN') starterOdds = getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[0];
-    if (pool === 'QPL') starterOdds = getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[1];
-    if (pool === 'FCT') starterOdds = getForecastPlacingOdds(starter, placing, this.activeRacecard);
-    if (pool === 'TCE') starterOdds = getTiercePlacingOdds(starter, placing, this.activeRacecard);
-    if (pool === 'TRI') starterOdds = getTrioFirstFourOdds(starter, this.activeRacecard)[0];
-    if (pool === 'F-F') starterOdds = getTrioFirstFourOdds(starter, this.activeRacecard)[1];
-    if (pool === 'DBL') starterOdds = getDoublePlacingOdds(starter, placing, placing === 1 ? this.activePrevRacecard : this.activeRacecard);
-    if (starterOdds === 1) return false;
-
-    const starters = getStarters(this.activeRacecard);
-    const priorStarterIndex = starters.indexOf(starter) - 1;
-    if (priorStarterIndex < 0) return false;
-
-    let priorStarterOdds = 1;
-    if (pool === 'QIN') priorStarterOdds = getStarterQQPWinPlaceOdds(starters[priorStarterIndex], this.activeRacecard)[0];
-    if (pool === 'QPL') priorStarterOdds = getStarterQQPWinPlaceOdds(starters[priorStarterIndex], this.activeRacecard)[1];
-    if (pool === 'FCT') priorStarterOdds = getForecastPlacingOdds(starters[priorStarterIndex], placing, this.activeRacecard);
-    if (pool === 'TCE') priorStarterOdds = getTiercePlacingOdds(starters[priorStarterIndex], placing, this.activeRacecard);
-    if (pool === 'TRI') priorStarterOdds = getTrioFirstFourOdds(starters[priorStarterIndex], this.activeRacecard)[0];
-    if (pool === 'F-F') priorStarterOdds = getTrioFirstFourOdds(starters[priorStarterIndex], this.activeRacecard)[1];
-    if (pool === 'DBL') priorStarterOdds = getDoublePlacingOdds(starters[priorStarterIndex], placing, placing === 1 ? this.activePrevRacecard : this.activeRacecard);
-    if (priorStarterOdds === 1) return false;
-
-    return starterOdds < priorStarterOdds;
-  }
-
-  getStarterPoolOdds = (pool: string, starter: Starter, placing: number): string => {
-    let odds = 1;
-    if (pool === 'QIN') odds = getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[0];
-    if (pool === 'QPL') odds = getStarterQQPWinPlaceOdds(starter, this.activeRacecard)[1];
-    if (pool === 'FCT') odds = getForecastPlacingOdds(starter, placing, this.activeRacecard);
-    if (pool === 'TCE') odds = getTiercePlacingOdds(starter, placing, this.activeRacecard);
-    if (pool === 'TRI') odds = getTrioFirstFourOdds(starter, this.activeRacecard)[0];
-    if (pool === 'F-F') odds = getTrioFirstFourOdds(starter, this.activeRacecard)[1];
-    if (pool === 'DBL') odds = getDoublePlacingOdds(starter, placing, placing === 1 ? this.activePrevRacecard : this.activeRacecard);
-    if (odds === 1) return '';
-    return odds < 10 ? odds.toFixed(1) : Math.floor(odds).toString();
-  }
-
   getDBLCellBackground = (currIndex: number, nextIndex: number): string => {
     const currStarters = getStarters(this.activeRacecard).length;
     const nextStarters = getStarters(this.activeNextRacecard).length;
@@ -714,20 +670,39 @@ export class OddsComponent implements OnInit {
   getHorseNameCH = (horseCode: string): string =>
     this.repo.findHorses().find(h => h.code === horseCode)?.nameCH || horseCode
 
-  get poolRows(): Array<{ pool: string, placing: number, label: string, edge: boolean }> {
-    return [
-      {pool: 'QIN', placing: 1, label: '', edge: false},
-      {pool: 'QPL', placing: 1, label: '', edge: true},
-      {pool: 'FCT', placing: 1, label: 'W', edge: false},
-      {pool: 'FCT', placing: 2, label: 'Q', edge: true},
-      {pool: 'TCE', placing: 1, label: 'W', edge: false},
-      {pool: 'TCE', placing: 2, label: 'Q', edge: false},
-      {pool: 'TCE', placing: 3, label: 'P', edge: true},
-      {pool: 'TRI', placing: 1, label: '', edge: false},
-      {pool: 'F-F', placing: 1, label: '', edge: true},
-      {pool: 'DBL', placing: 1, label: 'U', edge: false},
-      {pool: 'DBL', placing: 2, label: 'D', edge: true},
-    ];
+  isAbnormalCashflow = (starter: Starter): boolean => {
+    const starters = getStarters(this.activeRacecard);
+    const priorStarterIndex = starters.indexOf(starter) - 1;
+    if (priorStarterIndex < 0) return false;
+
+    const starterCashflow = this.getStarterCashflow(starter).height;
+    const priorStarterCashflow = this.getStarterCashflow(starters[priorStarterIndex]).height;
+    return starterCashflow > priorStarterCashflow;
+  }
+
+  getStarterCashflow = (starter: Starter): { height: number, amount: string } => {
+    const cashflows = this.activeRacecard.starters
+      .filter(s => !s.scratched)
+      .map(s =>
+        ({
+          order: s.order,
+          cashflow: this.activeCashflows
+            .flatMap(cf => cf.investments)
+            .filter(i => i.order === s.order)
+            .map(i => i.total)
+            .reduce((prev, curr) => prev + curr, 0)
+        }))
+      .sort((a, b) => b.cashflow - a.cashflow);
+
+    if (cashflows.some(cf => cf.cashflow < 1)) return {height: 0, amount: ''};
+
+    const maxCashflow = cashflows[0]?.cashflow;
+    const starterCashflow = cashflows.find(cf => cf.order === starter.order)?.cashflow || 0;
+
+    return {
+      height: parseFloat((128.0 * starterCashflow / maxCashflow).toFixed(1)),
+      amount: `${(starterCashflow / ONE_MILLION).toFixed(2)}M`
+    };
   }
 
   get trainersWithMoreThanOneStarter(): string[] {
@@ -802,11 +777,6 @@ export class OddsComponent implements OnInit {
   get activeNextRacecard(): Racecard {
     // @ts-ignore
     return this.racecards.find(r => r.race === this.activeRace + 1);
-  }
-
-  get activePrevRacecard(): Racecard {
-    // @ts-ignore
-    return this.racecards.find(r => r.race === this.activeRace - 1);
   }
 
   get maxRace(): number {

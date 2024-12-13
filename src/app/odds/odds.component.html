@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <div class="m-4 grid grid-cols-4">
+  <div class="m-4 mb-2 grid grid-cols-4">
     <div *ngFor="let c of rangeControls.slice(0, 3)"
          class="flex flex-row justify-evenly items-center px-6 text-center"
     >
@@ -107,27 +107,29 @@
   <table class="mx-auto table-fixed text-center border-collapse border border-gray-700"
          (mouseleave)="hoveredJockey = ''"
   >
-    <tr *ngFor="let row of poolRows"
-        class="hover:bg-gray-800"
-    >
-      <td class="w-40 border border-gray-700 font-mono"
-          [class.border-b-gray-400]="row.edge"
-      >
-        <span *ngIf="row.label.length === 0">
-          {{ row.pool }}
-        </span>
-        <span *ngIf="row.label.length > 0">
-          {{ row.pool }} - {{ row.label }}
-        </span>
+    <tr>
+      <td class="w-40 max-h-40 border border-gray-700 text-lg italic">
+        CASHFLOWS
       </td>
       <td *ngFor="let starter of getStarters(this.activeRacecard)"
-          class="w-20 border border-gray-700 {{ row.placing === (starter?.placing || 0) ? toPlacingColor(starter?.placing) : ''}}"
-          [class.bg-gray-700]="isAbnormalPoolOdds(row.pool, starter, row.placing)"
+          class="w-20 max-h-40 py-1 mx-auto border border-gray-700 relative"
           [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starter.jockey"
-          [class.border-b-gray-400]="row.edge"
           (mouseenter)="hoveredJockey = starter.jockey"
       >
-        {{ getStarterPoolOdds(row.pool, starter, row.placing) }}
+        <div class="flex flex-col items-center absolute top-1
+                    {{getStarterCashflow(starter).amount.length >= 6 ? 'left-3' : 'left-3.5'}}"
+        >
+          <div class="w-10 bg-gradient-to-b from-indigo-400 to-indigo-700"
+               [style.height]="getStarterCashflow(starter).height + 'px'"
+          >
+          </div>
+          <div
+            [class.text-yellow-400]="isAbnormalCashflow(starter)"
+            [class.opacity-0]="getStarterCashflow(starter).amount.length === 0"
+          >
+            {{ getStarterCashflow(starter).amount }}
+          </div>
+        </div>
       </td>
     </tr>
     <tr class="font-bold">
