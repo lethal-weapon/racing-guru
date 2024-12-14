@@ -108,11 +108,13 @@
          (mouseleave)="hoveredJockey = ''"
   >
     <tr>
-      <td class="w-40 max-h-40 border border-gray-700 text-lg italic">
+      <td class="w-40 border border-gray-700 text-lg italic"
+          [class.h-40]="getStarterCashflow(getStarters(this.activeRacecard)[0]).height > 0"
+      >
         CASHFLOWS
       </td>
       <td *ngFor="let starter of getStarters(this.activeRacecard)"
-          class="w-20 max-h-40 py-1 mx-auto border border-gray-700 relative"
+          class="w-20 py-1 mx-auto border border-gray-700 relative"
           [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starter.jockey"
           (mouseenter)="hoveredJockey = starter.jockey"
       >
