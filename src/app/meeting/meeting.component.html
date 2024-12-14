@@ -261,11 +261,12 @@
           {{ getStarterCount(race) }}
         </td>
         <td *ngFor="let pool of investmentPoolNames"
-            class="border border-gray-700"
+            class="border border-gray-700 font-mono"
             [class.border-r-red-900]="BOUNDARY_INVESTMENT_POOLS.includes(pool)"
         >
-          <span *ngIf="getInvestmentPoolAmount(race, pool) !== '0.00'">
-            ${{ getInvestmentPoolAmount(race, pool) }}M
+          <span *ngIf="getInvestmentPoolAmount(race, pool).length > 0">
+            $<span *ngIf="getInvestmentPoolAmount(race, pool).length < 5">&nbsp;</span>
+            {{ getInvestmentPoolAmount(race, pool) }}M
           </span>
         </td>
       </tr>
@@ -312,7 +313,7 @@
             [class.text-yellow-400]="getDividendOdds(race, pool.name) >= pool.threshold"
         >
           <span *ngIf="getDividendOdds(race, pool.name) > 0">
-            {{ getDividendOdds(race, pool.name) }}
+            {{ getDividendOdds(race, pool.name) | number }}
           </span>
         </td>
       </tr>

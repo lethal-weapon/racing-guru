@@ -366,8 +366,16 @@ export class MeetingComponent implements OnInit {
     `;
   }
 
-  getInvestmentPoolAmount = (race: number, pool: string): string =>
-    this.investmentPools.find(i => i.race === race && i.pool === pool)?.amount || ''
+  getInvestmentPoolAmount = (race: number, pool: string): string => {
+    let amount = this.investmentPools
+      .find(i => i.race === race && i.pool === pool)?.amount || '';
+
+    if (amount === '0.00') return '';
+    if (amount.startsWith('0.')) amount = amount.replace('0.', ' .');
+    if (amount.includes('.0')) amount = amount.replace('.0', '. ');
+
+    return amount;
+  }
 
   getRaceTooltip = (racecard: Racecard): string => {
     const name = racecard.name
