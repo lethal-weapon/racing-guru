@@ -1,19 +1,14 @@
-import {Pool} from './pool.model';
-import {Odds} from './odds.model';
-
 export interface OddsSnapshot {
   meeting: string,
   race: number,
   venue: string,
   time: string,
-  snapshots: PoolOddsSnapshot[],
+  distributions: StarterDistribution[],
   cashflows: StarterCashflow[]
 }
 
-export interface PoolOddsSnapshot {
+export interface StarterDistribution {
   timestamp: string,
-  pool: Pool,
-  odds: Odds,
   investments: StarterInvestment[]
 }
 

@@ -371,9 +371,15 @@ export class MeetingComponent implements OnInit {
       .find(i => i.race === race && i.pool === pool)?.amount || '';
 
     if (amount === '0.00') return '';
-    if (amount.startsWith('0.')) amount = amount.replace('0.', ' .');
-    if (amount.includes('.0')) amount = amount.replace('.0', '. ');
-
+    if (amount.startsWith('0.')) {
+      amount = amount.replace('0.', ' .');
+      if (amount.includes('.0')) {
+        amount = amount.replace('.0', '. ');
+      }
+    }
+    if (amount.endsWith('0')) {
+      amount = `${amount.slice(0, amount.length - 1)} `;
+    }
     return amount;
   }
 

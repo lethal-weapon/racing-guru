@@ -265,8 +265,7 @@
             [class.border-r-red-900]="BOUNDARY_INVESTMENT_POOLS.includes(pool)"
         >
           <span *ngIf="getInvestmentPoolAmount(race, pool).length > 0">
-            $<span *ngIf="getInvestmentPoolAmount(race, pool).length < 5">&nbsp;</span>
-            {{ getInvestmentPoolAmount(race, pool) }}M
+            $<span *ngIf="getInvestmentPoolAmount(race, pool).length < 5">&nbsp;</span>{{ getInvestmentPoolAmount(race, pool) }}M
           </span>
         </td>
       </tr>

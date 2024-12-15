@@ -144,7 +144,7 @@ export class OddsComponent implements OnInit {
 
       if (oldSnapshot) {
         if (oldSnapshot.time != newSnapshot.time) oldSnapshot.time = newSnapshot.time;
-        if (oldSnapshot.snapshots != newSnapshot.snapshots) oldSnapshot.snapshots = newSnapshot.snapshots;
+        if (oldSnapshot.distributions != newSnapshot.distributions) oldSnapshot.distributions = newSnapshot.distributions;
         if (oldSnapshot.cashflows != newSnapshot.cashflows) oldSnapshot.cashflows = newSnapshot.cashflows;
       }
 
