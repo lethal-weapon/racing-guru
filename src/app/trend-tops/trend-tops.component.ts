@@ -36,7 +36,7 @@ export class TrendTopsComponent implements OnInit {
     return 'bg-red-600';
   }
 
-  getOnBoardPlayers = (meeting: Meeting): PlayerSummary[] => {
+  getTopPlayers = (meeting: Meeting): PlayerSummary[] => {
     let board: PlayerSummary[] = [];
     [this.trainers, this.jockeys].forEach((category, index) => {
       meeting.players
@@ -49,6 +49,35 @@ export class TrendTopsComponent implements OnInit {
         });
     });
     return board;
+  }
+
+  get topConsistentPlayers(): Array<{ player: string, points: number }> {
+    const today = new Date().toISOString().split('T')[0];
+    let pointByPlayer: Map<string, number> = new Map();
+
+    this.meetings
+      .filter(m => m.meeting < today)
+      .forEach((m, mIndex) => {
+        this.getTopPlayers(m).forEach((ps, index) => {
+          let points = TOP_PLAYER_SIZE - (index % TOP_PLAYER_SIZE);
+          points *= ((this.meetings.length - mIndex) / this.meetings.length);
+
+          if (pointByPlayer.has(ps.player)) {
+            const newPoints = points + (pointByPlayer.get(ps.player) || 0);
+            pointByPlayer.set(ps.player, newPoints);
+          } else {
+            pointByPlayer.set(ps.player, points);
+          }
+        });
+      });
+
+    return [this.trainers, this.jockeys].flatMap(category =>
+      category
+        .map(p => ({player: p, points: (pointByPlayer.get(p) || 0)}))
+        .sort((p1, p2) => p2.points - p1.points)
+        .slice(0, TOP_PLAYER_SIZE)
+        .map(p => ({player: p.player, points: Math.floor(p.points)}))
+    );
   }
 
   get trainers(): string[] {
