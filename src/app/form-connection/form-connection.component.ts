@@ -10,7 +10,7 @@ import {Player} from '../model/player.model';
 })
 export class FormConnectionComponent implements OnInit {
 
-  activePlayer: string = 'WDJ';
+  activePlayer: string = 'NPC';
 
   constructor(private repo: RestRepository) {
   }

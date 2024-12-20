@@ -16,7 +16,7 @@ import {
 })
 export class TrendCollaborationComponent implements OnInit {
 
-  activePlayer: string = 'WDJ';
+  activePlayer: string = 'NPC';
   hoveredTrainer: string = '';
 
   protected readonly toPlacingColor = toPlacingColor;

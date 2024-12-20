@@ -95,6 +95,7 @@ export class OddsComponent implements OnInit {
   trackModeOn: boolean = false;
   onDoubleTable: boolean = false;
   hoveredJockey: string = '';
+  cashflowMinute: number = -3;
 
   bets: Map<number, Bet> = new Map();
   ranges: Map<number, OddsRange> = new Map();
@@ -361,6 +362,21 @@ export class OddsComponent implements OnInit {
     else unwanted.push(order);
 
     this.trashes.set(race, unwanted);
+  }
+
+  adjustCashflowMinute = (increment: number) => {
+    if (increment === -99) {
+      this.cashflowMinute = -3;
+
+    } else if (increment === -1) {
+      if (this.cashflowMinute > -3) this.cashflowMinute -= 1;
+
+    } else if (increment === 1) {
+      if (this.cashflowMinute < 25) this.cashflowMinute += 1;
+
+    } else if (increment === 99) {
+      this.cashflowMinute = 25;
+    }
   }
 
   adjustOdds = (pool: string, step: number, onMin: boolean, toAdd: boolean) => {
@@ -728,6 +744,11 @@ export class OddsComponent implements OnInit {
       .reduce((prev, curr) => prev + curr, 0);
   }
 
+  get cashflowMinuteDisplay(): string {
+    if (this.cashflowMinute === -3) return `Latest`;
+    return `${this.cashflowMinute} Min`.replace('-', '+');
+  }
+
   get activeBet(): Bet {
     return this.bets.get(this.activeRace) || DEFAULT_BET;
   }
@@ -765,8 +786,11 @@ export class OddsComponent implements OnInit {
   }
 
   get activeCashflows(): StarterCashflow[] {
-    // @ts-ignore
-    return this.oddsSnapshots.find(r => r.race === this.activeRace)?.cashflows || [];
+    const raceTime = new Date(this.activeRacecard.time).getTime();
+    let upToTimestamp = raceTime - 60_000 * this.cashflowMinute;
+
+    return (this.oddsSnapshots.find(r => r.race === this.activeRace)?.cashflows || [])
+      .filter(cf => new Date(cf.toTimestamp).getTime() <= upToTimestamp);
   }
 
   get activeRacecard(): Racecard {

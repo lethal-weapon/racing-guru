@@ -101,8 +101,8 @@ export class RestRepository {
   fetchHorseWithoutStarters = () =>
     this.source.getHorseWithoutStarters().subscribe(data => this.horses = data)
 
-  fetchMeetingHorses = () =>
-    this.source.getMeetingHorses().subscribe(data => this.horses = data)
+  fetchMeetingHorses = (meeting: string = 'latest') =>
+    this.source.getMeetingHorses(meeting).subscribe(data => this.horses = data)
 
   fetchActivePlayers = () =>
     this.source.getActivePlayers().subscribe(data => this.players = data)

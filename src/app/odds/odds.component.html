@@ -108,10 +108,40 @@
          (mouseleave)="hoveredJockey = ''"
   >
     <tr>
-      <td class="w-40 border border-gray-700 text-lg italic"
+      <td class="w-40 border border-gray-700 text-lg"
           [class.h-40]="getStarterCashflow(getStarters(this.activeRacecard)[0]).height > 0"
       >
-        CASHFLOWS
+        <div class="italic">
+          CASHFLOWS
+        </div>
+        <ng-container *ngIf="getStarterCashflow(getStarters(this.activeRacecard)[0]).height > 0">
+          <div class="mx-2 h-0.5 bg-gradient-to-r from-gray-900 via-gray-400 to-gray-900"></div>
+          <div class="mt-4">
+            {{ cashflowMinuteDisplay }}
+          </div>
+          <div class="flex flex-row justify-evenly">
+            <div class="cursor-pointer hover:text-yellow-400"
+                 (click)="adjustCashflowMinute(-99)"
+            >
+              <i class="fa fa-step-backward"></i>
+            </div>
+            <div class="cursor-pointer hover:text-yellow-400"
+                 (click)="adjustCashflowMinute(-1)"
+            >
+              <i class="fa fa-backward"></i>
+            </div>
+            <div class="cursor-pointer hover:text-yellow-400"
+                 (click)="adjustCashflowMinute(1)"
+            >
+              <i class="fa fa-forward"></i>
+            </div>
+            <div class="cursor-pointer hover:text-yellow-400"
+                 (click)="adjustCashflowMinute(99)"
+            >
+              <i class="fa fa-step-forward"></i>
+            </div>
+          </div>
+        </ng-container>
       </td>
       <td *ngFor="let starter of getStarters(this.activeRacecard)"
           class="w-20 py-1 mx-auto border border-gray-700 relative"

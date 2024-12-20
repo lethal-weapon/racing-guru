@@ -52,7 +52,7 @@ interface HorseView {
 export class TrendEveryoneComponent implements OnInit {
 
   meetingIndex: number = 0;
-  activePlayer: string = 'WDJ';
+  activePlayer: string = 'NPC';
   activeMeeting: string = '';
   activePlayerType: string = this.playerTypes[0];
   activePlayerView: string = this.playerViews[0];
