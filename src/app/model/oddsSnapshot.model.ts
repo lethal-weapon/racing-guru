@@ -1,3 +1,5 @@
+import {WinPlaceOdds} from './odds.model';
+
 export interface OddsSnapshot {
   meeting: string,
   race: number,
@@ -9,6 +11,7 @@ export interface OddsSnapshot {
 
 export interface StarterDistribution {
   timestamp: string,
+  winPlaceOdds: WinPlaceOdds[],
   investments: StarterInvestment[]
 }
 
