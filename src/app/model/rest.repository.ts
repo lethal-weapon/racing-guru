@@ -255,7 +255,7 @@ export class RestRepository {
       callback();
     })
 
-  fetchRecentCollaborations = (meetingSize: number = 16) =>
+  fetchRecentCollaborations = (meetingSize: number = 24) =>
     this.source
       .getRecentCollaborations(meetingSize)
       .subscribe(data => this.collaborations = data)

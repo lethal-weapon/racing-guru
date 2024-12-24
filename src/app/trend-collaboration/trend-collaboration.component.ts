@@ -25,7 +25,7 @@ export class TrendCollaborationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchRecentCollaborations(16);
+    this.repo.fetchRecentCollaborations(24);
   }
 
   setActivePlayer = (clicked: string) =>

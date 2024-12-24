@@ -26,7 +26,7 @@ export class TrendDrawComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.repo.fetchDrawInheritances(16);
+    this.repo.fetchDrawInheritances(24);
 
     this.loopIntervalId = setInterval(() => {
       this.repo.fetchLatestDrawInheritances();
