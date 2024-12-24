@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {ExpenseItem, FinancialStatement, IncomeItem} from '../model/financial.model';
+import {today} from '../util/functions';
 import {
   DEFAULT_TRANSACTION,
   EXPENSE_CATEGORIES,
@@ -71,7 +72,7 @@ export class FinancePersonalComponent implements OnInit {
   copyTransaction = (clicked: Transaction) => {
     this.editingTransaction = {...clicked};
     this.editingTransaction.id = '';
-    this.editingTransaction.date = new Date().toISOString().split('T')[0];
+    this.editingTransaction.date = today();
   }
 
   editTransaction = (clicked: Transaction) => {

@@ -1,3 +1,5 @@
+import {today} from '../util/functions';
+
 export class Transaction {
   constructor(
     public id: string,
@@ -56,7 +58,7 @@ export const TRANSACTION_METHODS: string[] = [
 
 export const DEFAULT_TRANSACTION: Transaction = {
   id: '',
-  date: new Date().toISOString().split('T')[0],
+  date: today(),
   type: 'Expense',
   category: 'Food',
   method: 'VISA',

@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {Meeting, PlayerSummary} from '../model/meeting.model';
-import {formatMeeting} from '../util/functions';
+import {formatMeeting, today} from '../util/functions';
 
 const TOP_PLAYER_SIZE = 7;
 
@@ -52,11 +52,10 @@ export class TrendTopsComponent implements OnInit {
   }
 
   get topConsistentPlayers(): Array<{ player: string, points: number }> {
-    const today = new Date().toISOString().split('T')[0];
     let pointByPlayer: Map<string, number> = new Map();
 
     this.meetings
-      .filter(m => m.meeting < today)
+      .filter(m => m.meeting < today())
       .forEach((m, mIndex) => {
         this.getTopPlayers(m).forEach((ps, index) => {
           let points = TOP_PLAYER_SIZE - (index % TOP_PLAYER_SIZE);

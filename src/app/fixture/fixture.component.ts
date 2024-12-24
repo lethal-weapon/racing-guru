@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Fixture} from '../model/fixture.model';
 import {PAYDAY_MEETING_INTERVAL} from '../util/numbers';
+import {today} from "../util/functions";
 
 export interface MeetingItem {
   meeting: string,
@@ -38,7 +39,7 @@ export class FixtureComponent implements OnInit {
     meeting === (
       this.fixture.meetings
         .map(m => m.meeting)
-        .filter(m => new Date(m) >= new Date())
+        .filter(m => m >= today())
         .sort((m1, m2) => m1.localeCompare(m2))
         .shift() || ''
     )

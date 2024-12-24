@@ -1,3 +1,5 @@
+import {today} from '../util/functions';
+
 export class Journal {
   constructor(
     public id: string,
@@ -10,7 +12,7 @@ export class Journal {
 
 export const DEFAULT_JOURNAL: Journal = {
   id: '',
-  date: new Date().toISOString().split('T')[0],
+  date: today(),
   description: '',
   entries: [],
 }

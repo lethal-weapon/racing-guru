@@ -6,6 +6,9 @@ import {COLORS, ODDS_INTENSITIES} from './strings';
 import {DBL_PAYOUT_RATE, FCT_PAYOUT_RATE, ONE_MILLION, PAYOUT_RATE, REST_PAYOUT_RATE, TRI_PAYOUT_RATE} from './numbers';
 import {Meeting} from '../model/meeting.model';
 
+export const today = (): string =>
+  (new Date()).toISOString().split('T')[0];
+
 export const formatRace = (race: number): string =>
   race === 10 ? 'X' : race === 11 ? 'E' : race.toString()
 
