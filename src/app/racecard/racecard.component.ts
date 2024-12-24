@@ -208,6 +208,19 @@ export class RacecardComponent implements OnInit {
       this.editingSelections.push({order: starter.order, placing: placing});
   }
 
+  setFavoriteToDrawInheritanceStarters = () => {
+    let newPick: Pick = {...this.pick, races: [...this.pick.races]};
+    let newRacePick = newPick.races.find(r => r.race === this.activeRace);
+    if (!newRacePick) return;
+
+    const orders = (this.activeRacecard?.starters || [])
+      .filter(s => this.isDrawInheritanceStarter(s))
+      .map(s => s.order);
+
+    newRacePick.favorites = orders;
+    this.repo.savePick(newPick);
+  }
+
   isFavorite = (starter: Starter): boolean =>
     this.pick.races
       .filter(r => r.race === this.activeRace)
