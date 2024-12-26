@@ -98,6 +98,7 @@ export class TrendDrawComponent implements OnInit, OnDestroy {
     const draw = this.getDraw(meeting, race, placing);
     return (this.meetings.find(m => m.meeting === meeting)?.players || [])
       .flatMap(ps => ps.starters)
+      .filter(s => !s.scratched)
       .filter(s => s.race === race && s.draw === draw)
       .shift()?.winOdds || 0;
   }
