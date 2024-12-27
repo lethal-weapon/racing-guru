@@ -118,6 +118,7 @@
               </div>
               <div>
                 <a [href]="toHorseProfileUrl(getStarter(jockey, race).horse)"
+                   [class.text-green-600]="getStarter(jockey, race).interviewed"
                    target="_blank"
                 >
                   {{ getStarter(jockey, race).horse[0] }}
