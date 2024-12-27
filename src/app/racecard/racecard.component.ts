@@ -115,6 +115,7 @@ export class RacecardComponent implements OnInit {
 
     this.repo.fetchMeetingHorses();
     this.repo.fetchDrawInheritances(2);
+    this.repo.fetchTrackworkSnapshots(1);
   }
 
   formatVenue = (venue: string): string =>
@@ -221,6 +222,19 @@ export class RacecardComponent implements OnInit {
     this.repo.savePick(newPick);
   }
 
+  setFavoriteToTrainerFocusStarters = () => {
+    let newPick: Pick = {...this.pick, races: [...this.pick.races]};
+    let newRacePick = newPick.races.find(r => r.race === this.activeRace);
+    if (!newRacePick) return;
+
+    const orders = (this.activeRacecard?.starters || [])
+      .filter(s => this.isTrainerFocusStarter(s))
+      .map(s => s.order);
+
+    newRacePick.favorites = orders;
+    this.repo.savePick(newPick);
+  }
+
   isFavorite = (starter: Starter): boolean =>
     this.pick.races
       .filter(r => r.race === this.activeRace)
@@ -268,6 +282,18 @@ export class RacecardComponent implements OnInit {
     }
     return false;
   }
+
+  isTrainerFocusStarter = (starter: Starter): boolean =>
+    (
+      this.repo
+        .findTrackworkSnapshots()
+        .find(ts => ts.meeting === this.activeRacecard.meeting)
+        ?.starters
+      || []
+    )
+      .filter(s => s.race === this.activeRace && s.trainerFocus)
+      .map(s => s.order)
+      .includes(starter.order)
 
   getSelectionCheckColor = (starter: Starter, placing: number): string => {
     if (this.isSelection(starter, placing)) return 'text-yellow-400';
@@ -398,6 +424,7 @@ export class RacecardComponent implements OnInit {
       || this.meetings.length === 0
       || this.collaborations.length === 0
       || this.repo.findHorses().length === 0
-      || this.repo.findDrawInheritances().length === 0;
+      || this.repo.findDrawInheritances().length === 0
+      || this.repo.findTrackworkSnapshots().length === 0;
   }
 }
