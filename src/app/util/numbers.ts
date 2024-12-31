@@ -18,13 +18,13 @@ export const MAX_RACE_PER_MEETING = 11;
 export const PAYDAY_MEETING_INTERVAL = 22;
 export const SENIOR_HORSE_AGE = 7;
 
-export const DEFAULT_MIN_QPL_ODDS = 10;
-export const DEFAULT_MIN_QIN_ODDS = 20;
+export const DEFAULT_MIN_QPL_ODDS = 1;
+export const DEFAULT_MIN_QIN_ODDS = 5;
 export const DEFAULT_MIN_FCT_ODDS = 35;
 export const DEFAULT_MIN_DBL_ODDS = 30;
 
 export const DEFAULT_MAX_QPL_ODDS = 75;
-export const DEFAULT_MAX_QIN_ODDS = 120;
+export const DEFAULT_MAX_QIN_ODDS = 150;
 export const DEFAULT_MAX_FCT_ODDS = 240;
 export const DEFAULT_MAX_DBL_ODDS = 150;
 
