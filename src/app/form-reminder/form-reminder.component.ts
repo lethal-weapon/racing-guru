@@ -7,7 +7,7 @@ import {StarterChange} from '../model/starter.model';
 import {PlayerBirthday, PlayerWinner, Reminder} from '../model/reminder.model';
 import {TEN_THOUSAND, TWO_SECONDS} from '../util/numbers';
 import {SEASONS} from '../util/strings';
-import {formatMeeting} from '../util/functions';
+import {formatMeeting, toPlacingColor} from '../util/functions';
 
 const REPORT_WINDOW_SIZE = 6;
 const MEETING_WINDOW_SIZE = 12;
@@ -176,6 +176,18 @@ export class FormReminderComponent implements OnInit {
       }
     }
     return 0;
+  }
+
+  getInterviewPlacingStyle = (interview: Interview): string => {
+    const placing = (
+      this.repo.findRacecards()
+        .find(r => r.meeting === interview.meeting && r.race === interview.race)
+        ?.starters || []
+    )
+      .find(s => s.order === interview.order)
+      ?.placing;
+
+    return toPlacingColor(placing);
   }
 
   getBadgeStyle = (render: string): string =>
