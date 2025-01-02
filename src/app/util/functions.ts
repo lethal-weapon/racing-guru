@@ -4,7 +4,7 @@ import {WinPlaceOdds} from '../model/odds.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {COLORS, ODDS_INTENSITIES} from './strings';
 import {DBL_PAYOUT_RATE, FCT_PAYOUT_RATE, ONE_MILLION, PAYOUT_RATE, REST_PAYOUT_RATE, TRI_PAYOUT_RATE} from './numbers';
-import {Meeting} from '../model/meeting.model';
+import {Meeting, PlayerSummary} from '../model/meeting.model';
 
 export const today = (): string =>
   (new Date()).toISOString().split('T')[0];
@@ -37,6 +37,9 @@ export const toMillion = (amount: number): string =>
 
 export const toHorseProfileUrl = (brand: string): string =>
   `https://racing.hkjc.com/racing/information/English/Horse/Horse.aspx?HorseNo=${brand}`
+
+export const toChallengePoints = (ps: PlayerSummary): number =>
+  12 * ps.wins + 6 * ps.seconds + 4 * ps.thirds
 
 export const toOrdinalWithSuffix = (ordinal: number): string => {
   let suffix = 'th';

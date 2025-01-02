@@ -65,12 +65,16 @@
       <i class="fa fa-eraser"></i>
     </td>
     <td *ngFor="let overview of overviews"
-        colspan="6"
+        colspan="8"
         class="border border-gray-700 cursor-pointer"
         [class.text-yellow-400]="activeMeeting === overview.meeting"
         (click)="activeMeeting = overview.meeting"
     >
-      {{ overview.title }}
+      {{ overview.monthDay }}
+      &nbsp;
+      {{ overview.venue }}
+      &nbsp;
+      {{ overview.races }}R
     </td>
   </tr>
   <tr>
@@ -136,7 +140,13 @@
           [class.border-r-gray-700]="last"
           [class.border-b-gray-400]="isBoundaryPlayer(player)"
           [class.border-b-gray-700]="!isBoundaryPlayer(player)"
-          [class.text-yellow-400]="'X' == getCellValue(player, meeting.meeting, placing.key)"
+          [class.underline]="last && isChallengeWinner(meeting.meeting, player)"
+          [class.text-yellow-400]="
+          (
+          'X' == getCellValue(player, meeting.meeting, placing.key)
+          ||
+          (last && isChallengeWinner(meeting.meeting, player))
+          )"
       >
         {{ getCellValue(player, meeting.meeting, placing.key) }}
       </td>

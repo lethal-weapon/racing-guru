@@ -56,6 +56,7 @@ export class TrendComponent implements OnInit {
     this.repo.fetchMeetings(24);
     this.repo.fetchReminders(24);
     this.repo.fetchSyndicateSnapshots(24);
+    this.repo.fetchChallengeSnapshots(24);
     this.repo.fetchRacecards('latest', () => {
     });
   }
@@ -76,6 +77,7 @@ export class TrendComponent implements OnInit {
       || this.repo.findMeetings().length === 0
       || this.repo.findReminders().length === 0
       || this.repo.findSyndicateSnapshots().length === 0
+      || this.repo.findChallengeSnapshots().length === 0
       || this.repo.findRacecards().length === 0;
   }
 }

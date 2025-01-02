@@ -16,6 +16,7 @@ import {Collaboration} from './collaboration.model';
 import {DrawInheritance} from './draw.model';
 import {TrackworkSnapshot} from './trackwork.model';
 import {SignalSnapshot} from './signal.model';
+import {ChallengeSnapshot} from './challenge.model';
 import {OddsSnapshot} from './oddsSnapshot.model';
 import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
@@ -42,6 +43,7 @@ export class RestRepository {
   private syndicateSnapshots: SyndicateSnapshot[] = [];
   private trackworkSnapshots: TrackworkSnapshot[] = [];
   private signalSnapshots: SignalSnapshot[] = [];
+  private challengeSnapshots: ChallengeSnapshot[] = [];
   private oddsSnapshots: OddsSnapshot[] = [];
   private playerConnections: PlayerConnection[] = [];
   private blacklistConnections: BlacklistConnection[] = [];
@@ -73,6 +75,7 @@ export class RestRepository {
   findSyndicateSnapshots = () => this.syndicateSnapshots
   findTrackworkSnapshots = () => this.trackworkSnapshots
   findSignalSnapshots = () => this.signalSnapshots
+  findChallengeSnapshots = () => this.challengeSnapshots
   findOddsSnapshots = () => this.oddsSnapshots
   findPlayerConnections = () => this.playerConnections
   findBlacklistConnections = () => this.blacklistConnections
@@ -320,6 +323,17 @@ export class RestRepository {
     this.source
       .getSignalSnapshots(meetingSize)
       .subscribe(data => this.signalSnapshots = data);
+
+    callback();
+  }
+
+  fetchChallengeSnapshots = (
+    meetingSize: number = 8,
+    callback: () => any = () => console.log(``)
+  ) => {
+    this.source
+      .getChallengeSnapshots(meetingSize)
+      .subscribe(data => this.challengeSnapshots = data);
 
     callback();
   }

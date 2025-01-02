@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {EarningStarter, Meeting} from '../model/meeting.model';
+import {Racecard} from '../model/racecard.model';
+import {ChallengeSnapshot} from '../model/challenge.model';
 import {DEFAULT_PLAYER_WINNER, PlayerWinner} from '../model/reminder.model';
 import {COLORS} from '../util/strings';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
@@ -17,17 +19,19 @@ import {
   getOddsIntensityColor,
   getWinPlaceOdds,
   isBoundaryMeeting,
+  toChallengePoints,
   toPlacingColor
 } from '../util/functions';
-import {Racecard} from "../model/racecard.model";
 
-const MEETING_WINDOW_SIZE = 7;
+const MEETING_WINDOW_SIZE = 6;
 const SYNDICATE_KIND_SINGLE = 'SINGLE';
 const SYNDICATE_KIND_MULTIPLE = 'MULTIPLE';
 const SYNDICATE_KIND_SOLE = 'SOLE';
 
 interface MeetingOverview {
-  title: string,
+  monthDay: string,
+  venue: string,
+  races: number,
   link: string,
   meeting: string
 }
@@ -189,6 +193,18 @@ export class TrendEveryoneComponent implements OnInit {
       return ['engagements', 'earnings'].includes(key) ? 'X' : '';
     }
 
+    if (['challengeOrder', 'challengePoint'].includes(key)) {
+      const snapshot = this.challengeSnapshots.find(cs => cs.meeting === meeting);
+      const challengeOrder = [...(snapshot?.jkc || []), ...(snapshot?.tnc || [])]
+        .find(co => co.challenger === player)?.order || 0;
+
+      const points = toChallengePoints(players[0]);
+      if (key === 'challengeOrder') {
+        return challengeOrder >= 1 && challengeOrder <= 9 ? `(${challengeOrder})` : '';
+      }
+      return points === 0 ? '' : `${points}`;
+    }
+
     // @ts-ignore
     const value = players[0][key]
     if (value == 0) {
@@ -201,6 +217,20 @@ export class TrendEveryoneComponent implements OnInit {
     [this.activePlayerType, this.activePlayerView].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
+
+  isChallengeWinner = (meeting: string, player: string): boolean => {
+    const snapshot = this.challengeSnapshots.find(cs => cs.meeting === meeting);
+    const jkc = snapshot?.jkc || [];
+    const tnc = snapshot?.tnc || [];
+
+    if (jkc.some(co => co.challenger === player)) {
+      return jkc.sort((co1, co2) => co2.points - co1.points)[0]?.challenger === player;
+    }
+    if (tnc.some(co => co.challenger === player)) {
+      return tnc.sort((co1, co2) => co2.points - co1.points)[0]?.challenger === player;
+    }
+    return false;
+  }
 
   isOnMostRecentRacecard = (code: string): boolean => {
     if (this.meetings.length < 1) return false;
@@ -288,24 +318,26 @@ export class TrendEveryoneComponent implements OnInit {
       {placing: 'F', key: 'fourths', color: 'text-purple-600', width: 'w-6'},
       {placing: 'E', key: 'engagements', color: '', width: 'w-8'},
       {placing: '$', key: 'earnings', color: '', width: 'w-12'},
+      {placing: 'CO', key: 'challengeOrder', color: '', width: 'w-8'},
+      {placing: 'CP', key: 'challengePoint', color: '', width: 'w-10'},
     ];
   }
 
   get overviews(): MeetingOverview[] {
     return this.windowMeetings.map(m => {
-      const title = `
-          ${this.formatMeeting(m.meeting)}
-          ${m.races}R $${m.turnover}
-        `.trim();
-
       const date = m.meeting.replace(/-/g, '/');
-
       const link = `
           https://racing.hkjc.com/racing/information/
           English/Racing/ResultsAll.aspx?RaceDate=${date}
         `.replace(/\s/g, '');
 
-      return {title: title, link: link, meeting: m.meeting}
+      return {
+        monthDay: this.formatMeeting(m.meeting),
+        venue: m.venue,
+        races: m.races,
+        link: link,
+        meeting: m.meeting
+      }
     });
   }
 
@@ -354,6 +386,10 @@ export class TrendEveryoneComponent implements OnInit {
     return this.activePlayerType === this.playerTypes[0]
       ? this.repo.findPlayers().filter(p => !p.jockey).map(p => p.code)
       : this.repo.findPlayers().filter(p => p.jockey).map(p => p.code);
+  }
+
+  get challengeSnapshots(): ChallengeSnapshot[] {
+    return this.repo.findChallengeSnapshots();
   }
 
   get meetings(): Meeting[] {
