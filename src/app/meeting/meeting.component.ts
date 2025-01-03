@@ -9,7 +9,7 @@ import {Racecard} from '../model/racecard.model';
 import {DEFAULT_MEETING, Meeting} from '../model/meeting.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
-import {BOUNDARY_INVESTMENT_POOLS, BOUNDARY_POOLS} from '../util/strings';
+import {BOUNDARY_INVESTMENT_POOLS, BOUNDARY_POOLS, LATEST} from '../util/strings';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   formatRace,
@@ -23,7 +23,6 @@ import {
   toMillion,
   toPlacingColor
 } from '../util/functions';
-import {min} from "rxjs";
 
 interface PoolThreshold {
   name: string,
@@ -97,7 +96,7 @@ export class MeetingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const meeting = '2025-01-01';
+    const meeting = LATEST;
 
     this.repo.fetchPick(meeting, () => {
       this.pick = this.repo.findPick();
