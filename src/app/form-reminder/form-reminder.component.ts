@@ -6,7 +6,7 @@ import {Fine, Report} from '../model/report.model';
 import {StarterChange} from '../model/starter.model';
 import {PlayerBirthday, PlayerWinner, Reminder} from '../model/reminder.model';
 import {TEN_THOUSAND, TWO_SECONDS} from '../util/numbers';
-import {SEASONS} from '../util/strings';
+import {LATEST, SEASONS} from '../util/strings';
 import {formatMeeting, toPlacingColor} from '../util/functions';
 
 const REPORT_WINDOW_SIZE = 6;
@@ -35,7 +35,7 @@ export class FormReminderComponent implements OnInit {
   ngOnInit(): void {
     this.repo.fetchReports(88);
     this.repo.fetchReminders(88);
-    this.repo.fetchRacecards('latest', () => {
+    this.repo.fetchRacecards(LATEST, () => {
       this.activeMeeting = this.repo.findRacecards()[0]?.meeting || SEASONS[0].opening;
       this.initializeInterview();
     });

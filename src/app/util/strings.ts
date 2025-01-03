@@ -16,16 +16,14 @@ export interface Season {
   finale: string
 }
 
+export const LATEST: string = "latest";
+
 export const BOUNDARY_POOLS = [
   'F-F', 'QTT', 'PLA-3', 'QPL-3', 'TBL-2', '6UP-2', 'D-T', 'TT-2',
 ]
 
 export const BOUNDARY_INVESTMENT_POOLS = [
   'QPL', 'TRI', 'F-Q', 'DBL',
-]
-
-export const RATING_GRADES = [
-  'A', 'B', 'C', 'D',
 ]
 
 export const COMMON_HORSE_ORIGINS = [

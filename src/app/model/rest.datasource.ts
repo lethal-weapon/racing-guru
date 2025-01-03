@@ -20,7 +20,7 @@ import {TrackworkSnapshot} from './trackwork.model';
 import {SignalSnapshot} from './signal.model';
 import {ChallengeSnapshot} from './challenge.model';
 import {OddsSnapshot} from './oddsSnapshot.model';
-import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './connection.model';
+import {PlayerConnection, PlayerConnectionRequest} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
@@ -45,8 +45,8 @@ export class RestDataSource {
       `${env.API_PROTOCOL}://${env.SERVER_HOSTNAME}:${env.FINANCE_SERVER_PORT}`;
   }
 
-  getPick = (): Observable<Pick> =>
-    this.http.get<Pick>(`${this.baseUrl}/picks`)
+  getPick = (meeting: string): Observable<Pick> =>
+    this.http.get<Pick>(`${this.baseUrl}/picks?meeting=${meeting}`)
 
   savePick = (newPick: Pick): Observable<Pick> =>
     this.http.post<Pick>(`${this.baseUrl}/picks`, newPick)
@@ -99,8 +99,8 @@ export class RestDataSource {
   getMeetings = (size: number): Observable<Meeting[]> =>
     this.http.get<Meeting[]>(`${this.baseUrl}/meetings?size=${size}`)
 
-  getLatestMeeting = (): Observable<Meeting> =>
-    this.http.get<Meeting>(`${this.baseUrl}/meetings/latest`)
+  getSpecificMeeting = (meeting: string): Observable<Meeting> =>
+    this.http.get<Meeting>(`${this.baseUrl}/meetings/${meeting}`)
 
   getAccumulatedSeasonEarnings = (): Observable<AccumulatedSeasonEarning[]> =>
     this.http.get<AccumulatedSeasonEarning[]>(`${this.baseUrl}/meetings/accumulated-earnings`)
@@ -137,9 +137,6 @@ export class RestDataSource {
 
   savePlayerConnection = (request: PlayerConnectionRequest): Observable<PlayerConnection> =>
     this.http.post<PlayerConnection>(`${this.baseUrl}/players/connections`, request)
-
-  getBlacklistConnections = (meeting: string): Observable<BlacklistConnection[]> =>
-    this.http.get<BlacklistConnection[]>(`${this.baseUrl}/players/blacklist-connections?meeting=${meeting}`)
 
   getFixtures = (): Observable<Fixture[]> =>
     this.http.get<Fixture[]>(`${this.baseUrl}/fixtures`)

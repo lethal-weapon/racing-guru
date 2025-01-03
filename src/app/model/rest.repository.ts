@@ -18,13 +18,14 @@ import {TrackworkSnapshot} from './trackwork.model';
 import {SignalSnapshot} from './signal.model';
 import {ChallengeSnapshot} from './challenge.model';
 import {OddsSnapshot} from './oddsSnapshot.model';
-import {BlacklistConnection, PlayerConnection, PlayerConnectionRequest} from './connection.model';
+import {PlayerConnection, PlayerConnectionRequest} from './connection.model';
 import {Factor, FactorHit} from './backtest.model';
 import {Fixture} from './fixture.model';
 import {AccumulatedSeasonEarning} from './earning.model';
 import {Transaction} from './transaction.model';
 import {FinancialStatement} from './financial.model';
 import {Journal} from './journal.model';
+import {LATEST} from '../util/strings';
 
 @Injectable()
 export class RestRepository {
@@ -46,7 +47,6 @@ export class RestRepository {
   private challengeSnapshots: ChallengeSnapshot[] = [];
   private oddsSnapshots: OddsSnapshot[] = [];
   private playerConnections: PlayerConnection[] = [];
-  private blacklistConnections: BlacklistConnection[] = [];
   private accumulatedSeasonEarnings: AccumulatedSeasonEarning[] = [];
 
   private fixtures: Fixture[] = [];
@@ -78,7 +78,6 @@ export class RestRepository {
   findChallengeSnapshots = () => this.challengeSnapshots
   findOddsSnapshots = () => this.oddsSnapshots
   findPlayerConnections = () => this.playerConnections
-  findBlacklistConnections = () => this.blacklistConnections
   findAccumulatedSeasonEarnings = () => this.accumulatedSeasonEarnings
 
   findFixtures = () => this.fixtures
@@ -89,8 +88,11 @@ export class RestRepository {
   findFinancialStatements = () => this.financialStatements
   findJournals = () => this.journals
 
-  fetchPick = (callback: () => any) =>
-    this.source.getPick().subscribe(data => {
+  fetchPick = (
+    meeting: string = LATEST,
+    callback: () => any = () => console.log(``)
+  ) =>
+    this.source.getPick(meeting).subscribe(data => {
       this.pick = data;
       callback();
     })
@@ -104,7 +106,7 @@ export class RestRepository {
   fetchHorseWithoutStarters = () =>
     this.source.getHorseWithoutStarters().subscribe(data => this.horses = data)
 
-  fetchMeetingHorses = (meeting: string = 'latest') =>
+  fetchMeetingHorses = (meeting: string = LATEST) =>
     this.source.getMeetingHorses(meeting).subscribe(data => this.horses = data)
 
   fetchActivePlayers = () =>
@@ -168,7 +170,7 @@ export class RestRepository {
     )
 
   fetchRacecards = (
-    meeting: string = 'latest',
+    meeting: string = LATEST,
     callback: () => any = () => console.log(``)
   ) =>
     this.source.getRacecards(meeting).subscribe(data => {
@@ -237,8 +239,11 @@ export class RestRepository {
       callback();
     })
 
-  fetchLatestMeeting = (callback: () => any = () => console.log(``)) =>
-    this.source.getLatestMeeting().subscribe(data => {
+  fetchSpecificMeeting = (
+    meeting: string = LATEST,
+    callback: () => any = () => console.log(``)
+  ) =>
+    this.source.getSpecificMeeting(meeting).subscribe(data => {
       const index = this.meetings.findIndex(m => m.meeting === data.meeting);
       if (index === -1) this.meetings.unshift(data);
       else this.meetings.splice(index, 1, data);
@@ -264,7 +269,7 @@ export class RestRepository {
       .subscribe(data => this.collaborations = data)
 
   fetchMeetingCollaborations = (
-    meeting: string = 'latest',
+    meeting: string = LATEST,
     callback: () => any = () => console.log(``)
   ) =>
     this.source.getMeetingCollaborations(meeting).subscribe(data => {
@@ -339,7 +344,7 @@ export class RestRepository {
   }
 
   fetchOddsSnapshots = (
-    meeting: string = 'latest',
+    meeting: string = LATEST,
     callback: () => any = () => console.log(``)
   ) =>
     this.source.getOddsSnapshots(meeting).subscribe(data => {
@@ -365,11 +370,6 @@ export class RestRepository {
         if (index === -1) this.playerConnections.push(data);
         else this.playerConnections.splice(index, 1, data);
       })
-
-  fetchBlacklistConnections = (meeting: string = 'latest') =>
-    this.source
-      .getBlacklistConnections(meeting)
-      .subscribe(data => this.blacklistConnections = data)
 
   fetchFixtures = () =>
     this.source.getFixtures().subscribe(data => this.fixtures = data)

@@ -6,7 +6,7 @@ import {DEFAULT_PICK, Pick, Selection} from '../model/pick.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {DEFAULT_HORSE, Horse, PastStarter} from '../model/horse.model';
-import {COLORS, COMMON_HORSE_ORIGINS, PLACING_MAPS} from '../util/strings';
+import {COLORS, COMMON_HORSE_ORIGINS, LATEST, PLACING_MAPS} from '../util/strings';
 import {EarningStarter, Meeting} from '../model/meeting.model';
 import {Collaboration, CollaborationStarter} from '../model/collaboration.model';
 import {DEFAULT_RECOMMENDATION, RaceRecommendation, Recommendation} from '../model/recommendation.model';
@@ -92,11 +92,11 @@ export class RacecardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchPick(() => {
+    this.repo.fetchPick(LATEST, () => {
       this.pick = this.repo.findPick();
     });
 
-    this.repo.fetchRacecards('latest', () => {
+    this.repo.fetchRacecards(LATEST, () => {
       this.racecards = this.repo.findRacecards();
     });
 
@@ -109,7 +109,7 @@ export class RacecardComponent implements OnInit {
       this.meetings = this.repo.findMeetings();
     });
 
-    this.repo.fetchMeetingCollaborations('latest', () => {
+    this.repo.fetchMeetingCollaborations(LATEST, () => {
       this.collaborations = this.repo.findCollaborations();
     });
 

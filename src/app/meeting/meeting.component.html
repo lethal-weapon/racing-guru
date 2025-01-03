@@ -176,6 +176,8 @@
     <thead>
       <th class="w-28 border border-gray-600 border-b-red-900">
       </th>
+      <th class="w-28 border border-gray-600 border-b-red-900">
+      </th>
       <th *counter="let order of maxChallengerOrder"
           class="w-28 border border-gray-600 border-b-red-900"
       >
@@ -192,8 +194,26 @@
         <td class="border border-gray-700"
             [class.border-b-red-900]="index == 2"
         >
-          <div *ngIf="index % 3 === 0">
+          <div *ngIf="index % 3 === 0" class="italic">
             {{ personType === 'Jockey' ? 'JKC' : 'TNC' }}
+          </div>
+          <div *ngIf="index % 3 === 1">
+            {{ getChallengeBreakEvenPercentageSum(personType) | percent }}
+          </div>
+          <div *ngIf="index % 3 === 2" class="bg-gray-700">
+            {{ getActiveChallengerBreakEvenPercentageSum(personType) | percent }}
+          </div>
+        </td>
+        <td class="border border-gray-700"
+            [class.border-b-red-900]="index == 2"
+        >
+          <div *ngIf="index % 3 === 0">
+          </div>
+          <div *ngIf="index % 3 === 1">
+            {{ getArbitrageBet(personType)[0] | currency:'USD':'symbol':'1.0-0' }}
+          </div>
+          <div *ngIf="index % 3 === 2">
+            {{ getArbitrageBet(personType)[1] | number: '1.0-2' }}
           </div>
         </td>
         <td *counter="let order of maxChallengerOrder"
@@ -201,7 +221,10 @@
             [class.border-b-red-900]="index == 2"
         >
           <div *ngIf="index % 3 === 0"
+               class="cursor-pointer"
                [class.text-yellow-400]="isTopChallengePoint(personType, order)"
+               [class.bg-gray-700]="activeChallengers.has(getChallengeOdds(personType, order).challenger)"
+               (click)="toggleActiveChallenger(getChallengeOdds(personType, order).challenger)"
           >
             {{ getChallengeOdds(personType, order).challenger }}
             <span *ngIf="getChallengeOdds(personType, order).challenger.length > 0">

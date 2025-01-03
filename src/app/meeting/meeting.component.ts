@@ -23,6 +23,7 @@ import {
   toMillion,
   toPlacingColor
 } from '../util/functions';
+import {min} from "rxjs";
 
 interface PoolThreshold {
   name: string,
@@ -44,8 +45,9 @@ export class MeetingComponent implements OnInit {
   meeting: Meeting = DEFAULT_MEETING;
   racecards: Racecard[] = [];
 
-  activeDraw: number = 0;
   remainingTime: string = '---';
+  activeDraw: number = 0;
+  activeChallengers: Set<string> = new Set();
 
   activeTrainer: string = '';
   activeTrainerIntervalId: any;
@@ -67,7 +69,9 @@ export class MeetingComponent implements OnInit {
     private socket: WebsocketService
   ) {
     socket.addPickCallback((newPick: Pick) => {
-      if (this.pick != newPick) this.pick = newPick;
+      if (this.pick.meeting === newPick.meeting) {
+        this.pick = newPick;
+      }
     });
 
     socket.addMeetingCallback((newMeeting: Meeting) => {
@@ -93,21 +97,23 @@ export class MeetingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchPick(() => {
+    const meeting = '2025-01-01';
+
+    this.repo.fetchPick(meeting, () => {
       this.pick = this.repo.findPick();
     });
 
-    this.repo.fetchLatestMeeting(() => {
+    this.repo.fetchSpecificMeeting(meeting, () => {
       this.meeting = this.repo.findMeetings()[0];
     });
 
-    this.repo.fetchRacecards('latest', () => {
+    this.repo.fetchRacecards(meeting, () => {
       this.racecards = this.repo.findRacecards();
     });
 
     setInterval(() => this.tick(), THREE_SECONDS);
     this.repo.fetchActivePlayers();
-    this.repo.fetchMeetingHorses();
+    this.repo.fetchMeetingHorses(meeting);
   }
 
   setActiveDraw = (clicked: number) =>
@@ -164,6 +170,14 @@ export class MeetingComponent implements OnInit {
           this.activeTrainerAnimationOn = !this.activeTrainerAnimationOn;
         }, 500);
       }
+    }
+  }
+
+  toggleActiveChallenger = (clicked: string) => {
+    if (this.activeChallengers.has(clicked)) {
+      this.activeChallengers.delete(clicked);
+    } else {
+      this.activeChallengers.add(clicked);
     }
   }
 
@@ -510,6 +524,49 @@ export class MeetingComponent implements OnInit {
     return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
       ?.filter(o => o.outsider)
       .map(o => this.getChallengerInvestment(o.challenger))
+      .reduce((prev, curr) => prev + curr, 0);
+  }
+
+  getArbitrageBet = (personType: string): number[] => {
+    const beps = this.getActiveChallengerBreakEvenPercentageSum(personType);
+    if (beps <= 0 || beps >= 1) return [0, 0];
+
+    const odds = this.racecards.find(r => r.race === 1)?.odds;
+    const oddsList = (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+      ?.filter(o => this.activeChallengers.has(o.challenger))
+      ?.map(o => o.odds) || [];
+
+    if (oddsList.length === 1) return [10, oddsList[0] - 1];
+    const minEachCredit = 10 * (oddsList.sort((o1, o2) => o2 - o1)[0] || 1);
+
+    const minTotalDebit = oddsList
+      .map(o => {
+        let wager = Math.floor(minEachCredit / o);
+        while (wager % 10 !== 0) wager++;
+        return wager;
+      })
+      .reduce((prev, curr) => prev + curr, 0);
+
+    return [
+      minTotalDebit,
+      minEachCredit / minTotalDebit - 1
+    ];
+  }
+
+  getActiveChallengerBreakEvenPercentageSum = (personType: string): number => {
+    const odds = this.racecards.find(r => r.race === 1)?.odds;
+    if (!odds?.jkc || !odds?.tnc) return 0;
+    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+      ?.filter(o => this.activeChallengers.has(o.challenger))
+      ?.map(o => 1 / o.odds)
+      .reduce((prev, curr) => prev + curr, 0);
+  }
+
+  getChallengeBreakEvenPercentageSum = (personType: string): number => {
+    const odds = this.racecards.find(r => r.race === 1)?.odds;
+    if (!odds?.jkc || !odds?.tnc) return 0;
+    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+      ?.map(o => 1 / o.odds)
       .reduce((prev, curr) => prev + curr, 0);
   }
 

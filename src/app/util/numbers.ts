@@ -10,10 +10,6 @@ export const ONE_DAY_MILL = 1000 * 3600 * 24;
 
 export const EARNING_THRESHOLD = 11;
 export const PAYOUT_RATE = 0.825;
-export const DBL_PAYOUT_RATE = 0.70125;
-export const FCT_PAYOUT_RATE = 0.805;
-export const TRI_PAYOUT_RATE = 0.77;
-export const REST_PAYOUT_RATE = 0.75;
 export const MAX_RACE_PER_MEETING = 11;
 export const PAYDAY_MEETING_INTERVAL = 22;
 export const SENIOR_HORSE_AGE = 7;

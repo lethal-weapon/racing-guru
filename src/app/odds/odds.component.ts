@@ -9,7 +9,7 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {OddsSnapshot, StarterCashflow} from '../model/oddsSnapshot.model';
-import {COLORS} from '../util/strings';
+import {COLORS, LATEST} from '../util/strings';
 import {
   DBL_ODDS_STEP,
   DEFAULT_MAX_DBL_ODDS,
@@ -154,7 +154,7 @@ export class OddsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchPick(() => {
+    this.repo.fetchPick(LATEST, () => {
       this.pick = this.repo.findPick();
     });
 
@@ -163,11 +163,11 @@ export class OddsComponent implements OnInit {
         this.repo.findRecommendations()[0] || DEFAULT_RECOMMENDATION;
     });
 
-    this.repo.fetchRacecards('latest', () => {
+    this.repo.fetchRacecards(LATEST, () => {
       this.racecards = this.repo.findRacecards();
     });
 
-    this.repo.fetchOddsSnapshots('latest', () => {
+    this.repo.fetchOddsSnapshots(LATEST, () => {
       this.oddsSnapshots = this.repo.findOddsSnapshots();
     });
 

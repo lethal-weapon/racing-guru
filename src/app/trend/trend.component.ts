@@ -8,6 +8,7 @@ import {Meeting} from '../model/meeting.model';
 import {Recommendation} from '../model/recommendation.model';
 import {SyndicateSnapshot} from '../model/syndicate.model';
 import {TrackworkSnapshot} from '../model/trackwork.model';
+import {LATEST} from '../util/strings';
 
 @Component({
   selector: 'app-trend',
@@ -57,7 +58,7 @@ export class TrendComponent implements OnInit {
     this.repo.fetchReminders(24);
     this.repo.fetchSyndicateSnapshots(24);
     this.repo.fetchChallengeSnapshots(24);
-    this.repo.fetchRacecards('latest', () => {
+    this.repo.fetchRacecards(LATEST, () => {
     });
   }
 
