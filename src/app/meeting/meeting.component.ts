@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {Clipboard} from '@angular/cdk/clipboard';
 
 import {WebsocketService} from '../websocket.service';
 import {RestRepository} from '../model/rest.repository';
@@ -35,6 +36,12 @@ interface InvestmentPool {
   amount: string
 }
 
+interface ChallengeArbitrageBet {
+  minTotalDebit: number,
+  expectedRoi: number,
+  betline: string
+}
+
 @Component({
   selector: 'app-meeting',
   templateUrl: './meeting.component.html'
@@ -65,7 +72,8 @@ export class MeetingComponent implements OnInit {
 
   constructor(
     private repo: RestRepository,
-    private socket: WebsocketService
+    private socket: WebsocketService,
+    private clipboard: Clipboard
   ) {
     socket.addPickCallback((newPick: Pick) => {
       if (this.pick.meeting === newPick.meeting) {
@@ -517,83 +525,104 @@ export class MeetingComponent implements OnInit {
       )
       .reduce((prev, curr) => prev + curr, 0)
 
-  getOutsiderChallengerInvestment = (personType: string): number => {
+  getOutsiderChallengerInvestment = (playerType: string): number => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return 0;
-    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+    return (playerType === 'Jockey' ? odds?.jkc : odds?.tnc)
       ?.filter(o => o.outsider)
       .map(o => this.getChallengerInvestment(o.challenger))
       .reduce((prev, curr) => prev + curr, 0);
   }
 
-  getArbitrageBet = (personType: string): number[] => {
-    const beps = this.getActiveChallengerBreakEvenPercentageSum(personType);
-    if (beps <= 0 || beps >= 1) return [0, 0];
+  copyArbitrageBetline = (playerType: string) =>
+    this.clipboard.copy(this.getArbitrageBet(playerType).betline)
 
+  getArbitrageBet = (playerType: string): ChallengeArbitrageBet => {
+    const beps = this.getActiveChallengerBreakEvenPercentageSum(playerType);
+    if (beps <= 0 || beps >= 1) return {minTotalDebit: 0, expectedRoi: 0, betline: ''};
+
+    const betlinePool = playerType === 'Jockey' ? 'jkc' : 'tnc';
     const odds = this.racecards.find(r => r.race === 1)?.odds;
-    const oddsList = (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
-      ?.filter(o => this.activeChallengers.has(o.challenger))
-      ?.map(o => o.odds) || [];
+    const oddsList = (playerType === 'Jockey' ? odds?.jkc : odds?.tnc)
+      ?.filter(o => this.activeChallengers.has(o.challenger)) || [];
 
-    if (oddsList.length === 1) return [10, oddsList[0] - 1];
-    const minEachCredit = 10 * (oddsList.sort((o1, o2) => o2 - o1)[0] || 1);
+    if (oddsList.length === 1) {
+      return {
+        minTotalDebit: 10,
+        expectedRoi: oddsList[0].odds - 1,
+        betline: `${betlinePool}:${oddsList[0].order}`
+      };
+    }
 
-    const minTotalDebit = oddsList
-      .map(o => {
-        let wager = Math.floor(minEachCredit / o);
-        while (wager % 10 !== 0) wager++;
-        return wager;
-      })
+    const minEachCredit = 10 * (oddsList.sort((o1, o2) => o2.odds - o1.odds)[0].odds || 1);
+    const oddsWagerList = oddsList.map(o => {
+      let wager = Math.floor(minEachCredit / o.odds);
+      while (wager % 10 !== 0) wager++;
+      return {...o, wager: wager};
+    });
+
+    const minTotalDebit = oddsWagerList
+      .map(ow => ow.wager)
       .reduce((prev, curr) => prev + curr, 0);
 
-    return [
-      minTotalDebit,
-      minEachCredit / minTotalDebit - 1
-    ];
+    const roiSum = oddsWagerList
+      .map(ow => ow.wager * ow.odds / minTotalDebit - 1)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    const betline = oddsWagerList
+      .sort((ow1, ow2) => ow1.order - ow2.order)
+      .map(ow => `${betlinePool}:${ow.order}/$${ow.wager}`)
+      .join(';');
+
+    return {
+      minTotalDebit: minTotalDebit,
+      expectedRoi: roiSum / oddsWagerList.length,
+      betline: betline
+    };
   }
 
-  getActiveChallengerBreakEvenPercentageSum = (personType: string): number => {
+  getActiveChallengerBreakEvenPercentageSum = (playerType: string): number => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return 0;
-    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+    return (playerType === 'Jockey' ? odds?.jkc : odds?.tnc)
       ?.filter(o => this.activeChallengers.has(o.challenger))
       ?.map(o => 1 / o.odds)
       .reduce((prev, curr) => prev + curr, 0);
   }
 
-  getChallengeBreakEvenPercentageSum = (personType: string): number => {
+  getChallengeBreakEvenPercentageSum = (playerType: string): number => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return 0;
-    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+    return (playerType === 'Jockey' ? odds?.jkc : odds?.tnc)
       ?.map(o => 1 / o.odds)
       .reduce((prev, curr) => prev + curr, 0);
   }
 
-  getChallengeOdds = (personType: string, order: number): ChallengeOdds => {
+  getChallengeOdds = (playerType: string, order: number): ChallengeOdds => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return DEFAULT_CHALLENGE_ODDS;
-    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+    return (playerType === 'Jockey' ? odds?.jkc : odds?.tnc)
       ?.filter(o => !o.outsider)
       ?.find(o => o.order === order) || DEFAULT_CHALLENGE_ODDS;
   }
 
-  getOutsiderChallengeOdds = (personType: string): ChallengeOdds => {
+  getOutsiderChallengeOdds = (playerType: string): ChallengeOdds => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return DEFAULT_CHALLENGE_ODDS;
-    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+    return (playerType === 'Jockey' ? odds?.jkc : odds?.tnc)
       ?.find(o => o.outsider) || DEFAULT_CHALLENGE_ODDS;
   }
 
-  isTopChallengePoint = (personType: string, order: number): boolean => {
+  isTopChallengePoint = (playerType: string, order: number): boolean => {
     const odds = this.racecards.find(r => r.race === 1)?.odds;
     if (!odds?.jkc || !odds?.tnc) return false;
-    return (personType === 'Jockey' ? odds?.jkc : odds?.tnc)
+    return (playerType === 'Jockey' ? odds?.jkc : odds?.tnc)
       ?.filter(o => o.points > 0)
       .map(o => o.points)
       .filter((p, index, arr) => index === arr.indexOf(p))
       .sort((p1, p2) => p2 - p1)
       .slice(0, 3)
-      .includes(this.getChallengeOdds(personType, order).points);
+      .includes(this.getChallengeOdds(playerType, order).points);
   }
 
   getCrossRacePoolDividendRaces = (row: number): number => {

@@ -174,10 +174,8 @@
          class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center"
   >
     <thead>
-      <th class="w-28 border border-gray-600 border-b-red-900">
-      </th>
-      <th class="w-28 border border-gray-600 border-b-red-900">
-      </th>
+      <th class="w-28 border border-gray-600 border-b-red-900"></th>
+      <th class="w-28 border border-gray-600 border-b-red-900"></th>
       <th *counter="let order of maxChallengerOrder"
           class="w-28 border border-gray-600 border-b-red-900"
       >
@@ -188,32 +186,36 @@
       </th>
     </thead>
     <tbody>
-      <tr *ngFor="let personType of ['Jockey', 'Jockey', 'Jockey', 'Trainer', 'Trainer', 'Trainer']; let index = index"
+      <tr *ngFor="let playerType of ['Jockey', 'Jockey', 'Jockey', 'Trainer', 'Trainer', 'Trainer']; let index = index"
           class="hover:bg-gray-800"
       >
         <td class="border border-gray-700"
             [class.border-b-red-900]="index == 2"
         >
           <div *ngIf="index % 3 === 0" class="italic">
-            {{ personType === 'Jockey' ? 'JKC' : 'TNC' }}
+            {{ playerType === 'Jockey' ? 'JKC' : 'TNC' }}
           </div>
           <div *ngIf="index % 3 === 1">
-            {{ getChallengeBreakEvenPercentageSum(personType) | percent }}
+            {{ getChallengeBreakEvenPercentageSum(playerType) | percent }}
           </div>
           <div *ngIf="index % 3 === 2" class="bg-gray-700">
-            {{ getActiveChallengerBreakEvenPercentageSum(personType) | percent }}
+            {{ getActiveChallengerBreakEvenPercentageSum(playerType) | percent }}
           </div>
         </td>
         <td class="border border-gray-700"
             [class.border-b-red-900]="index == 2"
         >
-          <div *ngIf="index % 3 === 0">
+          <div *ngIf="index % 3 === 0"
+               class="cursor-pointer hover:text-yellow-400"
+               (click)="copyArbitrageBetline(playerType)"
+          >
+            <i class="fa fa-copy"></i>
           </div>
           <div *ngIf="index % 3 === 1">
-            {{ getArbitrageBet(personType)[0] | currency:'USD':'symbol':'1.0-0' }}
+            {{ getArbitrageBet(playerType).minTotalDebit | currency:'USD':'symbol':'1.0-0' }}
           </div>
           <div *ngIf="index % 3 === 2">
-            {{ getArbitrageBet(personType)[1] | number: '1.0-2' }}
+            {{ getArbitrageBet(playerType).expectedRoi | number: '1.0-2' }}
           </div>
         </td>
         <td *counter="let order of maxChallengerOrder"
@@ -222,23 +224,23 @@
         >
           <div *ngIf="index % 3 === 0"
                class="cursor-pointer"
-               [class.text-yellow-400]="isTopChallengePoint(personType, order)"
-               [class.bg-gray-700]="activeChallengers.has(getChallengeOdds(personType, order).challenger)"
-               (click)="toggleActiveChallenger(getChallengeOdds(personType, order).challenger)"
+               [class.text-yellow-400]="isTopChallengePoint(playerType, order)"
+               [class.bg-gray-700]="activeChallengers.has(getChallengeOdds(playerType, order).challenger)"
+               (click)="toggleActiveChallenger(getChallengeOdds(playerType, order).challenger)"
           >
-            {{ getChallengeOdds(personType, order).challenger }}
-            <span *ngIf="getChallengeOdds(personType, order).challenger.length > 0">
-              <span *ngIf="getChallengeOdds(personType, order).points > 0">
-                ({{ getChallengeOdds(personType, order).points }})
+            {{ getChallengeOdds(playerType, order).challenger }}
+            <span *ngIf="getChallengeOdds(playerType, order).challenger.length > 0">
+              <span *ngIf="getChallengeOdds(playerType, order).points > 0">
+                ({{ getChallengeOdds(playerType, order).points }})
               </span>
             </span>
           </div>
           <div *ngIf="index % 3 === 1">
-            {{ formatChallengeOdds(getChallengeOdds(personType, order).odds) }}
+            {{ formatChallengeOdds(getChallengeOdds(playerType, order).odds) }}
           </div>
           <div *ngIf="index % 3 === 2">
-            <span *ngIf="getChallengerInvestment(getChallengeOdds(personType, order).challenger) > 0">
-              {{ getChallengerInvestment(getChallengeOdds(personType, order).challenger) | percent }}
+            <span *ngIf="getChallengerInvestment(getChallengeOdds(playerType, order).challenger) > 0">
+              {{ getChallengerInvestment(getChallengeOdds(playerType, order).challenger) | percent }}
             </span>
           </div>
         </td>
@@ -249,10 +251,10 @@
             Others
           </div>
           <div *ngIf="index % 3 === 1">
-            {{ formatChallengeOdds(getOutsiderChallengeOdds(personType).odds) }}
+            {{ formatChallengeOdds(getOutsiderChallengeOdds(playerType).odds) }}
           </div>
           <div *ngIf="index % 3 === 2">
-            {{ getOutsiderChallengerInvestment(personType) | percent }}
+            {{ getOutsiderChallengerInvestment(playerType) | percent }}
           </div>
         </td>
       </tr>
