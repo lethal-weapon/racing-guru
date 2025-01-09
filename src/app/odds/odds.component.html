@@ -172,9 +172,6 @@
       <td *ngFor="let starter of getStarters(this.activeRacecard)"
           class="w-20 border border-gray-700 {{toPlacingColor(starter?.placing)}}"
           [class.bg-gray-800]="!onDoubleTable && hoveredJockey === starter.jockey"
-          [class.cursor-pointer]="!isFavorite(starter, this.activeRacecard)"
-          [class.cursor-not-allowed]="isFavorite(starter, this.activeRacecard)"
-          (click)="toggleTrash(starter)"
           (mouseenter)="hoveredJockey = starter.jockey"
       >
         <div>
@@ -186,11 +183,6 @@
         <div class="flex flex-row justify-evenly">
           <div>
             {{ starter.order }}
-          </div>
-          <div *ngIf="isTrash(starter)"
-               class="text-gray-500"
-          >
-            <i class="fa fa-trash"></i>
           </div>
           <div *ngIf="isFavorite(starter, this.activeRacecard)"
                class="text-yellow-400"
@@ -480,9 +472,6 @@
       <td *ngFor="let starterA of getStarters(this.activeRacecard)"
           class="w-20 border border-gray-700 {{toPlacingColor(starterA?.placing)}}"
           [class.bg-gray-800]="onDoubleTable && hoveredJockey === starterA.jockey"
-          [class.cursor-pointer]="!isFavorite(starterA, this.activeRacecard)"
-          [class.cursor-not-allowed]="isFavorite(starterA, this.activeRacecard)"
-          (click)="toggleTrash(starterA)"
           (mouseenter)="hoveredJockey = starterA.jockey"
       >
         <div>
@@ -494,11 +483,6 @@
         <div class="flex flex-row justify-evenly">
           <div>
             {{ starterA.order }}
-          </div>
-          <div *ngIf="isTrash(starterA)"
-               class="text-gray-500"
-          >
-            <i class="fa fa-trash"></i>
           </div>
           <div *ngIf="isFavorite(starterA, this.activeRacecard)"
                class="text-yellow-400"
@@ -518,11 +502,7 @@
         class="hover:bg-gray-800"
     >
       <td class="py-1 border border-gray-700 font-bold {{toPlacingColor(starterB?.placing)}}">
-        <div class="grid grid-cols-3"
-             [class.cursor-pointer]="!isFavorite(starterB, this.activeNextRacecard)"
-             [class.cursor-not-allowed]="isFavorite(starterB, this.activeNextRacecard)"
-             (click)="toggleTrash(starterB, true)"
-        >
+        <div class="grid grid-cols-3">
           <div>
             {{ starterB.jockey }}
           </div>
@@ -541,11 +521,6 @@
           </div>
           <div class="col-span-2">
             {{ getHorseNameCH(starterB.horse) }}
-            <span *ngIf="isTrash(starterB, true)"
-                  class="text-gray-500"
-            >
-              <i class="fa fa-trash"></i>
-            </span>
             <span *ngIf="isFavorite(starterB, this.activeNextRacecard)"
                   class="text-yellow-400"
             >

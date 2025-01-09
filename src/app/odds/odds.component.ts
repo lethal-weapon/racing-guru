@@ -99,7 +99,6 @@ export class OddsComponent implements OnInit {
 
   bets: Map<number, Bet> = new Map();
   ranges: Map<number, OddsRange> = new Map();
-  trashes: Map<number, number[]> = new Map();
 
   protected readonly toPlacingColor = toPlacingColor;
   protected readonly getSignalColor = getSignalColor;
@@ -176,7 +175,6 @@ export class OddsComponent implements OnInit {
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.bets.set(race, {...DEFAULT_BET});
       this.ranges.set(race, {...DEFAULT_RANGE});
-      this.trashes.set(race, []);
     }
   }
 
@@ -326,13 +324,10 @@ export class OddsComponent implements OnInit {
   }
 
   track = () => {
+    // TODO: placeholder
   }
 
   toggleBet = (pool: string, starterA: Starter, starterB: Starter) => {
-    if (this.isTrash(starterA)) return;
-    if (pool !== 'dbl' && this.isTrash(starterB)) return;
-    if (pool === 'dbl' && this.isTrash(starterB, true)) return;
-
     // @ts-ignore
     let newPairs = [...this.activeBet[pool]] || [];
     const pair = [starterA, starterB].map(s => s.order);
@@ -348,20 +343,6 @@ export class OddsComponent implements OnInit {
     newBets[pool] = newPairs;
 
     this.bets.set(this.activeRace, newBets);
-  }
-
-  toggleTrash = (starter: Starter, isNextRace: boolean = false) => {
-    const card = isNextRace ? this.activeNextRacecard : this.activeRacecard;
-    if (this.isFavorite(starter, card)) return;
-
-    const order = starter.order;
-    const race = isNextRace ? this.activeRace + 1 : this.activeRace;
-    let unwanted = this.trashes.get(race) || [];
-
-    if (unwanted.includes(order)) unwanted = unwanted.filter(e => e !== order);
-    else unwanted.push(order);
-
-    this.trashes.set(race, unwanted);
   }
 
   adjustCashflowMinute = (increment: number) => {
@@ -406,21 +387,12 @@ export class OddsComponent implements OnInit {
     this.ranges.set(this.activeRace, newRange);
   }
 
-  isTrash = (starter: Starter, isNextRace: boolean = false): boolean =>
-    isNextRace
-      ? this.activeNextTrash.includes(starter.order)
-      : this.activeTrash.includes(starter.order)
-
   isShowOdds = (
     pool: string,
     starterA: Starter,
     starterB: Starter,
     isReverse: boolean = false
   ): boolean => {
-
-    if (this.isTrash(starterA)) return false;
-    if (pool !== 'dbl' && this.isTrash(starterB)) return false;
-    if (pool === 'dbl' && this.isTrash(starterB, true)) return false;
 
     const qqpInRange = this.isQQPOddsWithinRange(starterA, starterB);
     const fctInRange = this.isFCTOddsWithinRange(starterA, starterB);
@@ -755,14 +727,6 @@ export class OddsComponent implements OnInit {
 
   get activeRange(): OddsRange {
     return this.ranges.get(this.activeRace) || DEFAULT_RANGE;
-  }
-
-  get activeTrash(): number[] {
-    return this.trashes.get(this.activeRace) || [];
-  }
-
-  get activeNextTrash(): number[] {
-    return this.trashes.get(this.activeRace + 1) || [];
   }
 
   get activeSelections(): Selection[] {
