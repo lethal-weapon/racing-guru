@@ -95,7 +95,7 @@
           </div>
         </td>
         <td *ngFor="let jockey of jockeys"
-            class="border border-gray-700 hover:bg-gray-800 text-sm {{toPlacingColor(getStarter(jockey, race)?.placing)}}"
+            class="border border-gray-700 hover:bg-gray-800 text-sm {{getStarterPlacingColor(jockey, race)}}"
             [class.border-r-red-900]="isBoundaryPlayer(jockey, true)"
             [class.border-b-red-900]="race.race === lastRace"
             [class.border-b-gray-900]="hideBottomBorder(jockey, race)"

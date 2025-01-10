@@ -18,21 +18,21 @@
     </div>
   </div>
 
-  <div class="m-4 mb-2 grid grid-cols-4">
-    <div *ngFor="let c of rangeControls.slice(0, 3)"
+  <div class="m-4 grid grid-cols-4">
+    <div *ngFor="let rc of rangeControls"
          class="flex flex-row justify-evenly items-center px-6 text-center"
     >
       <div class="flex flex-col gap-y-1">
         <div class="{{oddsButtonStyle}}"
-             (click)="adjustOdds(c.pool, c.step, true, false)"
+             (click)="adjustOdds(rc.pool, rc.step, true, false)"
         >
           <i class="fa fa-minus"></i>
         </div>
         <div class="text-2xl">
-          {{ c.minOdds }}
+          {{ rc.minOdds }}
         </div>
         <div class="{{oddsButtonStyle}}"
-             (click)="adjustOdds(c.pool, c.step, true, true)"
+             (click)="adjustOdds(rc.pool, rc.step, true, true)"
         >
           <i class="fa fa-plus"></i>
         </div>
@@ -42,13 +42,13 @@
       </div>
       <div class="flex flex-col gap-y-1">
         <div class="{{oddsButtonStyle}} text-yellow-400">
-          {{ getSelectedBetCount(c.pool) }}
+          {{ getSelectedBetCount(rc.pool) }}
         </div>
         <div class="text-2xl">
-          {{ c.pool }}
+          {{ rc.pool }}
         </div>
         <div class="{{oddsButtonStyle}}"
-             (click)="copyBets(c.pool)"
+             (click)="copyBets(rc.pool)"
         >
           <i class="fa fa-copy"></i>
         </div>
@@ -58,48 +58,18 @@
       </div>
       <div class="flex flex-col gap-y-1">
         <div class="{{oddsButtonStyle}}"
-             (click)="adjustOdds(c.pool, c.step, false, false)"
+             (click)="adjustOdds(rc.pool, rc.step, false, false)"
         >
           <i class="fa fa-minus"></i>
         </div>
         <div class="text-2xl">
-          {{ c.maxOdds }}
+          {{ rc.maxOdds }}
         </div>
         <div class="{{oddsButtonStyle}}"
-             (click)="adjustOdds(c.pool, c.step, false, true)"
+             (click)="adjustOdds(rc.pool, rc.step, false, true)"
         >
           <i class="fa fa-plus"></i>
         </div>
-      </div>
-    </div>
-    <div class="grid grid-cols-3 px-2 py-4 gap-4 text-center">
-      <div class="{{controlButtonStyle}}"
-           (click)="resetBets()"
-      >
-        Reset B.
-      </div>
-      <div class="text-lg pt-1">
-        My Bets
-      </div>
-      <div class="text-2xl text-center text-yellow-400">
-        {{ totalSelectedBetCount }}
-      </div>
-      <div class="{{controlButtonStyle}}"
-           (click)="resetFavorites()"
-      >
-        Reset F.
-      </div>
-      <div class="{{controlButtonStyle}}"
-           (click)="copyBets()"
-      >
-        Copy
-      </div>
-      <div class="{{controlButtonStyle}}"
-           [class.font-bold]="trackModeOn"
-           [class.text-yellow-400]="trackModeOn"
-           (click)="trackModeOn = !trackModeOn"
-      >
-        {{ trackModeOn ? 'Stop' : 'Track' }}
       </div>
     </div>
   </div>
@@ -249,7 +219,7 @@
             <div>
               {{
                 isShowOdds('qin', starterA, starterB)
-                  ? (getStarterQQPOdds(starterA, starterB)[0] | number: '1.0-1')
+                  ? (getStarterQQPOdds(starterA.order, starterB.order)[0] | number: '1.0-1')
                   : '-'
               }}
             </div>
@@ -271,7 +241,7 @@
             <div>
               {{
                 isShowOdds('qpl', starterA, starterB)
-                  ? (getStarterQQPOdds(starterA, starterB)[1] | number: '1.0-1')
+                  ? (getStarterQQPOdds(starterA.order, starterB.order)[1] | number: '1.0-1')
                   : '-'
               }}
             </div>
@@ -293,7 +263,7 @@
             <div>
               {{
                 isShowOdds('fct', starterA, starterB)
-                  ? (getStarterFCTOdds(starterA, starterB)[0] | number: '1.0-1')
+                  ? (getStarterFCTOdds(starterA.order, starterB.order)[0] | number: '1.0-1')
                   : '-'
               }}
             </div>
@@ -315,7 +285,7 @@
             <div>
               {{
                 isShowOdds('fct', starterB, starterA, true)
-                  ? (getStarterFCTOdds(starterA, starterB)[1] | number: '1.0-1')
+                  ? (getStarterFCTOdds(starterA.order, starterB.order)[1] | number: '1.0-1')
                   : '-'
               }}
             </div>
@@ -332,130 +302,60 @@
     </tr>
   </table>
 
-  <div *ngIf="maxRace !== 0"
-       class="my-4 flex flex-row justify-center items-center"
-  >
-    <div *ngIf="maxRace !== activeRace">
-      <div *ngFor="let c of rangeControls.slice(3, 4)"
-           class="mx-4 flex flex-row justify-evenly items-center text-center"
-      >
-        <div class="flex flex-col gap-y-1">
-          <div class="{{oddsButtonStyle}}"
-               (click)="adjustOdds(c.pool, c.step, true, false)"
-          >
-            <i class="fa fa-minus"></i>
-          </div>
-          <div class="text-2xl">
-            {{ c.minOdds }}
-          </div>
-          <div class="{{oddsButtonStyle}}"
-               (click)="adjustOdds(c.pool, c.step, true, true)"
-          >
-            <i class="fa fa-plus"></i>
-          </div>
-        </div>
-        <div class="mx-3 text-2xl">
-          &#8828;
-        </div>
-        <div class="flex flex-col gap-y-1">
-          <div class="{{oddsButtonStyle}} text-yellow-400">
-            {{ getSelectedBetCount(c.pool) }}
-          </div>
-          <div class="text-2xl">
-            {{ c.pool }}
-          </div>
-          <div class="{{oddsButtonStyle}}"
-               (click)="copyBets(c.pool)"
-          >
-            <i class="fa fa-copy"></i>
-          </div>
-        </div>
-        <div class="mx-3 text-2xl">
-          &#8828;
-        </div>
-        <div class="flex flex-col gap-y-1">
-          <div class="{{oddsButtonStyle}}"
-               (click)="adjustOdds(c.pool, c.step, false, false)"
-          >
-            <i class="fa fa-minus"></i>
-          </div>
-          <div class="text-2xl">
-            {{ c.maxOdds }}
-          </div>
-          <div class="{{oddsButtonStyle}}"
-               (click)="adjustOdds(c.pool, c.step, false, true)"
-          >
-            <i class="fa fa-plus"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="mx-4 grid grid-cols-4 py-4 gap-4 text-center">
-      <div *ngFor="let betType of multiBankerBetTypes"
-           class="w-24 {{controlButtonStyle}}"
-           (click)="copyMultiBankerBets(betType)"
-      >
-        <i class="fa fa-copy"></i>
-        <span class="ml-2">{{ betType }}</span>
-      </div>
-      <div class="w-24 {{controlButtonStyle}}"
-           (click)="resetSelections()"
-      >
-        Reset S.
-      </div>
-      <div *ngFor="let betType of multiBankerBetTypes.slice(1)"
-           class="text-2xl text-yellow-400"
-      >
-        {{ getMultiBankerBets(betType).length }}
-      </div>
-    </div>
-    <div class="overflow-y-auto h-28 mx-4 px-4 pt-1 pb-1.5 rounded-xl border border-gray-600">
-      <div class="mb-2 flex flex-row justify-between gap-x-4">
-        <div>
-          Recommendation
-        </div>
-        <div>
-          {{ activeRecommendationTime }}
-        </div>
-      </div>
-      <div *ngIf="activeRecommendationCombinations === 0"
-           class="text-center text-lg font-bold text-red-600"
-      >
-        SKIP THIS RACE!
-        <br>
-        TAKE A BREAK NOW!
-      </div>
-      <table *ngIf="activeRecommendationCombinations > 0"
-             class="text-left"
-      >
-        <tr class="hover:text-yellow-400 cursor-pointer"
-            (click)="copyRecommendationBets(true, '')"
+  <div class="m-4 flex flex-row justify-evenly items-center text-center">
+    <div>
+      <table class="mx-auto border-collapse border border-gray-700 text-lg">
+        <tr *ngFor="let rc of rangeControls"
+            class="hover:bg-gray-800"
         >
-          <td>
-            <i class="fa fa-copy"></i>
+          <td class="w-20 border border-gray-700 text-xl">
+            {{ rc.pool }}
           </td>
-          <td class="px-2">
-            ({{ activeRecommendationCombinations }})
+          <td class="w-20 border border-gray-700">
+            <div (click)="copyBets(rc.pool)"
+                 class="cursor-pointer hover:text-yellow-400"
+            >
+              <i class="fa fa-copy"></i>
+            </div>
           </td>
-          <td>
-            All Bets
+          <td class="w-20 border border-gray-700">
+            {{ getArbitrageBet(rc.pool).minTotalDebit | currency:'USD':'symbol':'1.0-0' }}
           </td>
-        </tr>
-        <tr *ngFor="let bet of activeRecommendation.bets"
-            class="hover:text-yellow-400 cursor-pointer"
-            (click)="copyRecommendationBets(false, bet.betline)"
-        >
-          <td>
-            <i class="fa fa-copy"></i>
-          </td>
-          <td class="px-2">
-            ({{ bet.combinations }})
-          </td>
-          <td>
-            {{ bet.betline }}
+          <td class="w-20 border border-gray-700">
+            {{ getArbitrageBet(rc.pool).expectedRoi | number: '1.0-1' }}
           </td>
         </tr>
       </table>
+    </div>
+    <div class="grid grid-cols-3 px-2 py-4 gap-4">
+      <div class="{{controlButtonStyle}}"
+           (click)="resetFavorites()"
+      >
+        Reset Fav.
+      </div>
+      <div class="text-lg pt-1">
+        My Bets
+      </div>
+      <div class="text-2xl text-center text-yellow-400">
+        {{ totalSelectedBetCount }}
+      </div>
+      <div class="{{controlButtonStyle}}"
+           (click)="resetBets()"
+      >
+        Reset Bets
+      </div>
+      <div class="{{controlButtonStyle}}"
+           (click)="copyBets()"
+      >
+        Copy Bets
+      </div>
+      <div class="{{controlButtonStyle}}"
+           [class.font-bold]="trackModeOn"
+           [class.text-yellow-400]="trackModeOn"
+           (click)="trackModeOn = !trackModeOn"
+      >
+        {{ trackModeOn ? 'Stop' : 'Track' }}
+      </div>
     </div>
   </div>
 
@@ -549,7 +449,7 @@
           >
             {{
               isShowOdds('dbl', starterA, starterB)
-                ? (getStarterDBLOdds(starterA, starterB) | number: '1.0-1')
+                ? (getStarterDBLOdds(starterA.order, starterB.order) | number: '1.0-1')
                 : '-'
             }}
           </div>

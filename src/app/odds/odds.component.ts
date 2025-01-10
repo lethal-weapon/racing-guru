@@ -3,8 +3,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 
 import {WebsocketService} from '../websocket.service';
 import {RestRepository} from '../model/rest.repository';
-import {DEFAULT_PICK, Pick, Selection} from '../model/pick.model';
-import {DEFAULT_RECOMMENDATION, RaceRecommendation, Recommendation} from '../model/recommendation.model';
+import {DEFAULT_PICK, Pick} from '../model/pick.model';
 import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
@@ -81,13 +80,18 @@ const DEFAULT_BET: Bet = {
   dbl: []
 }
 
+interface ArbitrageBet {
+  minTotalDebit: number,
+  expectedRoi: number,
+  betline: string
+}
+
 @Component({
   selector: 'app-odds',
   templateUrl: './odds.component.html'
 })
 export class OddsComponent implements OnInit {
   pick: Pick = DEFAULT_PICK;
-  recommendation: Recommendation = DEFAULT_RECOMMENDATION;
   racecards: Racecard[] = [];
   oddsSnapshots: OddsSnapshot[] = [];
 
@@ -115,10 +119,6 @@ export class OddsComponent implements OnInit {
   ) {
     socket.addPickCallback((newPick: Pick) => {
       if (this.pick != newPick) this.pick = newPick;
-    });
-
-    socket.addRecommendationCallback((newRecommendation: Recommendation) => {
-      if (this.recommendation != newRecommendation) this.recommendation = newRecommendation;
     });
 
     socket.addRacecardCallback((newCard: Racecard) => {
@@ -153,24 +153,21 @@ export class OddsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchPick(LATEST, () => {
+    const meeting = LATEST;
+
+    this.repo.fetchPick(meeting, () => {
       this.pick = this.repo.findPick();
     });
 
-    this.repo.fetchRecommendations(1, () => {
-      this.recommendation =
-        this.repo.findRecommendations()[0] || DEFAULT_RECOMMENDATION;
-    });
-
-    this.repo.fetchRacecards(LATEST, () => {
+    this.repo.fetchRacecards(meeting, () => {
       this.racecards = this.repo.findRacecards();
     });
 
-    this.repo.fetchOddsSnapshots(LATEST, () => {
+    this.repo.fetchOddsSnapshots(meeting, () => {
       this.oddsSnapshots = this.repo.findOddsSnapshots();
     });
 
-    this.repo.fetchMeetingHorses();
+    this.repo.fetchMeetingHorses(meeting);
 
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.bets.set(race, {...DEFAULT_BET});
@@ -190,25 +187,18 @@ export class OddsComponent implements OnInit {
     this.repo.savePick(newPick);
   }
 
-  resetSelections = () => {
-    let newPick: Pick = {...this.pick, races: [...this.pick.races]};
-    let newRacePick = newPick.races.find(r => r.race === this.activeRace);
-    if (!newRacePick) return;
-
-    newRacePick.selections = [];
-    this.repo.savePick(newPick);
-  }
-
-  copyRecommendationBets = (isCopyAll: boolean, betline: string) => {
-    if (isCopyAll) {
-      const betlines = this.activeRecommendation.bets.map(b => b.betline).join(';');
-      this.clipboard.copy(betlines);
-    } else {
-      this.clipboard.copy(betline);
-    }
-  }
-
   copyBets = (pool: string = '') => {
+    const betline = pool.length > 0
+      ? this.getArbitrageBet(pool).betline
+      : this.rangeControls
+        .map(rc => this.getArbitrageBet(rc.pool).betline)
+        .filter(b => b.length > 0)
+        .join(';');
+
+    this.clipboard.copy(betline);
+  }
+
+  getBetlines = (pool: string = ''): string[] => {
     let bets = '';
     for (const [key, value] of Object.entries(this.activeBet)) {
       const cmd = key.startsWith('f') ? 'fs' : key;
@@ -221,110 +211,68 @@ export class OddsComponent implements OnInit {
         bets = bets.concat(poolBets);
       }
     }
-    this.clipboard.copy(bets);
+    return bets.split(';').filter(b => b.length > 0);
   }
 
-  copyMultiBankerBets = (betType: string) => {
-    const ordersByPlacing = Array(4).fill(1)
-      .map((_, index) => 1 + index)
-      .map(p =>
-        this.activeSelections
-          .filter(s => s.placing === p)
-          .map(s => s.order)
-          .sort((o1, o2) => o1 - o2)
-          .join()
-      );
+  getArbitrageBet = (pool: string): ArbitrageBet => {
+    const betlines = this.getBetlines(pool).map(betline => {
+      let odds = 1;
+      let orders = betline
+        .split(':')[1]
+        .replace('-', ',')
+        .replace('/', ',')
+        .split(',')
+        .map(o => parseInt(o));
 
-    let fmb = `fmb:${ordersByPlacing.slice(0, 2).join('>')}`;
-    let tmb = `tmb:${ordersByPlacing.slice(0, 3).join('>')}`;
-    let qmb = `qmb:${ordersByPlacing.join('>')}`;
-
-    const fctBets = this.getMultiBankerBets('FMB').length;
-    const tceBets = this.getMultiBankerBets('TMB').length;
-    const qttBets = this.getMultiBankerBets('QMB').length;
-
-    if (fctBets <= 12) fmb = fmb.concat(`/$10`);
-    else fmb = fmb.concat(`|$120`);
-
-    if (tceBets <= 12) tmb = tmb.concat(`/$10`);
-    else if (tceBets <= 18) tmb = tmb.concat(`/$8`);
-    else if (tceBets <= 24) tmb = tmb.concat(`/$6`);
-    else if (tceBets <= 30) tmb = tmb.concat(`/$5`);
-    else if (tceBets <= 36) tmb = tmb.concat(`/$4`);
-    else if (tceBets <= 48) tmb = tmb.concat(`/$3`);
-    else tmb = tmb.concat(`/$2`);
-
-    if (qttBets <= 16) qmb = qmb.concat(`/$10`);
-    else if (qttBets <= 24) qmb = qmb.concat(`/$6`);
-    else if (qttBets <= 30) qmb = qmb.concat(`/$5`);
-    else if (qttBets <= 36) qmb = qmb.concat(`/$4`);
-    else if (qttBets <= 48) qmb = qmb.concat(`/$3`);
-    else if (qttBets <= 72) qmb = qmb.concat(`/$2`);
-    else qmb = qmb.concat(`/$1`);
-
-    switch (betType) {
-      case 'FMB':
-        this.clipboard.copy(fmb);
-        break
-      case 'TMB':
-        this.clipboard.copy(tmb);
-        break
-      case 'QMB':
-        this.clipboard.copy(qmb);
-        break
-      case 'ALL':
-        this.clipboard.copy([fmb, tmb, qmb].join(';'));
-        break
-      default:
-        break
-    }
-  }
-
-  getMultiBankerBets = (betType: string): number[][] => {
-    let bets: number[][] = [];
-    const ordersByPlacing = Array(4).fill(1)
-      .map((_, index) => 1 + index)
-      .map(p =>
-        this.activeSelections
-          .filter(s => s.placing === p)
-          .map(s => s.order)
-      );
-
-    for (let i = 0; i < ordersByPlacing[0].length; i++) {
-      const winner = ordersByPlacing[0][i];
-
-      for (let j = 0; j < ordersByPlacing[1].length; j++) {
-        const second = ordersByPlacing[1][j];
-        if (second == winner) continue;
-
-        if (betType === 'FMB') {
-          bets.push([winner, second]);
-          continue;
-        }
-
-        for (let k = 0; k < ordersByPlacing[2].length; k++) {
-          const third = ordersByPlacing[2][k];
-          if ([winner, second].includes(third)) continue;
-
-          if (betType === 'TMB') {
-            bets.push([winner, second, third]);
-            continue;
-          }
-
-          for (let l = 0; l < ordersByPlacing[3].length; l++) {
-            const fourth = ordersByPlacing[3][l];
-            if ([winner, second, third].includes(fourth)) continue;
-            bets.push([winner, second, third, fourth]);
-          }
-        }
+      if (pool === 'QIN') odds = this.getStarterQQPOdds(orders[0], orders[1])[0];
+      if (pool === 'QPL') odds = this.getStarterQQPOdds(orders[0], orders[1])[1];
+      if (pool === 'DBL') odds = this.getStarterDBLOdds(orders[0], orders[1]);
+      if (pool === 'FCT') {
+        const fct1 = this.getStarterFCTOdds(orders[0], orders[1])[0];
+        const fct2 = this.getStarterFCTOdds(orders[0], orders[1])[1];
+        if (fct1 > 0) odds = fct1;
+        else if (fct2 > 0) odds = fct2;
       }
+
+      return {betline: betline, odds: odds < 1 ? 1 : odds};
+    });
+
+    if (betlines.length === 0) return {minTotalDebit: 0, expectedRoi: 0, betline: ''};
+    if (betlines.length === 1) {
+      return {
+        minTotalDebit: 10,
+        expectedRoi: betlines[0].odds - 1,
+        betline: betlines[0].betline,
+      };
     }
 
-    return bets;
+    const minEachCredit = 10 * (betlines.sort((b1, b2) => b2.odds - b1.odds)[0].odds || 1);
+    const oddsWagerList = betlines.map(b => {
+      let wager = Math.floor(minEachCredit / b.odds);
+      while (wager % 10 !== 0) wager++;
+      return {...b, wager: wager};
+    });
+
+    const minTotalDebit = oddsWagerList
+      .map(ow => ow.wager)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    const roiSum = oddsWagerList
+      .map(ow => ow.wager * ow.odds / minTotalDebit - 1)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    const totalBetline = oddsWagerList
+      .map(ow => `${ow.betline}/$${ow.wager}`)
+      .join(';');
+
+    return {
+      minTotalDebit: minTotalDebit,
+      expectedRoi: roiSum / oddsWagerList.length,
+      betline: totalBetline
+    };
   }
 
   track = () => {
-    // TODO: placeholder
   }
 
   toggleBet = (pool: string, starterA: Starter, starterB: Starter) => {
@@ -453,7 +401,7 @@ export class OddsComponent implements OnInit {
   }
 
   isQQPOddsWithinRange = (starterA: Starter, starterB: Starter): boolean[] => {
-    const qqp = this.getStarterQQPOdds(starterA, starterB);
+    const qqp = this.getStarterQQPOdds(starterA.order, starterB.order);
     return [
       qqp[0] >= this.activeRange.minQIN && qqp[0] <= this.activeRange.maxQIN,
       qqp[1] >= this.activeRange.minQPL && qqp[1] <= this.activeRange.maxQPL,
@@ -462,11 +410,11 @@ export class OddsComponent implements OnInit {
 
   isFCTOddsWithinRange = (starterA: Starter, starterB: Starter): boolean[] =>
     this
-      .getStarterFCTOdds(starterA, starterB)
+      .getStarterFCTOdds(starterA.order, starterB.order)
       .map(o => o >= this.activeRange.minFCT && o <= this.activeRange.maxFCT)
 
   isDBLOddsWithinRange = (starterA: Starter, starterB: Starter): boolean => {
-    const dbl = this.getStarterDBLOdds(starterA, starterB);
+    const dbl = this.getStarterDBLOdds(starterA.order, starterB.order);
     return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
   }
 
@@ -586,7 +534,7 @@ export class OddsComponent implements OnInit {
       .getCombinationSignals(starterA, starterB)
       .map(css => this.toSignalTooltip(css))
 
-  getStarterQQPOdds = (starterA: Starter, starterB: Starter): number[] => {
+  getStarterQQPOdds = (starterA: number, starterB: number): number[] => {
     if (!this.activeRacecard?.odds) return [0, 0];
     const qin = this.activeRacecard.odds?.quinella;
     const qpl = this.activeRacecard.odds?.quinellaPlace;
@@ -594,36 +542,36 @@ export class OddsComponent implements OnInit {
     return [qin, qpl].map(pairs => {
       if (!pairs) return 0;
       return pairs
-        .filter(p => p.orders.includes(starterA.order))
-        .filter(p => p.orders.includes(starterB.order))
+        .filter(p => p.orders.includes(starterA))
+        .filter(p => p.orders.includes(starterB))
         .pop()
         ?.odds || 0;
     });
   }
 
-  getStarterFCTOdds = (starterA: Starter, starterB: Starter): number[] => {
+  getStarterFCTOdds = (starterA: number, starterB: number): number[] => {
     const fct = this.activeRacecard?.odds?.forecast;
     if (!fct) return [0, 0];
 
     const pairs = fct.filter(comb =>
-      comb.orders.includes(starterA.order) &&
-      comb.orders.includes(starterB.order)
+      comb.orders.includes(starterA) &&
+      comb.orders.includes(starterB)
     );
 
     if (pairs.length !== 2) return [0, 0];
 
-    return pairs[0].orders[0] === starterA.order
+    return pairs[0].orders[0] === starterA
       ? pairs.map(p => p.odds)
       : pairs.reverse().map(p => p.odds);
   }
 
-  getStarterDBLOdds = (starterA: Starter, starterB: Starter): number => {
+  getStarterDBLOdds = (starterA: number, starterB: number): number => {
     const dbl = this.activeRacecard?.odds?.doubles;
     if (!dbl) return 0;
 
     return dbl.find(comb =>
-      comb.orders[0] == starterA.order &&
-      comb.orders[1] == starterB.order
+      comb.orders[0] == starterA &&
+      comb.orders[1] == starterB
     )
       ?.odds || 0;
   }
@@ -729,26 +677,6 @@ export class OddsComponent implements OnInit {
     return this.ranges.get(this.activeRace) || DEFAULT_RANGE;
   }
 
-  get activeSelections(): Selection[] {
-    return this.pick.races.find(r => r.race === this.activeRace)?.selections || [];
-  }
-
-  get activeRecommendationCombinations(): number {
-    return this.activeRecommendation.bets
-      .map(b => b.combinations)
-      .reduce((prev, curr) => prev + curr, 0);
-  }
-
-  get activeRecommendationTime(): string {
-    const raceTime = new Date(this.activeRacecard.time);
-    return toRelativeTime(raceTime, this.activeRecommendation.computedAt);
-  }
-
-  get activeRecommendation(): RaceRecommendation {
-    // @ts-ignore
-    return this.recommendation.races.find(r => r.race === this.activeRace);
-  }
-
   get activeCashflows(): StarterCashflow[] {
     const raceTime = new Date(this.activeRacecard.time).getTime();
     let upToTimestamp = raceTime - 60_000 * this.cashflowMinute;
@@ -800,10 +728,6 @@ export class OddsComponent implements OnInit {
     ];
   }
 
-  get multiBankerBetTypes(): string[] {
-    return ['ALL', 'FMB', 'TMB', 'QMB'];
-  }
-
   get controlButtonStyle(): string {
     return `px-2 pt-1 pb-1.5 rounded-xl border border-gray-600 ` +
       `hover:border-yellow-400 cursor-pointer`;
@@ -816,7 +740,6 @@ export class OddsComponent implements OnInit {
 
   get isLoading(): boolean {
     return this.pick.races.length === 0
-      || this.recommendation.races.length === 0
       || this.racecards.length === 0
       || this.oddsSnapshots.length === 0
       || this.repo.findHorses().length === 0;

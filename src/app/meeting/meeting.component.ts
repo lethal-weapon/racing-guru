@@ -64,7 +64,6 @@ export class MeetingComponent implements OnInit {
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly formatRace = formatRace;
   protected readonly formatRaceTimeWithoutSpace = formatRaceTimeWithoutSpace;
-  protected readonly toPlacingColor = toPlacingColor;
   protected readonly toHorseProfileUrl = toHorseProfileUrl;
   protected readonly getStarter = getStarter;
   protected readonly getTrainer = getTrainer;
@@ -367,6 +366,9 @@ export class MeetingComponent implements OnInit {
     const raceDiff = Math.floor((nextRaceTime - raceTime) / 1000);
     return `${Math.ceil(100 * Math.abs(diff) / raceDiff)}%`;
   }
+
+  getStarterPlacingColor = (jockey: string, card: Racecard): string =>
+    toPlacingColor(getStarter(jockey, card)?.placing)
 
   getStarterCount = (race: number): number =>
     (this.racecards.find(r => r.race === race)?.starters || [])
