@@ -14,6 +14,8 @@ export const MAX_RACE_PER_MEETING = 11;
 export const PAYDAY_MEETING_INTERVAL = 22;
 export const SENIOR_HORSE_AGE = 7;
 
+export const DEFAULT_MIN_UNIT_BET = 10;
+
 export const DEFAULT_MIN_QPL_ODDS = 1;
 export const DEFAULT_MIN_QIN_ODDS = 5;
 export const DEFAULT_MIN_FCT_ODDS = 35;

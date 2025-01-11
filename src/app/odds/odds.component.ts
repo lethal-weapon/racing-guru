@@ -19,6 +19,7 @@ import {
   DEFAULT_MIN_FCT_ODDS,
   DEFAULT_MIN_QIN_ODDS,
   DEFAULT_MIN_QPL_ODDS,
+  DEFAULT_MIN_UNIT_BET,
   FCT_ODDS_STEP,
   MAX_RACE_PER_MEETING,
   ONE_MILLION,
@@ -98,11 +99,13 @@ export class OddsComponent implements OnInit {
   activeRace: number = 1;
   trackModeOn: boolean = false;
   onDoubleTable: boolean = false;
+  isTrueDutching: boolean = false;
   hoveredJockey: string = '';
   cashflowMinute: number = -3;
 
   bets: Map<number, Bet> = new Map();
   ranges: Map<number, OddsRange> = new Map();
+  unitBets: Map<number, number> = new Map();
 
   protected readonly toPlacingColor = toPlacingColor;
   protected readonly getSignalColor = getSignalColor;
@@ -172,6 +175,7 @@ export class OddsComponent implements OnInit {
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.bets.set(race, {...DEFAULT_BET});
       this.ranges.set(race, {...DEFAULT_RANGE});
+      this.unitBets.set(race, DEFAULT_MIN_UNIT_BET);
     }
   }
 
@@ -240,16 +244,18 @@ export class OddsComponent implements OnInit {
     if (betlines.length === 0) return {minTotalDebit: 0, expectedRoi: 0, betline: ''};
     if (betlines.length === 1) {
       return {
-        minTotalDebit: 10,
+        minTotalDebit: this.activeUnitBet,
         expectedRoi: betlines[0].odds - 1,
         betline: betlines[0].betline,
       };
     }
 
-    const minEachCredit = 10 * (betlines.sort((b1, b2) => b2.odds - b1.odds)[0].odds || 1);
+    const minEachCredit =
+      this.activeUnitBet * (betlines.sort((b1, b2) => b2.odds - b1.odds)[0].odds || 1);
+
     const oddsWagerList = betlines.map(b => {
       let wager = Math.floor(minEachCredit / b.odds);
-      while (wager % 10 !== 0) wager++;
+      while (wager % this.activeUnitBet !== 0) wager++;
       return {...b, wager: wager};
     });
 
@@ -262,7 +268,16 @@ export class OddsComponent implements OnInit {
       .reduce((prev, curr) => prev + curr, 0);
 
     const totalBetline = oddsWagerList
-      .map(ow => `${ow.betline}/$${ow.wager}`)
+      .map(ow => {
+        if (!this.isTrueDutching) return `${ow.betline}/$${ow.wager}`;
+
+        const multiplier = ow.wager / this.activeUnitBet;
+        return `${ow.betline}/$${this.activeUnitBet};`
+          .repeat(multiplier)
+          .split(';')
+          .filter(b => b.length > 0)
+          .join(';');
+      })
       .join(';');
 
     return {
@@ -305,6 +320,17 @@ export class OddsComponent implements OnInit {
 
     } else if (increment === 99) {
       this.cashflowMinute = 25;
+    }
+  }
+
+  adjustUnitBet = (toAdd: boolean) => {
+    const currentAmount = this.unitBets.get(this.activeRace) || DEFAULT_MIN_UNIT_BET;
+    if (toAdd) {
+      this.unitBets.set(this.activeRace, currentAmount + DEFAULT_MIN_UNIT_BET);
+    } else {
+      if (currentAmount > DEFAULT_MIN_UNIT_BET) {
+        this.unitBets.set(this.activeRace, currentAmount - DEFAULT_MIN_UNIT_BET);
+      }
     }
   }
 
@@ -675,6 +701,10 @@ export class OddsComponent implements OnInit {
 
   get activeRange(): OddsRange {
     return this.ranges.get(this.activeRace) || DEFAULT_RANGE;
+  }
+
+  get activeUnitBet(): number {
+    return this.unitBets.get(this.activeRace) || DEFAULT_MIN_UNIT_BET;
   }
 
   get activeCashflows(): StarterCashflow[] {
