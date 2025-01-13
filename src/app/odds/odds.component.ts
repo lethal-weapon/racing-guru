@@ -19,12 +19,13 @@ import {
   DEFAULT_MIN_FCT_ODDS,
   DEFAULT_MIN_QIN_ODDS,
   DEFAULT_MIN_QPL_ODDS,
-  DEFAULT_MIN_UNIT_BET,
+  DEFAULT_UNIT_BET,
   FCT_ODDS_STEP,
   MAX_RACE_PER_MEETING,
   ONE_MILLION,
   QIN_ODDS_STEP,
-  QPL_ODDS_STEP
+  QPL_ODDS_STEP,
+  UNIT_BET_STEP
 } from '../util/numbers';
 import {
   formatOdds,
@@ -175,7 +176,7 @@ export class OddsComponent implements OnInit {
     for (let race = 1; race <= MAX_RACE_PER_MEETING; race++) {
       this.bets.set(race, {...DEFAULT_BET});
       this.ranges.set(race, {...DEFAULT_RANGE});
-      this.unitBets.set(race, DEFAULT_MIN_UNIT_BET);
+      this.unitBets.set(race, DEFAULT_UNIT_BET);
     }
   }
 
@@ -324,12 +325,12 @@ export class OddsComponent implements OnInit {
   }
 
   adjustUnitBet = (toAdd: boolean) => {
-    const currentAmount = this.unitBets.get(this.activeRace) || DEFAULT_MIN_UNIT_BET;
+    const currentAmount = this.unitBets.get(this.activeRace) || DEFAULT_UNIT_BET;
     if (toAdd) {
-      this.unitBets.set(this.activeRace, currentAmount + DEFAULT_MIN_UNIT_BET);
+      this.unitBets.set(this.activeRace, currentAmount + UNIT_BET_STEP);
     } else {
-      if (currentAmount > DEFAULT_MIN_UNIT_BET) {
-        this.unitBets.set(this.activeRace, currentAmount - DEFAULT_MIN_UNIT_BET);
+      if (currentAmount > UNIT_BET_STEP) {
+        this.unitBets.set(this.activeRace, currentAmount - UNIT_BET_STEP);
       }
     }
   }
@@ -662,7 +663,7 @@ export class OddsComponent implements OnInit {
     const starterCashflow = cashflows.find(cf => cf.order === starter.order)?.cashflow || 0;
 
     return {
-      height: parseFloat((128.0 * starterCashflow / maxCashflow).toFixed(1)),
+      height: parseFloat((96.0 * starterCashflow / maxCashflow).toFixed(1)),
       amount: `${(starterCashflow / ONE_MILLION).toFixed(2)}M`
     };
   }
@@ -704,7 +705,7 @@ export class OddsComponent implements OnInit {
   }
 
   get activeUnitBet(): number {
-    return this.unitBets.get(this.activeRace) || DEFAULT_MIN_UNIT_BET;
+    return this.unitBets.get(this.activeRace) || DEFAULT_UNIT_BET;
   }
 
   get activeCashflows(): StarterCashflow[] {
