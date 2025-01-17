@@ -45,7 +45,14 @@
        class="mb-4 mx-auto table-fixed border-collapse"
 >
   <tr class="text-lg">
-    <td class="w-16 border border-gray-700"></td>
+    <td class="w-16 border border-gray-700 cursor-pointer"
+        tooltip="Earning Mode"
+        [hideDelay]="0"
+        [class.text-yellow-400]="isEarningMode"
+        (click)="isEarningMode = !isEarningMode"
+    >
+      <i class="fa fa-map-pin"></i>
+    </td>
     <td class="w-12 border border-gray-700 cursor-help"
         tooltip="Meetings since a winner"
         [hideDelay]="0"
@@ -92,7 +99,6 @@
       </td>
     </ng-container>
   </tr>
-
   <tr *ngFor="let player of players">
     <td class="border border-gray-700 cursor-pointer"
         (click)="activePlayer = player"
@@ -134,22 +140,46 @@
       </span>
     </td>
     <ng-container *ngFor="let meeting of windowMeetings">
-      <td *ngFor="let placing of placings; let last = last"
-          colspan="1"
-          class="border border-gray-900 {{placing.color}}"
-          [class.border-r-gray-700]="last"
-          [class.border-b-gray-400]="isBoundaryPlayer(player)"
-          [class.border-b-gray-700]="!isBoundaryPlayer(player)"
-          [class.underline]="last && isChallengeWinner(meeting.meeting, player)"
-          [class.text-yellow-400]="
-          (
-          'X' == getCellValue(player, meeting.meeting, placing.key)
-          ||
-          (last && isChallengeWinner(meeting.meeting, player))
-          )"
-      >
-        {{ getCellValue(player, meeting.meeting, placing.key) }}
-      </td>
+      <ng-container *ngIf="isEarningMode">
+        <td colspan="8"
+            class="border border-gray-900 border-r-gray-700 px-2"
+            [class.border-b-gray-400]="isBoundaryPlayer(player)"
+            [class.border-b-gray-700]="!isBoundaryPlayer(player)"
+        >
+          <div class="flex flex-row items-center">
+            <div class="w-3/4">
+              <div *ngIf="'0%' != getPlayerEarningRatio(player, meeting.meeting)"
+                   class="h-1.5 border rounded-full bg-sky-600 border-sky-600"
+                   [style.width]="getPlayerEarningRatio(player, meeting.meeting)"
+              >
+              </div>
+            </div>
+            <div class="w-1/4"
+                 [class.text-yellow-400]="'X' == getCellValue(player, meeting.meeting, 'earnings')"
+            >
+              {{ getCellValue(player, meeting.meeting, 'earnings') }}
+            </div>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container *ngIf="!isEarningMode">
+        <td *ngFor="let placing of placings; let last = last"
+            colspan="1"
+            class="border border-gray-900 {{placing.color}}"
+            [class.border-r-gray-700]="last"
+            [class.border-b-gray-400]="isBoundaryPlayer(player)"
+            [class.border-b-gray-700]="!isBoundaryPlayer(player)"
+            [class.underline]="last && isChallengeWinner(meeting.meeting, player)"
+            [class.text-yellow-400]="
+            (
+            'X' == getCellValue(player, meeting.meeting, placing.key)
+            ||
+            (last && isChallengeWinner(meeting.meeting, player))
+            )"
+        >
+          {{ getCellValue(player, meeting.meeting, placing.key) }}
+        </td>
+      </ng-container>
     </ng-container>
   </tr>
 </table>

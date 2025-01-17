@@ -60,6 +60,7 @@ export class TrendEveryoneComponent implements OnInit {
   activeMeeting: string = '';
   activePlayerType: string = this.playerTypes[0];
   activePlayerView: string = this.playerViews[0];
+  isEarningMode: boolean = true;
 
   protected readonly COLORS = COLORS;
   protected readonly MEETING_WINDOW_SIZE = MEETING_WINDOW_SIZE;
@@ -183,6 +184,24 @@ export class TrendEveryoneComponent implements OnInit {
       .find(p => p.player === this.activePlayer)
       ?.starters
       .filter(s => s.race === race) || []
+
+  getPlayerEarningRatio = (player: string, meeting: string): string => {
+    const playerEarnings = this.getCellValue(player, meeting, 'earnings');
+    if (playerEarnings === '' || playerEarnings === 'X') return '0%';
+
+    const maxPlayerEarnings = this.players
+      .map(p => {
+        const earnings = this.getCellValue(p, meeting, 'earnings');
+        if (earnings === '' || earnings === 'X') return 0;
+        return parseFloat(earnings);
+      })
+      .sort((e1, e2) => e1 - e2)
+      .pop() || 0;
+
+    return maxPlayerEarnings < 1
+      ? '0%'
+      : `${(100 * parseFloat(playerEarnings) / maxPlayerEarnings).toFixed(1)}%`;
+  }
 
   getCellValue = (player: string, meeting: string, key: string): string => {
     const meetings = this.meetings.filter(m => m.meeting == meeting);
