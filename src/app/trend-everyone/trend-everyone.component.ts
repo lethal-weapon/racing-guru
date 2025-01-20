@@ -60,7 +60,7 @@ export class TrendEveryoneComponent implements OnInit {
   activeMeeting: string = '';
   activePlayerType: string = this.playerTypes[0];
   activePlayerView: string = this.playerViews[0];
-  isEarningMode: boolean = true;
+  isEarningMode: boolean = false;
 
   protected readonly COLORS = COLORS;
   protected readonly MEETING_WINDOW_SIZE = MEETING_WINDOW_SIZE;
