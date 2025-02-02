@@ -62,13 +62,14 @@ export class FormBetComponent implements OnInit {
     ]
 
   getReturnOnInvestment = (bet: Bet): number =>
-    parseFloat((bet.credit / bet.debit - 1).toFixed(2))
+    bet.debit < 1 ? 0 : parseFloat((bet.credit / bet.debit - 1).toFixed(2))
 
   getMeetingROIColor = (bet: Bet): string => {
     const roi = this.getReturnOnInvestment(bet);
     if (roi < 0) return 'text-red-600';
-    if (roi >= 1) return 'text-yellow-400';
-    return 'text-green-600';
+    if (roi === 0) return '';
+    if (roi > 0 && roi < 1) return 'text-green-600';
+    return 'text-yellow-400';
   }
 
   getProfitRacesOnMeeting = (bet: Bet): number[] =>
