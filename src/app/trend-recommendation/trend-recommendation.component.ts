@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {Meeting} from '../model/meeting.model';
+import {EarningStarter, Meeting} from '../model/meeting.model';
 import {Recommendation, StarterRank} from '../model/recommendation.model';
 import {formatMeeting, getPlacingBorderBackground} from '../util/functions';
 import {PLACING_MAPS} from '../util/strings';
 
 const BY_STATS = 'By Stats';
+const BY_INHERITANCE = 'By IRank';
 
 @Component({
   selector: 'app-trend-recommendation',
@@ -17,6 +18,7 @@ export class TrendRecommendationComponent implements OnInit {
   activeBadge: string = BY_STATS;
 
   protected readonly BY_STATS = BY_STATS;
+  protected readonly BY_INHERITANCE = BY_INHERITANCE;
   protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly formatMeeting = formatMeeting;
 
@@ -24,9 +26,72 @@ export class TrendRecommendationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchRecommendations(8, () => {
+    this.repo.fetchRecommendations(16, () => {
       this.activeBadge = this.repo.findRecommendations()[0].meeting;
     });
+  }
+
+  getRacesOnMeeting = (meeting: string): number[] =>
+    (this.recommendations.find(r => r.meeting === meeting)?.races || [])
+      .map(r => r.race)
+      .sort((r1, r2) => r2 - r1)
+
+  getEarningStarter = (meeting: string, race: number, placing: number): EarningStarter | undefined =>
+    (this.meetings.find(m => m.meeting === meeting)?.players || [])
+      .flatMap(ps => ps.starters)
+      .filter(s => !s.scratched)
+      .filter(s => s.race === race && s?.placing === placing)
+      .shift()
+
+  getOdds = (meeting: string, race: number, placing: number): number =>
+    this.getEarningStarter(meeting, race, placing)?.winOdds || 0
+
+  getRankInheritancePlacingCount = (meeting: string, placing: number): number =>
+    this.getRacesOnMeeting(meeting)
+      .filter(r => this.isRankInherited(meeting, r, placing))
+      .length
+
+  getRankInheritanceAverageEarning = (m: Meeting): number => {
+    const totalEarning = m.players
+      .map(p => {
+        p.meeting = m.meeting;
+        return p;
+      })
+      .flatMap(ps => ps.starters.map(s => {
+        s.meeting = ps.meeting;
+        return s;
+      }))
+      .filter(es => (es?.earning || 0) > 0)
+      .filter(es => this.isRankInherited(es.meeting, es.race, es.placing))
+      .map(es => es.earning / 2)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    // ignore first race
+    const races = this.getRacesOnMeeting(m.meeting).length - 1;
+
+    return parseFloat((totalEarning / (races < 1 ? 1 : races)).toFixed(1));
+  }
+
+  isMultipleRankInheritance = (meeting: string, race: number): boolean =>
+    [1, 2, 3, 4].filter(p => this.isRankInherited(meeting, race, p)).length > 1
+
+  isRankInherited = (meeting: string, race: number, placing: number): boolean => {
+    const races = this.recommendations.find(r => r.meeting === meeting)?.races || [];
+    if (races.length < 1) return false;
+
+    const currentRaceRanks = races.find(r => r.race === race)?.starters || [];
+    const previousRaceRanks = races.find(r => r.race === race - 1)?.starters || [];
+    if (currentRaceRanks.length < 1 || previousRaceRanks.length < 1) return false;
+
+    const order = this.getEarningStarter(meeting, race, placing)?.order || 0;
+    if (order < 0) return false;
+
+    const currentRaceRank = currentRaceRanks.find(crr => crr.order === order)?.rank || 0;
+
+    return previousRaceRanks
+      .filter(prr => [1, 2, 3, 4].includes(this.getStarterPlacing(meeting, race - 1, prr.order)))
+      .map(prr => prr.rank)
+      .includes(currentRaceRank);
   }
 
   isTopExactRankPlacing = (rank: number, placing: number): boolean =>

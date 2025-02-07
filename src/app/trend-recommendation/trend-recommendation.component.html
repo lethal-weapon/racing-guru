@@ -3,8 +3,8 @@
 </div>
 
 <div *ngIf="!isLoading" class="mx-12">
-  <div class="my-4 flex flex-row justify-evenly">
-    <div *ngFor="let section of [BY_STATS]"
+  <div class="mx-8 my-3 grid grid-cols-9 gap-3">
+    <div *ngFor="let section of [BY_STATS, BY_INHERITANCE]"
          class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(section)}}"
          (click)="activeBadge = section"
     >
@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div *ngIf="![BY_STATS].includes(activeBadge)">
+  <div *ngIf="![BY_STATS, BY_INHERITANCE].includes(activeBadge)">
     <div *ngFor="let rr of activeRecommendation.races"
          class="my-4 flex flex-row items-center gap-x-10"
     >
@@ -122,5 +122,54 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div *ngIf="activeBadge === BY_INHERITANCE"
+       class="m-8 grid grid-cols-4 gap-x-4 gap-y-2 text-lg"
+  >
+    <div *ngFor="let m of meetings"
+         class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
+    >
+      <div class="">
+        {{ m.meeting }}
+        &nbsp;
+        ({{ m.venue }})
+        &nbsp;
+        <span class="{{getRankInheritanceAverageEarning(m) >= 6 ? 'text-yellow-400' : ''}}">
+          ${{ getRankInheritanceAverageEarning(m) }}/R
+        </span>
+      </div>
+      <div class="grid grid-cols-5">
+        <div></div>
+        <div *ngFor="let pm of PLACING_MAPS; let index = index"
+             class="{{pm.color}}"
+        >
+          <span *ngIf="getRankInheritancePlacingCount(m.meeting, index + 1) < 1">
+            X
+          </span>
+          <span *ngIf="getRankInheritancePlacingCount(m.meeting, index + 1) >= 1">
+            {{ getRankInheritancePlacingCount(m.meeting, index + 1) + pm.placing }}
+          </span>
+        </div>
+      </div>
+      <div *ngFor="let race of getRacesOnMeeting(m.meeting)"
+           class="grid grid-cols-5 text-lg"
+      >
+        <div class="italic"
+             [class.text-yellow-600]="isMultipleRankInheritance(m.meeting, race)"
+        >
+          #{{ race }}
+        </div>
+        <div *ngFor="let pm of PLACING_MAPS; let index = index"
+             class="{{ isRankInherited(m.meeting, race, index + 1) ? pm.color : 'opacity-50'}}"
+             [class.border]="isRankInherited(m.meeting, race, index + 1) && getOdds(m.meeting, race, index + 1) >= 10"
+             [class.border-gray-600]="isRankInherited(m.meeting, race, index + 1) && getOdds(m.meeting, race, index + 1) >= 10"
+        >
+          <span *ngIf="getOdds(m.meeting, race, index + 1) > 0">
+            {{ getOdds(m.meeting, race, index + 1) | number: '1.0-1' }}
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
