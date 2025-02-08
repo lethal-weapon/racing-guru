@@ -224,7 +224,7 @@ export class TrendRecommendationComponent implements OnInit {
   }
 
   get meetings(): Meeting[] {
-    return this.repo.findMeetings();
+    return this.repo.findMeetings().slice(0, 16);
   }
 
   get isLoading(): boolean {

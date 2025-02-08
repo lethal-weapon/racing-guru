@@ -209,6 +209,19 @@ export class RacecardComponent implements OnInit {
       this.editingSelections.push({order: starter.order, placing: placing});
   }
 
+  setFavoriteToRankInheritanceStarters = () => {
+    let newPick: Pick = {...this.pick, races: [...this.pick.races]};
+    let newRacePick = newPick.races.find(r => r.race === this.activeRace);
+    if (!newRacePick) return;
+
+    const orders = (this.activeRacecard?.starters || [])
+      .filter(s => this.isRankInheritanceStarter(s))
+      .map(s => s.order);
+
+    newRacePick.favorites = orders;
+    this.repo.savePick(newPick);
+  }
+
   setFavoriteToDrawInheritanceStarters = () => {
     let newPick: Pick = {...this.pick, races: [...this.pick.races]};
     let newRacePick = newPick.races.find(r => r.race === this.activeRace);
@@ -254,6 +267,29 @@ export class RacecardComponent implements OnInit {
       .map(s => s.order)
       .slice(0, 3)
       .includes(starter.order);
+  }
+
+  isRankInheritanceStarter = (starter: Starter): boolean => {
+    if (this.activeRace === 1) return false;
+
+    const priorCard = this.racecards.find(r => r.race === this.activeRace - 1);
+    if (!priorCard) return false;
+
+    const priorRaceTop4StarterRanks = priorCard.starters
+      .filter(s => s.placing >= 1 && s.placing <= 4)
+      .map(s =>
+        (this.recommendation.races.find(r => r.race === this.activeRace - 1)?.starters || [])
+          .find(rs => rs.order === s.order)
+          ?.rank || 0
+      )
+      .filter(r => r > 0);
+
+    const starterRank =
+      (this.recommendation.races.find(r => r.race === this.activeRace)?.starters || [])
+        .find(rs => rs.order === starter.order)
+        ?.rank || 0;
+
+    return starterRank > 0 && priorRaceTop4StarterRanks.includes(starterRank);
   }
 
   isDrawInheritanceStarter = (starter: Starter): boolean => {
