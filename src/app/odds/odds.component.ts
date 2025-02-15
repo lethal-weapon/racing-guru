@@ -10,7 +10,9 @@ import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {OddsSnapshot, StarterCashflow} from '../model/oddsSnapshot.model';
 import {COLORS, LATEST} from '../util/strings';
 import {
+  CAPITAL_STEP,
   DBL_ODDS_STEP,
+  DEFAULT_CAPITAL,
   DEFAULT_MAX_DBL_ODDS,
   DEFAULT_MAX_FCT_ODDS,
   DEFAULT_MAX_QIN_ODDS,
@@ -107,6 +109,7 @@ export class OddsComponent implements OnInit {
   bets: Map<number, Bet> = new Map();
   ranges: Map<number, OddsRange> = new Map();
   unitBets: Map<number, number> = new Map();
+  capitals: Map<number, number> = new Map();
 
   protected readonly toPlacingColor = toPlacingColor;
   protected readonly getSignalColor = getSignalColor;
@@ -177,6 +180,7 @@ export class OddsComponent implements OnInit {
       this.bets.set(race, {...DEFAULT_BET});
       this.ranges.set(race, {...DEFAULT_RANGE});
       this.unitBets.set(race, DEFAULT_UNIT_BET);
+      this.capitals.set(race, DEFAULT_CAPITAL);
     }
   }
 
@@ -321,6 +325,17 @@ export class OddsComponent implements OnInit {
 
     } else if (increment === 99) {
       this.cashflowMinute = 25;
+    }
+  }
+
+  adjustCapital = (toAdd: boolean) => {
+    const currentAmount = this.capitals.get(this.activeRace) || DEFAULT_CAPITAL;
+    if (toAdd) {
+      this.capitals.set(this.activeRace, currentAmount + CAPITAL_STEP);
+    } else {
+      if (currentAmount > CAPITAL_STEP) {
+        this.capitals.set(this.activeRace, currentAmount - CAPITAL_STEP);
+      }
     }
   }
 
@@ -706,6 +721,10 @@ export class OddsComponent implements OnInit {
 
   get activeUnitBet(): number {
     return this.unitBets.get(this.activeRace) || DEFAULT_UNIT_BET;
+  }
+
+  get activeCapital(): number {
+    return this.capitals.get(this.activeRace) || DEFAULT_CAPITAL;
   }
 
   get activeCashflows(): StarterCashflow[] {

@@ -43,45 +43,59 @@
         </tr>
       </table>
     </div>
-    <div class="flex flex-col gap-y-2">
-      <div class="flex flex-row">
-        <div class="text-xl mr-4">
-          Dutching
-        </div>
-        <div class="pt-1">
-          <label class="inline-flex cursor-pointer">
-            <input
-              [(ngModel)]="isTrueDutching"
-              type="checkbox"
-              class="sr-only peer"
-            />
-            <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600
-                        rtl:peer-checked:after:-translate-x-full peer-focus:ring-0 peer-focus:outline-none
-                        peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
-                        after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
-                        after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
-            >
-            </div>
-          </label>
-        </div>
+    <div class="grid grid-cols-4 gap-2">
+      <div class="text-xl">
+        Dutching
       </div>
-      <div class="flex flex-row">
-        <div class="text-xl mr-4">
-          Unit Bet
-        </div>
-        <div class="{{oddsButtonStyle}}"
-             (click)="adjustUnitBet(false)"
-        >
-          <i class="fa fa-minus"></i>
-        </div>
-        <div class="w-20 text-2xl">
-          {{ activeUnitBet | currency:'USD':'symbol':'1.0-0' }}
-        </div>
-        <div class="{{oddsButtonStyle}}"
-             (click)="adjustUnitBet(true)"
-        >
-          <i class="fa fa-plus"></i>
-        </div>
+      <div class="pt-1">
+        <label class="inline-flex cursor-pointer">
+          <input
+            [(ngModel)]="isTrueDutching"
+            type="checkbox"
+            class="sr-only peer"
+          />
+          <div class="relative w-11 h-6 rounded-full peer bg-gray-700 border-gray-600
+                      rtl:peer-checked:after:-translate-x-full peer-focus:ring-0 peer-focus:outline-none
+                      peer-checked:after:border-white peer-checked:bg-blue-600 peer-checked:after:translate-x-full
+                      after:absolute after:content-[''] after:h-5 after:w-5 after:top-[2px] after:start-[2px]
+                      after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all"
+          >
+          </div>
+        </label>
+      </div>
+      <div></div>
+      <div></div>
+      <div class="text-xl">
+        Unit Bet
+      </div>
+      <div class="{{oddsButtonStyle}}"
+           (click)="adjustUnitBet(false)"
+      >
+        <i class="fa fa-minus"></i>
+      </div>
+      <div class="w-20 text-2xl">
+        {{ activeUnitBet | currency:'USD':'symbol':'1.0-0' }}
+      </div>
+      <div class="{{oddsButtonStyle}}"
+           (click)="adjustUnitBet(true)"
+      >
+        <i class="fa fa-plus"></i>
+      </div>
+      <div class="text-xl">
+        Capital
+      </div>
+      <div class="{{oddsButtonStyle}}"
+           (click)="adjustCapital(false)"
+      >
+        <i class="fa fa-minus"></i>
+      </div>
+      <div class="w-20 text-2xl">
+        {{ activeCapital | currency:'USD':'symbol':'1.0-0' }}
+      </div>
+      <div class="{{oddsButtonStyle}}"
+           (click)="adjustCapital(true)"
+      >
+        <i class="fa fa-plus"></i>
       </div>
     </div>
     <div class="grid grid-cols-3 px-2 py-4 gap-4">

@@ -15,7 +15,10 @@ export const PAYDAY_MEETING_INTERVAL = 22;
 export const SENIOR_HORSE_AGE = 7;
 
 export const UNIT_BET_STEP = 10;
-export const DEFAULT_UNIT_BET = 20;
+export const DEFAULT_UNIT_BET = 10;
+
+export const CAPITAL_STEP = 50;
+export const DEFAULT_CAPITAL = 250;
 
 export const DEFAULT_MIN_QPL_ODDS = 1;
 export const DEFAULT_MIN_QIN_ODDS = 5;
