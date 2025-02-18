@@ -9,8 +9,7 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {DEFAULT_MEETING, Meeting} from '../model/meeting.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
-import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
-import {BOUNDARY_INVESTMENT_POOLS, BOUNDARY_POOLS, LATEST} from '../util/strings';
+import {BOUNDARY_INVESTMENT_POOLS, LATEST} from '../util/strings';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   formatRace,
@@ -24,11 +23,6 @@ import {
   toMillion,
   toPlacingColor
 } from '../util/functions';
-
-interface PoolThreshold {
-  name: string,
-  threshold: number
-}
 
 interface InvestmentPool {
   race: number,
@@ -59,7 +53,6 @@ export class MeetingComponent implements OnInit {
   activeTrainerIntervalId: any;
   activeTrainerAnimationOn: boolean = false;
 
-  protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
   protected readonly BOUNDARY_INVESTMENT_POOLS = BOUNDARY_INVESTMENT_POOLS;
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly formatRace = formatRace;
@@ -435,87 +428,6 @@ export class MeetingComponent implements OnInit {
     `;
   }
 
-  getDividendOdds = (race: number, pool: string): number => {
-    const d = this.racecards.find(r => r.race === race)?.dividend;
-    try {
-      switch (pool) {
-        case 'WIN':
-          return (d?.win || DEFAULT_SINGULARS)[0].odds
-        case 'QIN':
-          return Math.floor((d?.quinella || DEFAULT_COMBINATIONS)[0].odds)
-        case 'FCT':
-          return Math.floor((d?.forecast || DEFAULT_COMBINATIONS)[0].odds)
-        case 'TRI':
-          return Math.floor((d?.trio || DEFAULT_COMBINATIONS)[0].odds)
-        case 'F-F':
-          return Math.floor((d?.firstFour || DEFAULT_COMBINATIONS)[0].odds)
-        case 'TCE':
-          return Math.floor((d?.tierce || DEFAULT_COMBINATIONS)[0].odds)
-        case 'QTT':
-          return Math.floor((d?.quartet || DEFAULT_COMBINATIONS)[0].odds)
-
-        case 'PLA-1':
-          return (d?.place || DEFAULT_SINGULARS)[0].odds
-        case 'PLA-2':
-          return (d?.place || DEFAULT_SINGULARS)[1].odds
-        case 'PLA-3':
-          return (d?.place || DEFAULT_SINGULARS)[2].odds
-
-        case 'QPL-1':
-          return parseFloat((d?.quinellaPlace || DEFAULT_COMBINATIONS)[0].odds.toFixed(1))
-        case 'QPL-2':
-          return parseFloat((d?.quinellaPlace || DEFAULT_COMBINATIONS)[1].odds.toFixed(1))
-        case 'QPL-3':
-          return parseFloat((d?.quinellaPlace || DEFAULT_COMBINATIONS)[2].odds.toFixed(1))
-
-        case 'DBL-1':
-          return Math.floor((d?.doubles || DEFAULT_COMBINATIONS)[0].odds)
-        case 'DBL-2':
-          return (d?.doubles || DEFAULT_COMBINATIONS)[1].odds
-
-        case 'TBL-1':
-          return Math.floor((d?.treble || DEFAULT_COMBINATIONS)[0].odds)
-        case 'TBL-2':
-          return Math.floor((d?.treble || DEFAULT_COMBINATIONS)[1].odds)
-
-        case '6UP-1':
-          return Math.floor((d?.sixUp || DEFAULT_COMBINATIONS)[0].odds)
-        case '6UP-2':
-          return Math.floor((d?.sixUp || DEFAULT_COMBINATIONS)[1].odds)
-
-        case 'D-T':
-          return Math.floor((d?.doubleTrio || DEFAULT_COMBINATIONS)[0].odds)
-        case 'TT-1':
-          return Math.floor((d?.tripleTrio || DEFAULT_COMBINATIONS)[0].odds)
-        case 'TT-2':
-          return Math.floor((d?.tripleTrio || DEFAULT_COMBINATIONS)[1].odds)
-
-        default:
-          return 0
-      }
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  getDividendTop4 = (race: number): string[] => {
-    const starters = this.racecards
-        .find(r => r.race === race)
-        ?.starters
-        .filter(s => (s?.placing || 0) >= 1 && (s?.placing || 0) <= 4)
-        .sort((s1, s2) => (s1.placing - s2.placing) || (s1.order - s2.order))
-      || [];
-
-    if (starters.length === 0) return [];
-
-    return Array(4).fill(1)
-      .map((_, index) => 1 + index)
-      .map(p => starters
-        .filter(s => s.placing === p)
-        .map(s => s.order)
-        .join('/'));
-  }
-
   getChallengerInvestment = (challenger: string): number =>
     this.racecards
       .map(r => r.starters
@@ -625,71 +537,6 @@ export class MeetingComponent implements OnInit {
       .sort((p1, p2) => p2 - p1)
       .slice(0, 3)
       .includes(this.getChallengeOdds(playerType, order).points);
-  }
-
-  getCrossRacePoolDividendRaces = (row: number): number => {
-    if (this.crossRacePoolDividendRaces.length >= row) {
-      return this.crossRacePoolDividendRaces[row - 1];
-    }
-    return 1;
-  }
-
-  get todayTurnover(): number {
-    return this.racecards
-      .filter(r => (r?.pool?.meetingTotal || 0) > 0)
-      .map(r => r.pool.meetingTotal)
-      .sort((t1, t2) => t2 - t1)
-      .shift() || 0;
-  }
-
-  get dividendRacePools(): PoolThreshold[] {
-    return [
-      {name: 'WIN', threshold: 8},
-      {name: 'QIN', threshold: 40},
-      {name: 'FCT', threshold: 80},
-      {name: 'TRI', threshold: 100},
-      {name: 'F-F', threshold: 100},
-      {name: 'TCE', threshold: 300},
-      {name: 'QTT', threshold: 3000},
-      {name: 'PLA-1', threshold: 4},
-      {name: 'PLA-2', threshold: 4},
-      {name: 'PLA-3', threshold: 4},
-      {name: 'QPL-1', threshold: 15},
-      {name: 'QPL-2', threshold: 15},
-      {name: 'QPL-3', threshold: 15},
-      {name: 'DBL-1', threshold: 50},
-      {name: 'DBL-2', threshold: 20},
-    ];
-  }
-
-  get dividendCrossRacePools(): PoolThreshold[] {
-    return [
-      {name: 'TBL-1', threshold: 100},
-      {name: 'TBL-2', threshold: 40},
-      {name: '6UP-1', threshold: 300},
-      {name: '6UP-2', threshold: 3000},
-      {name: 'D-T', threshold: 3000},
-      {name: 'TT-1', threshold: 10000},
-      {name: 'TT-2', threshold: 1000},
-    ];
-  }
-
-  get crossRacePoolDividendRaces(): number[] {
-    let races = this.racecards
-      .filter(r =>
-        r?.dividend?.treble
-        ||
-        r?.dividend?.sixUp
-        ||
-        r?.dividend?.doubleTrio
-        ||
-        r?.dividend?.tripleTrio
-      )
-      .map(r => r.race)
-      .sort((r1, r2) => r1 - r2);
-
-    while (races.length < 5) races.push(1);
-    return races;
   }
 
   get investmentPoolNames(): string[] {

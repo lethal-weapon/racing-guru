@@ -36,6 +36,7 @@ export class RestRepository {
   private reports: Report[] = [];
   private reminders: Reminder[] = [];
   private racecards: Racecard[] = [];
+  private dividends: Racecard[] = [];
   private recommendations: Recommendation[] = [];
   private syndicates: Syndicate[] = [];
   private meetings: Meeting[] = [];
@@ -67,6 +68,7 @@ export class RestRepository {
   findReports = () => this.reports
   findReminders = () => this.reminders
   findRacecards = () => this.racecards
+  findDividends = () => this.dividends
   findRecommendations = () => this.recommendations
   findSyndicates = () => this.syndicates
   findMeetings = () => this.meetings
@@ -192,6 +194,15 @@ export class RestRepository {
       if (oldCard.dividend != newCard.dividend) oldCard.dividend = newCard.dividend;
     }
   }
+
+  fetchDividends = (
+    size: number = 8,
+    callback: () => any = () => console.log(``)
+  ) =>
+    this.source.getDividends(size).subscribe(data => {
+      this.dividends = data;
+      callback();
+    })
 
   fetchRecommendations = (
     size: number = 8,

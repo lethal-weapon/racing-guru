@@ -19,12 +19,14 @@ import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {RacecardComponent} from './racecard/racecard.component';
+import {DividendComponent} from './dividend/dividend.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
 import {FixtureComponent} from './fixture/fixture.component';
 import {TrendComponent} from './trend/trend.component';
 import {TrendEveryoneComponent} from './trend-everyone/trend-everyone.component';
 import {TrendTopsComponent} from './trend-tops/trend-tops.component';
+import {TrendDividendComponent} from './trend-dividend/trend-dividend.component';
 import {TrendEarningComponent} from './trend-earning/trend-earning.component';
 import {TrendCollaborationComponent} from './trend-collaboration/trend-collaboration.component';
 import {TrendSignalComponent} from './trend-signal/trend-signal.component';
@@ -53,6 +55,7 @@ import {FinanceStatementComponent} from './finance-statement/finance-statement.c
     FooterComponent,
     MeetingComponent,
     RacecardComponent,
+    DividendComponent,
     OddsComponent,
     BacktestComponent,
     FixtureComponent,
@@ -60,6 +63,7 @@ import {FinanceStatementComponent} from './finance-statement/finance-statement.c
     TrendEveryoneComponent,
     TrendEarningComponent,
     TrendTopsComponent,
+    TrendDividendComponent,
     TrendCollaborationComponent,
     TrendSignalComponent,
     TrendRecommendationComponent,

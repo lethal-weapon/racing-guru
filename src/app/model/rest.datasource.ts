@@ -84,6 +84,9 @@ export class RestDataSource {
   getRacecards = (meeting: string): Observable<Racecard[]> =>
     this.http.get<Racecard[]>(`${this.baseUrl}/racecards?meeting=${meeting}`)
 
+  getDividends = (size: number): Observable<Racecard[]> =>
+    this.http.get<Racecard[]>(`${this.baseUrl}/racecards/dividends?meetingSize=${size}`)
+
   getRecommendations = (size: number): Observable<Recommendation[]> =>
     this.http.get<Recommendation[]>(`${this.baseUrl}/recommendations?size=${size}`)
 

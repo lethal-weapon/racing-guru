@@ -18,7 +18,8 @@ export class TrendComponent implements OnInit {
   pages: Array<{ section: string, link: string }> = [
     {section: 'Everyone', link: 'everyone'},
     {section: 'Board', link: 'tops'},
-    {section: 'Earning', link: 'earning'},
+    {section: 'Dividend', link: 'dividend'},
+    // {section: 'Earning', link: 'earning'},
     // {section: 'C11N', link: 'collaboration'},
     // {section: 'Signal', link: 'signal'},
     {section: 'R12N', link: 'recommendation'},

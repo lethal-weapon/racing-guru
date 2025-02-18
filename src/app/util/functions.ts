@@ -57,6 +57,17 @@ export const toRelativeTime = (raceTime: Date, detectedAt: string): string => {
   return `${seconds}S`;
 }
 
+export const isBoundaryMeetingStr = (meetings: string[], meeting: string): boolean =>
+  meetings
+    .map(m => m.slice(0, 7))
+    .filter((prefix, i, array) => array.indexOf(prefix) === i)
+    .map(prefix => meetings
+      .filter(m => m.startsWith(prefix))
+      .sort((m1, m2) => m1.localeCompare(m2))
+      .shift()
+    )
+    .includes(meeting)
+
 export const isBoundaryMeeting = (meetings: Meeting[], meeting: string): boolean =>
   meetings
     .map(m => m.meeting.slice(0, 7))

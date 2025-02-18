@@ -1,0 +1,58 @@
+<div *ngIf="isLoading">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+  <div class="mx-8 my-3 grid grid-cols-9 gap-3">
+    <div *ngFor="let section of [BY_OVERVIEW]"
+         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(section)}}"
+         (click)="activeBadge = section"
+    >
+      {{ section }}
+    </div>
+    <div *ngFor="let d of raceOneCards"
+         class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(d.meeting)}}"
+         (click)="activeBadge = d.meeting"
+    >
+      {{ formatMeeting(d.meeting) }}
+      {{ d.venue }}
+    </div>
+  </div>
+
+  <div *ngIf="![BY_OVERVIEW].includes(activeBadge)"
+       class="my-8"
+  >
+    <app-dividend [racecards]="activeRacecards"></app-dividend>
+  </div>
+
+  <table *ngIf="activeBadge === BY_OVERVIEW"
+         class="my-8 mx-auto table-fixed border-collapse font-mono"
+  >
+    <thead class="text-xl">
+      <th class="w-24 border border-gray-600 py-1">
+        <i class="fa fa-calendar"></i>
+      </th>
+      <th *counter="let race of MAX_RACE_PER_MEETING"
+          class="w-32 border border-gray-600"
+      >
+        {{ formatRace(race) }}
+      </th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of meetings; let last = last"
+          class="hover:bg-gray-800"
+      >
+        <td class="h-10 border border-gray-700 text-xl py-1"
+            [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
+        >
+          {{ formatMeeting(m) }}
+        </td>
+        <td *counter="let race of MAX_RACE_PER_MEETING"
+            class="h-10 border border-gray-700 text-xs py-1"
+            [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
+        >
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

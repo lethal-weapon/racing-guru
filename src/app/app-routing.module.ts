@@ -13,6 +13,7 @@ import {TrendCollaborationComponent} from './trend-collaboration/trend-collabora
 import {TrendSignalComponent} from './trend-signal/trend-signal.component';
 import {TrendRecommendationComponent} from './trend-recommendation/trend-recommendation.component';
 import {TrendTopsComponent} from './trend-tops/trend-tops.component';
+import {TrendDividendComponent} from './trend-dividend/trend-dividend.component';
 import {TrendTrackworkComponent} from './trend-trackwork/trend-trackwork.component';
 import {TrendDrawComponent} from './trend-draw/trend-draw.component';
 import {FormComponent} from './form/form.component';
@@ -47,6 +48,10 @@ const routes: Routes = [
       {
         path: 'tops',
         component: TrendTopsComponent,
+      },
+      {
+        path: 'dividend',
+        component: TrendDividendComponent,
       },
       {
         path: 'earning',
