@@ -9,7 +9,7 @@ import {Starter} from '../model/starter.model';
 import {Racecard} from '../model/racecard.model';
 import {DEFAULT_MEETING, Meeting} from '../model/meeting.model';
 import {ChallengeOdds, DEFAULT_CHALLENGE_ODDS} from '../model/odds.model';
-import {BOUNDARY_INVESTMENT_POOLS, LATEST} from '../util/strings';
+import {LATEST} from '../util/strings';
 import {EARNING_THRESHOLD, PAYOUT_RATE, THREE_SECONDS} from '../util/numbers';
 import {
   formatRace,
@@ -23,12 +23,6 @@ import {
   toMillion,
   toPlacingColor
 } from '../util/functions';
-
-interface InvestmentPool {
-  race: number,
-  pool: string,
-  amount: string
-}
 
 interface ChallengeArbitrageBet {
   minTotalDebit: number,
@@ -53,7 +47,6 @@ export class MeetingComponent implements OnInit {
   activeTrainerIntervalId: any;
   activeTrainerAnimationOn: boolean = false;
 
-  protected readonly BOUNDARY_INVESTMENT_POOLS = BOUNDARY_INVESTMENT_POOLS;
   protected readonly EARNING_THRESHOLD = EARNING_THRESHOLD;
   protected readonly formatRace = formatRace;
   protected readonly formatRaceTimeWithoutSpace = formatRaceTimeWithoutSpace;
@@ -363,10 +356,6 @@ export class MeetingComponent implements OnInit {
   getStarterPlacingColor = (jockey: string, card: Racecard): string =>
     toPlacingColor(getStarter(jockey, card)?.placing)
 
-  getStarterCount = (race: number): number =>
-    (this.racecards.find(r => r.race === race)?.starters || [])
-      .filter(s => !s.scratched).length
-
   getStarterTooltip = (jockey: string, racecard: Racecard): string => {
     const starter = racecard.starters.find(s => s.jockey === jockey);
     if (!starter) return '';
@@ -380,23 +369,6 @@ export class MeetingComponent implements OnInit {
         <div>${horse.nameEN}</div>
       </div>
     `;
-  }
-
-  getInvestmentPoolAmount = (race: number, pool: string): string => {
-    let amount = this.investmentPools
-      .find(i => i.race === race && i.pool === pool)?.amount || '';
-
-    if (amount === '0.00') return '';
-    if (amount.startsWith('0.')) {
-      amount = amount.replace('0.', ' .');
-      if (amount.includes('.0')) {
-        amount = amount.replace('.0', '. ');
-      }
-    }
-    if (amount.endsWith('0')) {
-      amount = `${amount.slice(0, amount.length - 1)} `;
-    }
-    return amount;
   }
 
   getRaceTooltip = (racecard: Racecard): string => {
@@ -537,33 +509,6 @@ export class MeetingComponent implements OnInit {
       .sort((p1, p2) => p2 - p1)
       .slice(0, 3)
       .includes(this.getChallengeOdds(playerType, order).points);
-  }
-
-  get investmentPoolNames(): string[] {
-    return this.investmentPools
-      .map(p => p.pool)
-      .filter((p, index, arr) => index === arr.indexOf(p));
-  }
-
-  get investmentPools(): InvestmentPool[] {
-    return this.racecards.flatMap(r => {
-      const pool = r?.pool;
-      return [
-        {race: r.race, pool: 'WIN', amount: toMillion(pool?.win || 0)},
-        {race: r.race, pool: 'PLA', amount: toMillion(pool?.place || 0)},
-        {race: r.race, pool: 'QIN', amount: toMillion(pool?.quinella || 0)},
-        {race: r.race, pool: 'QPL', amount: toMillion(pool?.quinellaPlace || 0)},
-        {race: r.race, pool: 'FCT', amount: toMillion(pool?.forecast || 0)},
-        {race: r.race, pool: 'TRI', amount: toMillion(pool?.trio || 0)},
-        {race: r.race, pool: 'TCE', amount: toMillion(pool?.tierce || 0)},
-        {race: r.race, pool: 'F-Q', amount: toMillion(pool?.quartet || 0)},
-        {race: r.race, pool: 'DBL', amount: toMillion(pool?.doubles || 0)},
-        {race: r.race, pool: 'TBL', amount: toMillion(pool?.treble || 0)},
-        {race: r.race, pool: '6UP', amount: toMillion(pool?.sixUp || 0)},
-        {race: r.race, pool: 'D-T', amount: toMillion(pool?.doubleTrio || 0)},
-        {race: r.race, pool: 'T-T', amount: toMillion(pool?.tripleTrio || 0)},
-      ];
-    });
   }
 
   get summaryLines(): string[] {

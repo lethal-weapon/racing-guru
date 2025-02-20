@@ -1,0 +1,36 @@
+<table class="mt-2 mx-auto table-fixed border-collapse border border-gray-700 text-center">
+  <thead>
+    <th class="w-16 border border-gray-600">
+      Race
+    </th>
+    <th class="w-20 border border-gray-600 border-r-red-900">
+      Starters
+    </th>
+    <th *ngFor="let pool of investmentPoolNames"
+        class="w-28 border border-gray-600"
+        [class.border-r-red-900]="BOUNDARY_INVESTMENT_POOLS.includes(pool)"
+    >
+      {{ pool }}
+    </th>
+  </thead>
+  <tbody>
+    <tr *counter="let race of maxRace"
+        class="hover:bg-gray-800"
+    >
+      <td class="border border-gray-700">
+        {{ formatRace(race) }}
+      </td>
+      <td class="px-1 border border-gray-700 border-r-red-900">
+        {{ getStarterCount(race) }}
+      </td>
+      <td *ngFor="let pool of investmentPoolNames"
+          class="border border-gray-700 font-mono"
+          [class.border-r-red-900]="BOUNDARY_INVESTMENT_POOLS.includes(pool)"
+      >
+        <span *ngIf="getInvestmentPoolAmount(race, pool).length > 0">
+          $<span *ngIf="getInvestmentPoolAmount(race, pool).length < 5">&nbsp;</span>{{ getInvestmentPoolAmount(race, pool) }}M
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>

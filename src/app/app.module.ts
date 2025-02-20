@@ -20,6 +20,7 @@ import {FooterComponent} from './footer/footer.component';
 import {MeetingComponent} from './meeting/meeting.component';
 import {RacecardComponent} from './racecard/racecard.component';
 import {DividendComponent} from './dividend/dividend.component';
+import {PoolComponent} from './pool/pool.component';
 import {OddsComponent} from './odds/odds.component';
 import {BacktestComponent} from './backtest/backtest.component';
 import {FixtureComponent} from './fixture/fixture.component';
@@ -56,6 +57,7 @@ import {FinanceStatementComponent} from './finance-statement/finance-statement.c
     MeetingComponent,
     RacecardComponent,
     DividendComponent,
+    PoolComponent,
     OddsComponent,
     BacktestComponent,
     FixtureComponent,

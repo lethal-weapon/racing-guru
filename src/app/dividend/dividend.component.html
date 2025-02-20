@@ -6,7 +6,7 @@
     <th class="w-36 border border-gray-600 border-r-red-900">
       Top 4
     </th>
-    <th *ngFor="let pool of dividendRacePools"
+    <th *ngFor="let pool of DIVIDEND_RACE_POOLS"
         class="w-20 border border-gray-600"
         [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
     >
@@ -31,7 +31,7 @@
           </div>
         </div>
       </td>
-      <td *ngFor="let pool of dividendRacePools"
+      <td *ngFor="let pool of DIVIDEND_RACE_POOLS"
           class="border border-gray-700"
           [class.border-b-red-900]="race === maxRace"
           [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
@@ -48,7 +48,7 @@
       <th class="border border-gray-700 border-r-red-900">
         Cross Race
       </th>
-      <th *ngFor="let pool of dividendCrossRacePools"
+      <th *ngFor="let pool of DIVIDEND_CROSS_RACE_POOLS"
           class="border border-gray-700"
           [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
       >
@@ -67,7 +67,7 @@
         {{ formatRace(getCrossRacePoolDividendRaces(row)) }}
       </td>
       <td class="border border-gray-700 border-r-red-900"></td>
-      <td *ngFor="let pool of dividendCrossRacePools"
+      <td *ngFor="let pool of DIVIDEND_CROSS_RACE_POOLS"
           class="border border-gray-700"
           [class.border-r-red-900]="BOUNDARY_POOLS.includes(pool.name)"
           [class.text-yellow-400]="getDividendOdds(getCrossRacePoolDividendRaces(row), pool.name) >= pool.threshold"

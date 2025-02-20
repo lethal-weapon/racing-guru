@@ -1,13 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
+
 import {Racecard} from '../model/racecard.model';
-import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS} from '../model/dividend.model';
 import {BOUNDARY_POOLS} from '../util/strings';
 import {formatRace} from '../util/functions';
-
-interface PoolThreshold {
-  name: string,
-  threshold: number
-}
+import {
+  DEFAULT_COMBINATIONS,
+  DEFAULT_SINGULARS,
+  DIVIDEND_CROSS_RACE_POOLS,
+  DIVIDEND_RACE_POOLS
+} from '../model/dividend.model';
 
 @Component({
   selector: 'app-dividend',
@@ -18,6 +19,8 @@ export class DividendComponent implements OnInit {
   @Input() racecards!: Racecard[];
 
   protected readonly BOUNDARY_POOLS = BOUNDARY_POOLS;
+  protected readonly DIVIDEND_RACE_POOLS = DIVIDEND_RACE_POOLS;
+  protected readonly DIVIDEND_CROSS_RACE_POOLS = DIVIDEND_CROSS_RACE_POOLS;
   protected readonly formatRace = formatRace;
 
   constructor() {
@@ -145,37 +148,5 @@ export class DividendComponent implements OnInit {
       .map(r => r.race)
       .sort((r1, r2) => r1 - r2)
       .pop() || 0;
-  }
-
-  get dividendRacePools(): PoolThreshold[] {
-    return [
-      {name: 'WIN', threshold: 8},
-      {name: 'QIN', threshold: 40},
-      {name: 'FCT', threshold: 80},
-      {name: 'TRI', threshold: 100},
-      {name: 'F-F', threshold: 100},
-      {name: 'TCE', threshold: 300},
-      {name: 'QTT', threshold: 3000},
-      {name: 'PLA-1', threshold: 4},
-      {name: 'PLA-2', threshold: 4},
-      {name: 'PLA-3', threshold: 4},
-      {name: 'QPL-1', threshold: 15},
-      {name: 'QPL-2', threshold: 15},
-      {name: 'QPL-3', threshold: 15},
-      {name: 'DBL-1', threshold: 50},
-      {name: 'DBL-2', threshold: 20},
-    ];
-  }
-
-  get dividendCrossRacePools(): PoolThreshold[] {
-    return [
-      {name: 'TBL-1', threshold: 100},
-      {name: 'TBL-2', threshold: 40},
-      {name: '6UP-1', threshold: 300},
-      {name: '6UP-2', threshold: 3000},
-      {name: 'D-T', threshold: 3000},
-      {name: 'TT-1', threshold: 10000},
-      {name: 'TT-2', threshold: 1000},
-    ];
   }
 }

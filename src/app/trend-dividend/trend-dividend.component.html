@@ -22,11 +22,13 @@
   <div *ngIf="![BY_OVERVIEW].includes(activeBadge)"
        class="my-8"
   >
+    <app-pool [racecards]="activeRacecards"></app-pool>
+
     <app-dividend [racecards]="activeRacecards"></app-dividend>
   </div>
 
   <table *ngIf="activeBadge === BY_OVERVIEW"
-         class="my-8 mx-auto table-fixed border-collapse font-mono"
+         class="my-8 mx-auto table-fixed border-collapse font-mono text-center"
   >
     <thead class="text-xl">
       <th class="w-24 border border-gray-600 py-1">
@@ -48,9 +50,21 @@
           {{ formatMeeting(m) }}
         </td>
         <td *counter="let race of MAX_RACE_PER_MEETING"
-            class="h-10 border border-gray-700 text-xs py-1"
+            class="h-10 border border-gray-700 py-1"
+            [class.bg-gray-800]="isTripleTrioFirstLeg(m, race)"
             [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
         >
+          <div class="flex flex-row items-center">
+            <div class="w-1/2">
+              <div class="mx-auto w-5 h-5 rounded-full {{getDividendIntensityColor(m, race)}}">
+              </div>
+            </div>
+            <div class="w-1/2 text-xl"
+                 [class.opacity-0]="getStarterCount(m, race) < 1 || getStarterCount(m, race) > 10"
+            >
+              {{ getStarterCount(m, race) }}
+            </div>
+          </div>
         </td>
       </tr>
     </tbody>
