@@ -2,11 +2,14 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {Racecard} from '../model/racecard.model';
+import {Starter} from '../model/starter.model';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS, Dividend, DIVIDEND_RACE_POOLS} from '../model/dividend.model';
 import {formatMeeting, formatRace, isBoundaryMeetingStr, toPlacingColor} from '../util/functions';
 
 const BY_OVERVIEW = 'Overview';
+const OVERVIEW_MODES = ['M1', 'M2', 'M3', 'M4'];
+const SPECIAL_ORDERS = [1, 7, 11];
 
 @Component({
   selector: 'app-trend-dividend',
@@ -15,8 +18,10 @@ const BY_OVERVIEW = 'Overview';
 export class TrendDividendComponent implements OnInit {
 
   activeBadge: string = BY_OVERVIEW;
+  activeMode: string = OVERVIEW_MODES[0];
 
   protected readonly BY_OVERVIEW = BY_OVERVIEW;
+  protected readonly OVERVIEW_MODES = OVERVIEW_MODES;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
   protected readonly formatRace = formatRace;
   protected readonly formatMeeting = formatMeeting;
@@ -30,10 +35,22 @@ export class TrendDividendComponent implements OnInit {
     this.repo.fetchDividends(17);
   }
 
+  rotateOverviewMode = () => {
+    const newIndex =
+      (OVERVIEW_MODES.indexOf(this.activeMode) + 1) % OVERVIEW_MODES.length;
+
+    this.activeMode = OVERVIEW_MODES[newIndex];
+  }
+
   getBadgeStyle = (render: string): string =>
     this.activeBadge === render
       ? `text-yellow-400 border-yellow-400`
       : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
+
+  getWinnerStarter = (meeting: string, race: number): Starter | undefined => {
+    const card = this.allRacecards.find(r => r.meeting === meeting && r.race === race);
+    return card?.starters.find(s => s?.placing === 1);
+  }
 
   getStarterCount = (meeting: string, race: number): number =>
     (
@@ -83,9 +100,63 @@ export class TrendDividendComponent implements OnInit {
     }
   }
 
+  getDividendTop4 = (meeting: string, race: number): string[] => {
+    const starters = this.allRacecards
+        .find(r => r.meeting === meeting && r.race === race)
+        ?.starters
+        .filter(s => (s?.placing || 0) >= 1 && (s?.placing || 0) <= 4)
+        .sort((s1, s2) => (s1.placing - s2.placing) || (s1.order - s2.order))
+      || [];
+
+    if (starters.length === 0) return [];
+
+    return Array(4).fill(1)
+      .map((_, index) => 1 + index)
+      .map(p => starters
+        .filter(s => s.placing === p)
+        .map(s => s.order)
+        .join('/'));
+  }
+
+  isPlayerDouble = (meeting: string, race: number, isTrainer: boolean): boolean => {
+    const currentWinnerStarter = this.getWinnerStarter(meeting, race);
+    const currentWinnerPlayer = isTrainer
+      ? currentWinnerStarter?.trainer || ''
+      : currentWinnerStarter?.jockey || '';
+
+    if (currentWinnerPlayer.length < 1) return false;
+
+    const priorWinnerStarter = this.getWinnerStarter(meeting, race - 1);
+    const priorWinnerPlayer = isTrainer
+      ? priorWinnerStarter?.trainer || ''
+      : priorWinnerStarter?.jockey || '';
+
+    const nextWinnerStarter = this.getWinnerStarter(meeting, race + 1);
+    const nextWinnerPlayer = isTrainer
+      ? nextWinnerStarter?.trainer || ''
+      : nextWinnerStarter?.jockey || '';
+
+    if (race === 1) {
+      return currentWinnerPlayer === nextWinnerPlayer;
+    }
+
+    return (currentWinnerPlayer === nextWinnerPlayer)
+      || (currentWinnerPlayer === priorWinnerPlayer);
+  }
+
   isTripleTrioFirstLeg = (meeting: string, race: number): boolean => {
     const card = this.allRacecards.find(r => r.meeting === meeting && r.race === race);
     return (card?.pool?.tripleTrio || 0) > 0;
+  }
+
+  isSpecialOrder = (orderStr: string): boolean => {
+    if (orderStr.includes('/')) {
+      return orderStr
+        .split('/')
+        .map(n => parseInt(n))
+        .some(n => SPECIAL_ORDERS.includes(n));
+    }
+    return SPECIAL_ORDERS.includes(parseInt(orderStr));
   }
 
   get meetings(): string[] {

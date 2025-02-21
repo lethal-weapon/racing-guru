@@ -31,8 +31,10 @@
          class="my-8 mx-auto table-fixed border-collapse font-mono text-center"
   >
     <thead class="text-xl">
-      <th class="w-24 border border-gray-600 py-1">
-        <i class="fa fa-calendar"></i>
+      <th class="w-24 border border-gray-600 py-1 cursor-pointer"
+          (click)="rotateOverviewMode()"
+      >
+        {{ activeMode }}
       </th>
       <th *counter="let race of MAX_RACE_PER_MEETING"
           class="w-32 border border-gray-600"
@@ -54,7 +56,9 @@
             [class.bg-gray-800]="isTripleTrioFirstLeg(m, race)"
             [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
         >
-          <div class="flex flex-row items-center">
+          <div *ngIf="activeMode === OVERVIEW_MODES[0]"
+               class="flex flex-row items-center"
+          >
             <div class="w-1/2">
               <div class="mx-auto w-5 h-5 rounded-full {{getDividendIntensityColor(m, race)}}">
               </div>
@@ -62,7 +66,49 @@
             <div class="w-1/2 text-xl"
                  [class.opacity-0]="getStarterCount(m, race) < 1 || getStarterCount(m, race) > 10"
             >
-              {{ getStarterCount(m, race) }}
+              {{ formatRace(getStarterCount(m, race)) }}
+            </div>
+          </div>
+
+          <div *ngIf="activeMode === OVERVIEW_MODES[1]"
+               class="flex flex-row items-center"
+          >
+            <div class="w-1/2"
+                 [class.opacity-0]="!isPlayerDouble(m, race, true) && ((getWinnerStarter(m, race)?.winOdds || 0) < 8)"
+                 [class.text-red-600]="isPlayerDouble(m, race, true)"
+            >
+              @{{ (getWinnerStarter(m, race)?.winOdds || 0) | number: '1.0-0' }}
+            </div>
+            <div class="w-1/2"
+                 [class.text-red-600]="isPlayerDouble(m, race, true)"
+            >
+              {{ getWinnerStarter(m, race)?.trainer || '' }}
+            </div>
+          </div>
+
+          <div *ngIf="activeMode === OVERVIEW_MODES[2]"
+               class="flex flex-row items-center"
+          >
+            <div class="w-1/2"
+                 [class.opacity-0]="!isPlayerDouble(m, race, false) && ((getWinnerStarter(m, race)?.winOdds || 0) < 8)"
+                 [class.text-red-600]="isPlayerDouble(m, race, false)"
+            >
+              @{{ (getWinnerStarter(m, race)?.winOdds || 0) | number: '1.0-0' }}
+            </div>
+            <div class="w-1/2"
+                 [class.text-red-600]="isPlayerDouble(m, race, false)"
+            >
+              {{ getWinnerStarter(m, race)?.jockey || '' }}
+            </div>
+          </div>
+
+          <div *ngIf="activeMode === OVERVIEW_MODES[3]"
+               class="grid grid-cols-4"
+          >
+            <div *ngFor="let order of getDividendTop4(m, race)"
+                 [class.opacity-0]="!isSpecialOrder(order)"
+            >
+              {{ order }}
             </div>
           </div>
         </td>
