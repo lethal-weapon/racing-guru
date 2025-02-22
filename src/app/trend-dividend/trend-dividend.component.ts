@@ -32,7 +32,9 @@ export class TrendDividendComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repo.fetchDividends(17);
+    if (this.repo.findDividends().length < 2) {
+      this.repo.fetchDividends(17);
+    }
   }
 
   rotateOverviewMode = () => {
@@ -48,21 +50,30 @@ export class TrendDividendComponent implements OnInit {
       : `border-gray-600 hover:border-yellow-400 hvr-float-shadow cursor-pointer`
 
   getWinnerStarter = (meeting: string, race: number): Starter | undefined => {
-    const card = this.allRacecards.find(r => r.meeting === meeting && r.race === race);
+    const card = meeting === this.latestRacecards[0].meeting
+      ? this.latestRacecards.find(r => r.race === race)
+      : this.allRacecards.find(r => r.meeting === meeting && r.race === race);
+
     return card?.starters.find(s => s?.placing === 1);
   }
 
   getStarterCount = (meeting: string, race: number): number =>
     (
-      this.allRacecards
-        .find(r => r.meeting === meeting && r.race === race)
+      (
+        meeting === this.latestRacecards[0].meeting
+          ? this.latestRacecards.find(r => r.race === race)
+          : this.allRacecards.find(r => r.meeting === meeting && r.race === race)
+      )
         ?.starters || []
     )
       .filter(s => !s.scratched)
       .length
 
   getDividendIntensityColor = (meeting: string, race: number): string => {
-    const card = this.allRacecards.find(r => r.meeting === meeting && r.race === race);
+    const card = meeting === this.latestRacecards[0].meeting
+      ? this.latestRacecards.find(r => r.race === race)
+      : this.allRacecards.find(r => r.meeting === meeting && r.race === race);
+
     if (!card?.dividend?.quartet) return '';
 
     const profitablePoolCount = DIVIDEND_RACE_POOLS
@@ -101,9 +112,15 @@ export class TrendDividendComponent implements OnInit {
   }
 
   getDividendTop4 = (meeting: string, race: number): string[] => {
-    const starters = this.allRacecards
-        .find(r => r.meeting === meeting && r.race === race)
-        ?.starters
+    const starters =
+      (
+        (
+          meeting === this.latestRacecards[0].meeting
+            ? this.latestRacecards.find(r => r.race === race)
+            : this.allRacecards.find(r => r.meeting === meeting && r.race === race)
+        )
+          ?.starters || []
+      )
         .filter(s => (s?.placing || 0) >= 1 && (s?.placing || 0) <= 4)
         .sort((s1, s2) => (s1.placing - s2.placing) || (s1.order - s2.order))
       || [];
@@ -144,9 +161,14 @@ export class TrendDividendComponent implements OnInit {
       || (currentWinnerPlayer === priorWinnerPlayer);
   }
 
-  isTripleTrioFirstLeg = (meeting: string, race: number): boolean => {
-    const card = this.allRacecards.find(r => r.meeting === meeting && r.race === race);
-    return (card?.pool?.tripleTrio || 0) > 0;
+  isHighlightOverviewCell = (meeting: string, race: number): boolean => {
+    if (this.activeMode !== OVERVIEW_MODES[3]) {
+      return this.isTripleTrioFirstLeg(meeting, race);
+    }
+
+    return this.getDividendTop4(meeting, race)
+      .filter(o => this.isSpecialOrder(o))
+      .length > 1;
   }
 
   isSpecialOrder = (orderStr: string): boolean => {
@@ -159,6 +181,14 @@ export class TrendDividendComponent implements OnInit {
     return SPECIAL_ORDERS.includes(parseInt(orderStr));
   }
 
+  isTripleTrioFirstLeg = (meeting: string, race: number): boolean => {
+    const card = meeting === this.latestRacecards[0].meeting
+      ? this.latestRacecards.find(r => r.race === race)
+      : this.allRacecards.find(r => r.meeting === meeting && r.race === race);
+
+    return (card?.pool?.tripleTrio || 0) > 0;
+  }
+
   get meetings(): string[] {
     return this.raceOneCards.map(d => d.meeting);
   }
@@ -168,6 +198,9 @@ export class TrendDividendComponent implements OnInit {
   }
 
   get activeRacecards(): Racecard[] {
+    if (this.activeBadge === this.latestRacecards[0].meeting) {
+      return this.latestRacecards;
+    }
     return this.allRacecards.filter(d => d.meeting === this.activeBadge);
   }
 
@@ -175,7 +208,12 @@ export class TrendDividendComponent implements OnInit {
     return this.repo.findDividends();
   }
 
+  get latestRacecards(): Racecard[] {
+    return this.repo.findRacecards();
+  }
+
   get isLoading(): boolean {
-    return this.repo.findDividends().length < 2;
+    return this.repo.findDividends().length < 2
+      || this.repo.findRacecards().length < 2;
   }
 }

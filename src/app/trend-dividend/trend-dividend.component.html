@@ -20,7 +20,7 @@
   </div>
 
   <div *ngIf="![BY_OVERVIEW].includes(activeBadge)"
-       class="my-8"
+       class="my-4"
   >
     <app-pool [racecards]="activeRacecards"></app-pool>
 
@@ -28,7 +28,7 @@
   </div>
 
   <table *ngIf="activeBadge === BY_OVERVIEW"
-         class="my-8 mx-auto table-fixed border-collapse font-mono text-center"
+         class="my-4 mx-auto table-fixed border-collapse font-mono text-center"
   >
     <thead class="text-xl">
       <th class="w-24 border border-gray-600 py-1 cursor-pointer"
@@ -53,7 +53,7 @@
         </td>
         <td *counter="let race of MAX_RACE_PER_MEETING"
             class="h-10 border border-gray-700 py-1"
-            [class.bg-gray-800]="isTripleTrioFirstLeg(m, race)"
+            [class.bg-gray-800]="isHighlightOverviewCell(m, race)"
             [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
         >
           <div *ngIf="activeMode === OVERVIEW_MODES[0]"
