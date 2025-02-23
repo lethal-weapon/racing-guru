@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
+import {Racecard} from '../model/racecard.model';
 import {EarningStarter, Meeting} from '../model/meeting.model';
 import {Recommendation, StarterRank} from '../model/recommendation.model';
-import {formatMeeting, getPlacingBorderBackground} from '../util/functions';
+import {formatMeeting, getPlacingBorderBackground, getWinPlaceOdds, toPlacingColor} from '../util/functions';
 import {PLACING_MAPS} from '../util/strings';
 
 const BY_STATS = 'By Stats';
@@ -15,20 +16,21 @@ const BY_INHERITANCE = 'By IRank';
 })
 export class TrendRecommendationComponent implements OnInit {
 
-  activeBadge: string = BY_STATS;
+  activeBadge: string = BY_INHERITANCE;
 
   protected readonly BY_STATS = BY_STATS;
   protected readonly BY_INHERITANCE = BY_INHERITANCE;
   protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly formatMeeting = formatMeeting;
+  protected readonly toPlacingColor = toPlacingColor;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    this.repo.fetchRecommendations(16, () => {
-      this.activeBadge = this.repo.findRecommendations()[0].meeting;
-    });
+    if (this.repo.findRecommendations().length < 2) {
+      this.repo.fetchRecommendations(16);
+    }
   }
 
   getRacesOnMeeting = (meeting: string): number[] =>
@@ -191,6 +193,31 @@ export class TrendRecommendationComponent implements OnInit {
       .pop()
       ?.placing || 0;
 
+  getStarterPlacingColor = (race: number, starter: StarterRank): string => {
+    const placing =
+      this.getStarterPlacing(this.activeRecommendation.meeting, race, starter.order);
+
+    return toPlacingColor(placing);
+  }
+
+  getStarterOdds = (race: number, starter: StarterRank): number => {
+    if (this.activeRecommendation.meeting === this.latestRacecards[0].meeting) {
+      const card = this.latestRacecards.find(r => r.race === race);
+      const jockey = (card?.starters || []).find(s => s.order === starter.order)?.jockey;
+
+      if (jockey) {
+        // @ts-ignore
+        return getWinPlaceOdds(jockey, card).win;
+      }
+    }
+
+    return this.getOdds(
+      this.activeRecommendation.meeting,
+      race,
+      this.getStarterPlacing(this.activeRecommendation.meeting, race, starter.order)
+    );
+  }
+
   getStarterBorderStyle = (race: number, starter: StarterRank): string => {
     // @ts-ignore
     return getPlacingBorderBackground({
@@ -219,6 +246,10 @@ export class TrendRecommendationComponent implements OnInit {
     return this.recommendations[0];
   }
 
+  get latestRacecards(): Racecard[] {
+    return this.repo.findRacecards();
+  }
+
   get recommendations(): Recommendation[] {
     return this.repo.findRecommendations();
   }
@@ -228,7 +259,7 @@ export class TrendRecommendationComponent implements OnInit {
   }
 
   get isLoading(): boolean {
-    return this.repo.findRecommendations().length === 0
-      || this.repo.findMeetings().length === 0;
+    return this.repo.findMeetings().length < 2
+      || this.repo.findRecommendations().length < 2;
   }
 }
