@@ -4,11 +4,20 @@ import {RestRepository} from '../model/rest.repository';
 import {Racecard} from '../model/racecard.model';
 import {EarningStarter, Meeting} from '../model/meeting.model';
 import {Recommendation, StarterRank} from '../model/recommendation.model';
-import {formatMeeting, getPlacingBorderBackground, getWinPlaceOdds, toPlacingColor} from '../util/functions';
 import {PLACING_MAPS} from '../util/strings';
+import {MAX_RACE_PER_MEETING} from '../util/numbers';
+import {
+  formatMeeting,
+  formatRace,
+  getPlacingBorderBackground,
+  getWinPlaceOdds,
+  isBoundaryMeeting,
+  toPlacingColor
+} from '../util/functions';
 
 const BY_STATS = 'By Stats';
 const BY_INHERITANCE = 'By IRank';
+const BY_TOP5 = 'By Top 5';
 
 @Component({
   selector: 'app-trend-recommendation',
@@ -16,20 +25,24 @@ const BY_INHERITANCE = 'By IRank';
 })
 export class TrendRecommendationComponent implements OnInit {
 
-  activeBadge: string = BY_INHERITANCE;
+  activeBadge: string = BY_TOP5;
 
   protected readonly BY_STATS = BY_STATS;
   protected readonly BY_INHERITANCE = BY_INHERITANCE;
+  protected readonly BY_TOP5 = BY_TOP5;
   protected readonly PLACING_MAPS = PLACING_MAPS;
+  protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
+  protected readonly formatRace = formatRace;
   protected readonly formatMeeting = formatMeeting;
   protected readonly toPlacingColor = toPlacingColor;
+  protected readonly isBoundaryMeeting = isBoundaryMeeting;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
     if (this.repo.findRecommendations().length < 2) {
-      this.repo.fetchRecommendations(16);
+      this.repo.fetchRecommendations(15);
     }
   }
 
@@ -193,17 +206,17 @@ export class TrendRecommendationComponent implements OnInit {
       .pop()
       ?.placing || 0;
 
-  getStarterPlacingColor = (race: number, starter: StarterRank): string => {
+  getStarterPlacingColor = (race: number, order: number): string => {
     const placing =
-      this.getStarterPlacing(this.activeRecommendation.meeting, race, starter.order);
+      this.getStarterPlacing(this.activeRecommendation.meeting, race, order);
 
     return toPlacingColor(placing);
   }
 
-  getStarterOdds = (race: number, starter: StarterRank): number => {
+  getStarterOdds = (race: number, order: number): number => {
     if (this.activeRecommendation.meeting === this.latestRacecards[0].meeting) {
       const card = this.latestRacecards.find(r => r.race === race);
-      const jockey = (card?.starters || []).find(s => s.order === starter.order)?.jockey;
+      const jockey = (card?.starters || []).find(s => s.order === order)?.jockey;
 
       if (jockey) {
         // @ts-ignore
@@ -214,9 +227,30 @@ export class TrendRecommendationComponent implements OnInit {
     return this.getOdds(
       this.activeRecommendation.meeting,
       race,
-      this.getStarterPlacing(this.activeRecommendation.meeting, race, starter.order)
+      this.getStarterPlacing(this.activeRecommendation.meeting, race, order)
     );
   }
+
+  getTop4EarningStarterWithinTop5Recommendation =
+    (meeting: Meeting, race: number): EarningStarter[] => {
+
+      const rankedOrders =
+        (
+          (this.recommendations.find(r => r.meeting === meeting.meeting)?.races || [])
+            .find(r => r.race === race)
+            ?.starters || []
+        )
+          .filter(s => s.rank >= 1 && s.rank <= 5)
+          .map(s => s.order);
+
+      if (rankedOrders.length < 1) return [];
+
+      // @ts-ignore
+      return [1, 2, 3, 4]
+        .map(placing => this.getEarningStarter(meeting.meeting, race, placing))
+        .filter(es => es)
+        .filter(es => rankedOrders.includes(es?.order || 0));
+    }
 
   getStarterBorderStyle = (race: number, starter: StarterRank): string => {
     // @ts-ignore
@@ -255,7 +289,7 @@ export class TrendRecommendationComponent implements OnInit {
   }
 
   get meetings(): Meeting[] {
-    return this.repo.findMeetings().slice(0, 16);
+    return this.repo.findMeetings().slice(0, 15);
   }
 
   get isLoading(): boolean {

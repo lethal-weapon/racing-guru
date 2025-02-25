@@ -4,7 +4,7 @@
 
 <div *ngIf="!isLoading" class="mx-12">
   <div class="mx-8 my-3 grid grid-cols-9 gap-3">
-    <div *ngFor="let section of [BY_STATS, BY_INHERITANCE]"
+    <div *ngFor="let section of [BY_STATS, BY_INHERITANCE, BY_TOP5]"
          class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(section)}}"
          (click)="activeBadge = section"
     >
@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div *ngIf="![BY_STATS, BY_INHERITANCE].includes(activeBadge)">
+  <div *ngIf="![BY_STATS, BY_INHERITANCE, BY_TOP5].includes(activeBadge)">
     <div *ngFor="let rr of activeRecommendation.races"
          class="my-3 flex flex-row items-center gap-x-10"
     >
@@ -36,10 +36,10 @@
           <div class="w-10 h-10 pt-0.5 rounded-full {{getStarterBorderStyle(rr.race, starter)}}">
             {{ starter.order }}
           </div>
-          <div *ngIf="getStarterOdds(rr.race, starter) > 0"
-               class="text-lg {{getStarterPlacingColor(rr.race, starter)}}"
+          <div *ngIf="getStarterOdds(rr.race, starter.order) > 0"
+               class="text-lg {{getStarterPlacingColor(rr.race, starter.order)}}"
           >
-            {{ getStarterOdds(rr.race, starter) | number: '1.0-1' }}
+            {{ getStarterOdds(rr.race, starter.order) | number: '1.0-1' }}
           </div>
         </div>
       </div>
@@ -179,4 +179,43 @@
       </div>
     </div>
   </div>
+
+  <table *ngIf="activeBadge === BY_TOP5"
+         class="mt-8 mx-auto table-fixed border-collapse font-mono text-center"
+  >
+    <thead class="text-xl">
+      <th class="w-24 border border-gray-600 py-1 cursor-pointer">
+        <i class="fa fa-calendar"></i>
+      </th>
+      <th *counter="let race of MAX_RACE_PER_MEETING"
+          class="w-32 border border-gray-600"
+      >
+        {{ formatRace(race) }}
+      </th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of meetings; let last = last"
+          class="hover:bg-gray-800"
+      >
+        <td class="h-10 border border-gray-700 text-xl py-1"
+            [class.border-b-yellow-400]="!last && isBoundaryMeeting(meetings, m.meeting)"
+        >
+          {{ formatMeeting(m.meeting) }}
+        </td>
+        <td *counter="let race of MAX_RACE_PER_MEETING"
+            class="h-10 border border-gray-700 py-1"
+            [class.border-b-yellow-400]="!last && isBoundaryMeeting(meetings, m.meeting)"
+            [class.bg-gray-800]="getTop4EarningStarterWithinTop5Recommendation(m, race).length > 2"
+        >
+          <div class="grid grid-cols-2">
+            <div *ngFor="let s of getTop4EarningStarterWithinTop5Recommendation(m, race)"
+                 class="{{toPlacingColor(s.placing)}}"
+            >
+              {{ s.winOdds | number: '1.0-1' }}
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
