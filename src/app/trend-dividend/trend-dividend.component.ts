@@ -74,7 +74,7 @@ export class TrendDividendComponent implements OnInit {
       ? this.latestRacecards.find(r => r.race === race)
       : this.allRacecards.find(r => r.meeting === meeting && r.race === race);
 
-    if (!card?.dividend?.quartet) return '';
+    if (!card?.dividend?.tierce) return '';
 
     const profitablePoolCount = DIVIDEND_RACE_POOLS
       .filter(pool => this.getDividendOdds(card?.dividend, pool.name) >= pool.threshold)
