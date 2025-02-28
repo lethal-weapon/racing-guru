@@ -102,8 +102,11 @@ export class RestRepository {
   savePick = (newPick: Pick) =>
     this.source.savePick(newPick).subscribe(data => this.pick = data)
 
-  fetchBets = () =>
-    this.source.getBets().subscribe(data => this.bets = data)
+  fetchBets = (callback: () => any) =>
+    this.source.getBets().subscribe(data => {
+      this.bets = data;
+      callback();
+    })
 
   fetchHorseWithoutStarters = () =>
     this.source.getHorseWithoutStarters().subscribe(data => this.horses = data)

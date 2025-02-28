@@ -17,7 +17,7 @@
   </div>
 
   <div class="mb-6 mx-36 pt-2 pb-2.5 flex flex-row justify-evenly text-xl text-center
-            rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
+              rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600"
   >
     <div>
       <span class="mr-2">Betlines:</span>
@@ -57,138 +57,7 @@
     </div>
   </div>
 
-  <table *ngIf="activeRange === BY_MEETING && activeView === BY_SUMMARY"
-         class="mx-auto border-collapse border border-gray-600 text-center"
-  >
-    <thead class="text-lg bg-gray-800">
-      <th class="border border-gray-600 py-1.5 px-6">
-        #
-      </th>
-      <th *ngFor="let field of meetingSummaryViewFields; let index = index"
-          class="border border-gray-600 py-1.5"
-          [class.px-6]="[1,4].includes(index)"
-          [class.px-8]="![1,4].includes(index)"
-      >
-        {{ field }}
-      </th>
-    </thead>
-    <tbody>
-      <tr *ngFor="let bet of bets; let index = index"
-          class="hover:bg-gray-800"
-      >
-        <td class="border border-gray-700 py-1 font-mono">
-          {{ bets.length - index }}
-        </td>
-        <td class="border border-gray-700 py-1 font-mono">
-          {{ bet.meeting }}
-        </td>
-        <td class="border border-gray-700 py-1">
-          {{ bet.venue }}
-        </td>
-        <td class="border border-gray-700 py-1 px-2">
-          <div class="grid grid-cols-6 gap-x-2">
-            <div *ngFor="let race of getProfitRacesOnMeeting(bet)">
-              {{ race }}
-            </div>
-          </div>
-        </td>
-        <td class="border border-gray-700 py-1 px-4">
-          <div class="grid grid-cols-3 gap-x-1">
-            <div class="{{countBetlinesOnMeeting(bet)[0] === 0 ? 'text-red-600' : 'text-green-600'}}">
-              {{ countBetlinesOnMeeting(bet)[0] | number }}
-            </div>
-            <div>/</div>
-            <div>
-              {{ countBetlinesOnMeeting(bet)[1] | number }}
-            </div>
-          </div>
-        </td>
-        <td class="border border-gray-700 py-1 text-red-600">
-          -{{ bet.debit | currency:'USD':'symbol':'1.0-0' }}
-        </td>
-        <td class="border border-gray-700 py-1">
-          <span *ngIf="bet.credit > 0" class="text-green-600">
-            +{{ bet.credit | currency:'USD':'symbol':'1.0-0' }}
-          </span>
-          <span *ngIf="bet.credit <= 0" class="text-red-600">
-            X
-          </span>
-        </td>
-        <td class="border border-gray-700 py-1"
-            [class.text-red-600]="bet.credit < bet.debit"
-            [class.text-green-600]="bet.credit > bet.debit"
-        >
-          {{ (bet.credit - bet.debit) | currency:'USD':'symbol':'1.0-0' }}
-        </td>
-        <td class="border border-gray-700 py-1 {{getMeetingROIColor(bet)}}">
-          {{ getReturnOnInvestment(bet) }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <table *ngIf="activeRange === BY_MEETING && activeView === BY_POOL"
-         class="mx-auto border-collapse border border-gray-600 text-center"
-  >
-    <thead class="text-lg bg-gray-800">
-      <th class="border border-gray-600 py-1.5 px-6">
-        #
-      </th>
-      <th class="border border-gray-600 border-r-yellow-400 py-1.5 px-8">
-        Meeting
-      </th>
-      <th *ngFor="let field of meetingPoolViewFields; let last = last"
-          colspan="2"
-          class="border border-gray-600 px-2 py-1.5"
-          [class.border-r-yellow-400]="!last"
-      >
-        {{ field }}
-      </th>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="border border-gray-700 py-1"></td>
-        <td class="border border-gray-700 border-r-yellow-400 py-1"></td>
-        <ng-container *ngFor="let _ of meetingPoolViewFields; let last = last">
-          <td *counter="let col of 2"
-              class="border border-gray-700 px-2 py-1"
-              [class.border-r-yellow-400]="!last && col === 2"
-          >
-            {{ col === 1 ? 'Debit' : 'Credit' }}
-          </td>
-        </ng-container>
-      </tr>
-      <tr *ngFor="let bet of bets; let index = index"
-          class="hover:bg-gray-800"
-      >
-        <td class="border border-gray-700 py-1 font-mono">
-          {{ bets.length - index }}
-        </td>
-        <td class="border border-gray-700 border-r-yellow-400 py-1 font-mono">
-          {{ bet.meeting }}
-        </td>
-        <ng-container *ngFor="let pool of meetingPoolViewFields; let last = last">
-          <td *counter="let col of 2"
-              class="border border-gray-700 px-2 py-1"
-              [class.border-r-yellow-400]="!last && col === 2"
-          >
-            <div *ngIf="col === 1 && getValueByMeetingPool(bet, pool, true) > 0"
-                 class="text-red-600"
-            >
-              -{{ getValueByMeetingPool(bet, pool, true) | currency:'USD':'symbol':'1.0-0' }}
-            </div>
-            <div *ngIf="col === 2 && getValueByMeetingPool(bet, pool, false) > 0"
-                 class="text-green-600"
-            >
-              +{{ getValueByMeetingPool(bet, pool, false) | currency:'USD':'symbol':'1.0-0' }}
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="activeRange === BY_MONTH"
+  <div *ngIf="activeView === BY_MONTH"
        class="mx-24 flex flex-col gap-y-4 text-center text-lg"
   >
     <div *ngFor="let ms of monthlySummaries"
@@ -339,5 +208,155 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <table *ngIf="activeView === BY_MEETING"
+         class="mx-auto border-collapse border border-gray-600 text-center"
+  >
+    <thead class="text-lg bg-gray-800">
+      <th class="border border-gray-600 py-1.5 px-6">
+        #
+      </th>
+      <th *ngFor="let field of meetingSummaryViewFields; let index = index"
+          class="border border-gray-600 py-1.5"
+          [class.px-6]="[1,4].includes(index)"
+          [class.px-8]="![1,4].includes(index)"
+      >
+        {{ field }}
+      </th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let bet of bets; let index = index"
+          class="hover:bg-gray-800"
+      >
+        <td class="border border-gray-700 py-1 font-mono">
+          {{ bets.length - index }}
+        </td>
+        <td class="border border-gray-700 py-1 font-mono">
+          {{ bet.meeting }}
+        </td>
+        <td class="border border-gray-700 py-1">
+          {{ bet.venue }}
+        </td>
+        <td class="border border-gray-700 py-1 px-2">
+          <div class="grid grid-cols-6 gap-x-2">
+            <div *ngFor="let race of getProfitRacesOnMeeting(bet)">
+              {{ race }}
+            </div>
+          </div>
+        </td>
+        <td class="border border-gray-700 py-1 px-4">
+          <div class="grid grid-cols-3 gap-x-1">
+            <div class="{{countBetlinesOnMeeting(bet)[0] === 0 ? 'text-red-600' : 'text-green-600'}}">
+              {{ countBetlinesOnMeeting(bet)[0] | number }}
+            </div>
+            <div>/</div>
+            <div>
+              {{ countBetlinesOnMeeting(bet)[1] | number }}
+            </div>
+          </div>
+        </td>
+        <td class="border border-gray-700 py-1 text-red-600">
+          -{{ bet.debit | currency:'USD':'symbol':'1.0-0' }}
+        </td>
+        <td class="border border-gray-700 py-1">
+          <span *ngIf="bet.credit > 0" class="text-green-600">
+            +{{ bet.credit | currency:'USD':'symbol':'1.0-0' }}
+          </span>
+          <span *ngIf="bet.credit <= 0" class="text-red-600">
+            X
+          </span>
+        </td>
+        <td class="border border-gray-700 py-1"
+            [class.text-red-600]="bet.credit < bet.debit"
+            [class.text-green-600]="bet.credit > bet.debit"
+        >
+          {{ (bet.credit - bet.debit) | currency:'USD':'symbol':'1.0-0' }}
+        </td>
+        <td class="border border-gray-700 py-1 {{getMeetingROIColor(bet)}}">
+          {{ getReturnOnInvestment(bet) }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table *ngIf="activeView === BY_POOL"
+         class="mx-auto border-collapse border border-gray-600 text-center"
+  >
+    <thead class="text-lg bg-gray-800">
+      <th class="border border-gray-600 py-1.5 px-6">
+        #
+      </th>
+      <th class="border border-gray-600 border-r-yellow-400 py-1.5 px-8">
+        Meeting
+      </th>
+      <th *ngFor="let field of meetingPoolViewFields; let last = last"
+          colspan="2"
+          class="border border-gray-600 px-2 py-1.5"
+          [class.border-r-yellow-400]="!last"
+      >
+        {{ field }}
+      </th>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="border border-gray-700 py-1"></td>
+        <td class="border border-gray-700 border-r-yellow-400 py-1"></td>
+        <ng-container *ngFor="let _ of meetingPoolViewFields; let last = last">
+          <td *counter="let col of 2"
+              class="border border-gray-700 px-2 py-1"
+              [class.border-r-yellow-400]="!last && col === 2"
+          >
+            {{ col === 1 ? 'Debit' : 'Credit' }}
+          </td>
+        </ng-container>
+      </tr>
+      <tr *ngFor="let bet of bets; let index = index"
+          class="hover:bg-gray-800"
+      >
+        <td class="border border-gray-700 py-1 font-mono">
+          {{ bets.length - index }}
+        </td>
+        <td class="border border-gray-700 border-r-yellow-400 py-1 font-mono">
+          {{ bet.meeting }}
+        </td>
+        <ng-container *ngFor="let pool of meetingPoolViewFields; let last = last">
+          <td *counter="let col of 2"
+              class="border border-gray-700 px-2 py-1"
+              [class.border-r-yellow-400]="!last && col === 2"
+          >
+            <div *ngIf="col === 1 && getValueByMeetingPool(bet, pool, true) > 0"
+                 class="text-red-600"
+            >
+              -{{ getValueByMeetingPool(bet, pool, true) | currency:'USD':'symbol':'1.0-0' }}
+            </div>
+            <div *ngIf="col === 2 && getValueByMeetingPool(bet, pool, false) > 0"
+                 class="text-green-600"
+            >
+              +{{ getValueByMeetingPool(bet, pool, false) | currency:'USD':'symbol':'1.0-0' }}
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="activeView === BY_GRAPH"
+       class="mx-16 my-16 flex justify-center bg-gray-200"
+  >
+    <ngx-charts-line-chart
+      [view]="[1200, 500]"
+      [results]="chartData"
+      [timeline]="true"
+      [animations]="true"
+      [roundDomains]="true"
+      [xAxis]="true"
+      [yAxis]="true"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="'Meeting#'"
+      [yAxisLabel]="'P & L (HKD)'"
+    >
+    </ngx-charts-line-chart>
   </div>
 </div>

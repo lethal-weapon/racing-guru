@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Bet, Betline} from '../model/bet.model';
 import {SEASONS} from '../util/strings';
+import {ChartLine, ChartLinePoint} from '../model/chart.model';
 
 interface MonthlyPoolSummary {
   pool: string,
@@ -25,34 +26,37 @@ interface MonthlySummary {
 
 const BY_MONTH = 'By Month';
 const BY_MEETING = 'By Meeting';
-const BY_SUMMARY = 'By Summary';
 const BY_POOL = 'By Pool';
+const BY_GRAPH = 'By Graph';
 
 @Component({
   selector: 'app-form-bet',
   templateUrl: './form-bet.component.html'
 })
 export class FormBetComponent implements OnInit {
+
   activeSeason: string = SEASONS[0].label;
-  activeRange: string = this.subsections[1][0];
-  activeView: string = this.subsections[2][0];
+  activeView: string = this.subsections[1][0];
+  chartData: ChartLine[] = [];
 
   protected readonly BY_MONTH = BY_MONTH;
   protected readonly BY_MEETING = BY_MEETING;
-  protected readonly BY_SUMMARY = BY_SUMMARY;
   protected readonly BY_POOL = BY_POOL;
+  protected readonly BY_GRAPH = BY_GRAPH;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    this.repo.fetchBets();
+    this.repo.fetchBets(() => this.updateChart());
   }
 
   setActiveItem = (sectionIndex: number, item: string) => {
-    if (sectionIndex == 0) this.activeSeason = item;
-    if (sectionIndex == 1) this.activeRange = item;
-    if (sectionIndex == 2) this.activeView = item;
+    if (sectionIndex == 0) {
+      this.activeSeason = item;
+      this.updateChart();
+    }
+    if (sectionIndex == 1) this.activeView = item;
   }
 
   countBetlinesOnMeeting = (bet: Bet): number[] =>
@@ -146,9 +150,26 @@ export class FormBetComponent implements OnInit {
       .reduce((prev, curr) => prev + curr, 0)
 
   getSectionStyle = (section: string): string =>
-    [this.activeSeason, this.activeRange, this.activeView].includes(section)
+    [this.activeSeason, this.activeView].includes(section)
       ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
+
+  updateChart = () => {
+    const series: ChartLinePoint[] = this.bets
+      .map(b => b.meeting)
+      .sort((m1, m2) => m1.localeCompare(m2))
+      .map((m, index) => ({
+        name: `${index + 1}`,
+        value: Math.floor(
+          this.bets
+            .filter(bi => bi.meeting <= m)
+            .map(bi => bi.credit - bi.debit)
+            .reduce((prev, curr) => prev + curr, 0)
+        )
+      }));
+
+    this.chartData = [{name: 'P&L', series: series}];
+  }
 
   get monthlySummaries(): MonthlySummary[] {
     return this.bets
@@ -242,8 +263,7 @@ export class FormBetComponent implements OnInit {
   get subsections(): string[][] {
     return [
       SEASONS.map(s => s.label),
-      [BY_MEETING, BY_MONTH],
-      [BY_SUMMARY, BY_POOL],
+      [BY_MONTH, BY_MEETING, BY_POOL, BY_GRAPH],
     ];
   }
 
