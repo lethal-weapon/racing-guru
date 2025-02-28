@@ -131,7 +131,7 @@ export class DividendComponent implements OnInit {
       .map(r => r.race)
       .sort((r1, r2) => r1 - r2);
 
-    while (races.length < 5) races.push(1);
+    while (races.length < 4) races.push(1);
     return races;
   }
 
