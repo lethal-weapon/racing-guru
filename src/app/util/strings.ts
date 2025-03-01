@@ -68,8 +68,8 @@ export const PLACING_MAPS: PlacingMap[] = [
 ]
 
 export const ODDS_INTENSITIES: OddsIntensity[] = [
-  {category: 'favorite', color: 'text-red-600', lower: 1.0, upper: 3.9},
-  {category: 'superior', color: 'text-green-600', lower: 4.0, upper: 9.9},
-  {category: 'inferior', color: 'text-blue-600', lower: 10.0, upper: 19.9},
+  {category: 'favorite', color: 'text-red-600', lower: 1.0, upper: 4.0},
+  {category: 'superior', color: 'text-green-600', lower: 4.0, upper: 10.0},
+  {category: 'inferior', color: 'text-blue-600', lower: 10.0, upper: 20.0},
   {category: 'unwanted', color: 'text-purple-600', lower: 20.0, upper: 999.0},
 ]

@@ -22,6 +22,9 @@ import {FormOwnerComponent} from './form-owner/form-owner.component';
 import {FormPlayerComponent} from './form-player/form-player.component';
 import {FormConnectionComponent} from './form-connection/form-connection.component';
 import {FormBetComponent} from './form-bet/form-bet.component';
+import {GameComponent} from './game/game.component';
+import {GameIntroComponent} from './game-intro/game-intro.component';
+import {GameEntryComponent} from './game-entry/game-entry.component';
 import {FinanceComponent} from './finance/finance.component';
 import {FinancePersonalComponent} from './finance-personal/finance-personal.component';
 import {FinanceAccountingComponent} from './finance-accounting/finance-accounting.component';
@@ -106,6 +109,24 @@ const routes: Routes = [
       {
         path: 'bet',
         component: FormBetComponent,
+      },
+    ]
+  },
+  {
+    path: 'game',
+    component: GameComponent,
+    children: [
+      {
+        path: '',
+        component: GameIntroComponent,
+      },
+      {
+        path: 'intro',
+        component: GameIntroComponent,
+      },
+      {
+        path: 'entry',
+        component: GameEntryComponent,
       },
     ]
   },

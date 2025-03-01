@@ -139,7 +139,7 @@ export const toPlacingColor = (placing: number | undefined): string =>
   (placing && placing >= 1 && placing <= 4) ? COLORS[placing - 1] : ''
 
 export const getOddsIntensityColor = (odds: number): string =>
-  ODDS_INTENSITIES.find(oi => odds >= oi.lower && odds <= oi.upper)?.color || ''
+  ODDS_INTENSITIES.find(oi => odds >= oi.lower && odds < oi.upper)?.color || ''
 
 export const getPlacingBorderBackground = (starter: Starter): string => {
   let placing = starter?.placing || 0;
