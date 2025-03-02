@@ -1,3 +1,57 @@
-<div class="mx-12 text-lg">
-  Game / Entry
+<div class="mx-16 text-lg">
+  <div class="grid grid-cols-3 gap-4">
+    <div *ngFor="let session of sessions"
+         class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
+    >
+      <div class="flex flex-row justify-between">
+        <div class="font-bold"
+             [class.text-red-600]="session.stakeLevel === 'Low Roller'"
+             [class.text-green-600]="session.stakeLevel === 'Mid Roller'"
+             [class.text-blue-600]="session.stakeLevel === 'High Roller'"
+        >
+          {{ session.stakeLevel }}
+        </div>
+        <div class="italic">
+          {{ session.range }}
+        </div>
+      </div>
+      <div class="mt-2 mx-6 grid grid-cols-2 gap-x-2 gap-y-1 text-left">
+        <div>
+          Status:
+        </div>
+        <div>
+          {{ session.status }}
+        </div>
+        <div>
+          Entry Fee:
+        </div>
+        <div class="text-yellow-400">
+          {{ session.entryFee }} Golds
+        </div>
+        <div>
+          Participants:
+        </div>
+        <div>
+          <span class="">
+            {{ session.currentParticipants }}
+          </span>
+          /
+          <span>
+            {{ session.minimumParticipants }}
+          </span>
+        </div>
+        <div>
+          Race:
+        </div>
+        <div>
+          <span *ngIf="session.races.length < 7">
+            {{ session.races.join(', ') }}
+          </span>
+          <span *ngIf="session.races.length >= 7">
+            All
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

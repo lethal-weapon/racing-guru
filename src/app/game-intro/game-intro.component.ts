@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../model/rest.repository';
 import {ODDS_INTENSITIES, PLACING_MAPS} from '../util/strings';
 
 @Component({
@@ -12,7 +11,7 @@ export class GameIntroComponent implements OnInit {
   protected readonly PLACING_MAPS = PLACING_MAPS;
   protected readonly ODDS_INTENSITIES = ODDS_INTENSITIES;
 
-  constructor(private repo: RestRepository) {
+  constructor() {
   }
 
   ngOnInit(): void {
@@ -36,16 +35,30 @@ export class GameIntroComponent implements OnInit {
       `,
       `Dead-heat case will be considered when one or more ties occur.`,
       `A service charge will be imposed for each game session.`,
+      `
+        Rounding Precision e.g.
+        17.0 ~ 17.4 golds will be rounded to 17 golds,
+        17.5 ~ 17.9 golds will be rounded to 18 golds.
+      `
     ]
   }
 
   get pointTableSpecs(): string[] {
     return [
       `Each selection's score is calculated individually.`,
+      `The selections like [5, 6, 7, 8] is same as [7, 5, 8, 6].`,
       `A selection scores NO points if finishes in 5th or later placing.`,
       `
         A default of 4 points will be credited if a selected
         starter is later scratched after the submission.
+      `,
+      `
+        A race result of [5W @3.5, 6Q @9.3, 7P @18, 8F @26]
+        will have points of [4pt, 6pt, 6pt, 4pt], 20 points in total at max.
+      `,
+      `
+        For the race result example above, the selections of [1, 2, 5, 8]
+        will score 8 points, [2, 6, 7, 9] will score 12 points.
       `,
     ]
   }
@@ -89,7 +102,7 @@ export class GameIntroComponent implements OnInit {
         total points they have scored in this session. 
       `,
       `
-        The session rewards will be distributed within 1 working day.
+        The session rewards will be distributed after 1 working day.
       `,
     ]
   }
