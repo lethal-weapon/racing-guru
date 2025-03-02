@@ -37,9 +37,16 @@
         {{ activeMode }}
       </th>
       <th *counter="let race of MAX_RACE_PER_MEETING"
-          class="w-32 border border-gray-600"
+          class="w-28 border border-gray-600"
       >
         {{ formatRace(race) }}
+      </th>
+      <th *counter="let x of 3"
+          class="w-16 border border-gray-600"
+      >
+        <div *ngIf="x === 1" class="mx-auto w-5 h-5 rounded-full bg-red-600"></div>
+        <div *ngIf="x === 2" class="mx-auto w-5 h-5 rounded-full bg-green-600"></div>
+        <div *ngIf="x === 3" class="mx-auto w-5 h-5 rounded-full bg-blue-600"></div>
       </th>
     </thead>
     <tbody>
@@ -111,6 +118,13 @@
               {{ order }}
             </div>
           </div>
+        </td>
+        <td *counter="let x of 3"
+            class="h-10 border border-gray-700 text-xl py-1"
+            [class.opacity-0]="0 === getRaceCountByMeetingAndIntensity(m, x)"
+            [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
+        >
+          {{ getRaceCountByMeetingAndIntensity(m, x) }}
         </td>
       </tr>
     </tbody>

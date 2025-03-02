@@ -135,6 +135,19 @@ export class TrendDividendComponent implements OnInit {
         .join('/'));
   }
 
+  getRaceCountByMeetingAndIntensity = (meeting: string, intensityOrder: number): number =>
+    Array(MAX_RACE_PER_MEETING)
+      .fill(1)
+      .map((_, index) => 1 + index)
+      .map(race => this.getDividendIntensityColor(meeting, race))
+      .filter(color => {
+        if (intensityOrder === 1) return color === 'bg-red-600';
+        if (intensityOrder === 2) return color === 'bg-green-600';
+        if (intensityOrder === 3) return color === 'bg-blue-600';
+        return false;
+      })
+      .length
+
   isPlayerDouble = (meeting: string, race: number, isTrainer: boolean): boolean => {
     const currentWinnerStarter = this.getWinnerStarter(meeting, race);
     const currentWinnerPlayer = isTrainer
