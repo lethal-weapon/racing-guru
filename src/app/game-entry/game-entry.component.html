@@ -1,9 +1,9 @@
-<div class="mx-16 text-lg">
+<div class="mx-12 text-lg">
   <div class="grid grid-cols-3 gap-4">
     <div *ngFor="let session of sessions"
-         class="pt-2 pb-3 px-4 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
+         class="pt-2 pb-3 px-6 shadow-md transition shadow-gray-600 hover:shadow-gray-400"
     >
-      <div class="flex flex-row justify-between">
+      <div class="flex flex-row justify-between items-center">
         <div class="font-bold"
              [class.text-red-600]="session.stakeLevel === 'Low Roller'"
              [class.text-green-600]="session.stakeLevel === 'Mid Roller'"
@@ -14,44 +14,62 @@
         <div class="italic">
           {{ session.range }}
         </div>
+        <div class="px-4 py-1 rounded-xl border border-gray-600 cursor-pointer
+                    transition hover:border-yellow-400 hover:text-yellow-400"
+        >
+          Register
+        </div>
       </div>
-      <div class="mt-2 mx-6 grid grid-cols-2 gap-x-2 gap-y-1 text-left">
-        <div>
-          Status:
-        </div>
-        <div>
-          {{ session.status }}
-        </div>
-        <div>
-          Entry Fee:
-        </div>
-        <div class="text-yellow-400">
-          {{ session.entryFee }} Golds
-        </div>
-        <div>
-          Participants:
-        </div>
-        <div>
-          <span class="">
+
+      <table class="mx-auto mt-2 border-collapse text-left">
+        <tr>
+          <td class="pr-6">
+            Status:
+          </td>
+          <td class="">
+            {{ session.status }}
+          </td>
+        </tr>
+        <tr>
+          <td class="pr-6">
+            Entry Fee:
+          </td>
+          <td class="text-yellow-400">
+            {{ session.entryFee }} Golds
+          </td>
+        </tr>
+        <tr>
+          <td class="pr-6">
+            Participants:
+          </td>
+          <td class="">
             {{ session.currentParticipants }}
-          </span>
-          /
-          <span>
+            /
             {{ session.minimumParticipants }}
-          </span>
-        </div>
-        <div>
-          Race:
-        </div>
-        <div>
-          <span *ngIf="session.races.length < 7">
-            {{ session.races.join(', ') }}
-          </span>
-          <span *ngIf="session.races.length >= 7">
-            All
-          </span>
-        </div>
-      </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="pr-6">
+            Race:
+          </td>
+          <td class="">
+            <span *ngIf="session.races.length < 7">
+              {{ session.races.join(', ') }}
+            </span>
+            <span *ngIf="session.races.length >= 7">
+              All
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="pr-6">
+            Cutoff:
+          </td>
+          <td class="">
+            {{ getEntryCutoffRemainingTime(session.firstRacePostTime) }}
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </div>

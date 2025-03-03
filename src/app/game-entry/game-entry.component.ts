@@ -2,10 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
 import {Racecard} from '../model/racecard.model';
-import {GameSession} from '../model/game.model';
-
-const STAKE_LEVELS: string[] = ['Low Roller', 'Mid Roller', 'High Roller'];
-const SESSION_RANGES: string[] = ['1st Half', '2nd Half', 'Entire Meeting'];
+import {CUTOFF_GAP_MINUTES, GameSession, SESSION_RANGES, STAKE_LEVELS} from '../model/game.model';
 
 @Component({
   selector: 'app-game-entry',
@@ -17,6 +14,20 @@ export class GameEntryComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  getEntryCutoffRemainingTime = (sessionFirstRacePostTime: string): string => {
+    const firstRacePostTimeMS = new Date(sessionFirstRacePostTime).getTime();
+    const cutoffTime = firstRacePostTimeMS - CUTOFF_GAP_MINUTES * 60 * 1000;
+
+    const currTime = new Date().getTime();
+    const diff = Math.floor((cutoffTime - currTime) / 1000);
+
+    if (diff < 0) return `-`;
+    if (diff < 100) return `${diff} sec`;
+    if (diff < 3_600) return `${Math.floor(diff / 60)} min`;
+    if (diff <= 36_000) return `${(diff / 3600).toFixed(1)} hrs`;
+    return `${Math.floor(diff / 3600)} hrs`;
   }
 
   get sessions(): GameSession[] {
@@ -45,7 +56,6 @@ export class GameEntryComponent implements OnInit {
             range: sr,
             races: races,
             firstRacePostTime: firstRacePostTime,
-            entryCutoffTime: '',
             entryFee: sl === 'Low Roller' ? 5 : (sl === 'Mid Roller' ? 10 : 25),
             currentParticipants: 16,
             minimumParticipants: sl === 'Low Roller' ? 100 : (sl === 'Mid Roller' ? 50 : 20),

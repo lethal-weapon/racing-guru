@@ -88,7 +88,7 @@ export class GameIntroComponent implements OnInit {
       `,
       `
         Each selected order will acquire a score which is measured by
-        the final win odds intensity and the placing, please refer to Point Table.
+        the final win odds intensity and the placing, see Point Table.
       `,
       `
         By the end of each race, participants within a game 
