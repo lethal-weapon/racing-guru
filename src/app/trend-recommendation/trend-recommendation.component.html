@@ -2,7 +2,7 @@
   <app-spinner></app-spinner>
 </div>
 
-<div *ngIf="!isLoading" class="mx-12">
+<div *ngIf="!isLoading" class="mx-8">
   <div class="mx-8 my-3 grid grid-cols-9 gap-3">
     <div *ngFor="let section of [BY_STATS, BY_INHERITANCE, BY_TOP5]"
          class="px-4 pt-1.5 pb-2 text-xl rounded-full border {{getBadgeStyle(section)}}"
