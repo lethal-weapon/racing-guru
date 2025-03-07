@@ -5,6 +5,7 @@ export interface GameSession {
   races: number[],
   firstRacePostTime: string,
   entryFee: number,
+  jackpot: number,
   currentParticipants: number,
   minimumParticipants: number,
   stakeLevel: string,

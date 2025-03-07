@@ -10,6 +10,8 @@ import {CUTOFF_GAP_MINUTES, GameSession, SESSION_RANGES, STAKE_LEVELS} from '../
 })
 export class GameEntryComponent implements OnInit {
 
+  selectedGame: GameSession | undefined;
+
   constructor(private repo: RestRepository) {
   }
 
@@ -32,8 +34,8 @@ export class GameEntryComponent implements OnInit {
 
   get sessions(): GameSession[] {
     return STAKE_LEVELS
-      .flatMap(sl =>
-        SESSION_RANGES.map(sr => {
+      .flatMap((sl, index1) =>
+        SESSION_RANGES.map((sr, index2) => {
 
           const midRace = Math.floor(this.maxRace / 2);
           let races = Array(this.maxRace).fill(1).map((_, index) => 1 + index);
@@ -57,6 +59,7 @@ export class GameEntryComponent implements OnInit {
             races: races,
             firstRacePostTime: firstRacePostTime,
             entryFee: sl === 'Low Roller' ? 5 : (sl === 'Mid Roller' ? 10 : 25),
+            jackpot: ((index1 + index2) % 3 === 0) ? 100 : 0,
             currentParticipants: 16,
             minimumParticipants: sl === 'Low Roller' ? 100 : (sl === 'Mid Roller' ? 50 : 20),
             stakeLevel: sl,

@@ -17,29 +17,15 @@ export class GameIntroComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  get rewards(): Array<{ item: string, percentage: number }> {
-    return [
-      {item: 'Winner', percentage: 50},
-      {item: 'Second', percentage: 25},
-      {item: 'Third', percentage: 10},
-      {item: 'Forth', percentage: 5},
-      {item: 'Service Charge', percentage: 10},
-    ]
-  }
+  get rewards():
+    Array<{ item: string, percentage: number, golds: number, goldsRounded: number }> {
 
-  get rewardSpecs(): string[] {
     return [
-      `
-        A percentage of the pot will be distributed to the top 4 
-        participants with the highest points within a game session.
-      `,
-      `Dead-heat case will be considered when one or more ties occur.`,
-      `A service charge will be imposed for each game session.`,
-      `
-        Rounding Precision e.g.
-        17.0 ~ 17.4 golds will be rounded to 17 golds,
-        17.5 ~ 17.9 golds will be rounded to 18 golds.
-      `
+      {item: 'Winner', percentage: 50, golds: 283.5, goldsRounded: 284},
+      {item: 'Second', percentage: 25, golds: 141.7, goldsRounded: 142},
+      {item: 'Third', percentage: 10, golds: 56.7, goldsRounded: 57},
+      {item: 'Forth', percentage: 5, golds: 27.8, goldsRounded: 28},
+      {item: 'Service Charge', percentage: 10, golds: 56.7, goldsRounded: 56},
     ]
   }
 
@@ -63,13 +49,35 @@ export class GameIntroComponent implements OnInit {
     ]
   }
 
+  get rewardSpecs(): string[] {
+    return [
+      `
+        The pot consists of all entry fees collected from participants
+        and an optional jackpot by the company from time to time.
+      `,
+      `
+        A percentage of the pot will be distributed to the top 4 
+        participants with the highest points within a game session.
+      `,
+      `Dead-heat case will be considered when one or more ties occur.`,
+      `A service charge will be imposed for each game session.`,
+      `Service charge is computed at last after all participant rewards are computed.`,
+      `
+        Rounding Precision e.g.
+        17.0 ~ 17.4 golds will be rounded to 17 golds,
+        17.5 ~ 17.9 golds will be rounded to 18 golds.
+      `,
+      `If the pot has 567 golds in total, then it will pay out as below:`
+    ]
+  }
+
   get rules(): string[] {
     return [
       `A user can only join game session after he unlocks the race meeting.`,
       `A user can join up to 3 game sessions within the same race meeting.`,
       `
-        A game session entry will close 5 minutes prior to
-        the scheduled post time of the 1st race it involves.
+        A game session entry will close and session start 5 minutes
+        prior to the scheduled post time of the 1st race it involves.
       `,
       `
         A game session will be cancelled and all golds will be refunded
@@ -95,7 +103,8 @@ export class GameIntroComponent implements OnInit {
         session are re-ranked by the points they have scored so far.
       `,
       `
-        By the end of each race, all participants' selections are published.
+        By the end of each race, all participants'
+        selections in this race are published.
       `,
       `
         By the end of a game session, participants are ranked by the 
