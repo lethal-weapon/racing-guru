@@ -22,13 +22,13 @@ export const DEFAULT_CAPITAL = 250;
 
 export const DEFAULT_MIN_QPL_ODDS = 1;
 export const DEFAULT_MIN_QIN_ODDS = 5;
-export const DEFAULT_MIN_FCT_ODDS = 35;
-export const DEFAULT_MIN_DBL_ODDS = 30;
+export const DEFAULT_MIN_FCT_ODDS = 10;
+export const DEFAULT_MIN_DBL_ODDS = 10;
 
 export const DEFAULT_MAX_QPL_ODDS = 75;
 export const DEFAULT_MAX_QIN_ODDS = 150;
-export const DEFAULT_MAX_FCT_ODDS = 240;
-export const DEFAULT_MAX_DBL_ODDS = 150;
+export const DEFAULT_MAX_FCT_ODDS = 300;
+export const DEFAULT_MAX_DBL_ODDS = 300;
 
 export const QPL_ODDS_STEP = 3;
 export const QIN_ODDS_STEP = 5;
