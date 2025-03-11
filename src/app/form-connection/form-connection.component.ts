@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {PlayerConnection} from '../model/connection.model';
 import {Player} from '../model/player.model';
+import {PLAYER_PLAIN_CONNECTIONS} from '../util/connections';
 
 @Component({
   selector: 'app-form-connection',
@@ -11,6 +12,7 @@ import {Player} from '../model/player.model';
 export class FormConnectionComponent implements OnInit {
 
   activePlayer: string = 'NPC';
+  activeSection: string = this.sections[0];
 
   constructor(private repo: RestRepository) {
   }
@@ -19,6 +21,11 @@ export class FormConnectionComponent implements OnInit {
     this.repo.fetchActivePlayers();
     this.repo.fetchPlayerConnections();
   }
+
+  isPlainConnected = (otherPlayer: string): boolean =>
+    this.plainConnections.some(conn =>
+      conn.includes(this.activePlayer) && conn.includes(otherPlayer)
+    )
 
   isRelationshipExist = (otherPlayer: string, relationship: string): boolean =>
     this.connections
@@ -29,6 +36,9 @@ export class FormConnectionComponent implements OnInit {
       )
       .filter(c => c.relations.includes(relationship))
       .length > 0
+
+  togglePlainConnection = (otherPlayer: string) => {
+  }
 
   toggleRelationship = (otherPlayer: string, relationship: string) => {
     if (relationship === 'MASTERS') return;
@@ -41,6 +51,12 @@ export class FormConnectionComponent implements OnInit {
     });
   }
 
+  getPlainConnectionStyle = (otherPlayer: string): string =>
+    this.isPlainConnected(otherPlayer)
+      ? `border border-gray-900 bg-gray-300 text-gray-800`
+      : `bg-gray-800 border border-gray-800 transition 
+         hover:border-gray-900 hover:bg-gray-300 hover:text-gray-800 opacity-50`;
+
   getRelationshipStyle = (otherPlayer: string, relationship: string): string =>
     this.isRelationshipExist(otherPlayer, relationship)
       ? `border border-gray-900 bg-gray-300 text-gray-800`
@@ -51,6 +67,11 @@ export class FormConnectionComponent implements OnInit {
     this.activePlayer === player
       ? `border border-gray-900 bg-gradient-to-r from-sky-800 to-indigo-800`
       : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`;
+
+  getSectionStyle = (section: string): string =>
+    this.activeSection === section
+      ? `font-bold bg-gradient-to-r from-sky-800 to-indigo-800`
+      : `bg-gray-800 border border-gray-800 hover:border-gray-600 cursor-pointer`
 
   get relationships(): string[] {
     return this.connections
@@ -80,6 +101,14 @@ export class FormConnectionComponent implements OnInit {
 
   get connections(): PlayerConnection[] {
     return this.repo.findPlayerConnections();
+  }
+
+  get plainConnections(): string[][] {
+    return PLAYER_PLAIN_CONNECTIONS;
+  }
+
+  get sections(): string[] {
+    return ['Plain Mode', 'Graph Mode'];
   }
 
   get isLoading(): boolean {
