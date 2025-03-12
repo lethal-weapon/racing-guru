@@ -54,14 +54,14 @@
           class="hover:bg-gray-800"
       >
         <td class="h-10 border border-gray-700 text-xl py-1"
-            [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
+            [class.border-b-yellow-400]="(!last && isBoundaryMeetingStr(meetings, m)) || (last && activeMode === OVERVIEW_MODES[3])"
         >
           {{ formatMeeting(m) }}
         </td>
         <td *counter="let race of MAX_RACE_PER_MEETING"
             class="h-10 border border-gray-700 py-1"
             [class.bg-gray-800]="isHighlightOverviewCell(m, race)"
-            [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
+            [class.border-b-yellow-400]="(!last && isBoundaryMeetingStr(meetings, m)) || (last && activeMode === OVERVIEW_MODES[3])"
         >
           <div *ngIf="activeMode === OVERVIEW_MODES[0]"
                class="flex flex-row items-center"
@@ -122,9 +122,26 @@
         <td *counter="let x of 3"
             class="h-10 border border-gray-700 text-xl py-1"
             [class.opacity-0]="0 === getRaceCountByMeetingAndIntensity(m, x)"
-            [class.border-b-yellow-400]="!last && isBoundaryMeetingStr(meetings, m)"
+            [class.border-b-yellow-400]="(!last && isBoundaryMeetingStr(meetings, m)) || (last && activeMode === OVERVIEW_MODES[3])"
         >
           {{ getRaceCountByMeetingAndIntensity(m, x) }}
+        </td>
+      </tr>
+      <tr *ngIf="activeMode === OVERVIEW_MODES[3]">
+        <td class="h-10 border border-gray-700 text-xl py-1 text-yellow-400 cursor-pointer"
+            (click)="rotateSpecialOrderDividendMode()"
+        >
+          {{ activeDividendMode }}
+        </td>
+        <td *counter="let race of MAX_RACE_PER_MEETING"
+            class="h-10 border border-gray-700 py-1"
+            [class.text-green-600]="getSpecialOrderDividend(race) > 0"
+        >
+          {{ getSpecialOrderDividend(race) | number: '1.0-0' }}
+        </td>
+        <td *counter="let x of 3"
+            class="h-10 border border-gray-700 py-1"
+        >
         </td>
       </tr>
     </tbody>

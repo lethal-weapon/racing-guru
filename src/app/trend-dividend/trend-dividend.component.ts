@@ -10,6 +10,7 @@ import {formatMeeting, formatRace, isBoundaryMeetingStr, toPlacingColor} from '.
 const BY_OVERVIEW = 'Overview';
 const OVERVIEW_MODES = ['M1', 'M2', 'M3', 'M4'];
 const SPECIAL_ORDERS = [1, 7, 11];
+const SPECIAL_ORDER_DIVIDEND_MODES = ['WIN', 'PLA',];
 
 @Component({
   selector: 'app-trend-dividend',
@@ -19,6 +20,7 @@ export class TrendDividendComponent implements OnInit {
 
   activeBadge: string = BY_OVERVIEW;
   activeMode: string = OVERVIEW_MODES[0];
+  activeDividendMode: string = SPECIAL_ORDER_DIVIDEND_MODES[0];
 
   protected readonly BY_OVERVIEW = BY_OVERVIEW;
   protected readonly OVERVIEW_MODES = OVERVIEW_MODES;
@@ -42,6 +44,14 @@ export class TrendDividendComponent implements OnInit {
       (OVERVIEW_MODES.indexOf(this.activeMode) + 1) % OVERVIEW_MODES.length;
 
     this.activeMode = OVERVIEW_MODES[newIndex];
+  }
+
+  rotateSpecialOrderDividendMode = () => {
+    const newIndex =
+      (SPECIAL_ORDER_DIVIDEND_MODES.indexOf(this.activeDividendMode) + 1)
+      % SPECIAL_ORDER_DIVIDEND_MODES.length;
+
+    this.activeDividendMode = SPECIAL_ORDER_DIVIDEND_MODES[newIndex];
   }
 
   getBadgeStyle = (render: string): string =>
@@ -147,6 +157,26 @@ export class TrendDividendComponent implements OnInit {
         return false;
       })
       .length
+
+  getSpecialOrderDividend = (race: number): number =>
+    this.allRacecards
+      .filter(d => d.race === race)
+      .map(d => {
+        if (this.activeDividendMode === 'WIN') {
+          if (!d?.dividend?.win) return 0;
+          return SPECIAL_ORDERS
+            .map(o => (d.dividend.win.find(s => s.order === o)?.odds || 0) - 1)
+            .reduce((prev, curr) => prev + curr, 0);
+
+        } else if (this.activeDividendMode === 'PLA') {
+          if (!d?.dividend?.place) return 0;
+          return SPECIAL_ORDERS
+            .map(o => (d.dividend.place.find(s => s.order === o)?.odds || 0) - 1)
+            .reduce((prev, curr) => prev + curr, 0);
+        }
+        return 0;
+      })
+      .reduce((prev, curr) => prev + curr, 0);
 
   isPlayerDouble = (meeting: string, race: number, isTrainer: boolean): boolean => {
     const currentWinnerStarter = this.getWinnerStarter(meeting, race);
