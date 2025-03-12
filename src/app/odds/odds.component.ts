@@ -9,6 +9,7 @@ import {Racecard} from '../model/racecard.model';
 import {CombinationSignal, SingularSignal} from '../model/signal.model';
 import {OddsSnapshot, StarterCashflow} from '../model/oddsSnapshot.model';
 import {COLORS, LATEST} from '../util/strings';
+import {PLAYER_PLAIN_CONNECTIONS} from '../util/connections';
 import {
   CAPITAL_STEP,
   DBL_ODDS_STEP,
@@ -460,6 +461,9 @@ export class OddsComponent implements OnInit {
     return dbl >= this.activeRange.minDBL && dbl <= this.activeRange.maxDBL;
   }
 
+  isPlayerConnected = (playerA: string, playerB: string): boolean =>
+    PLAYER_PLAIN_CONNECTIONS.some(conn => conn.includes(playerA) && conn.includes(playerB))
+
   getDBLCellBackground = (currIndex: number, nextIndex: number): string => {
     const currStarters = getStarters(this.activeRacecard).length;
     const nextStarters = getStarters(this.activeNextRacecard).length;
@@ -490,7 +494,11 @@ export class OddsComponent implements OnInit {
       // @ts-ignore
       : pairs.some(p => p.includes(pair[0]) && p.includes(pair[1]));
 
-    return isSelected ? 'border-yellow-400' : 'border-gray-900';
+    if (isSelected) return `border-yellow-400`;
+    if (pool !== 'dbl') return `border-gray-900`;
+    return this.isPlayerConnected(starterA.trainer, starterB.trainer)
+      ? `border-dashed border-yellow-700`
+      : `border-gray-900`;
   }
 
   getSelectedBetCount = (pool: string): number => {
