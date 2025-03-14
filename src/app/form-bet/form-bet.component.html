@@ -28,6 +28,9 @@
       <span>
         {{ seasonBetlines[1] | number }}
       </span>
+      <span class="ml-2 text-green-600">
+        ({{ (seasonBetlines[0] / seasonBetlines[1]) | percent:'1.1-1' }})
+      </span>
     </div>
     <div>
       <span class="mr-2">Debit:</span>
@@ -61,13 +64,13 @@
        class="mx-24 flex flex-col gap-y-4 text-center text-lg"
   >
     <div *ngFor="let ms of monthlySummaries"
-         class="grid grid-cols-12 gap-x-4"
+         class="flex flex-row gap-x-4"
     >
-      <div class="col-span-3 px-4 pt-2 pb-2.5 rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
+      <div class="w-72 pt-2 pb-2.5 rounded-2xl shadow-md transition shadow-sky-700/50 hover:shadow-sky-600">
         <div class="text-xl text-blue-600">
           {{ ms.month }} {{ ms.year }}
         </div>
-        <div class="px-4 grid grid-cols-2 gap-x-8 gap-y-1.5">
+        <div class="px-5 grid grid-cols-2 gap-y-1.5">
           <div class="text-left">Meetings</div>
           <div class="text-right">{{ ms.meetings }}</div>
           <div class="text-left">Betlines</div>
@@ -102,22 +105,22 @@
         </div>
       </div>
 
-      <div class="col-span-9 place-content-center shadow-md transition shadow-gray-600 hover:shadow-gray-400">
+      <div class="place-content-center shadow-md transition shadow-gray-600 hover:shadow-gray-400">
         <table class="mx-auto">
           <tr>
-            <td></td>
+            <td class="w-32"></td>
             <td *ngFor="let field of meetingPoolViewFields; let last = last"
-                class="px-3 text-blue-600"
+                class="w-32 text-blue-600"
             >
               {{ field }}
             </td>
           </tr>
           <tr>
-            <td class="px-3">
+            <td class="">
               Betlines
             </td>
             <td *ngFor="let ps of ms.pools"
-                class="px-3"
+                class=""
             >
               <div *ngIf="ps.betlines[1] === 0">
                 -
@@ -136,11 +139,11 @@
             </td>
           </tr>
           <tr>
-            <td class="px-3 py-1">
+            <td class="py-1">
               Debit
             </td>
             <td *ngFor="let ps of ms.pools"
-                class="px-3 py-1 text-red-600 text-center leading-5"
+                class="py-1 text-red-600 text-center leading-5"
             >
               <div *ngIf="ps.debit === 0">
                 -
@@ -156,11 +159,11 @@
             </td>
           </tr>
           <tr>
-            <td class="px-3 py-1">
+            <td class="py-1">
               Credit
             </td>
             <td *ngFor="let ps of ms.pools"
-                class="px-3 py-1 text-green-600 leading-5"
+                class="py-1 text-green-600 leading-5"
             >
               <div *ngIf="ps.credit === 0">
                 -
@@ -174,11 +177,11 @@
             </td>
           </tr>
           <tr>
-            <td class="px-3">
+            <td class="">
               P & L
             </td>
             <td *ngFor="let ps of ms.pools"
-                class="px-3"
+                class=""
                 [class.text-red-600]="ps.credit < ps.debit"
                 [class.text-green-600]="ps.credit > ps.debit"
             >
@@ -191,11 +194,11 @@
             </td>
           </tr>
           <tr>
-            <td class="px-3">
+            <td class="">
               ROI
             </td>
             <td *ngFor="let ps of ms.pools"
-                class="px-3 {{ps.roi > 0 ? 'text-green-600' : 'text-red-600'}}"
+                class="{{ps.roi > 0 ? 'text-green-600' : 'text-red-600'}}"
             >
               <div *ngIf="ps.roi === 0 || ps.roi === -1">
                 -

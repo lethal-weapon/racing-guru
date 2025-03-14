@@ -269,10 +269,10 @@ export class FormBetComponent implements OnInit {
 
   get bets(): Bet[] {
     const season = SEASONS.find(s => s.label === this.activeSeason);
-    return !season
-      ? []
-      : this.repo.findBets()
-        .filter(r => r.meeting >= season.opening && r.meeting <= season.finale);
+    if (!season) return [];
+
+    return this.repo.findBets()
+      .filter(r => r.meeting >= season.opening && r.meeting <= season.finale);
   }
 
   get isLoading(): boolean {
