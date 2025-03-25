@@ -112,7 +112,8 @@
           <div *ngIf="activeMode === OVERVIEW_MODES[3]"
                class="grid grid-cols-4"
           >
-            <div *ngFor="let order of getDividendTop4(m, race)"
+            <div *ngFor="let order of getDividendTop4(m, race); let index = index"
+                 class="{{COLORS[index]}}"
                  [class.opacity-0]="!isSpecialOrder(order)"
             >
               {{ order }}
@@ -135,8 +136,9 @@
         </td>
         <td *counter="let race of MAX_RACE_PER_MEETING"
             class="h-10 border border-gray-700 py-1"
-            [class.text-green-600]="getSpecialOrderDividend(race) > 0"
+            [class.text-yellow-400]="getSpecialOrderDividend(race) > 0"
         >
+          <span *ngIf="getSpecialOrderDividend(race) > 0">+</span>
           {{ getSpecialOrderDividend(race) | number: '1.0-0' }}
         </td>
         <td *counter="let x of 3"

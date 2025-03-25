@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {RestRepository} from '../model/rest.repository';
 import {Racecard} from '../model/racecard.model';
 import {Starter} from '../model/starter.model';
+import {COLORS} from '../util/strings';
 import {MAX_RACE_PER_MEETING} from '../util/numbers';
 import {DEFAULT_COMBINATIONS, DEFAULT_SINGULARS, Dividend, DIVIDEND_RACE_POOLS} from '../model/dividend.model';
 import {formatMeeting, formatRace, isBoundaryMeetingStr, toPlacingColor} from '../util/functions';
@@ -22,6 +23,7 @@ export class TrendDividendComponent implements OnInit {
   activeMode: string = OVERVIEW_MODES[0];
   activeDividendMode: string = SPECIAL_ORDER_DIVIDEND_MODES[0];
 
+  protected readonly COLORS = COLORS;
   protected readonly BY_OVERVIEW = BY_OVERVIEW;
   protected readonly OVERVIEW_MODES = OVERVIEW_MODES;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
