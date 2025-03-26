@@ -1,0 +1,77 @@
+<div class="mx-8 mt-12 flex flex-row gap-x-10 text-center">
+  <div class="flex flex-col gap-y-6">
+    <div *ngFor="let section of SECTIONS"
+         class="w-64 text-2xl px-3 py-2.5 bg-gray-800 rounded-full {{getSectionStyle(section)}}"
+         (click)="activeSection = section"
+    >
+      {{ section }}
+    </div>
+  </div>
+  <div class="">
+    <div *ngIf="activeSection === SECTIONS[0]"
+         class="text-xl"
+    >
+      <div class="mb-4 flex flex-row justify-between text-green-600">
+        <div class="italic">
+          {{ storageUsage.database }}
+          v{{ storageUsage.version }}
+        </div>
+        <div>
+          Checked on:
+          {{ storageUsage.checkedOn }}
+        </div>
+      </div>
+      <div class="relative overflow-x-auto shadow-md rounded-lg">
+        <table class="table-fixed">
+          <thead class="text-gray-400 bg-gradient-to-br from-gray-700 via-gray-900 to-gray-700">
+            <th class="px-3 py-2 w-16">
+              #
+            </th>
+            <th *ngFor="let field of storageItemFields"
+                class="px-3 py-2 w-20"
+            >
+              {{ field[0].toUpperCase() + field.slice(1) }}
+            </th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of storageUsageItems; let index = index"
+                class="bg-gray-800/50 hover:bg-gray-700/50 text-lg"
+            >
+              <td class="px-3 py-1 border border-gray-800">
+                {{ index + 1 }}
+              </td>
+              <td class="px-3 py-1 border border-gray-800">
+                {{ item.collection[0].toUpperCase() + item.collection.slice(1) }}
+              </td>
+              <td *ngFor="let field of storageItemFields.slice(1)"
+                  class="px-3 py-1 border border-gray-800"
+              >
+                {{ getStorageItemValue(item, field) }}
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="text-red-600 bg-gradient-to-br from-gray-700 via-gray-900 to-gray-700">
+            <td class="px-3 py-1 border border-gray-800">
+            </td>
+            <td *ngFor="let field of storageItemFields"
+                class="px-3 py-1 border border-gray-800"
+            >
+              <div *ngIf="getStorageStat(field) > 0">
+                {{ getStorageStat(field) | number }}
+                <span *ngIf="field.includes('Size')">
+                  MiB
+                </span>
+              </div>
+            </td>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[1]"
+         class=""
+    >
+      Section Contents
+    </div>
+  </div>
+</div>

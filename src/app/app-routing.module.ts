@@ -25,6 +25,7 @@ import {FormBetComponent} from './form-bet/form-bet.component';
 import {GameComponent} from './game/game.component';
 import {GameIntroComponent} from './game-intro/game-intro.component';
 import {GameEntryComponent} from './game-entry/game-entry.component';
+import {WorkInProgressComponent} from './work-in-progress/work-in-progress.component';
 import {FinanceComponent} from './finance/finance.component';
 import {FinancePersonalComponent} from './finance-personal/finance-personal.component';
 import {FinanceAccountingComponent} from './finance-accounting/finance-accounting.component';
@@ -36,6 +37,7 @@ const routes: Routes = [
   {path: 'odds', component: OddsComponent},
   {path: 'backtest', component: BacktestComponent},
   {path: 'fixture', component: FixtureComponent},
+  {path: 'wip', component: WorkInProgressComponent},
   {
     path: 'trend',
     component: TrendComponent,
