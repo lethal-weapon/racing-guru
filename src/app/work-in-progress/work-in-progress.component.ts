@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {RestRepository} from '../model/rest.repository';
-import {STORAGE_USAGES, StorageUsage, StorageUsageItem} from "./storage";
+import {STORAGE_USAGES, StorageUsage, StorageUsageItem} from './storage';
 
 const SECTIONS: string[] = [
   'Storage',
@@ -17,13 +17,11 @@ export class WorkInProgressComponent implements OnInit {
   activeSection: string = SECTIONS[0];
 
   protected readonly SECTIONS = SECTIONS;
-  protected readonly STORAGE_USAGES = STORAGE_USAGES;
 
   constructor(private repo: RestRepository) {
   }
 
   ngOnInit(): void {
-    // StorageUsageItem.
   }
 
   getStorageItemValue = (item: StorageUsageItem, field: string): string => {
