@@ -172,8 +172,95 @@
       </div>
     </div>
 
-    <div *ngIf="activeSection === SECTIONS[3]">
-      {{ activeSection }} Requirements
+    <div *ngIf="activeSection === SECTIONS[3]"
+         class="flex flex-col gap-y-6 text-left"
+    >
+      <div class="">
+        <div class="text-2xl text-green-600 mb-3 italic">
+          Rules
+        </div>
+        <table class="ml-8">
+          <tr *ngFor="let rule of GAME_RULE_SPECS; let index = index">
+            <td class="pt-2 pr-4 text-blue-600 align-top">
+              #{{ index + 1 }}
+            </td>
+            <td class="pt-2" [innerHTML]="rule">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="">
+        <div class="text-2xl text-green-600 mb-3 italic">
+          Rewards
+        </div>
+        <table class="ml-8">
+          <tr *ngFor="let spec of GAME_REWARD_SPECS; let index = index">
+            <td class="pt-2 pr-4 text-blue-600 align-top">
+              #{{ index + 1 }}
+            </td>
+            <td class="pt-2" [innerHTML]="spec">
+            </td>
+          </tr>
+        </table>
+        <table class="ml-8 mt-4 border-collapse border border-gray-600 text-center">
+          <tr *ngFor="let reward of GAME_REWARDS">
+            <td class="border border-gray-600 py-1.5 px-4">
+              {{ reward.item }}
+            </td>
+            <td class="border border-gray-600 py-1.5 px-4">
+              {{ reward.percentage }}%
+            </td>
+            <td class="border border-gray-600 py-1.5 px-4">
+              {{ reward.golds }}
+            </td>
+            <td class="border border-gray-600 py-1.5 px-4 text-yellow-400">
+              {{ reward.goldsRounded }} golds
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="">
+        <div class="text-2xl text-green-600 mb-3 italic">
+          Point Table
+        </div>
+        <table class="ml-8">
+          <tr *ngFor="let spec of GAME_POINT_TABLE_SPECS; let index = index">
+            <td class="pt-2 pr-4 text-blue-600 align-top">
+              #{{ index + 1 }}
+            </td>
+            <td class="pt-2" [innerHTML]="spec">
+              {{ spec }}
+            </td>
+          </tr>
+        </table>
+        <table class="ml-8 mt-4 table-fixed border-collapse border border-gray-600 text-center">
+          <thead class="text-2xl">
+            <th class="w-32 border border-gray-700 py-2 px-3"></th>
+            <th *ngFor="let pm of PLACING_MAPS"
+                class="w-28 border border-gray-700 py-2 px-3 {{pm.color}}"
+            >
+              {{ pm.placing }}
+            </th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let oi of ODDS_INTENSITIES; let row = index">
+              <td class="border border-gray-700 py-2 px-3">
+                <div class="uppercase {{oi.color}}">
+                  {{ oi.category }}
+                </div>
+                <div>
+                  [{{ oi.lower | number: '1.0-1' }} , {{ oi.upper | number: '1.0-1' }})
+                </div>
+              </td>
+              <td *ngFor="let _ of PLACING_MAPS; let column = index"
+                  class="border border-gray-700 py-2 px-3"
+              >
+                {{ (row + 1) * (4 - column) }} pt
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div *ngIf="activeSection === SECTIONS[4]">

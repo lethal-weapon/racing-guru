@@ -2,7 +2,9 @@ import {Component, OnInit} from '@angular/core';
 
 import {DESIGN_SECTIONS} from './design';
 import {STORAGE_USAGES, StorageUsage, StorageUsageItem} from './storage';
+import {GAME_POINT_TABLE_SPECS, GAME_REWARD_SPECS, GAME_REWARDS, GAME_RULE_SPECS} from './game';
 import {MAX_RACE_PER_MEETING, TWELVE_SECONDS} from '../util/numbers';
+import {ODDS_INTENSITIES, PLACING_MAPS} from '../util/strings';
 
 const POSTMAN_PROCESS_TIME_PER_CALL_MILL = 20;
 const SECTIONS: string[] = [
@@ -23,12 +25,18 @@ const SECTIONS: string[] = [
 })
 export class WorkInProgressComponent implements OnInit {
 
-  activeSection: string = SECTIONS[2];
+  activeSection: string = SECTIONS[4];
 
   protected readonly SECTIONS = SECTIONS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
+  protected readonly PLACING_MAPS = PLACING_MAPS;
+  protected readonly ODDS_INTENSITIES = ODDS_INTENSITIES;
   protected readonly POSTMAN_PROCESS_TIME_PER_CALL_MILL = POSTMAN_PROCESS_TIME_PER_CALL_MILL;
   protected readonly DESIGN_SECTIONS = DESIGN_SECTIONS;
+  protected readonly GAME_RULE_SPECS = GAME_RULE_SPECS;
+  protected readonly GAME_REWARD_SPECS = GAME_REWARD_SPECS;
+  protected readonly GAME_REWARDS = GAME_REWARDS;
+  protected readonly GAME_POINT_TABLE_SPECS = GAME_POINT_TABLE_SPECS;
   protected readonly parseInt = parseInt;
 
   constructor() {
