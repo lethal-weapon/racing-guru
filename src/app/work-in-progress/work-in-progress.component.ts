@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {DESIGN_SECTIONS} from './design';
+import {PRICING_SPECIFICATIONS} from './pricing';
 import {STORAGE_USAGES, StorageUsage, StorageUsageItem} from './storage';
 import {GAME_POINT_TABLE_SPECS, GAME_REWARD_SPECS, GAME_REWARDS, GAME_RULE_SPECS} from './game';
 import {MAX_RACE_PER_MEETING, TWELVE_SECONDS} from '../util/numbers';
@@ -111,4 +112,6 @@ export class WorkInProgressComponent implements OnInit {
   get storageUsage(): StorageUsage {
     return STORAGE_USAGES[0];
   }
+
+  protected readonly PRICING_SPECIFICATIONS = PRICING_SPECIFICATIONS;
 }

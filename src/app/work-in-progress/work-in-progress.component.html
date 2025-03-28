@@ -263,8 +263,25 @@
       </div>
     </div>
 
-    <div *ngIf="activeSection === SECTIONS[4]">
-      {{ activeSection }} Requirements
+    <div *ngIf="activeSection === SECTIONS[4]"
+         class="flex flex-col gap-y-6 text-left"
+    >
+      <div *ngFor="let spec of PRICING_SPECIFICATIONS"
+           class=""
+      >
+        <div class="text-2xl text-green-600 mb-3 italic">
+          {{ spec.section }}
+        </div>
+        <table class="ml-8">
+          <tr *ngFor="let line of spec.specifications; let index = index">
+            <td class="pt-2 pr-4 text-blue-600 align-top">
+              #{{ index + 1 }}
+            </td>
+            <td class="pt-2" [innerHTML]="line">
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
 
     <div *ngIf="activeSection === SECTIONS[5]">
