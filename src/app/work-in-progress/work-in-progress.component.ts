@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 
-import {RestRepository} from '../model/rest.repository';
 import {STORAGE_USAGES, StorageUsage, StorageUsageItem} from './storage';
+import {MAX_RACE_PER_MEETING, TWELVE_SECONDS} from '../util/numbers';
 
+const POSTMAN_PROCESS_TIME_PER_CALL_MILL = 20;
 const SECTIONS: string[] = [
   'Storage',
+  'Sync Rate',
   'New Design',
 ]
 
@@ -14,15 +16,20 @@ const SECTIONS: string[] = [
 })
 export class WorkInProgressComponent implements OnInit {
 
-  activeSection: string = SECTIONS[0];
+  activeSection: string = SECTIONS[1];
 
   protected readonly SECTIONS = SECTIONS;
+  protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
+  protected readonly POSTMAN_PROCESS_TIME_PER_CALL_MILL = POSTMAN_PROCESS_TIME_PER_CALL_MILL;
 
-  constructor(private repo: RestRepository) {
+  constructor() {
   }
 
   ngOnInit(): void {
   }
+
+  getRunnerDelay = (remainingRaces: number): number =>
+    TWELVE_SECONDS / (2 * remainingRaces) - POSTMAN_PROCESS_TIME_PER_CALL_MILL
 
   getStorageItemValue = (item: StorageUsageItem, field: string): string => {
     // @ts-ignore
@@ -72,6 +79,14 @@ export class WorkInProgressComponent implements OnInit {
     ]
   }
 
+  get syncRateFields(): string[] {
+    return [
+      'Races Remaining',
+      'Calls Needed',
+      'Postman Runner Interval Delay Between Call',
+    ]
+  }
+
   get storageUsageItems(): StorageUsageItem[] {
     return this.storageUsage.items.sort((i1, i2) => i2.documents - i1.documents);
   }
@@ -79,4 +94,6 @@ export class WorkInProgressComponent implements OnInit {
   get storageUsage(): StorageUsage {
     return STORAGE_USAGES[0];
   }
+
+  protected readonly parseInt = parseInt;
 }

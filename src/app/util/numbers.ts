@@ -1,6 +1,8 @@
 export const TWO_SECONDS = 2_000;
 export const THREE_SECONDS = 3_000;
 export const FIVE_SECONDS = 5_000;
+export const SIX_SECONDS = 6_000;
+export const TWELVE_SECONDS = 12_000;
 export const THIRTY_SECONDS = 30_000;
 export const ONE_MINUTE = 60_000;
 

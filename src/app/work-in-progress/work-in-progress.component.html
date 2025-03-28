@@ -1,4 +1,4 @@
-<div class="mx-8 mt-12 flex flex-row gap-x-10 text-center">
+<div class="mx-8 mt-10 flex flex-row gap-x-10 text-center">
   <div class="flex flex-col gap-y-6">
     <div *ngFor="let section of SECTIONS"
          class="w-64 text-2xl px-3 py-2.5 bg-gray-800 rounded-full {{getSectionStyle(section)}}"
@@ -7,6 +7,7 @@
       {{ section }}
     </div>
   </div>
+
   <div class="text-xl">
     <div *ngIf="activeSection === SECTIONS[0]">
       <div class="mb-4 flex flex-row justify-between text-green-600">
@@ -32,27 +33,37 @@
             </th>
           </thead>
           <tbody>
-            <tr *ngFor="let item of storageUsageItems; let index = index"
+            <tr *ngFor="let item of storageUsageItems; let index = index; let last = last"
                 class="bg-gray-800/50 hover:bg-gray-700/50 text-lg"
             >
-              <td class="px-3 py-1 border border-gray-800">
+              <td class="px-3 py-1 border border-gray-800"
+                  [class.border-b-red-700]="last"
+              >
                 {{ index + 1 }}
               </td>
-              <td class="px-3 py-1 border border-gray-800">
+              <td class="px-3 py-1 border border-gray-800"
+                  [class.border-b-red-700]="last"
+              >
                 {{ item.collection[0].toUpperCase() + item.collection.slice(1) }}
               </td>
               <td *ngFor="let field of storageItemFields.slice(1)"
                   class="py-1 border border-gray-800 {{field.includes('Size') ? 'text-right pr-6' : 'px-3'}}"
+                  [class.border-b-red-700]="last"
               >
-                {{ getStorageItemValue(item, field) }}
+                <span *ngIf="field !== 'documents'">
+                  {{ getStorageItemValue(item, field) }}
+                </span>
+                <span *ngIf="field === 'documents'">
+                  {{ parseInt(getStorageItemValue(item, field)) | number }}
+                </span>
               </td>
             </tr>
           </tbody>
-          <tfoot class="text-red-600 bg-gradient-to-br from-gray-700 via-gray-900 to-gray-700">
-            <td class="px-3 py-1 border border-gray-800">
+          <tfoot class="text-red-600">
+            <td class="px-3 py-1 border border-gray-800 bg-gray-800/50">
             </td>
             <td *ngFor="let field of storageItemFields"
-                class="py-1 border border-gray-800 {{field.includes('Size') ? 'text-right pr-6' : 'px-3'}}"
+                class="py-1 border border-gray-800 bg-gray-800/50 {{field.includes('Size') ? 'text-right pr-6' : 'px-3'}}"
             >
               <div *ngIf="getStorageStat(field) > 0">
                 {{ getStorageStat(field) | number }}
@@ -67,6 +78,86 @@
     </div>
 
     <div *ngIf="activeSection === SECTIONS[1]">
+      <table class="mb-4 italic text-left">
+        <tr>
+          <td class="text-green-600 pr-6">Odds Sync Rate:</td>
+          <td>every 6s</td>
+        </tr>
+        <tr>
+          <td class="text-green-600 pr-6">Postman Process Time:</td>
+          <td>
+            {{ POSTMAN_PROCESS_TIME_PER_CALL_MILL }}ms
+            each call, 2 calls per race, 1 for pool, 1 for odds
+          </td>
+        </tr>
+        <tr>
+          <td class="text-green-600 pr-6">Requirement:</td>
+          <td>sync at least once for each remaining race every 12s in real time</td>
+        </tr>
+      </table>
+      <div class="relative overflow-x-auto shadow-md rounded-lg">
+        <table class="table-fixed">
+          <thead class="text-gray-400 bg-gradient-to-br from-gray-700 via-gray-900 to-gray-700">
+            <th class="px-3 py-2 w-16">
+              #
+            </th>
+            <th *ngFor="let field of syncRateFields"
+                class="px-6 py-2"
+            >
+              {{ field }}
+            </th>
+          </thead>
+          <tbody>
+            <tr *counter="let race of MAX_RACE_PER_MEETING"
+                class="bg-gray-800/50 hover:bg-gray-700/50 text-lg"
+            >
+              <td class="px-3 py-1 border border-gray-800"
+                  [class.border-b-red-700]="race === MAX_RACE_PER_MEETING - 2"
+              >
+                {{ race }}
+              </td>
+              <td class="px-3 py-1 border border-gray-800"
+                  [class.border-b-red-700]="race === MAX_RACE_PER_MEETING - 2"
+              >
+                {{ MAX_RACE_PER_MEETING - race + 1 }}
+              </td>
+              <td class="px-3 py-1 border border-gray-800"
+                  [class.border-b-red-700]="race === MAX_RACE_PER_MEETING - 2"
+              >
+                {{ 2 * (MAX_RACE_PER_MEETING - race + 1) }}
+              </td>
+              <td class="px-12 py-1 border border-gray-800 text-right"
+                  [class.border-b-red-700]="race === MAX_RACE_PER_MEETING - 2"
+              >
+                <div class="flex flex-row justify-between">
+                  <div>
+                    <div *ngIf="race >= MAX_RACE_PER_MEETING - 1">
+                      Within 6s
+                    </div>
+                    <div *ngIf="race < MAX_RACE_PER_MEETING - 1">
+                      Within 12s
+                    </div>
+                  </div>
+                  <div>
+                    <div *ngIf="race === MAX_RACE_PER_MEETING - 1">
+                      1,480 ms
+                    </div>
+                    <div *ngIf="race === MAX_RACE_PER_MEETING">
+                      2,980 ms
+                    </div>
+                    <div *ngIf="race < MAX_RACE_PER_MEETING - 1">
+                      {{ getRunnerDelay(MAX_RACE_PER_MEETING - race + 1) | number: '1.0-0' }} ms
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[2]">
       Section Contents
     </div>
   </div>
