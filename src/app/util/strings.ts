@@ -16,7 +16,7 @@ export interface Season {
   finale: string
 }
 
-export const LATEST: string = "latest";
+export const LATEST: string = 'latest';
 
 export const BOUNDARY_POOLS = [
   'F-F', 'QTT', 'PLA-3', 'QPL-3', 'TBL-2', '6UP-2', 'D-T', 'TT-2',

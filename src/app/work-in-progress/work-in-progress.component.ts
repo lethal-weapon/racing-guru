@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 
+import {DESIGN_SECTIONS} from './design';
 import {STORAGE_USAGES, StorageUsage, StorageUsageItem} from './storage';
 import {MAX_RACE_PER_MEETING, TWELVE_SECONDS} from '../util/numbers';
 
@@ -8,6 +9,12 @@ const SECTIONS: string[] = [
   'Storage',
   'Sync Rate',
   'New Design',
+  'Game',
+  'Pricing',
+  'Account',
+  'Seminar',
+  'Feedback',
+  'Announcement',
 ]
 
 @Component({
@@ -16,11 +23,13 @@ const SECTIONS: string[] = [
 })
 export class WorkInProgressComponent implements OnInit {
 
-  activeSection: string = SECTIONS[1];
+  activeSection: string = SECTIONS[2];
 
   protected readonly SECTIONS = SECTIONS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
   protected readonly POSTMAN_PROCESS_TIME_PER_CALL_MILL = POSTMAN_PROCESS_TIME_PER_CALL_MILL;
+  protected readonly DESIGN_SECTIONS = DESIGN_SECTIONS;
+  protected readonly parseInt = parseInt;
 
   constructor() {
   }
@@ -94,6 +103,4 @@ export class WorkInProgressComponent implements OnInit {
   get storageUsage(): StorageUsage {
     return STORAGE_USAGES[0];
   }
-
-  protected readonly parseInt = parseInt;
 }

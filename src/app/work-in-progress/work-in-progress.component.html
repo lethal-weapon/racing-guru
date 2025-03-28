@@ -157,8 +157,43 @@
       </div>
     </div>
 
-    <div *ngIf="activeSection === SECTIONS[2]">
-      Section Contents
+    <div *ngIf="activeSection === SECTIONS[2]"
+         class="flex flex-row gap-x-20 text-left"
+    >
+      <div *ngFor="let ds of DESIGN_SECTIONS">
+        <div class="mb-2 text-2xl text-green-600 italic">
+          {{ ds.section }}
+        </div>
+        <div *ngFor="let subsection of ds.subsections"
+             class="ml-8"
+        >
+          {{ subsection }}
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[3]">
+      {{ activeSection }} Requirements
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[4]">
+      {{ activeSection }} Requirements
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[5]">
+      {{ activeSection }} Requirements
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[6]">
+      {{ activeSection }} Requirements
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[7]">
+      {{ activeSection }} Requirements
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[8]">
+      {{ activeSection }} Requirements
     </div>
   </div>
 </div>
