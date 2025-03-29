@@ -266,9 +266,44 @@
     <div *ngIf="activeSection === SECTIONS[4]"
          class="flex flex-col gap-y-6 text-left"
     >
-      <div *ngFor="let spec of PRICING_SPECIFICATIONS"
-           class=""
-      >
+      <div *ngFor="let spec of PRICING_SPECIFICATIONS">
+        <div class="text-2xl text-green-600 mb-3 italic">
+          {{ spec.section }}
+        </div>
+        <table class="ml-8">
+          <tr *ngFor="let line of spec.specifications; let index = index">
+            <td class="pt-2 pr-4 text-blue-600 align-top">
+              #{{ index + 1 }}
+            </td>
+            <td class="pt-2" [innerHTML]="line">
+            </td>
+          </tr>
+        </table>
+        <table *ngIf="spec.section === 'Gold'"
+               class="ml-8 mt-4 border-collapse border border-gray-600 text-right"
+        >
+          <tr *ngFor="let pack of GOLD_PACKAGES">
+            <td class="border border-gray-600 py-1.5 px-4 text-center">
+              {{ pack.product }}
+            </td>
+            <td class="border border-gray-600 py-1.5 px-4 text-yellow-400">
+              {{ pack.golds }} Golds
+            </td>
+            <td class="border border-gray-600 py-1.5 px-4">
+              {{ pack.avgPricePerGold | currency:'USD':'symbol':'1.0-1' }} / ea
+            </td>
+            <td class="border border-gray-600 py-1.5 px-4">
+              {{ (pack.golds * pack.avgPricePerGold) | currency:'USD':'symbol':'1.0-1' }}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === SECTIONS[5]"
+         class="flex flex-col gap-y-6 text-left"
+    >
+      <div *ngFor="let spec of ACCOUNT_SPECIFICATIONS">
         <div class="text-2xl text-green-600 mb-3 italic">
           {{ spec.section }}
         </div>
@@ -282,10 +317,6 @@
           </tr>
         </table>
       </div>
-    </div>
-
-    <div *ngIf="activeSection === SECTIONS[5]">
-      {{ activeSection }} Requirements
     </div>
 
     <div *ngIf="activeSection === SECTIONS[6]">

@@ -3,13 +3,29 @@ export interface PricingSpec {
   specifications: string[]
 }
 
+export interface GoldPackage {
+  product: string
+  golds: number
+  avgPricePerGold: number
+}
+
+export const GOLD_PACKAGES: GoldPackage[] = [
+  {product: 'Singular', golds: 1, avgPricePerGold: 7.5},
+  {product: '1-day Pack', golds: 10, avgPricePerGold: 7.0},
+  {product: '4-day Pack', golds: 40, avgPricePerGold: 6.8},
+  {product: 'Monthly Pack', golds: 80, avgPricePerGold: 6.6},
+  {product: 'Bi-monthly Pack', golds: 160, avgPricePerGold: 6.4},
+  {product: 'Half Season Pack', golds: 415, avgPricePerGold: 6.2},
+  {product: 'Whole Season Pack', golds: 830, avgPricePerGold: 6.0},
+]
+
 export const PRICING_SPECIFICATIONS: PricingSpec[] = [
   {
     section: `Model`,
     specifications: [
       `"Pay as you use" to attract customers by eliminating long-term commitment.`,
       `Use subscription to ensure the minimum revenue.`,
-      `Use golds as product balance to contribute to the majority of revenue.`,
+      `Use golds as product balance to create the majority of revenue.`,
       `Use competition game to boost revenue after reaching certain number of active regular users.`,
       `Introduce promotion sales during summer off-season & CNY holiday.`,
     ]
@@ -54,14 +70,7 @@ export const PRICING_SPECIFICATIONS: PricingSpec[] = [
       `,
       `Unlike subscription, there is no limit on how many golds can be purchased.`,
       `
-        Golds are selling in the form of singular or packs:<br>
-        Singular:            1 gold  => HK$ 7.0/ea<br>
-        1-day Pack:         10 golds => HK$ 6.5/ea<br>
-        4-day Pack:         40 golds => HK$ 6.4/ea<br>
-        Monthly Pack:       80 golds => HK$ 6.3/ea<br>
-        Bi-monthly Pack:   160 golds => HK$ 6.2/ea<br>
-        Half Season Pack:  415 golds => HK$ 6.1/ea<br>
-        Whole Season Pack: 830 golds => HK$ 6.0/ea
+        Golds are selling in the form of singular or packs:
       `,
     ]
   },
