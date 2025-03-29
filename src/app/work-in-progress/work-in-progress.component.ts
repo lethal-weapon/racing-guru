@@ -38,6 +38,7 @@ export class WorkInProgressComponent implements OnInit {
   protected readonly GAME_REWARD_SPECS = GAME_REWARD_SPECS;
   protected readonly GAME_REWARDS = GAME_REWARDS;
   protected readonly GAME_POINT_TABLE_SPECS = GAME_POINT_TABLE_SPECS;
+  protected readonly PRICING_SPECIFICATIONS = PRICING_SPECIFICATIONS;
   protected readonly parseInt = parseInt;
 
   constructor() {
@@ -112,6 +113,4 @@ export class WorkInProgressComponent implements OnInit {
   get storageUsage(): StorageUsage {
     return STORAGE_USAGES[0];
   }
-
-  protected readonly PRICING_SPECIFICATIONS = PRICING_SPECIFICATIONS;
 }

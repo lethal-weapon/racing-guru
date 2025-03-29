@@ -5,11 +5,21 @@ export interface PricingSpec {
 
 export const PRICING_SPECIFICATIONS: PricingSpec[] = [
   {
+    section: `Model`,
+    specifications: [
+      `"Pay as you use" to attract customers by eliminating long-term commitment.`,
+      `Use subscription to ensure the minimum revenue.`,
+      `Use golds as product balance to contribute to the majority of revenue.`,
+      `Use competition game to boost revenue after reaching certain number of active regular users.`,
+      `Introduce promotion sales during summer off-season & CNY holiday.`,
+    ]
+  },
+  {
     section: `Subscription`,
     specifications: [
       `A basic monthly subscription fee is HK$ 99 for every 30 days of service.`,
       `A reminder will be given when subscription is about to expire in 7 days or less.`,
-      `Nearly all functionalities require an active subscription for an account.`,
+      `All functionalities require an active subscription for an account.`,
       `
         Subscription alone can only access basic functionalities, to unlock a new<br>
         race meeting require certain amount of golds in addition to active subscription.
@@ -39,7 +49,7 @@ export const PRICING_SPECIFICATIONS: PricingSpec[] = [
         the total number of the races on that race day (8 to 11 golds).
       `,
       `
-        Golds can also be used for renaming nickname of the account,<br>
+        Golds can also be used for renaming the nickname of an account,<br>
         participate in the game competition as entry fee to possibly earn more golds.
       `,
       `Unlike subscription, there is no limit on how many golds can be purchased.`,
@@ -59,8 +69,8 @@ export const PRICING_SPECIFICATIONS: PricingSpec[] = [
     section: `Payment`,
     specifications: [
       `There is no shopping cart feature, only 1 item can be purchased at a time.`,
-      `For singular gold, a quantity can be specified before the checkout.`,
-      `Supported payment methods: Credit Card, AlipayHK, Payme, FPS`,
+      `For singular gold, a quantity can be specified during the checkout.`,
+      `Supported payment methods: Credit Card > AlipayHK > Payme > FPS`,
       `
         After payment successful, instruct user to refresh the page<br>
         and/or redirect user to home page with a countdown timer of 9 seconds.
@@ -70,7 +80,7 @@ export const PRICING_SPECIFICATIONS: PricingSpec[] = [
   {
     section: `Redemption`,
     specifications: [
-      `There is a channel for user to redeem his coupon like a gift card.`,
+      `A channel for user to redeem his "coupon" like a gift card.`,
       `Redemption code must be issued from our system.`,
       `1 redemption code can be used once only.`,
       `Redemption can be either subscriptions or golds for a certain days or amount.`,
@@ -79,17 +89,23 @@ export const PRICING_SPECIFICATIONS: PricingSpec[] = [
   {
     section: `Order History`,
     specifications: [
-      ``,
-      ``,
-      ``,
+      `
+        To display user's purchasing history listed in the most<br> 
+        recent first order and a pagination size of 12.
+      `,
+      `
+        Each order item shall include but not limit to below information:<br>
+        order #, date/time, status, product description, cost, payment method, etc.
+      `,
     ]
   },
   {
     section: `New User`,
     specifications: [
-      ``,
-      ``,
-      ``,
+      `
+        System will automatically credit a 3-day subscription and 10 golds<br>
+        to each newly successfully registered user account.
+      `,
     ]
   },
 ]
