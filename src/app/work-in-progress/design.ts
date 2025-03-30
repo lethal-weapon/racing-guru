@@ -81,7 +81,7 @@ export const DESIGN_SECTIONS: DesignSection[] = [
       '* Pricing / Price Tag',
       '* Pricing / Order & Sales',
       '* Pricing / Refund Management',
-      '* Pricing / Redemption Creation',
+      '* Pricing / Redemption Issuance',
       '* Pricing / User Account Crediting',
       SEPARATOR_LINE,
       '* Seminar / Session Creation',

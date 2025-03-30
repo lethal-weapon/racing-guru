@@ -2,13 +2,14 @@ import {Component, OnInit} from '@angular/core';
 
 import {DESIGN_SECTIONS} from './design';
 import {ACCOUNT_SPECIFICATIONS} from './account';
+import {SEMINAR_SPECIFICATIONS} from './seminar';
 import {GOLD_PACKAGES, PRICING_SPECIFICATIONS} from './pricing';
 import {STORAGE_USAGES, StorageUsage, StorageUsageItem} from './storage';
 import {GAME_POINT_TABLE_SPECS, GAME_REWARD_SPECS, GAME_REWARDS, GAME_RULE_SPECS} from './game';
 import {MAX_RACE_PER_MEETING, TWELVE_SECONDS} from '../util/numbers';
 import {ODDS_INTENSITIES, PLACING_MAPS} from '../util/strings';
 
-const POSTMAN_PROCESS_TIME_PER_CALL_MILL = 20;
+const POSTMAN_PROCESS_TIME_PER_CALL_MILL = 25;
 const SECTIONS: string[] = [
   'Storage',
   'Sync Rate',
@@ -27,7 +28,7 @@ const SECTIONS: string[] = [
 })
 export class WorkInProgressComponent implements OnInit {
 
-  activeSection: string = SECTIONS[5];
+  activeSection: string = SECTIONS[6];
 
   protected readonly SECTIONS = SECTIONS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
@@ -42,6 +43,7 @@ export class WorkInProgressComponent implements OnInit {
   protected readonly GOLD_PACKAGES = GOLD_PACKAGES;
   protected readonly PRICING_SPECIFICATIONS = PRICING_SPECIFICATIONS;
   protected readonly ACCOUNT_SPECIFICATIONS = ACCOUNT_SPECIFICATIONS;
+  protected readonly SEMINAR_SPECIFICATIONS = SEMINAR_SPECIFICATIONS;
   protected readonly parseInt = parseInt;
 
   constructor() {

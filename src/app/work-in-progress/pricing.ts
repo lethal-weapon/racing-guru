@@ -25,7 +25,7 @@ export const PRICING_SPECIFICATIONS: PricingSpec[] = [
     specifications: [
       `"Pay as you use" to attract customers by eliminating long-term commitment.`,
       `Use subscription to ensure the minimum revenue.`,
-      `Use golds as product balance to create the majority of revenue.`,
+      `Use golds as product currency for the majority of revenue.`,
       `Use competition game to boost revenue after reaching certain number of active regular users.`,
       `Introduce promotion sales during summer off-season & CNY holiday.`,
     ]

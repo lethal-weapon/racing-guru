@@ -25,8 +25,8 @@ export const ACCOUNT_SPECIFICATIONS: AccountSpec[] = [
         Regex: [a-zA-Z]{6,12}
       `,
       `
-        User needs to fill in an unverified (by our system) email address &<br>
-        local phone number but don't need to verify them during registration.
+        User needs to fill in an email address & local phone number<br>
+        but don't need to verify them during registration.
       `,
       `User account will be created with an inactive status.`
     ]
