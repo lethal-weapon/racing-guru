@@ -9,7 +9,7 @@ import {GAME_POINT_TABLE_SPECS, GAME_REWARD_SPECS, GAME_REWARDS, GAME_RULE_SPECS
 import {MAX_RACE_PER_MEETING, TWELVE_SECONDS} from '../util/numbers';
 import {ODDS_INTENSITIES, PLACING_MAPS} from '../util/strings';
 
-const POSTMAN_PROCESS_TIME_PER_CALL_MILL = 25;
+const POSTMAN_PROCESS_TIME_PER_CALL_MILL = 50;
 const SECTIONS: string[] = [
   'Storage',
   'Sync Rate',

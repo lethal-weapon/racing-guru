@@ -21,8 +21,8 @@ export const SEMINAR_SPECIFICATIONS: SeminarSpec[] = [
         so that the public odds is available for live product demo during the 2nd half session.
       `,
       `
-        Only successfully registered account user can register for the seminar.<br>
-        Each session registration window will be closed by 5 pm 1 day before the session day.<br>
+        Only the active account user can register for the seminar.<br>
+        Each session registration window will be closed by 5 pm, 1 day before the session day.<br>
         Each session requires at least 5 participants, notify participants for cancellation<br>
         and arrange for refund if not. Up to 20 participants will be accepted for each session.
       `,
@@ -51,17 +51,35 @@ export const SEMINAR_SPECIFICATIONS: SeminarSpec[] = [
   {
     section: `1st Half Session`,
     specifications: [
-      ``,
-      ``,
-      ``,
+      `Where's the biggest casino in the world?`,
+      `What's the difference between gambling and investing?`,
+      `Presenter's Credentials & Experiences`,
+      `HKJC: Mark Six, Football & Horse Racing`,
+      `Sports Betting & Unfair Advantage`,
+      `Psychology & Prospect Theory`,
+      `Summary: How to Make Money in the Long Run?`,
+      `Q & A for up to 3 Questions`,
     ]
   },
   {
     section: `2nd Half Session`,
     specifications: [
-      ``,
-      ``,
-      ``,
+      `Product Demo on Meeting Page`,
+      `Product Demo on Racecard Page`,
+      `Product Demo on Odds Page`,
+      `Product Demo on Trend Page`,
+      `Q & A for up to 3 Questions`,
+      `3 Reward Questions`,
+    ]
+  },
+  {
+    section: `Reward Questions`,
+    specifications: [
+      `Easy - What's the total turnover for last race meeting?`,
+      `Easy - What's the takeout (tax) rate for each pool?`,
+      `Easy - What's the minimum starters for pool QPL to exist?`,
+      `Medium - How the jackpot is form?`,
+      `Hard - How the DBL consolation dividend is calculated?`,
     ]
   },
 ]
