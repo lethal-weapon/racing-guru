@@ -207,13 +207,17 @@ export class TrendDividendComponent implements OnInit {
   }
 
   isHighlightOverviewCell = (meeting: string, race: number): boolean => {
-    if (this.activeMode !== OVERVIEW_MODES[3]) {
+    if (this.activeMode === OVERVIEW_MODES[0]) {
       return this.isTripleTrioFirstLeg(meeting, race);
     }
-
-    return this.getDividendTop4(meeting, race)
-      .filter(o => this.isSpecialOrder(o))
-      .length > 1;
+    if (this.activeMode === OVERVIEW_MODES[3]) {
+      return this.getDividendTop4(meeting, race)
+        .filter(o => this.isSpecialOrder(o))
+        .length > 1;
+    }
+    return this.isTripleTrioFirstLeg(meeting, race)
+      || this.isTripleTrioFirstLeg(meeting, race - 1)
+      || this.isTripleTrioFirstLeg(meeting, race - 2);
   }
 
   isSpecialOrder = (orderStr: string): boolean => {
