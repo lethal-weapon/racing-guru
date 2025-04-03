@@ -33,7 +33,8 @@ export const SEMINAR_SPECIFICATIONS: SeminarSpec[] = [
       `,
       `
         The seminar material will be in English, but the communication language<br>
-        in presentation will be in Cantonese due to the horse racing domain demographic.`,
+        in presentation will be in Cantonese due to the horse racing domain demographic.
+      `,
       `
         The fare must be paid during session registration.<br>
         The fare is not refundable once paid, unless due to session cancellation.<br>
@@ -56,7 +57,7 @@ export const SEMINAR_SPECIFICATIONS: SeminarSpec[] = [
       `Presenter's Credentials & Experiences`,
       `HKJC: Mark Six, Football & Horse Racing`,
       `Sports Betting & Unfair Advantage`,
-      `Psychology & Prospect Theory`,
+      `The Psychology Behind the Scene`,
       `Summary: How to Make Money in the Long Run?`,
       `Q & A for up to 3 Questions`,
     ]

@@ -140,10 +140,10 @@
                   </div>
                   <div>
                     <div *ngIf="race === MAX_RACE_PER_MEETING - 1">
-                      1,480 ms
+                      1,450 ms
                     </div>
                     <div *ngIf="race === MAX_RACE_PER_MEETING">
-                      2,980 ms
+                      2,950 ms
                     </div>
                     <div *ngIf="race < MAX_RACE_PER_MEETING - 1">
                       {{ getRunnerDelay(MAX_RACE_PER_MEETING - race + 1) | number: '1.0-0' }} ms
@@ -338,12 +338,42 @@
       </div>
     </div>
 
-    <div *ngIf="activeSection === SECTIONS[7]">
-      {{ activeSection }} Requirements
+    <div *ngIf="activeSection === SECTIONS[7]"
+         class="flex flex-col gap-y-6 text-left"
+    >
+      <div *ngFor="let spec of FEEDBACK_SPECIFICATIONS">
+        <div class="text-2xl text-green-600 mb-3 italic">
+          {{ spec.section }}
+        </div>
+        <table class="ml-8">
+          <tr *ngFor="let line of spec.specifications; let index = index">
+            <td class="pt-2 pr-4 text-blue-600 align-top">
+              #{{ index + 1 }}
+            </td>
+            <td class="pt-2" [innerHTML]="line">
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
 
-    <div *ngIf="activeSection === SECTIONS[8]">
-      {{ activeSection }} Requirements
+    <div *ngIf="activeSection === SECTIONS[8]"
+         class="flex flex-col gap-y-6 text-left"
+    >
+      <div *ngFor="let spec of ANNOUNCEMENT_SPECIFICATIONS">
+        <div class="text-2xl text-green-600 mb-3 italic">
+          {{ spec.section }}
+        </div>
+        <table class="ml-8">
+          <tr *ngFor="let line of spec.specifications; let index = index">
+            <td class="pt-2 pr-4 text-blue-600 align-top">
+              #{{ index + 1 }}
+            </td>
+            <td class="pt-2" [innerHTML]="line">
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
 </div>

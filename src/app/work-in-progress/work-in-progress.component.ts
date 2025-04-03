@@ -3,6 +3,8 @@ import {Component, OnInit} from '@angular/core';
 import {DESIGN_SECTIONS} from './design';
 import {ACCOUNT_SPECIFICATIONS} from './account';
 import {SEMINAR_SPECIFICATIONS} from './seminar';
+import {FEEDBACK_SPECIFICATIONS} from './feedback';
+import {ANNOUNCEMENT_SPECIFICATIONS} from './announcement';
 import {GOLD_PACKAGES, PRICING_SPECIFICATIONS} from './pricing';
 import {STORAGE_USAGES, StorageUsage, StorageUsageItem} from './storage';
 import {GAME_POINT_TABLE_SPECS, GAME_REWARD_SPECS, GAME_REWARDS, GAME_RULE_SPECS} from './game';
@@ -28,7 +30,7 @@ const SECTIONS: string[] = [
 })
 export class WorkInProgressComponent implements OnInit {
 
-  activeSection: string = SECTIONS[6];
+  activeSection: string = SECTIONS[8];
 
   protected readonly SECTIONS = SECTIONS;
   protected readonly MAX_RACE_PER_MEETING = MAX_RACE_PER_MEETING;
@@ -44,6 +46,8 @@ export class WorkInProgressComponent implements OnInit {
   protected readonly PRICING_SPECIFICATIONS = PRICING_SPECIFICATIONS;
   protected readonly ACCOUNT_SPECIFICATIONS = ACCOUNT_SPECIFICATIONS;
   protected readonly SEMINAR_SPECIFICATIONS = SEMINAR_SPECIFICATIONS;
+  protected readonly FEEDBACK_SPECIFICATIONS = FEEDBACK_SPECIFICATIONS;
+  protected readonly ANNOUNCEMENT_SPECIFICATIONS = ANNOUNCEMENT_SPECIFICATIONS;
   protected readonly parseInt = parseInt;
 
   constructor() {
