@@ -31,6 +31,12 @@ export const FEEDBACK_SPECIFICATIONS: FeedbackSpec[] = [
         Each feedback ticket shall include but not limit to below information:<br>
         feedback ticket #, date/time, status, rewards, paragraphs, etc.
       `,
+      `
+        Feedback Quality Level:<br>
+        - Good. Insightful, mentions pain points with good formatting.<br>
+        - Medium. Acceptable, mentions only 1 or 2 pain points with bad formatting.<br>
+        - Bad. Random text or repeated content for this account.
+      `,
     ]
   },
 ]
